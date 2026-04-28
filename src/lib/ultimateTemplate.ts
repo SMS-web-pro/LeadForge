@@ -1,1004 +1,20 @@
-// ── TEMPLATE ULTIME - GARANTIE PROFESSIONNELLE 100% (MODERNE BRIGHT 2026) ──
-// Résultat professionnel de pointe. Glassmorphism clair, complet, avec chatbot et WhatsApp.
+// ══════════════════════════════════════════════════════════════════
+// websiteGenerator.ts — VERSION FINALE CORRIGÉE
+// Tous les patches intégrés:
+//   ✅ Images: filtre logo/photo, dédup, object-fit intelligent
+//   ✅ Témoignages: vrais avis Google uniquement
+//   ✅ Formulaire: Formsubmit.co → email du prospect
+//   ✅ Chatbot: collecte nom+tel, envoie email via Formsubmit
+//   ✅ WhatsApp: formatage international automatique
+//   ✅ Menu desktop: CSS pur, sans JS
+//   ✅ Lucide: version 1.11.0 fixée, CDN jsDelivr
+//   ✅ Popup: déclenchement à 60% (au lieu de 50%)
+// ══════════════════════════════════════════════════════════════════
 
-import { getSectorImages, SECTOR_PEXELS_IMAGES } from './pexelsImages';
+import { getSectorImages } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 
-// ── SYSTÈME AVANCÉ DE TRAITEMENT D'IMAGES ──
-
-// Types d'images pour catégorisation intelligente
-interface ProcessedImage {
-  url: string;
-  type: 'logo' | 'photo' | 'icon' | 'banner' | 'unknown';
-  width?: number;
-  height?: number;
-  aspectRatio?: number;
-  isReal: boolean; // true = image du prospect, false = Pexels
-}
-
-// Filtres améliorés pour bloquer les images inappropriées
-const BLOCKED_KEYWORDS = [
-  'food', 'fruit', 'legume', 'carrot', 'salmon', 'kitchen', 'cooking', 'recipe', 'meal', 'dessert', 
-  'cake', 'pizza', 'burger', 'restaurant-menu', 'icon', 'logo', 'banner', 'thumbnail', 'avatar', 
-  'placeholder', 'sprite', 'badge', 'watermark', 'favicon', 'button', 'background', 'pattern'
-];
-
-const BLOCKED_DOMAINS = [
-  'tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 
-  'pagesjaunes.fr', 'linkedin.com', 'twitter.com'
-];
-
-// Détecter le type d'image à partir de l'URL et du nom
-function detectImageType(url: string, filename?: string): 'logo' | 'photo' | 'icon' | 'banner' | 'unknown' {
-  const lowerUrl = url.toLowerCase();
-  const lowerFilename = (filename || '').toLowerCase();
-  
-  // Détection par URL
-  if (lowerUrl.includes('logo') || lowerFilename.includes('logo')) return 'logo';
-  if (lowerUrl.includes('icon') || lowerFilename.includes('icon')) return 'icon';
-  if (lowerUrl.includes('banner') || lowerFilename.includes('banner')) return 'banner';
-  
-  // Détection par dimensions (si disponibles)
-  if (lowerUrl.includes('width=') || lowerUrl.includes('height=')) {
-    const widthMatch = lowerUrl.match(/width=(\d+)/);
-    const heightMatch = lowerUrl.match(/height=(\d+)/);
-    if (widthMatch && heightMatch) {
-      const w = parseInt(widthMatch[1]);
-      const h = parseInt(heightMatch[1]);
-      const ratio = w / h;
-      
-      // Ratio typique des logos
-      if (ratio < 1.5 && ratio > 0.5 && (w < 300 || h < 300)) return 'logo';
-      // Ratio typique des bannières
-      if (ratio > 3) return 'banner';
-    }
-  }
-  
-  // Détection par taille de fichier dans l'URL
-  if (lowerUrl.includes('200x50') || lowerUrl.includes('150x50') || lowerUrl.includes('100x100')) return 'logo';
-  if (lowerUrl.includes('1200x300') || lowerUrl.includes('1920x200')) return 'banner';
-  
-  return 'photo'; // Par défaut, considérer comme photo
-}
-
-// Valider et filtrer les images du prospect
-function validateAndCategorizeImages(images: string[], isReal: boolean = true): ProcessedImage[] {
-  return images
-    .filter(img => {
-      if (!img || typeof img !== 'string') return false;
-      if (!img.startsWith('https://')) return false;
-      
-      const low = img.toLowerCase();
-      
-      // Bloquer les domaines suspects
-      if (BLOCKED_DOMAINS.some(d => low.includes(d))) return false;
-      
-      // Bloquer les mots-clés inappropriés
-      if (BLOCKED_KEYWORDS.some(kw => low.includes(kw))) return false;
-      
-      // Bloquer les favicons et images techniques
-      if (low.includes('favicon') || low.includes('sprite') || low.includes('pixel')) return false;
-      
-      return true;
-    })
-    .map(img => {
-      const urlParts = img.split('/');
-      const filename = urlParts[urlParts.length - 1];
-      const type = detectImageType(img, filename);
-      
-      return {
-        url: img,
-        type,
-        isReal,
-        width: undefined, // Sera déterminé plus tard si besoin
-        height: undefined,
-        aspectRatio: undefined
-      };
-    });
-}
-
-// Obtenir les dimensions d'une image (async)
-async function getImageDimensions(url: string): Promise<{ width: number; height: number; aspectRatio: number }> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      const aspectRatio = img.width / img.height;
-      resolve({ width: img.width, height: img.height, aspectRatio });
-    };
-    img.onerror = () => {
-      // Dimensions par défaut en cas d'erreur
-      resolve({ width: 800, height: 600, aspectRatio: 1.33 });
-    };
-    img.src = url;
-  });
-}
-
-// Générer un fallback onerror robuste avec multiples tentatives
-function generateRobustFallback(primaryUrl: string, fallbackUrls: string[]): string {
-  const fallbackChain = fallbackUrls.map((url, index) => 
-    `this.onerror=function(){if(${index}<${fallbackUrls.length-1}){this.src='${fallbackUrls[index+1]}'}else{this.style.display='none';this.parentElement.innerHTML='<div class=\\'img-fallback\\'>Image non disponible</div>'};`
-  ).join(';');
-  
-  return `onerror="this.onerror=null;${fallbackChain}"`;
-}
-
-// Sélectionner intelligemment les images pour éviter les répétitions
-function selectUniqueImages(images: ProcessedImage[], count: number): ProcessedImage[] {
-  if (images.length <= count) return images;
-  
-  // Prioriser les images réelles et les photos
-  const realPhotos = images.filter(img => img.isReal && img.type === 'photo');
-  const realOthers = images.filter(img => img.isReal && img.type !== 'photo');
-  const stockPhotos = images.filter(img => !img.isReal && img.type === 'photo');
-  const stockOthers = images.filter(img => !img.isReal && img.type !== 'photo');
-  
-  // Construire la liste finale en évitant les répétitions
-  const selected: ProcessedImage[] = [];
-  const usedUrls = new Set<string>();
-  
-  // Ajouter les vraies photos en priorité
-  for (const img of realPhotos) {
-    if (selected.length >= count) break;
-    if (!usedUrls.has(img.url)) {
-      selected.push(img);
-      usedUrls.add(img.url);
-    }
-  }
-  
-  // Compléter avec d'autres images réelles
-  for (const img of realOthers) {
-    if (selected.length >= count) break;
-    if (!usedUrls.has(img.url)) {
-      selected.push(img);
-      usedUrls.add(img.url);
-    }
-  }
-  
-  // Compléter avec les images stock si nécessaire
-  const remainingImages = [...stockPhotos, ...stockOthers];
-  for (const img of remainingImages) {
-    if (selected.length >= count) break;
-    if (!usedUrls.has(img.url)) {
-      selected.push(img);
-      usedUrls.add(img.url);
-    }
-  }
-  
-  return selected;
-}
-
-// Générer les attributs d'image optimisés
-function generateImageAttributes(img: ProcessedImage, section: string): string {
-  const attributes: string[] = [];
-  
-  // Dimensions pour éviter CLS
-  const defaultDimensions = {
-    hero: { width: 1200, height: 600 },
-    about: { width: 800, height: 600 },
-    portfolio: { width: 400, height: 300 },
-    services: { width: 300, height: 200 }
-  };
-  
-  const dims = defaultDimensions[section as keyof typeof defaultDimensions] || { width: 800, height: 600 };
-  
-  attributes.push(`width="${dims.width}"`);
-  attributes.push(`height="${dims.height}"`);
-  attributes.push(`alt="${img.type === 'logo' ? 'Logo de l\'entreprise' : 'Photo professionnelle'}"`);
-  
-  // Style adapté selon le type
-  if (img.type === 'logo') {
-    attributes.push(`style="max-width: ${dims.width}px; height: auto; object-fit: contain;"`);
-  } else {
-    attributes.push(`style="width: 100%; height: auto; object-fit: cover;"`);
-  }
-  
-  // Loading optimisé
-  attributes.push('loading="lazy"');
-  attributes.push('decoding="async"');
-  
-  return attributes.join(' ');
-}
-
-// ── IMAGES SPÉCIFIQUES PAR SECTEUR (PLUS PERTINENTES) ──
-// Images spécifiques pour chaque section afin d'éviter les répétitions
-const SECTOR_SPECIFIC_IMAGES: Record<string, { hero: string; about: string; portfolio: string[]; services: string[] }> = {
-  plomberie: {
-    hero: 'https://example.com/plomberie-hero.jpg',
-    about: 'https://example.com/plomberie-about.jpg',
-    portfolio: [
-      'https://example.com/plomberie-portfolio-1.jpg',
-      'https://example.com/plomberie-portfolio-2.jpg',
-      'https://example.com/plomberie-portfolio-3.jpg'
-    ],
-    services: [
-      'https://example.com/plomberie-service-1.jpg',
-      'https://example.com/plomberie-service-2.jpg',
-      'https://example.com/plomberie-service-3.jpg'
-    ]
-  },
-  electricien: {
-    hero: 'https://example.com/electricien-hero.jpg',
-    about: 'https://example.com/electricien-about.jpg',
-    portfolio: [
-      'https://example.com/electricien-portfolio-1.jpg',
-      'https://example.com/electricien-portfolio-2.jpg',
-      'https://example.com/electricien-portfolio-3.jpg'
-    ],
-    services: [
-      'https://example.com/electricien-service-1.jpg',
-      'https://example.com/electricien-service-2.jpg',
-      'https://example.com/electricien-service-3.jpg'
-    ]
-  },
-  // ...
-};
-
-// ── AVIS CLIENTS AUTHENTIQUES (SPÉCIFIQUES ET RÉALISTES) ──
-// Avis réalistes basés sur de véritables expériences clients par secteur
-const AUTHENTIC_REVIEWS: Record<string, Array<{ author: string; text: string; rating: number; date: string; service?: string }>> = {
-  plomberie: [
-    { author: 'Marc Dubois', text: "Intervention d'urgence pour une fuite majeure. Le plombier est arrivé en moins d'une heure, a diagnostiqué précisément et réparé professionnellement. Très sérieux et tarifs transparents.", rating: 5, date: 'Il y a 3 jours', service: 'Dépannage urgence' },
-    { author: 'Sophie Martin', text: "Rénovation complète de notre salle de bain. Travail impeccable, respect des délais et budget respecté. Le plombier nous a conseillés sur les meilleurs matériaux et a tout laissé parfaitement propre.", rating: 5, date: 'Il y a 1 semaine', service: 'Rénovation salle de bain' },
-    { author: 'Pierre Bernard', text: "Installation d'un nouveau chauffe-eau. Professionnel, ponctuel et a pris le temps d'expliquer le fonctionnement. Prix très compétitif pour la qualité de service.", rating: 5, date: 'Il y a 2 semaines', service: 'Chauffe-eau' },
-    { author: 'Claire Petit', text: "Debouchage de canalisation bouchée. Intervention rapide avec matériel moderne. Le plombier a protégé nos sols et a tout nettoyé après intervention.", rating: 5, date: 'Il y a 3 semaines', service: 'Debouchage' },
-    { author: 'Jean-Louis Robert', text: "Diagnostic complet de notre installation avant achat maison. Très professionnel, nous a fait économiser en identifiant des problèmes cachés. Devis détaillé et sans surprise.", rating: 5, date: 'Il y a 1 mois', service: 'Diagnostic immobilier' },
-    { author: 'Marie Leroy', text: "Changement robinetterie salle de bain. Travail soigné, matériel de qualité. Le plombier a démonté l'ancien et installé le nouveau système en moins de 2h.", rating: 5, date: 'Il y a 1 mois', service: 'Robinetterie' }
-  ],
-  electricien: [
-    { author: 'Alain Richard', text: "Mise aux normes complètes de notre maison ancienne. Travail sérieux, explications claires et attestation fournie pour l'assurance. Vraiment pro du domaine.", rating: 5, date: 'Il y a 4 jours', service: 'Mise aux normes' },
-    { author: 'Isabelle Moreau', text: "Installation de notre borne de recharge pour voiture électrique. Raccordement propre, explications complètes et test de fonctionnement fait devant nous. Service impeccable.", rating: 5, date: 'Il y a 1 semaine', service: 'Borne de recharge' },
-    { author: 'Thomas Girard', text: "Installation domotique dans toute la maison. L'électricien a été patient pour nous former et s'est assuré que tout fonctionne parfaitement. Vraiment satisfait.", rating: 5, date: 'Il y a 2 semaines', service: 'Domotique' },
-    { author: 'Nathalie Fournier', text: "Court-circuit général réparé en urgence. Intervention nocturne rapide, diagnostic précis et réparation définitive. Tarif d'urgence raisonnable.", rating: 5, date: 'Il y a 3 semaines', service: 'Dépannage urgence' },
-    { author: 'Philippe Lambert', text: "Éclairage LED installé dans tout l'appartement. Conseil sur les luminaires, installation soignée et économies d'énergie visibles dès la première facture.", rating: 5, date: 'Il y a 1 mois', service: 'Éclairage LED' },
-    { author: 'François Mercier', text: "Tableau électrique remplacé avant mise en location. Travail aux normes, propre et rapide. L'expertise de notre assurance a validé sans problème.", rating: 5, date: 'Il y a 1 mois', service: 'Tableau électrique' }
-  ],
-  coiffeur: [
-    { author: 'Camille Sanchez', text: "Coupe et coloration parfaites exactement ce que je voulais. Le coiffeur a pris le temps de comprendre mes attentes et le résultat est magnifique. Je reviendrai!", rating: 5, date: 'Il y a 2 jours', service: 'Coupe et coloration' },
-    { author: 'Laura Martinez', text: "Balayage subtil et naturel. Le coiffeur a vraiment su adapter la couleur à ma peau et ma couleur naturelle. Ravis de mes amies!", rating: 5, date: 'Il y a 5 jours', service: 'Balayage' },
-    { author: 'Emma Rousseau', text: "Soins kératine pour mes cheveux abîmés. Résultat spectaculaire, mes cheveux sont douces et brillants. Le coiffeur m'a donné des conseils d'entretien.", rating: 5, date: 'Il y a 1 semaine', service: 'Soins kératine' },
-    { author: 'Alice David', text: "Chignon de mariage absolument magnifique. A tenu toute la journée et la nuit malgré la chaleur. Le coiffeur a été patient et créatif.", rating: 5, date: 'Il y a 2 semaines', service: 'Coiffure mariage' },
-    { author: 'Nicolas Blanc', text: "Extensions naturelles indétectables. Même ma coiffeuse habituelle n'a pas vu la différence! Pose professionnelle et conseils d'entretien.", rating: 5, date: 'Il y a 3 semaines', service: 'Extensions' },
-    { author: 'Julie Fontaine', text: "Coupe homme moderne avec soin barbe. Ambiance masculine très sympa, conseil sur produits adaptés et résultat très soigné. Je recommande vivement.", rating: 5, date: 'Il y a 1 mois', service: 'Coupe homme' }
-  ],
-  restaurant: [
-    { author: 'Antoine Chevalier', text: "Menu dégustation exceptionnel. Chaque plat était une découverte, associations de saveurs audacieuses mais équilibrées. Service attentif et vins parfaitement accordés.", rating: 5, date: 'Il y a 1 jour', service: 'Menu dégustation' },
-    { author: 'Marie Dupont', text: "Soirée anniversaire organisée parfaitement. Cadre magnifique, service impeccable et menu personnalisé sur mesure. Vraiment un moment inoubliable.", rating: 5, date: 'Il y a 3 jours', service: 'Événement privé' },
-    { author: 'Sarah Lemoine', text: "Brunch du dimanche excellent. Produits frais de saison, présentation soignée et atmosphere chaleureuse. Rapport qualité/prix imbattable.", rating: 5, date: 'Il y a 1 semaine', service: 'Brunch' },
-    { author: 'David Rousseau', text: "Accord mets et vins remarquable. Le sommelier nous a guidés avec expertise et patience. Découverte de pépites vinicoles.", rating: 5, date: 'Il y a 2 semaines', service: 'Accord mets-vins' },
-    { author: 'Claire Bernard', text: "Accueil chaleureux comme à la maison. L'équipe nous a traités comme des habitués malgré notre première visite. Cuisine authentique et généreuse.", rating: 5, date: 'Il y a 3 semaines', service: 'Repas du soir' },
-    { author: 'Romain Petit', text: "Carte des vins exceptionnelle. Sélection variée avec des pépites accessibles. Le personnel connaît parfaitement sa cave et conseille très bien.", rating: 5, date: 'Il y a 1 mois', service: 'Cave à vins' }
-  ],
-  garage: [
-    { author: 'Stéphane Weber', text: "Réparation moteur complexe sur notre berline. Diagnostic précis avec outil de diagnostic moderne, pièces d'origine et main d'œuvre raisonnable. Voiture comme neuve!", rating: 5, date: 'Il y a 2 jours', service: 'Réparation moteur' },
-    { author: 'Aurélie Meyer', text: "Changement 4 pneus et géométrie complète. Service rapide, pneus de qualité et réglage précis. Conduite plus sécurisée immédiatement.", rating: 5, date: 'Il y a 4 jours', service: 'Pneus et géométrie' },
-    { author: 'Christophe Fischer', text: "Diagnostic électronique sur problème intermittent. Le garagiste a identifié la panne en 30min alors que d'autres n'avaient rien trouvé. Honnête et compétent.", rating: 5, date: 'Il y a 1 semaine', service: 'Diagnostic électronique' },
-    { author: 'Marie-Jeanne Hoffmann', text: "Carrosserie réparation après petit accrochage. Travail de peinture impeccable, couleur parfaitement assortie et finition parfaite. On ne voit plus rien.", rating: 5, date: 'Il y a 2 semaines', service: 'Carrosserie' },
-    { author: 'Pierre Schneider', text: "Révision complète avant grand voyage. Contrôle pointilleux, vidange, filtres changés et vérification pneus. Prix très juste pour la qualité.", rating: 5, date: 'Il y a 3 semaines', service: 'Révision' },
-    { author: 'Sandrine Mueller', text: "Climatisation réglée et rechargée. Température parfaite maintenant, même en pleine canicule. Le garagiste a expliqué comment l'entretenir.", rating: 5, date: 'Il y a 1 mois', service: 'Climatisation' }
-  ],
-  nettoyage: [
-    { author: 'Laurent Weber', text: "Nettoyage de fin de chantier impeccable. L'équipe a transformé notre chantier en espace habitable en 2 jours. Travail sérieux et efficace.", rating: 5, date: 'Il y a 3 jours', service: 'Fin de chantier' },
-    { author: 'Sophie Klein', text: "Nettoyage bureaux mensuel contractuel. Équipe ponctuelle, travail discret et résultat toujours parfait. Vraiment professionnel et fiable.", rating: 5, date: 'Il y a 1 semaine', service: 'Nettoyage bureaux' },
-    { author: 'Marie Schmidt', text: "Grand ménage de printemps. Équipe dynamique et équipée, ont nettoyé des endroits inaccessibles depuis des années. Maison comme neuve!", rating: 5, date: 'Il y a 2 semaines', service: 'Grand ménage' },
-    { author: 'Jean-Marc Bauer', text: "Nettoyage vitres professionnel. Résultat sans traces, cadre métallique nettoyé également. Travaux en hauteur sans problème avec toutes sécurités.", rating: 5, date: 'Il y a 3 semaines', service: 'Nettoyage vitres' },
-    { author: 'Isabelle Wagner', text: "Shampooing de tapis et moquettes. Taches tenaces éliminées, séchage rapide et odeur agréable. Tapis comme neufs!", rating: 5, date: 'Il y a 1 mois', service: 'Shampooing tapis' },
-    { author: 'Thomas Becker', text: "Nettoyage industriel après arrêt machine. Équipe spécialisée, produits adaptés et respect des normes sécurité. Production relancée rapidement.", rating: 5, date: 'Il y a 1 mois', service: 'Nettoyage industriel' }
-  ]
-};
-
-// ── SYSTÈME DE VALIDATION DES DONNÉES AVANT GÉNÉRATION ──
-
-interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-  fixedData?: Partial<any>;
-}
-
-// Valider toutes les données critiques du prospect avant génération
-function validateLeadData(lead: any): ValidationResult {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-  const fixedData: Partial<any> = {};
-
-  // Validation du nom de l'entreprise
-  if (!lead.name || lead.name.trim().length < 2) {
-    errors.push("Nom de l'entreprise invalide ou manquant");
-    fixedData.name = lead.name || "Entreprise";
-  }
-
-  // Validation du secteur
-  if (!lead.sector || lead.sector.trim().length < 2) {
-    errors.push("Secteur invalide ou manquant");
-    fixedData.sector = lead.sector || "Services";
-  }
-
-  // Validation du téléphone
-  if (!lead.phone || !isValidPhone(lead.phone)) {
-    warnings.push("Téléphone invalide ou manquant");
-    fixedData.phone = lead.phone || "+33 1 23 45 67 89";
-  }
-
-  // Validation de l'email
-  if (!lead.email || !isValidEmail(lead.email)) {
-    warnings.push("Email invalide ou manquant");
-    fixedData.email = lead.email || "contact@example.com";
-  }
-
-  // Validation de la ville
-  if (!lead.city || lead.city.trim().length < 2) {
-    warnings.push("Ville invalide ou manquante");
-    fixedData.city = lead.city || "Paris";
-  }
-
-  // Validation de l'adresse
-  if (!lead.address || lead.address.trim().length < 5) {
-    warnings.push("Adresse invalide ou manquante");
-    fixedData.address = lead.address || "Centre Ville";
-  }
-
-  // Validation du site web
-  if (lead.website && !isValidUrl(lead.website)) {
-    warnings.push("URL du site web invalide");
-    fixedData.website = "";
-  }
-
-  // Validation du rating
-  if (lead.googleRating && (lead.googleRating < 1 || lead.googleRating > 5)) {
-    warnings.push("Rating Google invalide, normalisé à 5");
-    fixedData.googleRating = 5;
-  }
-
-  // Validation du nombre d'avis
-  if (lead.googleReviews && (lead.googleReviews < 0 || lead.googleReviews > 10000)) {
-    warnings.push("Nombre d'avis Google invalide, normalisé à 42");
-    fixedData.googleReviews = 42;
-  }
-
-  // Appliquer les corrections
-  if (Object.keys(fixedData).length > 0) {
-    Object.assign(lead, fixedData);
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-    fixedData
-  };
-}
-
-// Valider un numéro de téléphone
-function isValidPhone(phone: string): boolean {
-  if (!phone) return false;
-  const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
-  return phoneRegex.test(phone.replace(/\s/g, ''));
-}
-
-// Valider un email
-function isValidEmail(email: string): boolean {
-  if (!email) return false;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-// Valider une URL
-function isValidUrl(url: string): boolean {
-  if (!url) return false;
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// ── SYSTÈME DE CACHE LOCAL POUR IMAGES PEXELS ──
-
-interface CachedImage {
-  url: string;
-  blob?: Blob;
-  dataUrl?: string;
-  timestamp: number;
-  expiry: number;
-  size: number;
-}
-
-class PexelsImageCache {
-  private static instance: PexelsImageCache;
-  private cache: Map<string, CachedImage> = new Map();
-  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures
-  private readonly MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
-  private readonly CACHE_KEY = 'pexels_image_cache';
-
-  static getInstance(): PexelsImageCache {
-    if (!PexelsImageCache.instance) {
-      PexelsImageCache.instance = new PexelsImageCache();
-    }
-    return PexelsImageCache.instance;
-  }
-
-  constructor() {
-    this.loadCacheFromStorage();
-    this.cleanupExpiredCache();
-  }
-
-  // Charger le cache depuis localStorage
-  private loadCacheFromStorage(): void {
-    try {
-      const cached = localStorage.getItem(this.CACHE_KEY);
-      if (cached) {
-        const data = JSON.parse(cached);
-        this.cache = new Map(data);
-      }
-    } catch (error) {
-      console.warn('Erreur chargement cache images:', error);
-    }
-  }
-
-  // Sauvegarder le cache dans localStorage
-  private saveCacheToStorage(): void {
-    try {
-      const data = Array.from(this.cache.entries());
-      localStorage.setItem(this.CACHE_KEY, JSON.stringify(data));
-    } catch (error) {
-      console.warn('Erreur sauvegarde cache images:', error);
-      this.cleanupOldCache(); // Nettoyer si espace insuffisant
-    }
-  }
-
-  // Nettoyer le cache expiré
-  private cleanupExpiredCache(): void {
-    const now = Date.now();
-    for (const [key, image] of this.cache.entries()) {
-      if (now > image.expiry) {
-        this.cache.delete(key);
-      }
-    }
-    this.saveCacheToStorage();
-  }
-
-  // Nettoyer le vieux cache pour libérer de l'espace
-  private cleanupOldCache(): void {
-    const entries = Array.from(this.cache.entries())
-      .sort((a, b) => a[1].timestamp - b[1].timestamp);
-    
-    // Supprimer les 25% les plus anciens
-    const toDelete = Math.floor(entries.length * 0.25);
-    for (let i = 0; i < toDelete; i++) {
-      this.cache.delete(entries[i][0]);
-    }
-    this.saveCacheToStorage();
-  }
-
-  // Vérifier si une image est en cache
-  isCached(url: string): boolean {
-    const cached = this.cache.get(url);
-    if (!cached) return false;
-    
-    const now = Date.now();
-    if (now > cached.expiry) {
-      this.cache.delete(url);
-      return false;
-    }
-    
-    return true;
-  }
-
-  // Obtenir une image depuis le cache
-  getCachedImage(url: string): string | null {
-    const cached = this.cache.get(url);
-    if (!cached) return null;
-    
-    const now = Date.now();
-    if (now > cached.expiry) {
-      this.cache.delete(url);
-      return null;
-    }
-    
-    // Retourner le dataURL si disponible
-    if (cached.dataUrl) {
-      return cached.dataUrl;
-    }
-    
-    return cached.url;
-  }
-
-  // Mettre en cache une image
-  async cacheImage(url: string): Promise<string> {
-    // Vérifier si déjà en cache
-    if (this.isCached(url)) {
-      return this.getCachedImage(url) || url;
-    }
-
-    try {
-      // Télécharger l'image
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const blob = await response.blob();
-      const dataUrl = await this.blobToDataUrl(blob);
-      
-      // Ajouter au cache
-      const cachedImage: CachedImage = {
-        url,
-        blob,
-        dataUrl,
-        timestamp: Date.now(),
-        expiry: Date.now() + this.CACHE_DURATION,
-        size: blob.size
-      };
-
-      this.cache.set(url, cachedImage);
-      
-      // Vérifier la taille totale du cache
-      this.checkCacheSize();
-      this.saveCacheToStorage();
-
-      return dataUrl;
-    } catch (error) {
-      console.warn('Erreur mise en cache image:', error);
-      return url; // Retourner l'URL originale en cas d'erreur
-    }
-  }
-
-  // Convertir un Blob en DataURL
-  private blobToDataUrl(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  // Vérifier et limiter la taille du cache
-  private checkCacheSize(): void {
-    let totalSize = 0;
-    for (const image of this.cache.values()) {
-      totalSize += image.size;
-    }
-
-    if (totalSize > this.MAX_CACHE_SIZE) {
-      this.cleanupOldCache();
-    }
-  }
-
-  // Précharger plusieurs images
-  async preloadImages(urls: string[]): Promise<void> {
-    const promises = urls.map(url => this.cacheImage(url));
-    await Promise.allSettled(promises);
-  }
-
-  // Vider le cache
-  clearCache(): void {
-    this.cache.clear();
-    localStorage.removeItem(this.CACHE_KEY);
-  }
-
-  // Obtenir les statistiques du cache
-  getCacheStats(): { size: number; count: number; usage: string } {
-    let totalSize = 0;
-    for (const image of this.cache.values()) {
-      totalSize += image.size;
-    }
-
-    return {
-      size: totalSize,
-      count: this.cache.size,
-      usage: `${(totalSize / 1024 / 1024).toFixed(2)}MB / ${(this.MAX_CACHE_SIZE / 1024 / 1024).toFixed(2)}MB`
-    };
-  }
-}
-
-// Fonction pour optimiser les images avec cache Pexels
-async function optimizeImagesWithCache(imageUrls: string[]): Promise<string[]> {
-  const imageCache = PexelsImageCache.getInstance();
-  
-  // Précharger toutes les images en parallèle
-  await imageCache.preloadImages(imageUrls);
-  
-  // Retourner les URLs optimisées (dataURL si en cache, original sinon)
-  return imageUrls.map(url => imageCache.getCachedImage(url) || url);
-}
-
-// ── SYSTÈME DE VARIATIONS DE TEMPLATE ANTI-IDENTIFICATION ──
-
-interface TemplateVariation {
-  id: string;
-  colorScheme: string;
-  layoutStyle: string;
-  componentOrder: string[];
-  customClasses: Record<string, string>;
-  hiddenElements: string[];
-  additionalFeatures: string[];
-}
-
-// Générer une variation unique de template basée sur l'entreprise et le secteur
-function generateTemplateVariation(companyName: string, sector: string): TemplateVariation {
-  // Hash unique basé sur le nom de l'entreprise et le secteur
-  const combinedString = `${companyName.toLowerCase()}${sector.toLowerCase()}`;
-  let hash = 0;
-  for (let i = 0; i < combinedString.length; i++) {
-    hash = ((hash << 5) - hash) + combinedString.charCodeAt(i);
-    hash |= 0;
-  }
-  hash = Math.abs(hash);
-
-  // Déterminer la variation (0-15 pour 16 variations uniques)
-  const variationIndex = hash % 16;
-  
-  // Palettes de couleurs alternatives
-  const colorSchemes = [
-    { primary: '#2563eb', secondary: '#7c3aed', accent: '#ec4899' }, // Bleu/Violet/Rose
-    { primary: '#059669', secondary: '#0891b2', accent: '#0d9488' }, // Vert/Cyan
-    { primary: '#dc2626', secondary: '#ea580c', accent: '#f59e0b' }, // Rouge/Orange
-    { primary: '#7c2d12', secondary: '#a16207', accent: '#ca8a04' }, // Marron/Or
-    { primary: '#4338ca', secondary: '#6366f1', accent: '#8b5cf6' }, // Indigo/Violet
-    { primary: '#0891b2', secondary: '#06b6d4', accent: '#0ea5e9' }, // Cyan/Bleu
-    { primary: '#be123c', secondary: '#db2777', accent: '#ec4899' }, // Rose
-    { primary: '#166534', secondary: '#15803d', accent: '#16a34a' }, // Vert forêt
-    { primary: '#9333ea', secondary: '#a855f7', accent: '#c084fc' }, // Violet
-    { primary: '#c2410c', secondary: '#dc2626', accent: '#ef4444' }, // Rouge feu
-    { primary: '#1e3a8a', secondary: '#1e40af', accent: '#2563eb' }, // Bleu marine
-    { primary: '#14532d', secondary: '#166534', accent: '#15803d' }, // Vert sapin
-    { primary: '#7f1d1d', secondary: '#991b1b', accent: '#b91c1c' }, // Bordeaux
-    { primary: '#134e4a', secondary: '#14b8a6', accent: '#10b981' }, // Teal
-    { primary: '#4c1d95', secondary: '#6d28d9', accent: '#7c3aed' }, // Violet foncé
-    { primary: '#0f766e', secondary: '#115e59', accent: '#134e4a' }  // Cyan foncé
-  ];
-
-  // Styles de layout
-  const layoutStyles = ['modern', 'classic', 'minimal', 'bold', 'elegant', 'tech', 'organic', 'corporate'];
-  
-  // Ordres de composants
-  const componentOrders = [
-    ['hero', 'about', 'services', 'testimonials', 'contact'],
-    ['hero', 'services', 'about', 'testimonials', 'contact'],
-    ['hero', 'testimonials', 'services', 'about', 'contact'],
-    ['hero', 'about', 'testimonials', 'services', 'contact'],
-    ['hero', 'services', 'testimonials', 'about', 'contact'],
-    ['hero', 'contact', 'services', 'about', 'testimonials'],
-    ['hero', 'testimonials', 'about', 'services', 'contact'],
-    ['hero', 'about', 'contact', 'services', 'testimonials']
-  ];
-
-  // Éléments à masquer aléatoirement
-  const possibleHiddenElements = ['stats-banner', 'process-section', 'guarantees', 'values', 'team', 'blog', 'newsletter'];
-  const hiddenElementsCount = hash % 3; // 0-2 éléments à masquer
-  const hiddenElements = [];
-  for (let i = 0; i < hiddenElementsCount; i++) {
-    const index = (hash + i * 7) % possibleHiddenElements.length;
-    hiddenElements.push(possibleHiddenElements[index]);
-  }
-
-  // Fonctionnalités additionnelles
-  const possibleFeatures = ['chat-widget', 'appointment-booking', 'quote-calculator', 'price-table', 'gallery', 'video-hero', 'testimonials-carousel', 'map-integration'];
-  const additionalFeaturesCount = (hash % 4) + 1; // 1-4 fonctionnalités
-  const additionalFeatures = [];
-  for (let i = 0; i < additionalFeaturesCount; i++) {
-    const index = (hash + i * 11) % possibleFeatures.length;
-    additionalFeatures.push(possibleFeatures[index]);
-  }
-
-  // Classes CSS personnalisées
-  const customClasses = {
-    hero: `hero-${layoutStyles[variationIndex % layoutStyles.length]}`,
-    navigation: `nav-${variationIndex % 4 === 0 ? 'sticky' : variationIndex % 4 === 1 ? 'fixed' : variationIndex % 4 === 2 ? 'hidden' : 'transparent'}`,
-    buttons: `btn-${variationIndex % 3 === 0 ? 'rounded' : variationIndex % 3 === 1 ? 'square' : 'pill'}`,
-    cards: `card-${variationIndex % 3 === 0 ? 'shadow' : variationIndex % 3 === 1 ? 'border' : 'elevated'}`,
-    animations: `anim-${variationIndex % 4 === 0 ? 'fade' : variationIndex % 4 === 1 ? 'slide' : variationIndex % 4 === 2 ? 'zoom' : 'none'}`
-  };
-
-  return {
-    id: `var-${variationIndex}`,
-    colorScheme: colorSchemes[variationIndex],
-    layoutStyle: layoutStyles[variationIndex % layoutStyles.length],
-    componentOrder: componentOrders[variationIndex % componentOrders.length],
-    customClasses,
-    hiddenElements,
-    additionalFeatures
-  };
-}
-
-// Appliquer les variations de template au HTML
-function applyTemplateVariation(html: string, variation: TemplateVariation): string {
-  let modifiedHtml = html;
-
-  // Ajouter les classes CSS personnalisées
-  modifiedHtml = modifiedHtml.replace(
-    /<body/g,
-    `<body class="template-${variation.id}" data-layout="${variation.layoutStyle}"`
-  );
-
-  // Masquer les éléments spécifiés
-  variation.hiddenElements.forEach(element => {
-    const regex = new RegExp(`<section[^>]*class="[^"]*\\b${element}\\b[^"]*"[^>]*>.*?<\\/section>`, 'gs');
-    modifiedHtml = modifiedHtml.replace(regex, '');
-  });
-
-  // Ajouter les fonctionnalités additionnelles
-  if (variation.additionalFeatures.includes('chat-widget')) {
-    modifiedHtml = modifiedHtml.replace(
-      '</body>',
-      `<div class="chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
-        <button style="background: ${variation.colorScheme.primary}; color: white; border: none; padding: 12px; border-radius: 50%; cursor: pointer;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-        </button>
-      </div></body>`
-    );
-  }
-
-  // Ajouter des classes CSS pour les variations
-  const variationCSS = `
-    <style>
-      .template-${variation.id} .hero-${variation.layoutStyle} { 
-        background: linear-gradient(135deg, ${variation.colorScheme.primary}22, ${variation.colorScheme.secondary}22);
-      }
-      .template-${variation.id} .${variation.customClasses.buttons} {
-        background: ${variation.colorScheme.primary};
-        border-radius: ${variation.customClasses.buttons.includes('rounded') ? '8px' : variation.customClasses.buttons.includes('pill') ? '50px' : '0'};
-      }
-      .template-${variation.id} .${variation.customClasses.cards} {
-        ${variation.customClasses.cards.includes('shadow') ? 'box-shadow: 0 10px 30px rgba(0,0,0,0.1);' : ''}
-        ${variation.customClasses.cards.includes('border') ? 'border: 2px solid ' + variation.colorScheme.primary : ''}
-        ${variation.customClasses.cards.includes('elevated') ? 'transform: translateY(-4px);' : ''}
-      }
-      .template-${variation.id} .${variation.customClasses.animations} {
-        ${variation.customClasses.animations.includes('fade') ? 'animation: fadeIn 0.6s ease-in;' : ''}
-        ${variation.customClasses.animations.includes('slide') ? 'animation: slideIn 0.6s ease-out;' : ''}
-        ${variation.customClasses.animations.includes('zoom') ? 'animation: zoomIn 0.6s ease-out;' : ''}
-      }
-      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-      @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    </style>
-  `;
-
-  modifiedHtml = modifiedHtml.replace('</head>', `${variationCSS}</head>`);
-
-  return modifiedHtml;
-}
-
-// ── FONCTIONS AVANCÉES POUR LES VRAIS AVIS DU PROSPECT ──
-
-// Extraire et valider les vrais avis Google du prospect
-function extractAndValidateRealReviews(googleReviewsData: any[], lead: any): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal: boolean }> {
-  if (!googleReviewsData || googleReviewsData.length === 0) {
-    console.log(`⚠️ ${lead.name}: Aucun avis Google trouvé dans les données du prospect`);
-    return [];
-  }
-  
-  const validReviews = googleReviewsData
-    .filter(review => {
-      // Valider que l'avis a les champs requis
-      return review && 
-             review.text && 
-             review.text.trim().length > 10 && // Au moins 10 caractères
-             review.author && 
-             review.author.trim().length > 0 &&
-             (review.rating >= 1 && review.rating <= 5); // Rating valide
-    })
-    .map(review => ({
-      author: cleanAuthorName(review.author),
-      text: cleanReviewText(review.text),
-      rating: review.rating || 5,
-      date: formatReviewDate(review.date),
-      service: extractServiceFromReview(review.text, lead.sector),
-      isReal: true
-    }))
-    .sort((a, b) => {
-      // Prioriser les avis avec rating élevés et texte détaillé
-      const scoreA = (a.rating * 10) + (a.text.length / 50);
-      const scoreB = (b.rating * 10) + (b.text.length / 50);
-      return scoreB - scoreA;
-    });
-  
-  console.log(`✅ ${lead.name}: ${validReviews.length} avis validés sur ${googleReviewsData.length} avis bruts`);
-  return validReviews;
-}
-
-// Nettoyer le nom de l'auteur
-function cleanAuthorName(author: string): string {
-  if (!author) return 'Client';
-  
-  // Supprimer les caractères spéciaux et normaliser
-  return author
-    .replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '')
-    .trim()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ')
-    .substring(0, 30); // Limiter la longueur
-}
-
-// Nettoyer et formater le texte de l'avis
-function cleanReviewText(text: string): string {
-  if (!text) return "Service excellent";
-  
-  return text
-    .replace(/[^\w\sÀ-ÿ.,!?;:\-'"()\n]/g, '') // Garder caractères pertinents
-    .replace(/\s+/g, ' ') // Normaliser espaces
-    .trim()
-    .substring(0, 300) // Limiter la longueur
-    .replace(/(.{250}[^\s]*).*/, '$1...'); // Couper proprement si trop long
-}
-
-// Formater la date de l'avis
-function formatReviewDate(dateString: string): string {
-  if (!dateString) return 'Récemment';
-  
-  try {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return "Aujourd'hui";
-    if (diffDays === 1) return "Hier";
-    if (diffDays <= 7) return `Il y a ${diffDays} jours`;
-    if (diffDays <= 30) return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
-    if (diffDays <= 365) return `Il y a ${Math.floor(diffDays / 30)} mois`;
-    return `Il y a ${Math.floor(diffDays / 365)} an${Math.floor(diffDays / 365) > 1 ? 's' : ''}`;
-  } catch {
-    return 'Récemment';
-  }
-}
-
-// Extraire le service mentionné dans l'avis
-function extractServiceFromReview(text: string, sector: string): string {
-  const sectorKeywords: Record<string, string[]> = {
-    plomberie: ['fuite', 'chauffage', 'robinet', 'salle de bain', 'dépannage', 'installation'],
-    electricien: ['prise', 'lumière', 'tableau', 'chauffage', 'dysfonctionnement', 'installation'],
-    restaurant: ['plat', 'menu', 'service', 'ambiance', 'personnel', 'réservation'],
-    garage: ['voiture', 'entretien', 'réparation', 'diagnostic', 'contrôle', 'vidange'],
-    coiffeur: ['coupe', 'coiffure', 'coloration', ' brushing', 'service', 'rendez-vous'],
-    nettoyage: ['ménage', 'propreté', 'service', 'intervention', 'efficace', 'professionnel']
-  };
-  
-  const keywords = sectorKeywords[sector.toLowerCase()] || [];
-  
-  for (const keyword of keywords) {
-    if (text.toLowerCase().includes(keyword)) {
-      return keyword.charAt(0).toUpperCase() + keyword.slice(1);
-    }
-  }
-  
-  return 'Service général';
-}
-
-// Construire la liste complète des témoignages (vrais + fallbacks)
-function buildCompleteTestimonialList(realReviews: Array<any>, sector: string, targetCount: number): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal?: boolean }> {
-  const fallbackReviews = getAuthenticReviews(sector);
-  
-  // Commencer avec les vrais avis
-  let completeList = [...realReviews];
-  
-  // Ajouter des avis sectoriels si nécessaire
-  while (completeList.length < targetCount) {
-    const fallbackIndex = (completeList.length - realReviews.length) % fallbackReviews.length;
-    const fallbackReview = fallbackReviews[fallbackIndex];
-    
-    completeList.push({
-      ...fallbackReview,
-      isReal: false
-    });
-  }
-  
-  // Limiter au nombre cible
-  return completeList.slice(0, targetCount);
-}
-
-// Fonction pour obtenir les avis authentiques d'un secteur (inchangée)
-function getAuthenticReviews(sector: string): Array<{ author: string; text: string; rating: number; date: string; service?: string }> {
-  const normalizedSector = (sector || '').toLowerCase();
-  
-  // Chercher une correspondance exacte ou partielle
-  for (const [key, reviews] of Object.entries(AUTHENTIC_REVIEWS)) {
-    if (normalizedSector.includes(key) || key.includes(normalizedSector)) {
-      return reviews;
-    }
-  }
-  
-  // Fallback par défaut si aucun secteur trouvé
-  return AUTHENTIC_REVIEWS.default || [];
-}
-
-// Fonction pour générer le texte "about" dynamique avec l'expérience réelle
-function generateAboutText(templateText: string, lead: any): string {
-  let years = 'plusieurs';
-  
-  // Si on a une année de création, calculer les années d'expérience
-  if (lead.establishedYear && typeof lead.establishedYear === 'number') {
-    const currentYear = new Date().getFullYear();
-    const calculatedYears = currentYear - lead.establishedYear;
-    if (calculatedYears > 0 && calculatedYears < 100) {
-      years = calculatedYears.toString();
-    }
-  } 
-  // Fallback: extraire des années du texte du lead ou IA si disponible
-  else if (lead.description) {
-    const yearMatch = lead.description.match(/(\d+)\s*ans?\s*d['']exp[eé]rience/i);
-    if (yearMatch) {
-      years = yearMatch[1];
-    }
-  }
-  
-  // Remplacer "15 ans" par le nombre calculé
-  return templateText.replace(/depuis plus de 15 ans/gi, `depuis ${years} ans`)
-                     .replace(/15 ans d['']exp[eé]rience/gi, `${years} ans d'expérience`);
-}
-
-// Fonction pour générer des features cohérentes basées sur le service
-function generateFeaturesFromService(name: string, description: string, sector: string): string[] {
-  const serviceName = (name || '').toLowerCase();
-  const serviceDesc = (description || '').toLowerCase();
-  const normalizedSector = (sector || '').toLowerCase();
-  
-  // Features génériques de qualité
-  const defaultFeatures = ['Service professionnel', 'Intervention garantie', 'Devis gratuit'];
-  
-  // Dictionnaire de features par type de service
-  const featureDictionary: Record<string, string[]> = {
-    // Plomberie
-    'urgence': ['Disponible 24h/24', 'Intervention rapide', 'Déplacement inclus'],
-    'depannage': ['Réparation durable', 'Pièces garanties', 'Tarifs transparents'],
-    'installation': ['Pose certifiée', 'Conformité normes', 'Garantie décennale'],
-    'chauffage': ['Économies énergie', 'Installation propre', 'Entretien annuel'],
-    'sanitaire': ['Matériel qualité', 'Finitions soignées', 'Délai respecté'],
-    // Électricité
-    'mise aux normes': ['Conformité NFC 15-100', 'Certification Consuel', 'Sécurité garantie'],
-    'domotique': ['Configuration incluse', 'App smartphone', 'Support technique'],
-    'éclairage': ['Design moderne', 'LED économique', 'Installation discrète'],
-    // Coiffure
-    'coupe': ['Visagisme personnalisé', 'Conseil entretien', 'Produits adaptés'],
-    'coloration': ['Coloration végétale', 'Protection cheveux', 'Brillance longue durée'],
-    'barbier': ['Rasage précis', 'Soins barbe', 'Ambiance masculine'],
-    // Restaurant
-    'menu': ['Produits frais', 'Cuisine maison', 'Accord mets-vins'],
-    'livraison': ['Emballage qualité', 'Livraison rapide', 'Commande en ligne'],
-    // Garage
-    'moteur': ['Diagnostic précis', 'Réparation garantie', 'Pièces d\'origine'],
-    'pneus': ['Montage rapide', 'Géométrie 3D', 'Stockage hiver'],
-    'carrosserie': ['Peinture neuve', 'Débosselage sans peinture', 'Garantie vie'],
-    // Nettoyage
-    'ménage': ['Produits écologiques', 'Équipe formée', 'Intervention régulière'],
-    'vitres': ['Sans traces garanti', 'Accès difficile', 'Sécurité maximale'],
-    'désinfection': ['Produits certifiés', 'Zones sensibles', 'Certificat fourni'],
-    // Jardin
-    'taille': ['Forme parfaite', 'Évacuation déchets', 'Santé végétaux'],
-    'pelouse': ['Semence adaptée', 'Arrosage auto', 'Entretien minime'],
-    // Fitness
-    'coaching': ['Programme personnalisé', 'Suivi nutrition', 'Résultats mesurables'],
-    'musculation': ['Technique sécurisée', 'Progression adaptée', 'Sans blessure'],
-    // Médical
-    'consultation': ['À l\'écoute', 'Diagnostic précis', 'Disponibilité rapide'],
-    'kiné': ['Rééducation active', 'Appareillage moderne', 'Progrès rapides'],
-    // Juridique
-    'divorce': ['Discrétion totale', 'Médiation possible', 'Protection intérêts'],
-    'contrat': ['Rédaction précise', 'Clauses protectrices', 'Relecture gratuite'],
-  };
-  
-  // Chercher des correspondances dans le dictionnaire
-  for (const [keyword, features] of Object.entries(featureDictionary)) {
-    if (serviceName.includes(keyword) || serviceDesc.includes(keyword)) {
-      return features;
-    }
-  }
-  
-  // Fallback: extraire des mots-clés de la description
-  const keywords = serviceDesc.match(/\b(installation|réparation|remplacement|rénovation|entretien|dépannage|conseil|sur-mesure|professionnel|certifié|garanti|rapide|qualité|économique)\b/g);
-  if (keywords && keywords.length > 0) {
-    return keywords.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1) + ' garanti');
-  }
-  
-  return defaultFeatures;
-}
-
+// ── TYPES ──────────────────────────────────────────────────────────
 export interface UltimateContent {
   companyName: string;
   sector: string;
@@ -1011,7 +27,6 @@ export interface UltimateContent {
   rating?: number;
   reviews?: number;
   services: Array<{ name: string; description: string; features: string[] }>;
-  testimonials: Array<{ author: string; text: string; rating: number; date?: string }>;
   heroTitle: string;
   heroSubtitle: string;
   aboutText: string;
@@ -1021,14 +36,12 @@ export interface UltimateContent {
   allImages: string[];
 }
 
-const SECTOR_ULTIMATE_TEMPLATES = {
+// ── TEMPLATES PAR SECTEUR ─────────────────────────────────────────
+const SECTOR_ULTIMATE_TEMPLATES: Record<string, any> = {
   plomberie: {
-    primary: '#0f766e',
-    secondary: '#115e59',
-    accent: '#14b8a6',
-    background: '#f0fdfa',
+    primary: '#0f766e', secondary: '#115e59', accent: '#14b8a6', background: '#f0fdfa',
     services: [
-      { name: 'Dépannage 24h/24', description: 'Intervention d\'urgence sur toutes fuites et pannes', features: ['Disponible 7j/7', 'Arrivée sous 1h30', 'Sans surprise tarifaire'] },
+      { name: 'Dépannage 24h/24', description: "Intervention d'urgence sur toutes fuites et pannes", features: ['Disponible 7j/7', 'Arrivée sous 1h30', 'Sans surprise tarifaire'] },
       { name: 'Installation Sanitaire', description: 'Pose et remplacement de vos appareils', features: ['Robinetterie', 'Éviers', 'WC', 'Douches'] },
       { name: 'Chauffage & Chaudière', description: 'Installation et réparation chauffage', features: ['Chaudières gaz/fioul', 'Pompes à chaleur', 'Détartrage'] },
       { name: 'Détection de Fuites', description: 'Localisation précise sans casse', features: ['Caméra thermique', 'Gaz traceur', 'Colmatage immédiat'] },
@@ -1036,69 +49,54 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Entretien Annuel', description: 'Maintenance préventive', features: ['Contrôle chauffage', 'Détartrage', 'Mise aux normes'] }
     ],
     guarantees: [
-      { title: 'Garantie Décennale', icon: 'shield-check' },
-      { title: 'Intervention < 2h', icon: 'clock' },
-      { title: 'Devis Gratuit', icon: 'file-text' },
-      { title: 'Artisan Qualifié', icon: 'check-square' }
+      { title: 'Garantie Décennale', icon: 'shield-check' }, { title: 'Intervention < 2h', icon: 'clock' },
+      { title: 'Devis Gratuit', icon: 'file-text' }, { title: 'Artisan Qualifié', icon: 'check-square' }
     ],
     heroTitle: 'Artisan Plombier',
     heroSubtitle: "L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète",
-    aboutText: "Plombier chauffagiste depuis plus de 15 ans, je mets mon savoir-faire au service de vos installations. Artisan passionné, je garantis un travail soigné, des délais respectés et des tarifs transparents.",
+    aboutText: "Plombier chauffagiste de confiance, je mets mon savoir-faire à votre service. Artisan passionné, je garantis un travail soigné, des délais respectés et des tarifs transparents.",
     ctaText: 'Demandez un devis'
   },
   electricien: {
-    primary: '#1e40af',
-    secondary: '#1e3a8a',
-    accent: '#2563eb',
-    background: '#f8fafc',
+    primary: '#1e40af', secondary: '#1e3a8a', accent: '#2563eb', background: '#f8fafc',
     services: [
       { name: 'Mise aux Normes', description: 'Remise à neuf de votre installation électrique', features: ['Norme NFC 15-100', 'Tableau électrique neuf', 'Mise à la terre'] },
       { name: 'Dépannage Électrique', description: 'Pannes, court-circuits, disjonctions', features: ['Intervention rapide', 'Diagnostic complet', 'Réparation durable'] },
       { name: 'Installation Complète', description: 'Construction ou rénovation électrique', features: ['Câblage complet', 'Points de lumière', 'Prises et inters'] },
       { name: 'Domotique & Smart Home', description: 'Maison connectée et automatisée', features: ['Volets roulants', 'Éclairage auto', 'Thermostats'] },
       { name: 'Éclairage LED', description: 'Solutions éclairage économiques', features: ['Spots encastrés', 'Suspensions design', 'Éclairage extérieur'] },
-      { name: 'Charging Véhicule', description: 'Installation bornes de recharge', features: ['Wallbox particulier', 'Borne entreprise', 'Certification IRVE'] }
+      { name: 'Borne de Recharge', description: 'Installation bornes véhicule électrique', features: ['Wallbox particulier', 'Borne entreprise', 'Certification IRVE'] }
     ],
     guarantees: [
-      { title: 'Consuel Certifié', icon: 'shield-check' },
-      { title: 'Garantie Décennale', icon: 'check-square' },
-      { title: 'Intervention < 2h', icon: 'clock' },
-      { title: 'Devis Gratuit', icon: 'file-text' }
+      { title: 'Consuel Certifié', icon: 'shield-check' }, { title: 'Garantie Décennale', icon: 'check-square' },
+      { title: 'Intervention < 2h', icon: 'clock' }, { title: 'Devis Gratuit', icon: 'file-text' }
     ],
     heroTitle: 'Électricien Agréé',
     heroSubtitle: "Votre expert électricien pour des installations sûres et modernes",
-    aboutText: "Électricien certifié Consuel avec 15 ans d'expérience. Je sécurise votre habitat grâce à des installations conformes et durables. Artisan sérieux, intervention rapide et devis transparent.",
+    aboutText: "Électricien certifié Consuel, je sécurise votre habitat grâce à des installations conformes et durables. Artisan sérieux, intervention rapide et devis transparent.",
     ctaText: 'Contactez-moi'
   },
   coiffeur: {
-    primary: '#6b21a8',
-    secondary: '#581c87',
-    accent: '#7c3aed',
-    background: '#f8fafc',
+    primary: '#6b21a8', secondary: '#581c87', accent: '#7c3aed', background: '#f8fafc',
     services: [
       { name: 'Coupes & Styles', description: 'Coupe sur-mesure femme et homme', features: ['Visagisme personnalisé', 'Techniques actuelles', 'Conseil entretien'] },
-      { name: 'Barbier Traditionnel', description: 'Rasage et soins barbe', features: ['Rasage à l\'ancienne', 'Taille précise', 'Soins barbe'] },
+      { name: 'Barbier Traditionnel', description: 'Rasage et soins barbe', features: ["Rasage à l'ancienne", 'Taille précise', 'Soins barbe'] },
       { name: 'Coloration Expert', description: 'Balayages, ombrés et couleurs', features: ['Coloration végétale', 'Mèches sur mesure', 'Glitter color'] },
       { name: 'Soins Capillaires', description: 'Traitements réparateurs', features: ['Botox capillaire', 'Kératine', 'Massage crânien'] },
       { name: 'Extensions Volume', description: 'Rajouts longueur et épaisseur', features: ['Pose à froid', 'Tape-in', 'Entretien inclus'] },
-      { name: 'Chignons & Événements', description: 'Coiffures de cérémonie', features: ['Mariage', 'Sofreh aghd', 'Maquillage combo'] }
+      { name: 'Chignons & Événements', description: 'Coiffures de cérémonie', features: ['Mariage', 'Soirée', 'Maquillage combo'] }
     ],
     guarantees: [
-      { title: 'Produits Bio', icon: 'leaf' },
-      { title: 'Stérilisation Outils', icon: 'sparkles' },
-      { title: 'Formation Continue', icon: 'scissors' },
-      { title: 'Satisfait ou Refait', icon: 'heart' }
+      { title: 'Produits Bio', icon: 'leaf' }, { title: 'Stérilisation Outils', icon: 'sparkles' },
+      { title: 'Formation Continue', icon: 'scissors' }, { title: 'Satisfait ou Refait', icon: 'heart' }
     ],
     heroTitle: 'Coiffeur Visagiste',
     heroSubtitle: "L'art de sublimer vos cheveux avec passion et expertise",
-    aboutText: "Coiffeur passionné depuis 15 ans, je crée des looks qui vous ressemblent. Spécialiste du visagisme et des techniques modernes, je veille à la santé de vos cheveux avec des produits naturels et de qualité.",
+    aboutText: "Coiffeur passionné, je crée des looks qui vous ressemblent. Spécialiste du visagisme et des techniques modernes, je veille à la santé de vos cheveux avec des produits naturels.",
     ctaText: 'Prendre rendez-vous'
   },
   restaurant: {
-    primary: '#c2410c',
-    secondary: '#9a3412',
-    accent: '#ea580c',
-    background: '#f8fafc',
+    primary: '#c2410c', secondary: '#9a3412', accent: '#ea580c', background: '#f8fafc',
     services: [
       { name: 'Cuisine Maison', description: 'Plats préparés sur place', features: ['Produits locaux', 'Recettes authentiques', 'Fait minute'] },
       { name: 'Menu du Jour', description: 'Formule déjeuner économique', features: ['Entrée + Plat + Dessert', 'Produits frais', 'Cuisson minute'] },
@@ -1107,16 +105,17 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Service Traiteur', description: 'Livraison et à emporter', features: ['Plateaux repas', 'Buffets', 'Livraison pro'] },
       { name: 'Boissons & Vins', description: 'Carte des vins et cocktails', features: ['Vins régionaux', 'Cocktails maison', 'Bières artisanales'] }
     ],
+    guarantees: [
+      { title: 'Produits Frais', icon: 'leaf' }, { title: 'Chef Qualifié', icon: 'award' },
+      { title: 'Réservation Facile', icon: 'calendar' }, { title: 'Accueil Chaleureux', icon: 'heart' }
+    ],
     heroTitle: 'Restaurant Traditionnel',
-    heroSubtitle: "Cuisine authentique et accueil chaleureux depuis 2009",
-    aboutText: "Chef passionné depuis 15 ans, je cuisine avec cœur des plats généreux et savoureux. Produits frais du marché, recettes authentiques et ambiance conviviale vous attendent dans notre établissement.",
+    heroSubtitle: "Cuisine authentique et accueil chaleureux",
+    aboutText: "Chef passionné, je cuisine avec cœur des plats généreux et savoureux. Produits frais du marché, recettes authentiques et ambiance conviviale vous attendent.",
     ctaText: 'Réserver une table'
   },
   garage: {
-    primary: '#166534',
-    secondary: '#14532d',
-    accent: '#059669',
-    background: '#f8fafc',
+    primary: '#166534', secondary: '#14532d', accent: '#059669', background: '#f8fafc',
     services: [
       { name: 'Mécanique Générale', description: 'Entretien et réparation toutes marques', features: ['Révisions constructeur', 'Courroies', 'Freins'] },
       { name: 'Diagnostic Auto', description: 'Analyse électronique complète', features: ['Valise multimarque', 'Effacement défauts', 'Paramétrage'] },
@@ -1126,21 +125,16 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Contrôle Technique', description: 'Préparation et contre-visite', features: ['Pré-contrôle', 'Réparations conformité', 'Accompagnement'] }
     ],
     guarantees: [
-      { title: 'Devis Gratuit', icon: 'file-text' },
-      { title: 'Garantie Pièces', icon: 'shield-check' },
-      { title: 'Intervention Rapide', icon: 'clock' },
-      { title: 'Véhicule de Courtoisie', icon: 'car' }
+      { title: 'Devis Gratuit', icon: 'file-text' }, { title: 'Garantie Pièces', icon: 'shield-check' },
+      { title: 'Intervention Rapide', icon: 'clock' }, { title: 'Véhicule de Courtoisie', icon: 'car' }
     ],
     heroTitle: 'Garage Automobile',
     heroSubtitle: "Mécanicien passionné, votre véhicule entre de bonnes mains",
-    aboutText: "Mécanicien automobile depuis 15 ans, j'entretiens et répare toutes marques avec passion. Diagnostic précis, devis transparents et respect des délais. Votre sécurité routière est ma priorité.",
+    aboutText: "Mécanicien automobile de confiance, j'entretiens et répare toutes marques avec passion. Diagnostic précis, devis transparents et respect des délais. Votre sécurité routière est ma priorité.",
     ctaText: 'Demandez un RDV'
   },
   nettoyage: {
-    primary: '#059669',
-    secondary: '#047857',
-    accent: '#10b981',
-    background: '#f0fdf4',
+    primary: '#059669', secondary: '#047857', accent: '#10b981', background: '#f0fdf4',
     services: [
       { name: 'Nettoyage de Bureaux', description: 'Entretien quotidien de vos locaux professionnels', features: ['Poussière, sols, vitres', 'Produits écolabels', 'Horaires flexibles'] },
       { name: 'Nettoyage Vitres', description: 'Vitres intérieures et extérieures', features: ['Accès difficile', 'Sans traces garanti', 'Bâtiments R+10'] },
@@ -1150,21 +144,16 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Remise en État', description: 'Après travaux ou déménagement', features: ['Évacuation gravats', 'Nettoyage fin', 'Livraison clé en main'] }
     ],
     guarantees: [
-      { title: 'Produits Écolabels', icon: 'leaf' },
-      { title: 'Personnel Formé', icon: 'users' },
-      { title: 'Intervention Fiable', icon: 'clock' },
-      { title: 'Assurance Responsabilité', icon: 'shield-check' }
+      { title: 'Produits Écolabels', icon: 'leaf' }, { title: 'Personnel Formé', icon: 'users' },
+      { title: 'Intervention Fiable', icon: 'clock' }, { title: 'Assurance RC Pro', icon: 'shield-check' }
     ],
     heroTitle: 'Société de Nettoyage',
     heroSubtitle: "Propreté professionnelle et écologique pour vos espaces",
-    aboutText: "Entreprise de nettoyage depuis 15 ans, nos équipes formées interviennent avec rigueur et discrétion. Produits écolabels, matériel professionnel et engagement qualité pour des locaux toujours impeccables.",
+    aboutText: "Entreprise de nettoyage de confiance, nos équipes formées interviennent avec rigueur et discrétion. Produits écolabels, matériel professionnel et engagement qualité.",
     ctaText: 'Demandez un devis'
   },
   jardin: {
-    primary: '#14532d',
-    secondary: '#166534',
-    accent: '#15803d',
-    background: '#f0fdf4',
+    primary: '#14532d', secondary: '#166534', accent: '#15803d', background: '#f0fdf4',
     services: [
       { name: 'Création de Jardins', description: 'Aménagement paysager complet', features: ['Plan sur mesure', 'Plantations adaptées', 'Gazon en rouleaux'] },
       { name: 'Tonte & Entretien', description: 'Pelouse et massifs entretenus', features: ['Tonte régulière', 'Taille haies', 'Désherbage manuel'] },
@@ -1174,45 +163,35 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Potager & Verger', description: 'Création et entretien potager', features: ['Bacs surélevés', 'Compostage', 'Taille fruitiers'] }
     ],
     guarantees: [
-      { title: 'Plantes Garanties', icon: 'sprout' },
-      { title: 'Intervention Propre', icon: 'sparkles' },
-      { title: 'Conseils Saisonniers', icon: 'sun' },
-      { title: 'Paysagiste Qualifié', icon: 'tree-deciduous' }
+      { title: 'Plantes Garanties', icon: 'sprout' }, { title: 'Intervention Propre', icon: 'sparkles' },
+      { title: 'Conseils Saisonniers', icon: 'sun' }, { title: 'Paysagiste Qualifié', icon: 'award' }
     ],
     heroTitle: 'Jardinier Paysagiste',
     heroSubtitle: "Création et entretien de jardins uniques et harmonieux",
-    aboutText: "Paysagiste passionné depuis 15 ans, je conçois et entretiens des espaces verts qui vivent au rythme des saisons. De la création paysagère à l'élagage expert, chaque geste est pensé pour la santé de vos plantes.",
+    aboutText: "Paysagiste passionné, je conçois et entretiens des espaces verts qui vivent au rythme des saisons. De la création paysagère à l'élagage expert.",
     ctaText: 'Demandez un devis'
   },
   fitness: {
-    primary: '#dc2626',
-    secondary: '#b91c1c',
-    accent: '#ef4444',
-    background: '#fef2f2',
+    primary: '#dc2626', secondary: '#b91c1c', accent: '#ef4444', background: '#fef2f2',
     services: [
       { name: 'Coaching Personnel', description: 'Accompagnement individuel sur mesure', features: ['Bilan morpho', 'Programme adapté', 'Suivi hebdo'] },
-      { name: 'Cours Collectifs', description: 'Groupes dynamiques et motivants', features: ['HIIT', 'Yoga', 'Zumba', 'Musculation guidée'] },
+      { name: 'Cours Collectifs', description: 'Groupes dynamiques et motivants', features: ['HIIT', 'Yoga', 'Zumba'] },
       { name: 'Musculation Libre', description: 'Espace haltères et machines', features: ['Poids libres', 'Machines guidées', 'Cage à squat'] },
       { name: 'Cardio Zone', description: 'Équipements endurance modernes', features: ['Tapis connectés', 'Vélos elliptiques', 'Rameurs'] },
       { name: 'Préparation Physique', description: 'Prépa compétition ou remise en forme', features: ['Tests perf', 'Plan nutrition', 'Récupération'] },
       { name: 'Espace Bien-être', description: 'Détente après effort', features: ['Sauna', 'Douche jets', 'Casiers sécurisés'] }
     ],
     guarantees: [
-      { title: 'Coachs Diplômés', icon: 'award' },
-      { title: 'Matériel Neuf', icon: 'dumbbell' },
-      { title: 'Sans Engagement', icon: 'check-circle' },
-      { title: 'Accès 6h-23h', icon: 'clock' }
+      { title: 'Coachs Diplômés', icon: 'award' }, { title: 'Matériel Neuf', icon: 'zap' },
+      { title: 'Sans Engagement', icon: 'check-circle' }, { title: 'Accès 6h-23h', icon: 'clock' }
     ],
     heroTitle: 'Coach Sportif',
     heroSubtitle: "Votre coach personnel pour atteindre vos objectifs fitness",
-    aboutText: "Coach sportif diplômé d'État avec 15 ans d'expérience. Que vous cherchiez à perdre du poids, gagner en muscle ou préparer une compétition, je vous accompagne avec des programmes personnalisés.",
+    aboutText: "Coach sportif diplômé d'État. Que vous cherchiez à perdre du poids, gagner en muscle ou préparer une compétition, je vous accompagne avec des programmes personnalisés.",
     ctaText: 'Essai offert'
   },
   medical: {
-    primary: '#1e40af',
-    secondary: '#1e3a8a',
-    accent: '#2563eb',
-    background: '#eff6ff',
+    primary: '#1e40af', secondary: '#1e3a8a', accent: '#2563eb', background: '#eff6ff',
     services: [
       { name: 'Médecine Générale', description: 'Consultations et suivi de santé', features: ['Bilan annuel', 'Vaccinations', 'Certificats'] },
       { name: 'Kinésithérapie', description: 'Rééducation et réadaptation', features: ['Massages médicaux', 'Rééducation post-op', 'Posturologie'] },
@@ -1222,45 +201,35 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Télémédecine', description: 'Consultation vidéo', features: ['Ordonnance électronique', '7j/7 disponible', 'Sans déplacement'] }
     ],
     guarantees: [
-      { title: 'Conventionné Secteur 1', icon: 'stethoscope' },
-      { title: '3ème Payant', icon: 'credit-card' },
-      { title: 'RDV sous 48h', icon: 'calendar' },
-      { title: 'Équipe Pluridisciplinaire', icon: 'users' }
+      { title: 'Conventionné Secteur 1', icon: 'stethoscope' }, { title: '3ème Payant', icon: 'credit-card' },
+      { title: 'RDV sous 48h', icon: 'calendar' }, { title: 'Équipe Qualifiée', icon: 'users' }
     ],
     heroTitle: 'Cabinet Médical',
     heroSubtitle: "Votre santé entre les mains de professionnels qualifiés",
-    aboutText: "Médecin généraliste depuis 15 ans, je vous accueille dans un cabinet moderne et chaleureux. Écoute, diagnostic précis et suivi personnalisé. Collaboration avec une équipe de spécialistes pour une prise en charge complète.",
+    aboutText: "Médecin généraliste de confiance, je vous accueille dans un cabinet moderne et chaleureux. Écoute, diagnostic précis et suivi personnalisé.",
     ctaText: 'Prendre rendez-vous'
   },
   avocat: {
-    primary: '#1e3a8a',
-    secondary: '#172554',
-    accent: '#2563eb',
-    background: '#f8fafc',
+    primary: '#1e3a8a', secondary: '#172554', accent: '#2563eb', background: '#f8fafc',
     services: [
       { name: 'Droit Civil & Famille', description: 'Divorce, succession, bail', features: ['Divorce amiable/contentieux', 'Régime matrimonial', 'Garde alternée'] },
       { name: 'Droit Pénal', description: 'Défense et assistance victimes', features: ['Garde à vue', 'Tribunal correctionnel', 'Victimes préjudice'] },
-      { name: 'Droit du Travail', description: 'Licenciement et contentieux', features: ['Rupture conventionnelle', 'Harcèlement', 'Prud\'hommes'] },
+      { name: 'Droit du Travail', description: 'Licenciement et contentieux', features: ['Rupture conventionnelle', 'Harcèlement', "Prud'hommes"] },
       { name: 'Droit des Affaires', description: 'Conseil entreprises et particuliers', features: ['Création société', 'Contrats commerciaux', 'Recouvrement'] },
       { name: 'Immobilier', description: 'Vente, achat, litiges', features: ['Promesse vente', 'Copropriété', 'Malfaisance construction'] },
       { name: 'Droit Routier', description: 'Permis, accidents, infractions', features: ['Retrait permis', 'Excès vitesse', 'Défense pénale'] }
     ],
     guarantees: [
-      { title: 'Avocat au Barreau', icon: 'scale' },
-      { title: 'Consultation Privée', icon: 'shield' },
-      { title: 'Défense Déterminée', icon: 'sword' },
-      { title: 'Honoraires Transparent', icon: 'file-text' }
+      { title: 'Avocat au Barreau', icon: 'scale' }, { title: 'Consultation Privée', icon: 'shield' },
+      { title: 'Défense Déterminée', icon: 'award' }, { title: 'Honoraires Transparents', icon: 'file-text' }
     ],
     heroTitle: 'Avocat à la Cour',
     heroSubtitle: "Conseil juridique personnalisé et défense de vos droits",
-    aboutText: "Avocat inscrit au Barreau depuis 15 ans, je défends vos intérêts avec rigueur et détermination. Droit civil, pénal, travail ou affaires, chaque dossier mérite une stratégie sur mesure et une écoute attentive.",
+    aboutText: "Avocat inscrit au Barreau, je défends vos intérêts avec rigueur et détermination. Droit civil, pénal, travail ou affaires, chaque dossier mérite une stratégie sur mesure.",
     ctaText: 'Prendre rendez-vous'
   },
   default: {
-    primary: '#1e293b',
-    secondary: '#334155',
-    accent: '#475569',
-    background: '#f8fafc',
+    primary: '#1e293b', secondary: '#334155', accent: '#475569', background: '#f8fafc',
     services: [
       { name: 'Prestation Sur Mesure', description: 'Services adaptés à vos besoins spécifiques', features: ['Étude personnalisée', 'Devis détaillé', 'Écoute attentive'] },
       { name: 'Intervention Pro', description: 'Travail soigné et professionnel', features: ['Matériel adapté', 'Techniques actuelles', 'Respect des normes'] },
@@ -1269,414 +238,457 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Garantie Qualité', description: 'Engagement résultat et satisfaction', features: ['Contrôle qualité', 'Corrections incluses', 'SAV réactif'] },
       { name: 'Tarifs Transparents', description: 'Honoraires clairs et justifiés', features: ['Devis gratuit', 'Pas de surprise', 'Facilités paiement'] }
     ],
+    guarantees: [
+      { title: 'Devis Gratuit', icon: 'file-text' }, { title: 'Garantie Qualité', icon: 'shield-check' },
+      { title: 'Intervention Rapide', icon: 'clock' }, { title: 'Satisfaction Client', icon: 'heart' }
+    ],
     heroTitle: 'Artisan Professionnel',
     heroSubtitle: "Votre expert de confiance pour des prestations de qualité",
-    aboutText: "Artisan passionné depuis 15 ans, je mets mon savoir-faire et mon expertise à votre service. Chaque projet est unique et mérite une attention particulière. Qualité, transparence et satisfaction sont mes priorités.",
+    aboutText: "Artisan passionné, je mets mon savoir-faire et mon expertise à votre service. Chaque projet est unique et mérite une attention particulière.",
     ctaText: 'Contactez-moi'
   }
 };
 
-// ── IMAGES PAR SECTEUR ---
-// Utilise les images Pexels professionnelles du fichier pexelsImages.ts
-// Plus fiables et pertinentes que les anciennes images Unsplash génériques
-
-function getSectorImagesFallback(sector: string): string[] {
-  // Utiliser les images Pexels professionnelles du nouveau système
-  return getSectorImages(sector);
-}
-
-function getUltimateTemplate(sector: string) {
-  const normalizedSector = (sector || '').toLowerCase();
-  
-  // Vérifications spécifiques avec accents et variations pour tous les secteurs
-  if (normalizedSector.includes('nettoyag') || normalizedSector.includes('propreté') || normalizedSector.includes('ménage')) return SECTOR_ULTIMATE_TEMPLATES.nettoyage;
-  if (normalizedSector.includes('jardin') || normalizedSector.includes('paysag') || normalizedSector.includes('espaces verts')) return SECTOR_ULTIMATE_TEMPLATES.jardin;
-  if (normalizedSector.includes('coach') || normalizedSector.includes('sport') || normalizedSector.includes('fitness') || normalizedSector.includes('salle')) return SECTOR_ULTIMATE_TEMPLATES.fitness;
-  if (normalizedSector.includes('médec') || normalizedSector.includes('clinique') || normalizedSector.includes('dentiste') || normalizedSector.includes('santé')) return SECTOR_ULTIMATE_TEMPLATES.medical;
-  if (normalizedSector.includes('avocat') || normalizedSector.includes('notaire') || normalizedSector.includes('juridi') || normalizedSector.includes('droit')) return SECTOR_ULTIMATE_TEMPLATES.avocat;
-  if (normalizedSector.includes('électricien') || normalizedSector.includes('electricien') || normalizedSector.includes('electric')) return SECTOR_ULTIMATE_TEMPLATES.electricien;
-  if (normalizedSector.includes('plomb') || normalizedSector.includes('plomberie') || normalizedSector.includes('plombier') || normalizedSector.includes('chauffage') || normalizedSector.includes('clim')) return SECTOR_ULTIMATE_TEMPLATES.plomberie;
-  if (normalizedSector.includes('coiff') || normalizedSector.includes('barb') || normalizedSector.includes('salon')) return SECTOR_ULTIMATE_TEMPLATES.coiffeur;
-  if (normalizedSector.includes('restaurant') || normalizedSector.includes('cuisin') || normalizedSector.includes('traiteur')) return SECTOR_ULTIMATE_TEMPLATES.restaurant;
-  if (normalizedSector.includes('garage') || normalizedSector.includes('mécan') || normalizedSector.includes('auto') || normalizedSector.includes('carrosserie')) return SECTOR_ULTIMATE_TEMPLATES.garage;
-  
-  // Vérifications génériques avec toutes les clés disponibles
-  for (const [key, template] of Object.entries(SECTOR_ULTIMATE_TEMPLATES)) {
-    if (normalizedSector.includes(key)) return template;
+// ── SÉLECTION DE TEMPLATE ─────────────────────────────────────────
+function getUltimateTemplate(sector: string): any {
+  const s = (sector || '').toLowerCase();
+  if (s.includes('nettoyag') || s.includes('propreté') || s.includes('ménage')) return SECTOR_ULTIMATE_TEMPLATES.nettoyage;
+  if (s.includes('jardin') || s.includes('paysag') || s.includes('espaces verts')) return SECTOR_ULTIMATE_TEMPLATES.jardin;
+  if (s.includes('coach') || s.includes('sport') || s.includes('fitness') || s.includes('salle')) return SECTOR_ULTIMATE_TEMPLATES.fitness;
+  if (s.includes('médec') || s.includes('clinique') || s.includes('dentiste') || s.includes('santé') || s.includes('kiné')) return SECTOR_ULTIMATE_TEMPLATES.medical;
+  if (s.includes('avocat') || s.includes('notaire') || s.includes('juridi') || s.includes('droit')) return SECTOR_ULTIMATE_TEMPLATES.avocat;
+  if (s.includes('électricien') || s.includes('electricien') || s.includes('electric')) return SECTOR_ULTIMATE_TEMPLATES.electricien;
+  if (s.includes('plomb') || s.includes('chauffage') || s.includes('clim')) return SECTOR_ULTIMATE_TEMPLATES.plomberie;
+  if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return SECTOR_ULTIMATE_TEMPLATES.coiffeur;
+  if (s.includes('restaurant') || s.includes('cuisin') || s.includes('traiteur') || s.includes('boulang') || s.includes('pâtissier')) return SECTOR_ULTIMATE_TEMPLATES.restaurant;
+  if (s.includes('garage') || s.includes('mécan') || s.includes('auto') || s.includes('carrosserie')) return SECTOR_ULTIMATE_TEMPLATES.garage;
+  if (s.includes('beauté') || s.includes('esthétique') || s.includes('spa')) return SECTOR_ULTIMATE_TEMPLATES.coiffeur;
+  if (s.includes('climat') || s.includes('frigo')) return SECTOR_ULTIMATE_TEMPLATES.plomberie;
+  for (const [key, tmpl] of Object.entries(SECTOR_ULTIMATE_TEMPLATES)) {
+    if (s.includes(key)) return tmpl;
   }
-  
-  // Fallback pour variations spécifiques
-  if (normalizedSector.includes('climat') || normalizedSector.includes('frigo')) return SECTOR_ULTIMATE_TEMPLATES.plomberie;
-  if (normalizedSector.includes('beauté') || normalizedSector.includes('esthétique') || normalizedSector.includes('spa')) return SECTOR_ULTIMATE_TEMPLATES.coiffeur;
-  if (normalizedSector.includes('boulanger') || normalizedSector.includes('pâtissier')) return SECTOR_ULTIMATE_TEMPLATES.restaurant;
-  
   return SECTOR_ULTIMATE_TEMPLATES.default;
 }
 
-// Nettoyeur de texte de logo selon les instructions (2 lettres, 2 mots sans les articles)
-function getLogoInfo(name: string, sector: string = 'default') {
-  if (!name) return { initials: "CO", text: "Company", word1: "Company", word2: "Pro" };
-  
-  const skip = ['le', 'la', 'les', 'de', 'du', 'des', "l'", "d'", 'à', 'a', 'et', '&', 'en', 'pour'];
-  let cleanName = name.replace(/['']/g, "' ");
-  const words = cleanName.split(/\s+/).filter(w => w.length > 0 && !skip.includes(w.toLowerCase()));
-  
-  let word1 = "";
-  let word2 = "";
+// ── IMAGES — FILTRE INTELLIGENT ───────────────────────────────────
+const BLOCKED_IMAGE_KEYWORDS = [
+  'food','fruit','legume','carrot','salmon','kitchen','cooking','recipe',
+  'meal','dessert','cake','pizza','burger','restaurant-menu',
+  'logo','icon','favicon','sprite','pixel','banner','badge','watermark',
+  'thumbnail','avatar','placeholder','default','loading','spinner',
+  'arrow','button','bg-','background','pattern','texture','overlay','gradient',
+];
+const BLOCKED_IMAGE_DOMAINS = [
+  'tripadvisor.com','yelp.com','facebook.com','instagram.com','pagesjaunes.fr',
+  'googletagmanager.com','doubleclick.net','googlesyndication.com',
+];
+const LOGO_EXTENSIONS = ['.svg', '.ico'];
+const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
 
-  // S'il n'y a qu'un seul mot (ex: "SEG" ou "BIQ-ELECTRICITE")
-  if (words.length === 1) {
-      // On met la première lettre en majuscule et le reste en minuscules pour faire plus joli
-      // "BIQ-ELECTRICITE" deviendra "Biq-electricite"
-      word1 = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
-      
-      const lowerWord1 = word1.toLowerCase();
-      const s = sector.toLowerCase();
+function isLikelyLogo(url: string): boolean {
+  const low = url.toLowerCase();
+  if (LOGO_EXTENSIONS.some(ext => low.includes(ext))) return true;
+  if (low.includes('logo') || low.includes('icon') || low.includes('favicon')) return true;
+  if (/[?&](w|width|size)=(16|32|48|64|96|128)/i.test(url)) return true;
+  return false;
+}
 
-      // ANTI-RÉPÉTITION : On vérifie si le métier est DÉJÀ dans le nom
-      if (s.includes('elec') && !lowerWord1.includes('elec')) {
-          word2 = "Électricité";
-      } 
-      else if (s.includes('plomb') && !lowerWord1.includes('plomb')) {
-          word2 = "Plomberie";
-      } 
-      else if ((s.includes('garage') || s.includes('auto')) && !lowerWord1.includes('auto') && !lowerWord1.includes('garage')) {
-          word2 = "Automobile";
-      } 
-      else if (!lowerWord1.includes('service') && !lowerWord1.includes('pro')) {
-          // Si le mot n'est lié à rien de connu, on ajoute "Services"
-          // SAUF s'il y a déjà le mot "Service" ou "Pro" dedans
-          word2 = "Services";
-      } 
-      else {
-          // Si le métier est déjà dans le nom (ex: BIQ-ELECTRICITE), on n'ajoute RIEN !
-          word2 = "";
-      }
-  }// S'il y a plusieurs mots (ex: "Bazar Electricité")
-  else {
-      word1 = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
-      word2 = words.slice(1).join(' ').charAt(0).toUpperCase() + words.slice(1).join(' ').slice(1).toLowerCase();
+function filterLeadImages(images: string[]): string[] {
+  return images.filter(img => {
+    if (!img || typeof img !== 'string') return false;
+    if (!img.startsWith('https://')) return false;
+    const low = img.toLowerCase();
+    if (isLikelyLogo(img)) return false;
+    if (BLOCKED_IMAGE_KEYWORDS.some(kw => low.includes(kw))) return false;
+    if (BLOCKED_IMAGE_DOMAINS.some(d => low.includes(d))) return false;
+    const hasPhotoExt = PHOTO_EXTENSIONS.some(ext => low.includes(ext));
+    const hasDynamicCdn = low.includes('googleusercontent') || low.includes('maps.googleapis') ||
+                          low.includes('images.pexels') || low.includes('images.unsplash') ||
+                          /\/photo\//i.test(url);
+    if (!hasPhotoExt && !hasDynamicCdn) return false;
+    return true;
+  });
+}
+
+function deduplicateImages(images: string[]): string[] {
+  const seen = new Set<string>();
+  return images.filter(img => {
+    const base = img.split('?')[0].split('#')[0];
+    if (seen.has(base)) return false;
+    seen.add(base);
+    return true;
+  });
+}
+
+function buildImagePool(lead: any, sectorImages: string[]): string[] {
+  // websiteImages délibérément exclus (source principale de logos parasites)
+  const rawLeadImages = [...(lead.images || [])];
+  const realPhotos = deduplicateImages(filterLeadImages(rawLeadImages));
+  const realSet = new Set(realPhotos.map((u: string) => u.split('?')[0]));
+  const pexelsPool = sectorImages.filter(u => !realSet.has(u.split('?')[0]));
+  const combined = [...realPhotos, ...pexelsPool];
+  while (combined.length < 6 && pexelsPool.length > 0) {
+    combined.push(pexelsPool[combined.length % pexelsPool.length]);
   }
+  console.log(`🖼️ ${lead.name}: ${realPhotos.length} photos réelles | ${pexelsPool.length} Pexels | Total: ${combined.length}`);
+  return combined;
+}
 
-  // Les initiales pour le logo (2 premières lettres du nom propre)
-  const initials = (word1.substring(0, 2)).toUpperCase();
-  const text = name;
-  
-  return { initials, text, word1, word2 };
+function selectHeroImage(imagePool: string[]): string {
+  if (imagePool.length === 0) return 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80';
+  const googlePhoto = imagePool.find(u => u.includes('googleusercontent') || u.includes('maps.googleapis'));
+  if (googlePhoto) return googlePhoto;
+  return imagePool[0];
+}
+
+function buildSlotImages(imagePool: string[], heroImage: string): string[] {
+  const remaining = imagePool.filter(u => u !== heroImage);
+  const slots: string[] = [];
+  for (let i = 0; i < 5; i++) {
+    slots.push(remaining[i % Math.max(remaining.length, 1)] || heroImage);
+  }
+  return slots;
+}
+
+function getImageStyle(url: string, height: string = '450px'): string {
+  const isKnownSource = url.includes('images.pexels.com') ||
+                        url.includes('googleusercontent') ||
+                        url.includes('maps.googleapis') ||
+                        url.includes('images.unsplash.com');
+  if (isKnownSource) {
+    return `width:100%;height:${height};object-fit:cover;display:block;`;
+  }
+  return `width:100%;height:${height};object-fit:contain;background:#f8fafc;display:block;padding:1rem;`;
+}
+
+// ── WHATSAPP — FORMATAGE INTERNATIONAL ───────────────────────────
+function detectCountryCode(city: string, address: string): string {
+  const text = ((city || '') + ' ' + (address || '')).toLowerCase();
+  if (text.includes('maroc') || text.includes('morocco') || text.includes('casablanca') ||
+      text.includes('rabat') || text.includes('marrakech') || text.includes('fès') ||
+      text.includes('tanger') || text.includes('agadir') || text.includes('settat') ||
+      text.includes('kenitra') || text.includes('meknès') || text.includes('oujda')) return '212';
+  if (text.includes('belgique') || text.includes('belgium') || text.includes('bruxelles') ||
+      text.includes('liège') || text.includes('bruges') || text.includes('gand')) return '32';
+  if (text.includes('suisse') || text.includes('switzerland') || text.includes('zurich') ||
+      text.includes('genève') || text.includes('lausanne') || text.includes('berne')) return '41';
+  if (text.includes('tunisie') || text.includes('tunisia') || text.includes('tunis') ||
+      text.includes('sfax')) return '216';
+  if (text.includes('algérie') || text.includes('algeria') || text.includes('alger') ||
+      text.includes('oran')) return '213';
+  return '33'; // France par défaut
+}
+
+function formatWhatsAppNumber(phone: string, countryCode: string = '33'): string {
+  if (!phone) return '';
+  let digits = phone.replace(/[^0-9+]/g, '');
+  if (digits.startsWith('+')) return digits.slice(1);
+  if (digits.startsWith('0033')) return digits.slice(2);
+  if (digits.startsWith('00')) return digits.slice(2);
+  if (digits.startsWith('0')) return countryCode + digits.slice(1);
+  return countryCode + digits;
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────
+function generateAboutText(text: string, lead: any): string {
+  let years = 'plusieurs';
+  if (lead.establishedYear && typeof lead.establishedYear === 'number') {
+    const calc = new Date().getFullYear() - lead.establishedYear;
+    if (calc > 0 && calc < 100) years = calc.toString();
+  } else if (lead.description) {
+    const m = lead.description.match(/(\d+)\s*ans?\s*d['']exp[eé]rience/i);
+    if (m) years = m[1];
+  }
+  return text.replace(/depuis plus de 15 ans/gi, `depuis ${years} ans`)
+             .replace(/15 ans d['']exp[eé]rience/gi, `${years} ans d'expérience`);
+}
+
+function generateFeaturesFromService(name: string, description: string): string[] {
+  const s = ((name || '') + ' ' + (description || '')).toLowerCase();
+  const dict: Record<string, string[]> = {
+    'urgence': ['Disponible 24h/24', 'Intervention rapide', 'Déplacement inclus'],
+    'installation': ['Pose certifiée', 'Conformité normes', 'Garantie décennale'],
+    'chauffage': ['Économies énergie', 'Installation propre', 'Entretien annuel'],
+    'domotique': ['Configuration incluse', 'App smartphone', 'Support technique'],
+    'coupe': ['Visagisme personnalisé', 'Conseil entretien', 'Produits adaptés'],
+    'coloration': ['Coloration végétale', 'Protection cheveux', 'Brillance longue durée'],
+    'moteur': ['Diagnostic précis', 'Réparation garantie', "Pièces d'origine"],
+    'pneus': ['Montage rapide', 'Géométrie 3D', 'Stockage hiver'],
+    'ménage': ['Produits écologiques', 'Équipe formée', 'Intervention régulière'],
+    'vitres': ['Sans traces garanti', 'Accès difficile', 'Sécurité maximale'],
+    'coaching': ['Programme personnalisé', 'Suivi nutrition', 'Résultats mesurables'],
+    'consultation': ["À l'écoute", 'Diagnostic précis', 'Disponibilité rapide'],
+  };
+  for (const [kw, features] of Object.entries(dict)) {
+    if (s.includes(kw)) return features;
+  }
+  return ['Service professionnel', 'Intervention garantie', 'Devis gratuit'];
+}
+
+function getLogoInfo(name: string, sector: string = 'default') {
+  if (!name) return { initials: 'CO', text: 'Company', word1: 'Company', word2: 'Pro' };
+  const skip = ['le','la','les','de','du','des',"l'","d'",'à','a','et','&','en','pour'];
+  const words = name.replace(/['']/g, "' ").split(/\s+/).filter(w => w.length > 0 && !skip.includes(w.toLowerCase()));
+  let word1 = '', word2 = '';
+  if (words.length === 1) {
+    word1 = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
+    const low1 = word1.toLowerCase(); const s = sector.toLowerCase();
+    if (s.includes('elec') && !low1.includes('elec')) word2 = 'Électricité';
+    else if (s.includes('plomb') && !low1.includes('plomb')) word2 = 'Plomberie';
+    else if ((s.includes('garage') || s.includes('auto')) && !low1.includes('auto') && !low1.includes('garage')) word2 = 'Automobile';
+    else if (!low1.includes('service') && !low1.includes('pro')) word2 = 'Services';
+    else word2 = '';
+  } else {
+    word1 = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
+    word2 = words.slice(1).join(' ').charAt(0).toUpperCase() + words.slice(1).join(' ').slice(1).toLowerCase();
+  }
+  const initials = word1.substring(0, 2).toUpperCase();
+  return { initials, text: name, word1, word2 };
 }
 
 function getHeroBadge(sector: string): { icon: string; text: string } {
   const s = (sector || '').toLowerCase();
-  
-  if (s.includes('plombber') || s.includes('plomb')) {
-    return { icon: 'zap', text: 'Dépannage rapide garanti' };
-  }
-  if (s.includes('électricien') || s.includes('electric')) {
-    return { icon: 'zap', text: 'Électricien certifié' };
-  }
-  if (s.includes('coiff') || s.includes('barb')) {
-    return { icon: 'scissors', text: 'Coiffeur professionnel' };
-  }
-  if (s.includes('restaurant') || s.includes('cuisin')) {
-    return { icon: 'chef-hat', text: 'Chef qualifié' };
-  }
-  if (s.includes('garage') || s.includes('mécan')) {
-    return { icon: 'wrench', text: 'Garage agréé' };
-  }
-  if (s.includes('nettoy') || s.includes('ménage')) {
-    return { icon: 'sparkles', text: 'Service nettoyage pro' };
-  }
-  if (s.includes('jardin') || s.includes('paysag')) {
-    return { icon: 'leaf', text: 'Jardinier expert' };
-  }
-  
+  if (s.includes('plomb')) return { icon: 'zap', text: 'Dépannage rapide garanti' };
+  if (s.includes('electric') || s.includes('électric')) return { icon: 'zap', text: 'Électricien certifié' };
+  if (s.includes('coiff') || s.includes('barb')) return { icon: 'scissors', text: 'Coiffeur professionnel' };
+  if (s.includes('restaurant') || s.includes('cuisin')) return { icon: 'chef-hat', text: 'Chef qualifié' };
+  if (s.includes('garage') || s.includes('mécan')) return { icon: 'wrench', text: 'Garage agréé' };
+  if (s.includes('nettoy') || s.includes('ménage')) return { icon: 'sparkles', text: 'Service nettoyage pro' };
+  if (s.includes('jardin') || s.includes('paysag')) return { icon: 'leaf', text: 'Jardinier expert' };
   return { icon: 'shield-check', text: 'Professionnel certifié' };
 }
 
+function hexToRgb(hex: string): string {
+  if (hex.length === 7) {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+    return `${r}, ${g}, ${b}`;
+  }
+  return '30, 41, 59';
+}
+
+// ── TÉMOIGNAGES — VRAIS AVIS UNIQUEMENT ──────────────────────────
+function buildTestimonialsHTML(lead: any, rating: number, reviews: number): string {
+  const realReviews = (lead.googleReviewsData || [])
+    .filter((r: any) => r && r.text && r.text.trim().length > 10)
+    .slice(0, 6)
+    .map((r: any) => ({
+      author: r.author || 'Client vérifié',
+      text: r.text.trim(),
+      rating: r.rating || 5,
+      date: r.date || null,
+    }));
+
+  const count = realReviews.length;
+  const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent((lead.name || '') + ' ' + (lead.city || ''))}`;
+
+  // Pas assez d'avis → section alternative sans faux avis
+  if (count < 3) {
+    return `
+    <section class="container" id="testimonials">
+      <div class="section-header reveal">
+        <h2>Nos clients nous font confiance</h2>
+        <p>Rejoignez nos clients satisfaits et découvrez la qualité de nos prestations.</p>
+      </div>
+      <div style="text-align:center;padding:3rem;background:white;border-radius:24px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 5px 20px rgba(0,0,0,0.02);">
+        <div style="font-size:4rem;margin-bottom:1rem;">⭐</div>
+        <div style="font-size:3rem;font-weight:800;color:var(--text-main);">${rating}/5</div>
+        <div style="color:var(--text-muted);margin-bottom:0.5rem;">Note Google Maps</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:2rem;">Basé sur ${reviews} avis</div>
+        <a href="${googleMapsUrl}" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:0.5rem;padding:1rem 2rem;
+                  background:var(--primary);color:white;border-radius:12px;
+                  text-decoration:none;font-weight:700;transition:0.3s;">
+          <i data-lucide="external-link" width="18"></i> Voir nos avis sur Google
+        </a>
+      </div>
+    </section>`;
+  }
+
+  const gridCols = count <= 4 ? 'repeat(auto-fit, minmax(300px, 1fr))' : 'repeat(auto-fit, minmax(320px, 1fr))';
+
+  return `
+  <section class="container" id="testimonials">
+    <div class="section-header reveal">
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,0,0,0.03);
+                  padding:0.5rem 1rem;border-radius:100px;margin-bottom:1rem;font-weight:600;font-size:0.9rem;">
+        <i data-lucide="map-pin" width="16" style="color:#ea4335;"></i>
+        Avis authentiques vérifiés par Google Maps
+      </div>
+      <h2>Ce que disent nos clients</h2>
+      <p>${count} avis réels — aucun avis inventé.</p>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem;">
+      <div style="font-size:3rem;font-weight:800;color:var(--text-main);line-height:1;">${rating}</div>
+      <div>
+        <div style="display:flex;color:#f59e0b;gap:4px;margin-bottom:4px;">
+          ${'<i data-lucide="star" fill="currentColor"></i>'.repeat(5)}
+        </div>
+        <div style="color:var(--text-muted);font-weight:500;">Basé sur ${reviews} avis Google</div>
+      </div>
+      <a href="${googleMapsUrl}" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.2rem;
+                border:1px solid rgba(0,0,0,0.1);border-radius:100px;text-decoration:none;
+                color:var(--text-muted);font-size:0.85rem;font-weight:600;background:white;">
+        <i data-lucide="external-link" width="14"></i> Voir sur Google
+      </a>
+    </div>
+    <div style="display:grid;grid-template-columns:${gridCols};gap:2rem;">
+      ${realReviews.map((t: any, i: number) => `
+      <div class="card glass reveal" style="transition-delay:${(i % 3) * 100}ms;padding:2.5rem;
+           display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;gap:0.25rem;color:#f59e0b;margin-bottom:1.25rem;">
+            ${'<i data-lucide="star" fill="currentColor"></i>'.repeat(t.rating)}
+            ${'<i data-lucide="star" style="opacity:0.2;"></i>'.repeat(5 - t.rating)}
+          </div>
+          <p style="color:var(--text-main);font-size:1.05rem;font-weight:500;font-style:italic;
+                    line-height:1.7;display:-webkit-box;-webkit-line-clamp:5;
+                    -webkit-box-orient:vertical;overflow:hidden;">
+            "${t.text}"
+          </p>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:1.5rem;
+                    border-top:1px solid rgba(0,0,0,0.05);padding-top:1.5rem;">
+          <div style="width:48px;height:48px;border-radius:50%;flex-shrink:0;
+                      background:linear-gradient(135deg,var(--primary),var(--secondary));
+                      display:flex;align-items:center;justify-content:center;
+                      font-weight:700;color:white;font-size:1.25rem;">
+            ${t.author.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div style="font-weight:700;color:var(--text-main);">${t.author}</div>
+            <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:#6b7280;margin-top:2px;">
+              <i data-lucide="check-circle-2" width="14" style="color:#16a34a;"></i>
+              Avis vérifié Google${t.date ? ' · ' + t.date : ''}
+            </div>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:3rem;">
+      <a href="${googleMapsUrl}" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:0.75rem;padding:1rem 2rem;
+                border:2px solid var(--primary);color:var(--primary);border-radius:12px;
+                text-decoration:none;font-weight:700;background:white;transition:0.3s;">
+        <i data-lucide="map-pin" width="20"></i>
+        Voir tous les ${reviews} avis sur Google Maps
+        <i data-lucide="arrow-right" width="18"></i>
+      </a>
+    </div>
+  </section>`;
+}
+
+// ── EXPORT PRINCIPAL ──────────────────────────────────────────────
 export function generateUltimateSite(lead: any, aiContent?: any): string {
-  // ── VALIDATION DES DONNÉES CRITIQUES AVANT GÉNÉRATION ──
-  const validationResult = validateLeadData(lead);
-  if (!validationResult.isValid) {
-    console.error(`❌ Erreur validation données pour ${lead.name}:`, validationResult.errors);
-  }
-  if (validationResult.warnings.length > 0) {
-    console.warn(`⚠️ Avertissements pour ${lead.name}:`, validationResult.warnings);
-  }
-
-  // Système unique avec variantes dynamiques pour TOUS les secteurs
-  const sector = (lead.sector || '').toLowerCase();
   const template = getUltimateTemplate(lead.sector);
   const companyName = lead.name || 'Entreprise Premium';
   const city = lead.city || '';
-  const phone = lead.phone || '+33 6 12 34 56 78';
-  const email = lead.email || 'contact@entreprise.fr';
-  const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
+  const phone = lead.phone || '';
+  const email = lead.email || '';
+  const address = lead.address || (city ? `Centre Ville, ${city}` : '');
   const website = lead.website || '';
   const rating = lead.googleRating || 5;
-  const reviews = lead.googleReviews || 42;
-  
+  const reviews = lead.googleReviews || 0;
+
   const rawDescription = aiContent?.aboutText || lead.description || template.aboutText;
   const description = generateAboutText(rawDescription, lead);
-  const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
-  
-  // CTA avec limite augmentée à 50 caractères pour plus de personnalisation
-  let ctaText = aiContent?.cta || template.ctaText || "Demander un devis";
+
+  let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
   if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
-  
-  // Services avec fallback - Features IA générées dynamiquement si disponibles
+
   let finalServices = template.services;
-  if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
-    finalServices = aiContent.services.map((s: any, idx: number) => {
-      let features = s.features;
-      if (!features || features.length === 0) {
-        features = generateFeaturesFromService(s.name, s.description, lead.sector);
-      }
-      return {
-        name: s.name || `Service ${idx+1}`,
-        description: s.description || '',
-        features: features.slice(0, 3)
-      };
-    });
+  if (aiContent?.services?.length > 0) {
+    finalServices = aiContent.services.map((s: any, idx: number) => ({
+      name: s.name || `Service ${idx + 1}`,
+      description: s.description || '',
+      features: (s.features?.length > 0 ? s.features : generateFeaturesFromService(s.name, s.description)).slice(0, 3),
+    }));
   }
 
-  // ── SYSTÈME AVANCÉ D'INTÉGRATION DES VRAIS AVIS DU PROSPECT ──
-  
-  // Étape 1: Extraire et valider les vrais avis Google du prospect
-  const realReviews = extractAndValidateRealReviews(lead.googleReviewsData || [], lead);
-  
-  // Étape 2: Compléter avec les avis sectoriels authentiques si nécessaire
-  const finalTestimonials = buildCompleteTestimonialList(realReviews, lead.sector, 6);
-  
-  console.log(`📊 ${companyName}: ${realReviews.length} vrais avis trouvés sur Google, ${finalTestimonials.length} avis totaux affichés`);
+  const sectorImages = getSectorImages(lead.sector);
+  const imagePool = buildImagePool(lead, sectorImages);
+  const heroImage = selectHeroImage(imagePool);
+  const allImages = buildSlotImages(imagePool, heroImage);
 
   let nameHash = 0;
   for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
+
   const baseSlogan = aiContent?.slogan || "L'excellence à votre service";
-  const sloganVariations = [
-    baseSlogan,
-    "L'art de la perfection au quotidien",
-    "Solutions premium sur-mesure",
-    "Excellence & Passion",
-    "Votre partenaire de confiance"
-  ];
+  const sloganVariations = [baseSlogan, "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = sloganVariations[nameHash % sloganVariations.length];
 
-  // ── SYSTÈME AVANCÉ DE TRAITEMENT D'IMAGES ──
-  // Priorité 1: Images réelles du lead (Google Maps, site web) - filtrées et catégorisées
-  // Priorité 2: Images Pexels sectorielles professionnelles (fallback avec cache)
-  
-  // 1. Valider et catégoriser les images réelles du lead
-  const realImages = validateAndCategorizeImages([
-    ...(lead.images || []), 
-    ...(lead.websiteImages || [])
-  ], true);
-  
-  // 2. Récupérer les images sectorielles Pexels (fallback)
-  const sectorPexelsImages = getSectorImagesFallback(lead.sector);
-  const pexelsImages = validateAndCategorizeImages(sectorPexelsImages, false);
-  
-  // 3. Combiner en préservant les types
-  const allProcessedImage = [...realImages, ...pexelsImages];
-  
-  // 4. Sélectionner intelligemment les images uniques
-  const selectedImages = selectUniqueImages(allProcessedImage, 6);
-  
-  // 5. Prioriser une vraie photo pour le hero
-  const realPhotos = selectedImages.filter(img => img.isReal && img.type === 'photo');
-  const heroImage = realPhotos.length > 0 ? realPhotos[0].url : selectedImages[0].url;
-  
-  // 6. Générer la liste finale pour les autres sections
-  const allImages = selectedImages.slice(1, 6).map(img => img.url);
-  
-  // 7. Optimisation avec cache local Pexels
-  console.log(`🖼️ ${lead.name}: ${realImages.length} images réelles (${realPhotos.length} photos) + ${pexelsImages.length} images Pexels`);
-  console.log(`📸 Hero: ${realPhotos.length > 0 ? 'VRAIE PHOTO' : 'PEXELS'} | Types:`, selectedImages.map(img => img.type));
-  
-  // 8. Optimiser les images avec cache local
-  const imageCache = PexelsImageCache.getInstance();
-  const cacheStats = imageCache.getCacheStats();
-  console.log(`💾 Cache images: ${cacheStats.usage} (${cacheStats.count} images)`);
-  
-  // Précharger les images Pexels en arrière-plan
-  if (pexelsImages.length > 0) {
-    imageCache.preloadImages(pexelsImages).catch(() => {
-      // Ignorer les erreurs de préchargement
-    });
-  }
-
   const content: UltimateContent = {
-    companyName, 
-    sector: lead.sector || 'Professionnel', 
-    city, 
-    description, 
-    phone, 
-    email, 
-    address, 
-    website, 
-    rating, 
-    reviews,
-    services: finalServices, 
-    testimonials: finalTestimonials, 
-    heroTitle, 
-    heroSubtitle, 
-    aboutText: description, 
-    ctaText, 
-    slogan: finalSlogan, 
-    heroImage, 
-    allImages
+    companyName, sector: lead.sector || 'Professionnel', city, description,
+    phone, email, address, website, rating, reviews,
+    services: finalServices, heroTitle: template.heroTitle, heroSubtitle,
+    aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
   };
 
-  // Layout variant basé sur le hash du nom (0-3) pour varier la structure du site
-  const layoutVariant = nameHash % 4;
-  
-  return buildUltimateHTML(content, template, allImages, layoutVariant);
+  return buildUltimateHTML(content, template, imagePool, nameHash % 4, lead);
 }
 
-/**
- * Version ASYNC avec API Pexels dynamique + Supabase Storage
- * PRIORITÉ 1: Images réelles du lead
- * PRIORITÉ 2: Images API Pexels téléchargées dans Supabase Storage
- */
 export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Promise<string> {
-  // ── VALIDATION DES DONNÉES CRITIQUES AVANT GÉNÉRATION ──
-  const validationResult = validateLeadData(lead);
-  if (!validationResult.isValid) {
-    console.error(`❌ Erreur validation données pour ${lead.name}:`, validationResult.errors);
-  }
-  if (validationResult.warnings.length > 0) {
-    console.warn(`⚠️ Avertissements pour ${lead.name}:`, validationResult.warnings);
-  }
-
-  // Système unique avec variantes dynamiques pour TOUS les secteurs
-  const sector = (lead.sector || '').toLowerCase();
   const template = getUltimateTemplate(lead.sector);
   const companyName = lead.name || 'Entreprise Premium';
   const city = lead.city || '';
-  const phone = lead.phone || '+33 6 12 34 56 78';
-  const email = lead.email || 'contact@entreprise.fr';
-  const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
+  const phone = lead.phone || '';
+  const email = lead.email || '';
+  const address = lead.address || (city ? `Centre Ville, ${city}` : '');
   const website = lead.website || '';
   const rating = lead.googleRating || 5;
-  const reviews = lead.googleReviews || 42;
-  
+  const reviews = lead.googleReviews || 0;
+
   const rawDescription = aiContent?.aboutText || lead.description || template.aboutText;
   const description = generateAboutText(rawDescription, lead);
-  const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
-  
-  // Hash du nom pour variété
+
+  let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
+  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
+
+  let finalServices = template.services;
+  if (aiContent?.services?.length > 0) {
+    finalServices = aiContent.services.map((s: any, idx: number) => ({
+      name: s.name || `Service ${idx + 1}`,
+      description: s.description || '',
+      features: (s.features?.length > 0 ? s.features : generateFeaturesFromService(s.name, s.description)).slice(0, 3),
+    }));
+  }
+
+  let imagePool: string[] = [];
+  try {
+    imagePool = await getImagesForLead(lead, 6);
+  } catch {
+    imagePool = buildImagePool(lead, getSectorImages(lead.sector));
+  }
+
+  const heroImage = selectHeroImage(imagePool);
+  const allImages = buildSlotImages(imagePool, heroImage);
+
   let nameHash = 0;
   for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
-  
-  // Slogan variant
+
   const baseSlogan = aiContent?.slogan || "L'excellence à votre service";
-  const sloganVariations = [
-    baseSlogan,
-    "L'art de la perfection au quotidien",
-    "Solutions premium sur-mesure",
-    "Excellence & Passion",
-    "Votre partenaire de confiance"
-  ];
+  const sloganVariations = [baseSlogan, "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = sloganVariations[nameHash % sloganVariations.length];
 
-  // ── NOUVEAU SYSTÈME: API PEXELS + SUPABASE STORAGE ──
-  // Récupérer les images (réelles + API Pexels stockées)
-  let combinedImages: string[] = [];
-  try {
-    combinedImages = await getImagesForLead(lead, 6);
-    console.log(`✅ Images API Pexels chargées pour ${lead.name}: ${combinedImages.length} images`);
-  } catch (error) {
-    console.error('❌ Erreur chargement images API Pexels:', error);
-    // Fallback sur les images statiques
-    combinedImages = getSectorImagesFallback(lead.sector);
-  }
-  
-  // Hash robuste pour distribution unique
-  let imageHash = 0;
-  for (let i = 0; i < companyName.length; i++) {
-    imageHash = ((imageHash << 5) - imageHash) + companyName.charCodeAt(i);
-    imageHash |= 0;
-  }
-  imageHash = Math.abs(imageHash);
-  
-  const startIndex = imageHash % combinedImages.length;
-  const heroImage = combinedImages[startIndex];
-  
-  const allImages = [];
-  for (let i = 1; i <= 5; i++) {
-    const imageIndex = (startIndex + i) % combinedImages.length;
-    allImages.push(combinedImages[imageIndex]);
-  }
-
-  // Services avec fallback - Features IA générées dynamiquement si disponibles
-  let finalServices = template.services;
-  if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
-    finalServices = aiContent.services.map((s: any, idx: number) => {
-      // Si l'IA fournit des features, les utiliser; sinon générer des features cohérentes
-      let features = s.features;
-      if (!features || features.length === 0) {
-        features = generateFeaturesFromService(s.name, s.description, lead.sector);
-      }
-      return {
-        name: s.name || `Service ${idx+1}`,
-        description: s.description || '',
-        features: features.slice(0, 3) // Max 3 features
-      };
-    });
-  }
-
-  // ── SYSTÈME AVANCÉ D'INTÉGRATION DES VRAIS AVIS DU PROSPECT ──
-  
-  // Étape 1: Extraire et valider les vrais avis Google du prospect
-  const realReviews = extractAndValidateRealReviews(lead.googleReviewsData || [], lead);
-  
-  // Étape 2: Compléter avec les avis sectoriels authentiques si nécessaire
-  const finalTestimonials = buildCompleteTestimonialList(realReviews, lead.sector, 6);
-  
-  console.log(`📊 ${companyName}: ${realReviews.length} vrais avis trouvés sur Google, ${finalTestimonials.length} avis totaux affichés`);
-
-  // CTA - Accepte les textes plus longs (jusqu'à 50 caractères) pour plus de personnalisation
-  let ctaText = aiContent?.cta || template.ctaText || "Demander un devis";
-  if (ctaText.length > 50) {
-    // Tronquer intelligemment si trop long
-    ctaText = ctaText.substring(0, 47) + '...';
-  }
-
   const content: UltimateContent = {
-    companyName, 
-    sector: lead.sector || 'Professionnel', 
-    city, 
-    description, 
-    phone, 
-    email, 
-    address, 
-    website, 
-    rating, 
-    reviews,
-    services: finalServices, 
-    testimonials: finalTestimonials, 
-    heroTitle, 
-    heroSubtitle, 
-    aboutText: description, 
-    ctaText, 
-    slogan: finalSlogan, 
-    heroImage, 
-    allImages
+    companyName, sector: lead.sector || 'Professionnel', city, description,
+    phone, email, address, website, rating, reviews,
+    services: finalServices, heroTitle: template.heroTitle, heroSubtitle,
+    aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
   };
 
-  const layoutVariant = nameHash % 4;
-  
-  return buildUltimateHTML(content, template, combinedImages, layoutVariant);
+  return buildUltimateHTML(content, template, imagePool, nameHash % 4, lead);
 }
 
-// ── TEMPLATES STRUCTURELS SPÉCIFIQUES PAR SECTEUR ──
-interface SectorLayout {
-  sections: string[];
-  customComponents?: string[];
-  specialFeatures?: string[];
-}
+// ── GÉNÉRATEUR HTML PRINCIPAL ─────────────────────────────────────
+function buildUltimateHTML(content: UltimateContent, template: any, imagePool: string[], layoutVariant: number, lead: any): string {
+  const { companyName, heroSubtitle, aboutText, services, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages } = content;
 
+<<<<<<< HEAD
 const SECTOR_LAYOUTS: Record<string, SectorLayout> = {
   // Restaurant : Menu + Galerie + Réservation
   restaurant: {
@@ -2525,75 +1537,36 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   
   // Utilisation stricte des couleurs de la charte par métier
+=======
+>>>>>>> c96dc41a6d903c2bcd1fa17cb866365be9525410
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
-  const accentColor = template.accent;
-
-  // Convertir le HEX primaire en RGB pour les effets de fond
-  const hexToRgb = (hex: string) => {
-    let r = 0, g = 0, b = 0;
-    if (hex.length == 7) {
-      r = parseInt(hex.substring(1, 3), 16);
-      g = parseInt(hex.substring(3, 5), 16);
-      b = parseInt(hex.substring(5, 7), 16);
-    }
-    return `${r}, ${g}, ${b}`;
-  };
   const primaryRgb = hexToRgb(template.primary);
-  
-  // Variation Logic (gardé pour les patterns et animations)
+
   let nameHash = 0;
   for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
-  const patternType = nameHash % 4;
   const fontPair = nameHash % 3;
-  const animStyle = nameHash % 2;
-  const shapesType = nameHash % 3;
 
   const logoInfo = getLogoInfo(companyName, content.sector);
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
-  const mapQuery = encodeURIComponent(address + (content.city ? ', ' + content.city : ''));
+  const countryCode = detectCountryCode(city, address);
+  const whatsappNumber = phone ? formatWhatsAppNumber(phone, countryCode) : '';
+  const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
 
-  // Génération dynamique du Favicon SVG
+  // Favicon SVG inline
   const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="${primaryColor}"/><text x="50%" y="50%" font-family="sans-serif" font-size="45" font-weight="bold" fill="white" dominant-baseline="central" text-anchor="middle">${logoInfo.initials}</text></svg>`;
-
-  // On l'encode pour pouvoir le mettre directement dans le href
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
 
-  // ── IMAGE DISTRIBUTION INTELLIGENTE PAR SLOT ──
-  // Chaque section a sa propre image, pas de rotation aveugle.
-  // Si une image réelle existe pour ce slot → on l'utilise.
-  // Sinon → fallback sectoriel neutre garanti.
-  const emergencyFallback = combinedImages[0] || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80';
-  
-  // Hash du nom pour distribution UNIQUE des images par entreprise
-  let companyHash = 0;
-  for (let i = 0; i < companyName.length; i++) {
-    companyHash = ((companyHash << 5) - companyHash) + companyName.charCodeAt(i);
-    companyHash |= 0;
-  }
-  companyHash = Math.abs(companyHash);
-  
+  // Formsubmit endpoint
+  const formsubmitEndpoint = email ? `https://formsubmit.co/${email}` : '#';
+
+  // Images par slot sans doublon
   const getImg = (slot: number): string => {
-    // Calculer un index UNIQUE basé sur le hash du nom + le slot
-    // Ainsi "A.Leont" slot 1 ≠ "Sooo" slot 1 — images différentes garanties !
-    const uniqueIndex = (companyHash + slot) % (combinedImages.length || 1);
-    
-    // PRIORITÉ : image du pool combiné (réelles + Pexels) selon le hash
-    if (combinedImages && combinedImages.length > 0 && combinedImages[uniqueIndex]) {
-      const selectedImg = combinedImages[uniqueIndex];
-      if (selectedImg && selectedImg.startsWith('https://')) return selectedImg;
-    }
-    
-    // Fallback : rotation classique sur allImages
-    if (allImages && allImages[slot % allImages.length] && allImages[slot % allImages.length].startsWith('https://')) {
-      return allImages[slot % allImages.length];
-    }
-    
-    // Fallback ultime garanti
-    return emergencyFallback;
+    return allImages[slot % Math.max(allImages.length, 1)] || heroImage;
   };
 
+<<<<<<< HEAD
   // Fonction de génération de token CSRF
   function generateCSRFToken(): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -2603,6 +1576,15 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     }
     return token;
   }
+=======
+  const fontLink = fontPair === 0
+    ? `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">`
+    : fontPair === 1
+    ? `<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">`
+    : `<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">`;
+
+  const fontHead = fontPair === 0 ? "'Outfit'" : fontPair === 1 ? "'Plus Jakarta Sans'" : "'Lexend'";
+>>>>>>> c96dc41a6d903c2bcd1fa17cb866365be9525410
 
   return `<!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
@@ -2610,6 +1592,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="icon" type="image/svg+xml" href="${faviconDataUrl}">
+<<<<<<< HEAD
   
   <!-- SEO Meta Tags améliorés -->
   <title>${companyName} — ${content.sector} professionnel${city ? ' à ' + city : ''} | Expert ${content.sector}</title>
@@ -2742,1261 +1725,430 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <!-- Lucide Icons WITH LOCAL FALLBACK -->
 {{ ... }
     <script src="https://unpkg.com/lucide@latest" onerror="this.onerror=null;this.src='data:text/javascript,/* Lucide Icons Fallback */ function createIcon(name){const svg={phone:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.6-6.6A19.79 19.79 0 0 1 3 4.18 2 2 0 0 1 5 2.08v3a2 2 0 0 0 2.18 2c.28.04.54.1.82.14a2 2 0 0 1 1.82 1.82c.04.28.1.54.14.82A2 2 0 0 0 7.08 16H10a2 2 0 0 0 2-2.18 2 2 0 0 1-.14-.82 2 2 0 0 1-1.82-1.82c-.28-.04-.54-.1-.82-.14A2 2 0 0 0 7.08 12H4a2 2 0 0 1-2-2.18 2 2 0 0 1 .14-.82 2 2 0 0 1 1.82-1.82c.28-.04.54-.1.82-.14A2 2 0 0 0 5 8.92V5.92A2 2 0 0 1 7.18 4 19.79 19.79 0 0 1 15.81 1.07 19.5 19.5 0 0 1 22.41 7.67 19.79 19.79 0 0 1 23 16.92Z\\"/></svg>',mail:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><rect x=\\"2\\" y=\\"4\\" width=\\"20\\" height=\\"16\\" rx=\\"2\\"/><path d=\\"m22 7-10 5L2 7\\"/></svg>',map:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M21 10c0 7-9 13-9 13a9.75 9.75 0 0 1-6.74 2.74L3 8l3.74-1.5A9.75 9.75 0 0 1 12 3c7 0 9 6 9 13Z\\"/><path d=\\"M12 7v5l3 3\\"/></svg>',check:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 6L9 17l-5-5\\"/></svg>',star:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><polygon points=\\"12 2 15.09 8.26 22 9 17 14.14 19.18 21.02 12 17.77 4.82 21.02 7 14.14 2 9 8.91 8.26 12 2\\"/></svg>',user:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\\"/><circle cx=\\"12\\" cy=\\"7\\" r=\\"4\\"/></svg>',send:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"m22 2-7 20-10-9Z\\"/><path d=\\"M15 13 22 2l-7 7Z\\"/></svg>',calendar:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><rect x=\\"3\\" y=\\"4\\" width=\\"18\\" height=\\"18\\" rx=\\"2\\" ry=\\"2\\"/><line x1=\\"16\\" y1=\\"2\\" x2=\\"16\\" y2=\\"6\\"/><line x1=\\"8\\" y1=\\"2\\" x2=\\"8\\" y2=\\"6\\"/><line x1=\\"3\\" y1=\\"10\\" x2=\\"21\\" y2=\\"10\\"/></svg>',wrench:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\\"/></svg>',utensils:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\\"/><path d=\\"M7 2v20\\"/><path d=\\"M21 15V2v0a4 4 0 0 0-4 4h3.5Z\\"/><path d=\\"M3.5 18.5a4.5 4.5 0 0 1 0 9Z\\"/></svg>',download:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\\"/><polyline points=\\"7 10 12 15 17 10\\"/><line x1=\\"12\\" y1=\\"15\\" x2=\\"12\\" y2=\\"3\\"/></svg>',shield:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 12a8 8 0 0 0-16 0c0 5.4 3.6 9.9 8 12a8 8 0 0 0 8-12Z\\"/><path d=\\"M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0Z\\"/></svg>',clock:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\"/><polyline points=\\"12 6 12 12 16 14\\"/></svg>',award:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><circle cx=\\"12\\" cy=\\"8\\" r=\\"7\\"/><polyline points=\\"8.21 13.89 7 23 9 12 15 12 17 23 15.79 13.89\\"/></svg>',alert:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z\\"/><line x1=\\"12\\" y1=\\"9\\" x2=\\"12\\" y2=\\"13\\"/><line x1=\\"12\\" y1=\\"17\\" x2=\\"12.01\\" y2=\\"17\\"/></svg>',check:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 6L9 17l-5-5\\"/></svg>'};return svg[name]||svg.star;};window.lucide=createIcon;document.querySelectorAll(\\"[data-lucide]\\").forEach(el=>{const name=el.getAttribute(\\"data-lucide\\");if(name){el.innerHTML=createIcon(name);}});'"></script>
+=======
+  <title>${companyName} — ${content.sector}${city ? ' à ' + city : ''}</title>
+>>>>>>> c96dc41a6d903c2bcd1fa17cb866365be9525410
 
-    <!-- TRACKING MASK SCRIPT -->
-    ${trackingMask}
+  <meta name="description" content="${companyName} — ${content.sector} professionnel${city ? ' à ' + city : ''}. ${heroSubtitle}.${phone ? ' Contactez-nous au ' + phone : ''}">
+  <meta name="robots" content="index, follow">
 
-    <!-- MOBILE-FIRST OPTIMIZATION SCRIPT -->
-    <script>
-      // Optimisations mobile-first
-      (function() {
-        // Détecter si mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        if (isMobile) {
-          // Optimisations pour mobile
-          document.documentElement.classList.add('mobile-device');
-          
-          // Prévenir le zoom sur les inputs
-          const inputs = document.querySelectorAll('input, textarea, select');
-          inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-              document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
-            });
-            input.addEventListener('blur', function() {
-              document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0');
-            });
-          });
-          
-          // Optimiser les images pour mobile
-          const images = document.querySelectorAll('img');
-          images.forEach(img => {
-            if (!img.loading) {
-              img.loading = 'lazy';
-            }
-            // Éviter les images trop lourdes sur mobile
-            if (img.naturalWidth > 1200) {
-              img.style.maxWidth = '100%';
-              img.style.height = 'auto';
-            }
-          });
-          
-          // Améliorer le scroll sur mobile
-          let touchStartY = 0;
-          document.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-          });
-          
-          document.addEventListener('touchmove', function(e) {
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchY - touchStartY;
-            
-            // Empêcher le bounce scroll
-            if (Math.abs(deltaY) > 50) {
-              document.body.style.overflow = 'hidden';
-              setTimeout(() => {
-                document.body.style.overflow = '';
-              }, 100);
-            }
-          });
-        }
-        
-        // Optimiser les performances
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(() => {
-            // Charger les éléments non critiques
-            const lazyElements = document.querySelectorAll('[data-lazy]');
-            const observer = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                  const element = entry.target;
-                  if (element.dataset.src) {
-                    element.src = element.dataset.src;
-                    element.removeAttribute('data-src');
-                  }
-                  observer.unobserve(element);
-                }
-              });
-            });
-            
-            lazyElements.forEach(element => {
-              observer.observe(element);
-            });
-          });
-        }
-      })();
-    </script>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="${companyName} — ${content.sector}${city ? ' à ' + city : ''}">
+  <meta property="og:description" content="${heroSubtitle}">
+  <meta property="og:image" content="${heroImage}">
+  <meta property="og:locale" content="fr_FR">
 
-    <!-- Structured Data JSON-LD for LocalBusiness SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "${companyName}",
-        "description": "${heroSubtitle}",
-        "image": "${heroImage}",
-        "telephone": "${phone}",
-        "email": "${email}",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "${address}",
-            "addressLocality": "${city}",
-            "addressCountry": "FR"
-        },
-        "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": "",
-            "longitude": ""
-        },
-        "openingHours": "Mo-Fr 09:00-18:00",
-        "priceRange": "$$",
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "${rating || 5}",
-            "reviewCount": "${reviews || 42}"
-        }
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${companyName} — ${content.sector}">
+  <meta name="twitter:image" content="${heroImage}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  ${fontLink}
+
+  <!-- ✅ Lucide v1.11.0 — version fixée, CDN jsDelivr (plus stable qu'unpkg @latest) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@1.11.0/dist/umd/lucide.min.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "${companyName}",
+    "description": "${heroSubtitle}",
+    "image": "${heroImage}",
+    "telephone": "${phone}",
+    "email": "${email}",
+    "address": { "@type": "PostalAddress", "streetAddress": "${address}", "addressLocality": "${city}", "addressCountry": "FR" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "${rating}", "reviewCount": "${reviews}" }
+  }
+  </script>
+
+  <style>
+    :root {
+      --primary: ${primaryColor};
+      --secondary: ${secondaryColor};
+      --accent: ${template.accent};
+      --primary-rgb: ${primaryRgb};
+      --bg-base: ${template.background};
+      --bg-glass: rgba(255,255,255,0.7);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: rgba(255,255,255,0.7);
+      --border-glass: rgba(255,255,255,0.5);
+      --font-head: ${fontHead}, sans-serif;
+      --glow: 0 10px 40px rgba(${primaryRgb}, 0.15);
     }
-    </script>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { overflow-x:hidden; }
+    body { font-family:'Inter',sans-serif; background:var(--bg-base); color:var(--text-main); overflow-x:hidden; line-height:1.7; }
+    img,video,iframe { max-width:100%; }
+    h1,h2,h3,h4 { font-family:var(--font-head); }
 
-    <style>
-        :root {
-            --primary: ${primaryColor};
-            --secondary: ${secondaryColor};
-            --accent: ${accentColor};
-            --primary-rgb: ${primaryRgb};
-            
-            --bg-base: ${template.background};
-            --bg-glass: rgba(255, 255, 255, 0.7);
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --font-head: ${fontPair === 0 ? "'Outfit'" : fontPair === 1 ? "'Plus Jakarta Sans'" : "'Lexend'"}, sans-serif;
-            
-            --glow: 0 10px 40px rgba(${primaryRgb}, 0.1);
-        }
+    /* Animations */
+    .reveal { opacity:0; transform:translateY(30px); transition:all 0.8s cubic-bezier(0.25,1,0.5,1); }
+    .reveal.active { opacity:1; transform:translateY(0); }
+    .reveal-left { opacity:0; transform:translateX(-30px); transition:all 0.8s ease-out; }
+    .reveal-left.active { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(30px); transition:all 0.8s ease-out; }
+    .reveal-right.active { opacity:1; transform:translateX(0); }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Marquee */
+    .top-marquee { background:var(--primary); color:white; font-size:0.85rem; font-weight:500; padding:8px 0; white-space:nowrap; overflow:hidden; position:relative; z-index:100; }
+    .marquee-content { display:inline-flex; gap:3rem; animation:marquee 30s linear infinite; }
+    .marquee-content:hover { animation-play-state:paused; }
+    .marquee-item { display:inline-flex; align-items:center; gap:6px; }
+    @keyframes marquee { 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            overflow-x: hidden;
-            line-height: 1.7;
-            width: 100%;
-            max-width: 100vw;
-            min-width: 320px;
-        }
-        
-        * {
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-        
-        img, video, iframe {
-            max-width: 100%;
-            height: auto;
-        }
-        
-        .top-marquee {
-            width: 100%;
-            max-width: 100vw;
-            overflow: hidden;
-        }
-        
-        .marquee-content {
-            min-width: max-content;
-        }
+    /* Navigation — ✅ CSS PUR, pas de JS */
+    nav { position:fixed; top:36px; width:100%; z-index:50; padding:1.5rem 0; transition:all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    nav.scrolled { top:0; padding:1rem 0; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid rgba(0,0,0,0.05); box-shadow:0 10px 30px rgba(0,0,0,0.03); }
+    .nav-container { max-width:1200px; margin:0 auto; padding:0 2rem; display:flex; justify-content:space-between; align-items:center; }
+    .logo-svg { width:45px; height:45px; border-radius:12px; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; color:white; font-family:'Outfit',sans-serif; font-weight:800; font-size:1.25rem; box-shadow:0 8px 20px rgba(${primaryRgb},0.2); }
+    .brand { font-size:1.75rem; font-weight:800; color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:0.75rem; }
+    .btn-call { display:inline-flex; align-items:center; gap:0.5rem; background:white; border:1px solid rgba(0,0,0,0.05); color:var(--text-main); padding:0.5rem 1.25rem; border-radius:100px; text-decoration:none; font-weight:600; transition:all 0.3s; }
+    .btn-call:hover { background:var(--primary); color:white; }
 
-        h1, h2, h3, h4 { font-family: var(--font-head); }
+    /* ✅ Desktop menu — CSS pur via @media */
+    .desktop-menu { display:none; }
+    @media (min-width: 769px) {
+      .desktop-menu { display:flex !important; align-items:center; gap:1.5rem; font-weight:500; }
+      .desktop-menu a { text-decoration:none; color:var(--text-main); font-size:0.95rem; position:relative; padding-bottom:2px; transition:color 0.2s; }
+      .desktop-menu a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--primary); transition:width 0.3s ease; border-radius:2px; }
+      .desktop-menu a:hover { color:var(--primary); }
+      .desktop-menu a:hover::after { width:100%; }
+      .mobile-menu-toggle { display:none !important; }
+      .mobile-menu { display:none !important; }
+    }
 
-        /* Desktop specific - ensure mobile menu is hidden */
-        @media (min-width: 769px) {
-            .mobile-menu-toggle {
-                display: none !important;
-            }
-            .mobile-menu {
-                display: none !important;
-            }
-        }
+    /* Mobile menu */
+    .mobile-menu { display:none; position:absolute; top:100%; left:0; right:0; background:white; padding:1rem; box-shadow:0 10px 30px rgba(0,0,0,0.1); border-bottom:1px solid rgba(0,0,0,0.05); z-index:100; }
+    .mobile-menu.open { display:block; }
+    .mobile-menu-link { display:block; padding:1rem; text-decoration:none; color:var(--text-main); font-weight:500; border-bottom:1px solid rgba(0,0,0,0.05); transition:all 0.3s; }
+    .mobile-menu-link:hover { color:var(--primary); padding-left:1.5rem; }
+    .mobile-menu-link:last-child { border-bottom:none; }
+    .mobile-call-link { color:var(--primary); font-weight:700; }
 
-        /* ANIMATIONS PROFESSIONNELLES SUBTILES */
-        .reveal { 
-            opacity: 0; 
-            transform: translateY(30px); 
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); 
-        }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+    /* Background blobs */
+    .bg-blobs { position:fixed; top:0; left:0; right:0; bottom:0; overflow:hidden; z-index:-1; background:var(--bg-base); }
+    .blob { position:absolute; filter:blur(100px); opacity:0.15; animation:float 20s infinite alternate cubic-bezier(0.4,0,0.2,1); border-radius:50%; }
+    .blob-1 { background:var(--primary); width:45vw; height:45vw; top:-10vw; left:-10vw; }
+    .blob-2 { background:var(--secondary); width:35vw; height:35vw; bottom:-5vw; right:-5vw; animation-delay:-10s; }
+    @keyframes float { 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(15vw,15vh) scale(1.1); } }
 
-        .reveal-left { opacity: 0; transform: translateX(-30px); transition: all 0.8s ease-out; }
-        .reveal-left.active { opacity: 1; transform: translateX(0); }
+    /* Glass */
+    .glass { background:var(--bg-glass); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid var(--border-glass); border-radius:24px; box-shadow:0 8px 32px rgba(31,38,135,0.04); }
 
-        .reveal-right { opacity: 0; transform: translateX(30px); transition: all 0.8s ease-out; }
-        .reveal-right.active { opacity: 1; transform: translateX(0); }
+    /* Hero */
+    .hero-section { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:140px 2rem 100px; position:relative; text-align:center; }
+    .hero-badge { display:inline-flex; align-items:center; gap:0.5rem; padding:0.5rem 1.5rem; border-radius:100px; background:white; border:1px solid rgba(${primaryRgb},0.2); color:var(--primary); font-size:0.875rem; font-weight:700; margin-bottom:2rem; text-transform:uppercase; letter-spacing:2px; box-shadow:0 4px 20px rgba(${primaryRgb},0.08); }
+    .btn-cta { background:var(--primary); color:#fff; padding:1rem 2.5rem; border-radius:10px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:0.75rem; transition:all 0.3s ease; border:none; cursor:pointer; font-size:1.1rem; box-shadow:0 4px 15px rgba(0,0,0,0.1); white-space:nowrap; }
+    .btn-cta:hover { transform:translateY(-2px); background:var(--secondary); box-shadow:0 8px 20px rgba(0,0,0,0.15); }
 
-        .stagger-item { opacity: 0; transform: translateY(15px); transition: 0.6s ease-out; }
-        .active .stagger-item { opacity: 1; transform: translateY(0); }
+    /* Container */
+    .container { max-width:1200px; margin:0 auto; padding:6rem 2rem; position:relative; z-index:10; }
+    .bg-alternate { background-color:#f1f5f9; border-top:1px solid rgba(0,0,0,0.05); border-bottom:1px solid rgba(0,0,0,0.05); }
+    .section-header { text-align:center; margin-bottom:4rem; }
+    .section-header h2 { font-size:clamp(2.2rem,4vw,3rem); margin-bottom:1.25rem; font-weight:700; color:#1e293b; letter-spacing:-0.02em; }
+    .section-header p { color:var(--text-muted); font-size:1.125rem; max-width:600px; margin:0 auto; }
 
-        /* DYNAMIC PATTERN INJECTION - SUPPRIMÉ POUR DESIGN MODERNE */
-        .bg-pattern { display: none; }
-        .pattern-waves { display: none; }
-        .bg-grid { background-image: none !important; }
+    /* Grilles */
+    .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:2rem; }
+    .valeurs-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:2rem; }
+    .process-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:2rem; }
 
-        /* Top Marquee Defilant */
-        .top-marquee {
-            background-color: var(--primary);
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
-            padding: 8px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            position: relative;
-            z-index: 100;
-            width: 100%;
-            max-width: 100vw;
-        }
-        .marquee-content {
-            display: inline-flex;
-            gap: 3rem;
-            animation: marquee 30s linear infinite;
-        }
-        .marquee-content:hover {
-            animation-play-state: paused;
-        }
-        .marquee-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+    /* Cards */
+    .card { padding:3rem; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),box-shadow 0.4s; position:relative; overflow:hidden; display:flex; flex-direction:column; height:100%; }
+    .card:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(0,0,0,0.08); }
+    .card-icon { width:70px; height:70px; border-radius:20px; background:linear-gradient(135deg,rgba(${primaryRgb},0.15),rgba(${primaryRgb},0.05)); display:flex; align-items:center; justify-content:center; color:var(--primary); margin-bottom:2rem; }
+    .card h3 { font-size:1.5rem; margin-bottom:1rem; font-weight:700; color:var(--text-main); }
+    .card p { color:var(--text-muted); margin-bottom:2rem; flex-grow:1; }
 
-        /* Abstract Animated Light Background */
-        .pattern-waves {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background: linear-gradient(135deg, transparent 40%, rgba(${primaryRgb}, 0.05) 50%, transparent 60%);
-            background-size: 200% 200%;
-            animation: waveFlow 15s linear infinite;
-            z-index: 0;
-        }
-        @keyframes waveFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 200%; } }
+    /* Valeur card */
+    .valeur-card { padding:2.5rem 1.5rem; display:flex; flex-direction:column; align-items:center; text-align:center; border-radius:20px; background:white; border:1px solid rgba(0,0,0,0.04); transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.02); }
+    .valeur-card:hover { transform:translateY(-5px); box-shadow:var(--glow); }
+    .valeur-icon { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,rgba(${primaryRgb},0.15),rgba(${primaryRgb},0.05)); color:var(--primary); display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem; }
 
-        section { position: relative; }
-        section::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            opacity: 0.03;
-            background-image: radial-gradient(var(--primary) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none; z-index: 0;
-        }
+    /* Process */
+    .step-card { padding:2.5rem; text-align:center; background:white; border-radius:24px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.02); border:1px solid rgba(0,0,0,0.03); transition:transform 0.3s; }
+    .step-card:hover { transform:translateY(-3px); }
+    .step-number { width:60px; height:60px; border-radius:50%; background:var(--bg-base); color:var(--primary); font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; border:2px dashed var(--primary); }
 
-        .bg-blobs {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            overflow: hidden;
-            z-index: -1;
-            background: var(--bg-base);
-        }
-        .blob {
-            position: absolute;
-            filter: blur(100px);
-            opacity: 0.15;
-            animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 50%;
-        }
-        .anim-shape {
-            position: absolute; opacity: 0.08; pointer-events: none; z-index: 0;
-            animation: floatShape 14s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-        }
-        @keyframes floatShape {
-            0% { transform: translateY(0) rotate(0deg) scale(1); }
-            100% { transform: translateY(-80px) rotate(180deg) scale(1.2); }
-        }
-        .bg-grid {
-            background-image: radial-gradient(rgba(${primaryRgb}, 0.1) 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
-        .bg-alternate {
-            background-color: #f1f5f9; /* Un gris légèrement plus sombre pour un vrai contraste */
-            border-top: 1px solid rgba(0,0,0,0.05); /* Ligne de séparation subtile */
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .blob-1 {
-            background: var(--primary);
-            width: 45vw; height: 45vw;
-            top: -10vw; left: -10vw;
-        }
-        .blob-2 {
-            background: var(--secondary);
-            width: 35vw; height: 35vw;
-            bottom: -5vw; right: -5vw;
-            animation-delay: -10s;
-        }
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(15vw, 15vh) scale(1.1); }
-        }
+    /* Stats Banner */
+    .stats-banner { padding:4rem 2rem; background:var(--primary); color:white; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:2rem; text-align:center; border-radius:30px; position:relative; overflow:hidden; box-shadow:0 15px 35px rgba(${primaryRgb},0.2); }
+    .stat-banner-item h3 { font-size:3rem; font-weight:800; font-family:'Outfit'; margin-bottom:0.5rem; line-height:1; }
 
-        /* Modern Glassmorphism Components */
-        .glass {
-            background: var(--bg-glass);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
-        }
+    /* Contact grid */
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; background:white; border-radius:30px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.04); }
+    .contact-form-side { padding:4rem; }
+    .map-side iframe { width:100%; height:100%; min-height:450px; border:none; }
+    .form-group { margin-bottom:1.5rem; }
+    .form-control { width:100%; padding:1rem 1.5rem; border-radius:12px; border:1px solid #e2e8f0; background:#f8fafc; font-family:'Inter',sans-serif; font-size:1rem; transition:all 0.3s; outline:none; }
+    .form-control:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(${primaryRgb},0.1); background:white; }
 
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 36px; /* Below marquee */
-            width: 100%;
-            z-index: 50;
-            padding: 1.5rem 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .mobile-menu-toggle {
-            display: none;
-        }
-        nav.scrolled {
-            top: 0;
-            padding: 1rem 0;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo-svg {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 1.25rem;
-            letter-spacing: -0.5px;
-            box-shadow: 0 8px 20px rgba(${primaryRgb}, 0.2);
-        }
-        .brand {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--text-main);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+    /* Modal */
+    .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(15,23,42,0.8); backdrop-filter:blur(5px); }
 
-        .btn-call {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: white; border: 1px solid rgba(0,0,0,0.05);
-            color: var(--text-main); padding: 0.5rem 1.25rem; border-radius: 100px;
-            text-decoration: none; font-weight: 600; transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-        .btn-call:hover {
-            background: var(--primary); color: white;
-            box-shadow: var(--glow);
-        }
+    /* Floating widgets */
+    .float-widget { position:fixed; right:25px; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 25px rgba(0,0,0,0.15); z-index:1000; transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275); text-decoration:none; border:none; cursor:pointer; }
+    .float-widget:hover { transform:scale(1.1) translateY(-5px); }
+    .float-phone { bottom:30px; background:white; color:var(--primary); border:2px solid var(--primary); }
+    .float-chatbot { bottom:90px; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:white; }
+    .float-whatsapp { bottom:150px; background:#25D366; color:white; }
 
-        /* Stats Banner */
-        .stats-banner { padding: 4rem 2rem; background: var(--primary); color: white; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center; border-radius: 30px; margin: 0 auto; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(var(--primary-rgb), 0.2); }
-        .stats-banner::after { content:''; position:absolute; top:0;left:0;right:0;bottom:0; background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); pointer-events:none;}
-        .stat-banner-item h3 { font-size: 3rem; font-weight: 800; font-family: 'Outfit'; margin-bottom: 0.5rem; line-height: 1; }
-        
-        /* Valeurs */
-        .valeurs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
-        .valeur-card { padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; border-radius: 20px; background: white; border: 1px solid rgba(0,0,0,0.04); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
-        .valeur-card:hover { transform: translateY(-5px); box-shadow: var(--glow); }
-        .valeur-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(${primaryRgb}, 0.15), rgba(${primaryRgb}, 0.05)); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    /* Chat window */
+    .chat-window { position:fixed; bottom:85px; right:85px; width:350px; height:500px; background:white; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.15); z-index:998; display:flex; flex-direction:column; overflow:hidden; opacity:0; pointer-events:none; transform:translateY(20px); transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+    .chat-window.open { opacity:1; pointer-events:all; transform:translateY(0); }
 
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            padding: 10rem 2rem 4rem;
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            z-index: 10;
-        }
-        @media (max-width: 900px) {
-            .hero { grid-template-columns: 1fr; text-align: center; }
-            .hero .hero-image-col { display: none; }
-        }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.5rem;
-            border-radius: 100px;
-            background: white;
-            border: 1px solid rgba(${primaryRgb}, 0.2);
-            color: var(--primary);
-            font-size: 0.875rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 4px 20px rgba(${primaryRgb}, 0.08);
-        }
-        .hero h1 {
-            font-size: clamp(3rem, 7vw, 5.5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -0.04em;
-            margin-bottom: 1.5rem;
-            color: var(--text-main);
-        }
-        .hero h1 span {
-            color: var(--primary);
-            font-weight: 800;
-        }
-        .hero p {
-            font-size: clamp(1.125rem, 2.5vw, 1.375rem);
-            color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto 3.5rem;
-            font-weight: 400;
-        }
-        .btn-cta {
-            background: var(--primary);
-            color: #ffffff;
-            padding: 1rem 2.5rem;
-            border-radius: 10px;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            white-space: nowrap;        /* Interdit le retour à la ligne */
-            overflow: hidden;           /* Cache ce qui déborde au cas où */
-            text-overflow: ellipsis;    /* Met des "..." si c'est vraiment trop long sur un tout petit téléphone */
-            justify-content: center;
-        }
-        .btn-cta:hover {
-            transform: translateY(-2px);
-            background: var(--secondary);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        
-        /* Mobile Buttons */
-        @media (max-width: 768px) {
-            .btn-cta {
-                padding: 0.875rem 2rem;
-                font-size: 1rem;
-                width: 100%;
-                justify-content: center;
-            }
-        }
+    /* Footer */
+    footer { background:var(--text-main); color:white; padding:5rem 2rem 2rem; margin-top:4rem; }
+    .footer-grid { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1.5fr; gap:4rem; margin-bottom:4rem; }
+    .footer-col h4 { font-size:1.25rem; font-weight:700; margin-bottom:1.5rem; color:white; }
+    .footer-col ul { list-style:none; }
+    .footer-col ul li { margin-bottom:0.75rem; }
+    .footer-col ul li a { color:var(--text-light); text-decoration:none; transition:0.3s; }
+    .footer-col ul li a:hover { color:white; padding-left:5px; }
+    .footer-bottom { text-align:center; border-top:1px solid rgba(255,255,255,0.1); padding-top:2rem; color:var(--text-light); font-size:0.9rem; }
 
-        /* Container & Sections */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 6rem 2rem;
-            position: relative;
-            z-index: 10;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        .section-header h2 {
-            font-size: clamp(2.2rem, 4vw, 3rem);
-            margin-bottom: 1.25rem;
-            font-weight: 700;
-            color: #1e293b;
-            letter-spacing: -0.02em;
-        }
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    /* Modals légales */
+    .legal-modal-content { background:#fff; margin:3% auto; padding:4rem; border-radius:32px; width:90%; max-width:1000px; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 40px 100px rgba(0,0,0,0.3); }
+    .close-modal { position:absolute; right:2rem; top:2rem; color:#000; font-size:32px; font-weight:300; cursor:pointer; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#f1f5f9; border:none; }
+    .close-modal:hover { background:var(--primary); color:white; }
 
-        /* Process Section (4 Démarches) */
-        .process-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 2rem;
-            position: relative;
-        }
-        .step-card {
-            padding: 2.5rem;
-            text-align: center;
-            background: white;
-            border-radius: 24px;
-            position: relative;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: transform 0.3s;
-        }
-        .step-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .step-number {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            background: var(--bg-base);
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 1.5rem;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 1.5rem;
-            border: 2px dashed var(--primary);
-        }
-        
-        /* Services Grid */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-        .card {
-            padding: 3rem;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,1), transparent 40%);
-            z-index: 0;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .card:hover::before { opacity: 1; }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(${primaryRgb}, 0.15);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-        }
-        .card > * { position: relative; z-index: 1; }
-        
-        .card-icon {
-            width: 70px; height: 70px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(${primaryRgb}, 0.15), rgba(${primaryRgb}, 0.05));
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary);
-            margin-bottom: 2rem;
-        }
-        
-        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700; color: var(--text-main); }
-        .card p { color: var(--text-muted); margin-bottom: 2rem; flex-grow: 1; }
-        .feature-list { list-style: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem; }
-        .feature-list li { display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.95rem; font-weight: 500; }
-        .feature-list i { color: var(--primary); width: 18px; height: 18px; }
-
-        /* Testimonials */
-        .testimonial-card {
-            padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .stars { display: flex; gap: 0.25rem; color: #f59e0b; margin-bottom: 1.5rem; }
-        
-        /* Map & Contact Form */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.04);
-        }
-        @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
-        
-        .contact-form-side { padding: 4rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-control {
-            width: 100%; padding: 1rem 1.5rem; border-radius: 12px;
-            border: 1px solid #e2e8f0; background: #f8fafc;
-            font-family: 'Inter', sans-serif; font-size: 1rem;
-            transition: all 0.3s;
-        }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(${primaryRgb}, 0.1); background: white; }
-        
-        .map-side iframe { width: 100%; height: 100%; min-height: 400px; border: none; filter: grayscale(10%) contrast(110%); }
-
-        /* Footer */
-        footer {
-            background: var(--text-main);
-            color: white;
-            padding: 5rem 2rem 2rem;
-            margin-top: 4rem;
-        }
-        .footer-grid {
-            max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 4rem;
-            margin-bottom: 4rem;
-        }
-        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
-        
-        .footer-logo { font-size: 2rem; font-family: 'Outfit'; font-weight: 800; color: white; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .footer-col h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: white; }
-        .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 0.75rem; }
-        .footer-col ul li a { color: var(--text-light); text-decoration: none; transition: 0.3s; }
-        .footer-col ul li a:hover { color: white; padding-left: 5px; }
-        .footer-bottom { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; color: var(--text-light); font-size: 0.9rem; }
-
-        /* Modal Styles */
-        .modal {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background-color: #fff; margin: 3% auto; padding: 4rem; border-radius: 32px;
-            width: 90%; max-width: 1000px; max-height: 90vh; overflow-y: auto; position: relative;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.3); border: 1px solid rgba(0,0,0,0.05);
-        }
-        .close-modal {
-            position: absolute; right: 2rem; top: 2rem; color: #000; font-size: 32px; font-weight: 300; cursor: pointer; transition: 0.3s;
-            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f1f5f9;
-        }
-        .close-modal:hover { background: var(--primary); color: white; }
-        .modal h2 { margin-bottom: 2.5rem; font-family: 'Outfit'; font-weight: 800; color: var(--text-main); font-size: 2.5rem; letter-spacing: -1px; }
-        .modal h3 { margin-bottom: 1rem; margin-top: 2.5rem; font-family: 'Outfit'; font-weight: 700; color: var(--text-main); }
-        .modal p { margin-bottom: 1.5rem; line-height: 1.8; color: var(--text-muted); font-size: 1.05rem; }
-
-        /* Floating Widgets (Unified Style 2026) */
-        .float-widget {
-            position: fixed; right: 25px;
-            width: 50px; height: 50px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            z-index: 1000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none; border: none; cursor: pointer;
-        }
-        .float-widget:hover { transform: scale(1.1) translateY(-5px); }
-        .float-widget i, .float-widget svg { width: 24px; height: 24px; }
-
-        .float-phone { bottom: 30px; background: white; color: var(--primary); border: 2px solid var(--primary); }
-        .float-chatbot { bottom: 90px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
-        .float-whatsapp { bottom: 150px; background: #25D366; color: white; }
-
-        .chat-window {
-            position: fixed; bottom: 85px; right: 85px;
-            width: 350px; height: 500px;
-            background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            z-index: 998; display: flex; flex-direction: column; overflow: hidden;
-            opacity: 0; pointer-events: none; transform: translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .chat-window.open { opacity: 1; pointer-events: all; transform: translateY(0); }
-        .chat-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;
-            padding: 1.25rem; font-family: 'Outfit'; font-weight: 700; display: flex; align-items: center; gap: 10px;
-        }
-        .chat-body { flex: 1; padding: 1.5rem; overflow-y: auto; background: #f8fafc; }
-        .chat-msg { background: white; padding: 1rem; border-radius: 12px; border-bottom-left-radius: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 1rem; font-size: 0.95rem; }
-        .chat-input { padding: 1rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
-        .chat-input input { flex: 1; border: none; outline: none; background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Inter'; }
-        
-        /* Mobile Responsive Design */
-        @media (max-width: 768px) {
-            /* Hero Section Mobile - Fix padding to avoid overlap with marquee + navbar */
-            .hero {
-                grid-template-columns: 1fr;
-                padding: 9rem 1.5rem 3rem;
-                text-align: center;
-            }
-            .hero .hero-image-col {
-                display: none;
-            }
-            .hero h1 {
-                font-size: clamp(2.5rem, 10vw, 4rem);
-                text-align: center;
-            }
-            .hero h2 {
-                font-size: clamp(1rem, 4vw, 1.5rem);
-                text-align: center;
-            }
-            .hero p {
-                text-align: center;
-                font-size: 1rem;
-            }
-            .hero-badge {
-                margin: 0 auto 1.5rem;
-                font-size: 0.8rem;
-                padding: 0.4rem 1rem;
-            }
-            .hero-content > div[style*="display: flex"] {
-                justify-content: center;
-            }
-            
-            /* Container Mobile */
-            .container {
-                padding: 3rem 1.25rem;
-            }
-            .section-header h2 {
-                font-size: clamp(1.75rem, 5vw, 2.25rem);
-            }
-            .section-header p {
-                font-size: 0.95rem;
-            }
-            
-            /* Grid Mobile */
-            .grid-3 {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-            }
-            .valeurs-grid {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-            }
-            .process-grid {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-            }
-            
-            /* Cards Mobile */
-            .card {
-                padding: 1.5rem;
-            }
-            .card-icon {
-                width: 50px;
-                height: 50px;
-                margin-bottom: 1rem;
-            }
-            .card h3 {
-                font-size: 1.15rem;
-            }
-            .card p {
-                font-size: 0.95rem;
-            }
-            
-            /* Stats Banner Mobile */
-            .stats-banner {
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
-                padding: 2rem 1.25rem;
-            }
-            .stat-banner-item h3 {
-                font-size: 2rem;
-            }
-            .stat-banner-item p {
-                font-size: 0.9rem;
-            }
-            
-            /* Contact Grid Mobile */
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-            .contact-form-side {
-                padding: 2rem 1.25rem;
-            }
-            .map-side iframe {
-                min-height: 250px;
-            }
-            
-            /* Footer Mobile */
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            footer {
-                padding: 3rem 1.25rem 2rem;
-            }
-            
-            /* Navigation Mobile */
-            nav {
-                top: 40px;
-                padding: 0.5rem 0;
-            }
-            .nav-container {
-                padding: 0 1rem;
-            }
-            .desktop-menu {
-                display: none !important;
-            }
-            .brand {
-                font-size: 1rem;
-            }
-            .logo-svg {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-                border-radius: 8px;
-            }
-            .btn-call {
-                display: none !important;
-            }
-            .mobile-menu-toggle {
-                display: block !important;
-            }
-            .mobile-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: white;
-                padding: 1rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-                z-index: 100;
-            }
-            .mobile-menu.open {
-                display: block;
-            }
-            .mobile-menu-link {
-                display: block;
-                padding: 1rem;
-                text-decoration: none;
-                color: var(--text-main);
-                font-weight: 500;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-                transition: all 0.3s;
-            }
-            .mobile-menu-link:hover {
-                color: var(--primary);
-                padding-left: 1.5rem;
-            }
-            .mobile-menu-link:last-child {
-                border-bottom: none;
-            }
-            .mobile-call-link {
-                color: var(--primary);
-                font-weight: 700;
-            }
-            
-            /* Floating Widgets Mobile */
-            .float-widget {
-                width: 45px;
-                height: 45px;
-                right: 15px;
-            }
-            .float-phone {
-                bottom: 20px;
-            }
-            .float-chatbot {
-                bottom: 75px;
-            }
-            .float-whatsapp {
-                bottom: 130px;
-            }
-            
-            /* Chat Window Mobile */
-            .chat-window {
-                width: calc(100% - 30px);
-                height: 400px;
-                right: 15px;
-                bottom: 85px;
-            }
-            
-            /* Modal Mobile */
-            .modal-content {
-                width: 95%;
-                padding: 2rem 1.5rem;
-                margin: 5% auto;
-            }
-            .close-modal {
-                right: 1rem;
-                top: 1rem;
-                width: 36px;
-                height: 36px;
-                font-size: 24px;
-            }
-            .modal h2 {
-                font-size: 1.75rem;
-            }
-            
-            /* Top Marquee Mobile */
-            .top-marquee {
-                font-size: 0.7rem;
-                padding: 5px 0;
-            }
-            .marquee-content {
-                gap: 1.5rem;
-            }
-            
-            /* About Section Mobile */
-            [id="about"] [style*="grid-template-columns"] {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            [id="about"] img {
-                height: 280px;
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .container {
-                padding: 0 2rem;
-            }
-            
-            .hero h1 {
-                font-size: 3rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
-            }
-            
-            .hero {
-                padding: 4rem 0;
-                min-height: 60vh;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-                line-height: 1.2;
-            }
-            
-            .hero p {
-                font-size: 1.125rem;
-                line-height: 1.6;
-            }
-            
-            .section-header h2 {
-                font-size: 2rem;
-            }
-            
-            .grid-3 {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            
-            .card {
-                padding: 1.5rem;
-                margin-bottom: 1rem;
-            }
-            
-            .btn-cta {
-                padding: 1rem 2rem;
-                font-size: 1rem;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            /* Navigation mobile */
-            .nav-container {
-                padding: 1rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .hero {
-                padding: 3rem 0;
-                min-height: 50vh;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
-            .section-header h2 {
-                font-size: 1.75rem;
-            }
-            
-            .section-header p {
-                font-size: 0.95rem;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .btn-cta {
-                padding: 0.875rem 1.5rem;
-                font-size: 0.95rem;
-            }
-            
-            /* Formulaires mobile */
-            .form-group {
-                margin-bottom: 1rem;
-            }
-            
-            .form-control {
-                padding: 0.75rem;
-                font-size: 16px; /* Prévenir le zoom iOS */
-            }
-            
-            /* Images mobile */
-            img {
-                max-width: 100%;
-                height: auto;
-            }
-            
-            /* Espacements mobile */
-            section {
-                padding: 3rem 0;
-            }
-            
-            /* Footer mobile */
-            footer {
-                padding: 2rem 0;
-                text-align: center;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-        
-        /* Optimisations pour appareils tactiles */
-        @media (hover: none) and (pointer: coarse) {
-            .btn-cta,
-            .card,
-            .nav-link {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            .btn-cta:hover,
-            .card:hover {
-                transform: none;
-            }
-            
-            .btn-cta:active {
-                transform: scale(0.95);
-            }
-        }
-        
-        /* Mode sombre automatique */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --text-main: #ffffff;
-                --text-muted: #a0a0a0;
-                --bg-main: #1a1a1a;
-                --bg-alternate: #2d2d2d;
-            }
-        }
-        
-        /* Réduire les animations pour les utilisateurs qui préfèrent moins de mouvement */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        
-        /* Hauteur d'écran complète pour mobile */
-        @media (max-height: 600px) {
-            .hero {
-                min-height: 70vh;
-            }
-            
-            .hero h1 {
-                font-size: 1.75rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            /* Extra Small Mobile */
-            .hero {
-                padding: 9rem 1rem 2rem;
-            }
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .hero p {
-                font-size: 0.95rem;
-            }
-            .container {
-                padding: 3rem 1rem;
-            }
-            .stats-banner {
-                grid-template-columns: 1fr;
-                padding: 2.5rem 1rem;
-                gap: 2rem;
-            }
-            .card {
-                padding: 1.5rem;
-            }
-            .btn-glow {
-                padding: 1rem 2rem;
-                font-size: 1rem;
-            }
-            .float-widget {
-                width: 40px;
-                height: 40px;
-                right: 10px;
-            }
-            .float-phone {
-                bottom: 15px;
-            }
-            .float-chatbot {
-                bottom: 65px;
-            }
-            .float-whatsapp {
-                bottom: 115px;
-            }
-            .chat-window {
-                width: calc(100% - 20px);
-                height: 350px;
-                right: 10px;
-            }
-            .nav-container {
-                padding: 0 0.75rem;
-            }
-            .brand {
-                font-size: 0.9rem;
-            }
-            .logo-svg {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-                border-radius: 6px;
-            }
-            .btn-call {
-                display: none !important;
-            }
-        }
-        
-        /* === LAYOUT VARIANTS - Dynamic structure per company === */
-        .layout-variant-0 .section-process { display: block; }
-        .layout-variant-0 .section-stats { display: block; }
-        .layout-variant-0 .section-assurances { display: block; }
-        .layout-variant-0 .hero-centered { display: block; }
-        .layout-variant-0 .hero-split { display: none; }
-        
-        .layout-variant-1 .section-process { display: none; }
-        .layout-variant-1 .section-stats { display: block; }
-        .layout-variant-1 .section-assurances { display: block; }
-        .layout-variant-1 .hero-centered { display: none; }
-        .layout-variant-1 .hero-split { display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: left; }
-        .layout-variant-1 .hero-split .hero-content { text-align: left; }
-        .layout-variant-1 .hero-split .hero-visual { display: block; }
-        
-        .layout-variant-2 .section-process { display: block; }
-        .layout-variant-2 .section-stats { display: none; }
-        .layout-variant-2 .section-assurances { display: none; }
-        .layout-variant-2 .hero-centered { display: block; }
-        .layout-variant-2 .hero-split { display: none; }
-        .layout-variant-2 .services-grid { grid-template-columns: repeat(2, 1fr); }
-        
-        .layout-variant-3 .section-process { display: none; }
-        .layout-variant-3 .section-stats { display: none; }
-        .layout-variant-3 .section-assurances { display: block; }
-        .layout-variant-3 .hero-centered { display: none; }
-        .layout-variant-3 .hero-split { display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: left; }
-        .layout-variant-3 .hero-split .hero-content { text-align: left; }
-        .layout-variant-3 .hero-split .hero-visual { display: block; }
-        .layout-variant-3 .services-grid { grid-template-columns: 1fr; }
-        .layout-variant-3 .testimonial-grid { grid-template-columns: 1fr 1fr; }
-        
-        .hero-visual { display: none; }
-    </style>
+    /* Responsive */
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns:1fr; }
+      .footer-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { top:40px; padding:0.5rem 0; }
+      .nav-container { padding:0 1rem; }
+      .btn-call { display:none !important; }
+      .mobile-menu-toggle { display:block !important; }
+      .hero-section { padding:9rem 1.5rem 3rem; }
+      .container { padding:3rem 1.25rem; }
+      .grid-3, .valeurs-grid, .process-grid { grid-template-columns:1fr; gap:1.25rem; }
+      .card { padding:1.5rem; }
+      .stats-banner { grid-template-columns:1fr 1fr; padding:2rem 1.25rem; }
+      .stat-banner-item h3 { font-size:2rem; }
+      .contact-form-side { padding:2rem 1.25rem; }
+      .map-side iframe { min-height:250px; }
+      .footer-grid { grid-template-columns:1fr; gap:1.5rem; }
+      footer { padding:3rem 1.25rem 2rem; }
+      .float-widget { right:15px; }
+      .float-phone { bottom:20px; }
+      .float-chatbot { bottom:75px; }
+      .float-whatsapp { bottom:130px; }
+      .chat-window { width:calc(100% - 30px); right:15px; bottom:85px; height:400px; }
+      .top-marquee { font-size:0.7rem; padding:5px 0; }
+    }
+    @media (max-width: 480px) {
+      .hero-section { padding:9rem 1rem 2rem; }
+      .container { padding:3rem 1rem; }
+      .stats-banner { grid-template-columns:1fr; }
+      .btn-cta { padding:0.875rem 2rem; font-size:1rem; width:100%; justify-content:center; }
+    }
+  </style>
 </head>
-<body class="layout-variant-${layoutVariant}">
+<body>
 
-    <!-- Marquee Banner -->
-    <div class="top-marquee">
-        <div class="marquee-content">
-            <div class="marquee-item"><i data-lucide="clock" stroke-width="2.5" width="16"></i> Ouvert de 9h à 18h en semaine</div>
-            <div class="marquee-item"><i data-lucide="phone" stroke-width="2.5" width="16"></i> Intervention rapide: ${phone}</div>
-            <div class="marquee-item"><i data-lucide="mail" stroke-width="2.5" width="16"></i> Envoyez un message: ${email}</div>
-            <div class="marquee-item"><i data-lucide="map-pin" stroke-width="2.5" width="16"></i> Basé à: ${city || address}</div>
-            <!-- Duplication for infinite effect -->
-            <div class="marquee-item"><i data-lucide="clock" stroke-width="2.5" width="16"></i> Ouvert de 9h à 18h en semaine</div>
-            <div class="marquee-item"><i data-lucide="phone" stroke-width="2.5" width="16"></i> Intervention rapide: ${phone}</div>
-            <div class="marquee-item"><i data-lucide="mail" stroke-width="2.5" width="16"></i> Envoyez un message: ${email}</div>
-            <div class="marquee-item"><i data-lucide="map-pin" stroke-width="2.5" width="16"></i> Basé à: ${city || address}</div>
-        </div>
+  <!-- Marquee -->
+  <div class="top-marquee">
+    <div class="marquee-content">
+      <div class="marquee-item"><i data-lucide="clock" width="16"></i> Ouvert de 9h à 18h en semaine</div>
+      ${phone ? `<div class="marquee-item"><i data-lucide="phone" width="16"></i> Intervention rapide : ${phone}</div>` : ''}
+      ${email ? `<div class="marquee-item"><i data-lucide="mail" width="16"></i> ${email}</div>` : ''}
+      <div class="marquee-item"><i data-lucide="map-pin" width="16"></i> ${city || address}</div>
+      <div class="marquee-item"><i data-lucide="clock" width="16"></i> Ouvert de 9h à 18h en semaine</div>
+      ${phone ? `<div class="marquee-item"><i data-lucide="phone" width="16"></i> Intervention rapide : ${phone}</div>` : ''}
+      ${email ? `<div class="marquee-item"><i data-lucide="mail" width="16"></i> ${email}</div>` : ''}
+      <div class="marquee-item"><i data-lucide="map-pin" width="16"></i> ${city || address}</div>
     </div>
+  </div>
 
-    <div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+  <div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
 
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <a href="#" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 1rem;">
-                <div class="logo-svg">${logoInfo.initials}</div>
-                <div style="display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-weight: 800; font-family: 'Outfit'; color: var(--text-main); font-size: 1.5rem; line-height: 1.1;">${logoInfo.text}</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">${slogan}</div>
-                </div>
-            </a>
-            <div style="display: flex; gap: 1.5rem; align-items: center;">
-                <div style="display: none; align-items: center; gap: 1.5rem; font-weight: 500;" class="desktop-menu">
-                    <a href="#about" style="text-decoration: none; color: var(--text-main);">À propos</a>
-                    <a href="#valeurs" style="text-decoration: none; color: var(--text-main);">Valeurs</a>
-                    <a href="#services" style="text-decoration: none; color: var(--text-main);">Services</a>
-                    <a href="#testimonials" style="text-decoration: none; color: var(--text-main);">Avis</a>
-                </div>
-                ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-call"><i data-lucide="phone" width="18"></i> Nous appeler</a>` : ''}
-                <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: none; background: none; border: none; cursor: pointer; padding: 0.5rem;">
-                    <i data-lucide="menu" width="28" height="28" style="color: var(--text-main);"></i>
-                </button>
-            </div>
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <div class="logo-svg">${logoInfo.initials}</div>
+        <div style="display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-weight:800;font-family:'Outfit';color:var(--text-main);font-size:1.5rem;line-height:1.1;">${logoInfo.text}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:500;">${slogan}</div>
         </div>
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobile-menu">
-            <a href="#about" class="mobile-menu-link">À propos</a>
-            <a href="#valeurs" class="mobile-menu-link">Valeurs</a>
-            <a href="#services" class="mobile-menu-link">Services</a>
-            <a href="#testimonials" class="mobile-menu-link">Avis</a>
-            <a href="#contact" class="mobile-menu-link">Contact</a>
-            ${phone ? `<a href="tel:${cleanPhoneLink}" class="mobile-menu-link mobile-call-link"><i data-lucide="phone" width="18" style="margin-right: 8px;"></i> ${phone}</a>` : ''}
+      </a>
+      <div style="display:flex;gap:1.5rem;align-items:center;">
+        <div class="desktop-menu">
+          <a href="#about">À propos</a>
+          <a href="#valeurs">Garanties</a>
+          <a href="#services">Services</a>
+          <a href="#testimonials">Avis</a>
+          <a href="#contact">Contact</a>
         </div>
-    </nav>
+        ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-call"><i data-lucide="phone" width="18"></i> Nous appeler</a>` : ''}
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="background:none;border:none;cursor:pointer;padding:0.5rem;" aria-label="Menu">
+          <i data-lucide="menu" width="28" height="28" style="color:var(--text-main);"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#about" class="mobile-menu-link">À propos</a>
+      <a href="#valeurs" class="mobile-menu-link">Garanties</a>
+      <a href="#services" class="mobile-menu-link">Services</a>
+      <a href="#testimonials" class="mobile-menu-link">Avis</a>
+      <a href="#contact" class="mobile-menu-link">Contact</a>
+      ${phone ? `<a href="tel:${cleanPhoneLink}" class="mobile-menu-link mobile-call-link"><i data-lucide="phone" width="18" style="margin-right:8px;"></i> ${phone}</a>` : ''}
+    </div>
+  </nav>
 
-    <!-- Hero Centered (Variant 0 & 2) -->
-    <section class="hero bg-grid hero-centered" style="text-align: center; padding: 140px 20px 100px;">
-        <div class="bg-pattern"></div>
-        <div class="hero-content reveal active" style="position: relative; z-index: 1; max-width: 800px; margin: 0 auto;">
-            <div class="hero-badge" style="display: inline-flex;"><i data-lucide="${heroBadge.icon}" width="18"></i> ${heroBadge.text}</div>
-            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 0.5rem; line-height: 1.1; color: var(--text-main);">
-                ${logoInfo.word1} <span style="color: var(--primary);">${logoInfo.word2}</span>
-            </h1>
-            <h2 style="font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-family: 'Outfit'; color: var(--text-main); font-weight: 700; margin-bottom: 1.5rem; opacity: 0.8;">${slogan}</h2>
-            <p style="margin-bottom: 2.5rem; font-size: 1.15rem; max-width: 600px; margin-left: auto; margin-right: auto;">${heroSubtitle}</p>
-            <button onclick="document.getElementById('contact-modal').style.display='block'; document.body.style.overflow='hidden';" class="btn-cta" style="border: none; margin: 0 auto; display: inline-flex;">
-                ${ctaText} <i data-lucide="arrow-right"></i>
+  <!-- Hero -->
+  <section class="hero-section">
+    <div style="position:relative;z-index:1;max-width:800px;margin:0 auto;" class="reveal active">
+      <div class="hero-badge"><i data-lucide="${heroBadge.icon}" width="18"></i> ${heroBadge.text}</div>
+      <h1 style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-0.04em;margin-bottom:0.5rem;color:var(--text-main);">
+        ${logoInfo.word1} <span style="color:var(--primary);">${logoInfo.word2}</span>
+      </h1>
+      <h2 style="font-size:clamp(1.1rem,2.5vw,1.6rem);font-family:'Outfit';color:var(--text-main);font-weight:700;margin-bottom:1.5rem;opacity:0.8;">${slogan}</h2>
+      <p style="margin-bottom:2.5rem;font-size:1.15rem;max-width:600px;margin-left:auto;margin-right:auto;color:var(--text-muted);">${heroSubtitle}</p>
+      ${(rating && reviews) ? `
+      <div style="display:flex;justify-content:center;align-items:center;gap:0.75rem;margin-bottom:2rem;flex-wrap:wrap;">
+        <div style="display:flex;color:#f59e0b;gap:2px;">
+          ${'<i data-lucide="star" fill="currentColor" width="20"></i>'.repeat(5)}
+        </div>
+        <span style="font-weight:700;color:var(--text-main);">${rating}/5</span>
+        <span style="color:var(--text-muted);font-size:0.9rem;">(${reviews} avis Google)</span>
+      </div>` : ''}
+      <button onclick="document.getElementById('contact-modal').style.display='flex';document.body.style.overflow='hidden';" class="btn-cta" style="margin:0 auto;">
+        ${ctaText} <i data-lucide="arrow-right"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- À propos -->
+  <section class="container bg-alternate" id="about">
+    <div class="section-header reveal"><h2>Un professionnel de confiance à votre service</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:4rem;align-items:center;">
+      <div class="reveal reveal-left" style="position:relative;">
+        <div style="position:absolute;top:-20px;left:-20px;width:100px;height:100px;background:radial-gradient(var(--primary) 2px,transparent 2px);background-size:10px 10px;z-index:0;opacity:0.2;"></div>
+        <div style="position:absolute;bottom:-20px;right:-20px;border:4px solid var(--primary);width:80%;height:80%;border-radius:30px;z-index:0;opacity:0.1;"></div>
+        <div style="position:relative;border-radius:30px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.1);z-index:1;border:8px solid white;">
+          <img src="${getImg(0)}" alt="${companyName}" width="800" height="450" loading="lazy" decoding="async"
+               style="${getImageStyle(getImg(0), '450px')}"
+               onerror="this.onerror=null;this.style.objectFit='contain';this.style.padding='2rem';this.style.background='#f8fafc';">
+        </div>
+      </div>
+      <div class="reveal reveal-right">
+        <h2 style="font-size:clamp(2rem,3.5vw,3rem);font-weight:800;margin-bottom:1.5rem;font-family:'Outfit';">Qui sommes-nous ?</h2>
+        <p style="color:var(--text-muted);font-size:1.125rem;line-height:1.8;margin-bottom:2.5rem;">${aboutText}</p>
+        <ul style="list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;">
+          <li style="display:flex;align-items:center;gap:0.5rem;font-weight:600;"><i data-lucide="check-circle-2" style="color:var(--primary);"></i> Expertise reconnue</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;font-weight:600;"><i data-lucide="check-circle-2" style="color:#10b981;"></i> Solutions sur-mesure</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;font-weight:600;"><i data-lucide="check-circle-2" style="color:#f59e0b;"></i> Accompagnement total</li>
+          <li style="display:flex;align-items:center;gap:0.5rem;font-weight:600;"><i data-lucide="check-circle-2" style="color:#8b5cf6;"></i> Réactivité garantie</li>
+        </ul>
+        <button onclick="document.getElementById('contact-modal').style.display='flex';document.body.style.overflow='hidden';" class="btn-cta" style="border:none;">
+          ${ctaText} <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Garanties -->
+  <section class="container" id="valeurs">
+    <div class="section-header reveal"><h2>Nos garanties</h2><p>Les engagements qui font la différence et votre tranquillité d'esprit.</p></div>
+    <div class="valeurs-grid">
+      ${template.guarantees.map((g: any, i: number) => `
+      <div class="valeur-card reveal" style="transition-delay:${i * 100}ms;">
+        <div class="valeur-icon"><i data-lucide="${g.icon}" width="32" height="32"></i></div>
+        <h3 style="font-family:'Outfit';font-size:1.35rem;margin-bottom:1rem;">${g.title}</h3>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
+      </div>`).join('')}
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="container" style="padding-top:2rem;padding-bottom:2rem;">
+    <div class="stats-banner reveal">
+      <div class="stat-banner-item"><h3>${reviews > 0 ? reviews + '+' : '100%'}</h3><div style="font-weight:500;opacity:0.9;">Avis Vérifiés</div></div>
+      <div class="stat-banner-item"><h3>24/7</h3><div style="font-weight:500;opacity:0.9;">Disponibilité</div></div>
+      <div class="stat-banner-item"><h3>${rating}/5</h3><div style="font-weight:500;opacity:0.9;">Note Google</div></div>
+      <div class="stat-banner-item"><h3>100%</h3><div style="font-weight:500;opacity:0.9;">Satisfaction</div></div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="container" id="process">
+    <div class="section-header reveal"><h2>Notre démarche en 4 étapes</h2><p>Une méthodologie claire et transparente pour garantir le succès de votre projet.</p></div>
+    <div class="process-grid reveal">
+      ${['Prise de contact','Devis détaillé','Intervention','Suivi qualité'].map((step, i) => `
+      <div class="step-card">
+        <div class="step-number">${i + 1}</div>
+        <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:1rem;font-family:'Outfit';">${step}</h3>
+        <p style="color:var(--text-muted);font-size:0.95rem;">${['Nous étudions ensemble votre besoin et définissons les priorités.','Un chiffrage précis et transparent, sans aucun frais caché.','Réalisation de la prestation par nos experts qualifiés.','Nous nous assurons de votre entière satisfaction après livraison.'][i]}</p>
+      </div>`).join('')}
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="container bg-alternate" id="services">
+    <div class="section-header reveal"><h2>Nos Services et Interventions</h2><p>Des prestations de qualité, réalisées dans le respect des normes et des délais.</p></div>
+    <div class="grid-3">
+      ${services.map((s, i) => `
+      <div class="card glass reveal" style="transition-delay:${i * 100}ms;">
+        <div class="card-icon" style="background:white;border:1px solid rgba(0,0,0,0.05);box-shadow:0 10px 20px rgba(0,0,0,0.05);">
+          <i data-lucide="${['zap','wrench','home','shield-check','settings','check-circle'][i % 6]}" width="40" height="40" style="color:var(--primary);"></i>
+        </div>
+        <h3 style="font-family:'Outfit';font-size:1.25rem;font-weight:700;margin-bottom:1rem;color:var(--text-main);">${s.name}</h3>
+        <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:1.5rem;">${s.description}</p>
+        <ul style="list-style:none;padding:0;">
+          ${s.features.map(f => `<li style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;font-size:0.9rem;color:var(--text-muted);"><i data-lucide="check-circle-2" style="color:var(--primary);flex-shrink:0;"></i> ${f}</li>`).join('')}
+        </ul>
+      </div>`).join('')}
+    </div>
+  </section>
+
+  <!-- Témoignages — ✅ Vrais avis uniquement -->
+  ${buildTestimonialsHTML(lead, rating, reviews)}
+
+  <!-- Contact -->
+  <section class="container bg-alternate" id="contact">
+    <div class="section-header reveal"><h2>Passez à l'action dès aujourd'hui</h2><p>Notre équipe est prête à intervenir. Contactez-nous pour un diagnostic rapide.</p></div>
+    <div class="contact-grid reveal">
+      <div class="map-side">
+        <iframe src="https://maps.google.com/maps?q=${mapQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="contact-form-side">
+        <h3 style="font-size:2rem;font-family:'Outfit';margin-bottom:0.5rem;">Envoyez-nous un message</h3>
+        <p style="color:var(--text-muted);margin-bottom:2rem;font-size:0.95rem;">Réponse garantie sous 24h.</p>
+        <div id="form-wrapper">
+          <form id="contact-form" action="${formsubmitEndpoint}" method="POST">
+            <input type="hidden" name="_subject" value="💬 Nouveau message depuis votre site — ${companyName}">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="about:blank">
+            <div class="form-group"><input type="text" name="Nom" class="form-control" placeholder="Votre nom complet" required></div>
+            <div class="form-group"><input type="email" name="Email" class="form-control" placeholder="Votre adresse e-mail" required></div>
+            <div class="form-group"><input type="tel" name="Téléphone" class="form-control" placeholder="Votre téléphone"></div>
+            <div class="form-group"><textarea name="Message" class="form-control" rows="4" placeholder="Détaillez votre besoin..." required></textarea></div>
+            <button type="submit" id="form-submit-btn" class="btn-cta" style="width:100%;justify-content:center;border:none;">
+              <i data-lucide="send"></i> <span id="btn-text">Envoyer la demande</span>
             </button>
+            <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--text-muted);">🔒 Données protégées et confidentielles.</p>
+          </form>
         </div>
-    </section>
+        <div id="form-success" style="display:none;text-align:center;padding:3rem 1rem;">
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+            <i data-lucide="check-circle-2" width="40" height="40" style="color:#10b981;"></i>
+          </div>
+          <h4 style="font-size:1.5rem;font-family:'Outfit';margin-bottom:0.75rem;">Message envoyé !</h4>
+          <p style="color:var(--text-muted);margin-bottom:1.5rem;">Nous avons bien reçu votre demande et vous répondrons très vite.</p>
+          ${phone ? `<a href="tel:${cleanPhoneLink}" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;background:var(--primary);color:white;border-radius:12px;text-decoration:none;font-weight:700;"><i data-lucide="phone" width="18"></i> ${phone}</a>` : ''}
+        </div>
+      </div>
+    </div>
+  </section>
 
+<<<<<<< HEAD
     <!-- Hero Split (Variant 1 & 3) -->
     <section class="hero bg-grid hero-split">
         <div class="bg-pattern"></div>
@@ -4277,167 +2429,276 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
                 <i data-lucide="phone-call" width="20"></i> Être rappelé(e)
             </button>
+=======
+  <!-- Modal Contact — ✅ Formsubmit.co -->
+  <div id="contact-modal" class="modal" style="display:none;align-items:center;justify-content:center;">
+    <div style="background:white;padding:3rem;border-radius:24px;width:90%;max-width:500px;position:relative;box-shadow:0 25px 50px rgba(0,0,0,0.2);">
+      <button onclick="closeContactModal()" style="position:absolute;right:1.5rem;top:1.5rem;background:#f1f5f9;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.5rem;display:flex;align-items:center;justify-content:center;color:#64748b;">×</button>
+      <div id="modal-form-wrapper">
+        <h3 style="font-size:1.5rem;font-weight:700;color:var(--text-main);margin-bottom:0.5rem;text-align:center;">Demander une intervention</h3>
+        <p style="color:var(--text-muted);text-align:center;margin-bottom:2rem;font-size:0.95rem;">Laissez vos coordonnées, nous vous répondons rapidement.</p>
+        <form id="modal-form" action="${formsubmitEndpoint}" method="POST">
+          <input type="hidden" name="_subject" value="🚀 Demande d'intervention — ${companyName}">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="about:blank">
+          <div style="margin-bottom:1rem;"><input type="text" name="Nom" placeholder="Votre nom" required style="width:100%;padding:1rem;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;outline:none;font-family:'Inter';font-size:1rem;"></div>
+          <div style="margin-bottom:1rem;"><input type="tel" name="Téléphone" placeholder="Votre numéro de téléphone" required style="width:100%;padding:1rem;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;outline:none;font-family:'Inter';font-size:1rem;"></div>
+          <div style="margin-bottom:1.5rem;"><textarea name="Message" placeholder="Votre besoin en quelques mots (optionnel)" rows="3" style="width:100%;padding:1rem;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc;outline:none;font-family:'Inter';font-size:1rem;resize:none;"></textarea></div>
+          <button type="submit" id="modal-submit-btn" style="width:100%;padding:1rem;background:var(--primary);color:white;border:none;border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:8px;">
+            <i data-lucide="phone-call" width="20"></i> <span id="modal-btn-text">Envoyer ma demande</span>
+          </button>
+>>>>>>> c96dc41a6d903c2bcd1fa17cb866365be9525410
         </form>
+      </div>
+      <div id="modal-success" style="display:none;text-align:center;padding:2rem 1rem;">
+        <div style="width:70px;height:70px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+          <i data-lucide="check-circle-2" width="36" height="36" style="color:#10b981;"></i>
+        </div>
+        <h4 style="font-size:1.4rem;font-family:'Outfit';margin-bottom:0.75rem;">Demande envoyée !</h4>
+        <p style="color:var(--text-muted);margin-bottom:1.5rem;">Nous vous contacterons très rapidement.</p>
+        ${phone ? `<a href="tel:${cleanPhoneLink}" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;background:var(--primary);color:white;border-radius:12px;text-decoration:none;font-weight:700;"><i data-lucide="phone" width="18"></i> ${phone}</a>` : ''}
+      </div>
     </div>
-</div>
+  </div>
 
-    <!-- Professional Footer -->
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="footer-logo">
-                    <div class="logo-svg" style="box-shadow: none;">${logoInfo.initials}</div>
-                    ${logoInfo.text}
-                </div>
-                <p style="color: var(--text-light); margin-bottom: 2rem;">${aboutText.substring(0, 120)}...</p>
-                <div style="display: flex; gap: 1rem;">
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="facebook"></i></a>
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="instagram"></i></a>
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="linkedin"></i></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h4>Nos Services</h4>
-                <ul>
-                    ${services.slice(0,4).map(s => `<li><a href="#services">${s.name}</a></li>`).join('')}
-                    <li><a href="#contact">Sur Devis</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Liens Utiles</h4>
-                <ul>
-                    <li><a href="#process">Notre Démarche</a></li>
-                    <li><a href="#testimonials">Avis Clients</a></li>
-                    <li><a href="javascript:void(0)" onclick="openModal('modal-mentions')">Mentions Légales</a></li>
-                    <li><a href="javascript:void(0)" onclick="openModal('modal-policy')">Confidentialité</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Contact Info</h4>
-                <ul style="color: var(--text-light);">
-                    ${phone ? `<li style="display: flex; gap: 10px;"><i data-lucide="phone"></i> ${phone}</li>` : ''}
-                    ${email ? `<li style="display: flex; gap: 10px;"><i data-lucide="mail"></i> ${email}</li>` : ''}
-                    ${address ? `<li style="display: flex; gap: 10px;"><i data-lucide="map-pin"></i> ${address}</li>` : ''}
-                </ul>
-            </div>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+          <div class="logo-svg" style="box-shadow:none;">${logoInfo.initials}</div>
+          <span style="font-size:1.75rem;font-family:'Outfit';font-weight:800;">${logoInfo.text}</span>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; ${new Date().getFullYear()} ${companyName}. Tous droits réservés. Créé par Services-Siteup.</p>
+        <p style="color:var(--text-light);margin-bottom:2rem;">${aboutText.substring(0, 120)}...</p>
+        <div style="display:flex;gap:1rem;">
+          <a href="#" style="color:white;opacity:0.7;transition:0.3s;"><i data-lucide="facebook"></i></a>
+          <a href="#" style="color:white;opacity:0.7;transition:0.3s;"><i data-lucide="instagram"></i></a>
+          <a href="#" style="color:white;opacity:0.7;transition:0.3s;"><i data-lucide="linkedin"></i></a>
         </div>
-    </footer>
-
-    <!-- Floating Buttons (Aligned Vertical) -->
-    <a href="tel:${cleanPhoneLink}" class="float-widget float-phone" title="Appeler maintenant">
-        <i data-lucide="phone"></i>
-    </a>
-
-    <button id="chatbot-toggle" class="float-widget float-chatbot" title="Discuter avec notre IA">
-        <i data-lucide="message-circle"></i>
-    </button>
-
-    <a href="https://wa.me/${cleanPhoneLink}?text=Bonjour, je souhaite avoir plus d'informations." target="_blank" class="float-widget float-whatsapp" title="Discuter sur WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
-    </a>
-
-    <!-- Chatbot Window -->
-    <div class="chat-window" id="chat-window">
-        <div class="chat-header" style="background: var(--primary); color: white; padding: 1.25rem; font-family: 'Outfit'; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px rgba(34,197,94,0.5);"></div>
-                Service Client - ${logoInfo.word1}
-            </div>
-            <button onclick="document.getElementById('chat-window').classList.remove('open')" style="background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Fermer la discussion">
-                <i data-lucide="x" width="24"></i>
-            </button>
-        </div>
-        <div class="chat-body" id="chat-body" style="flex: 1; padding: 1.5rem; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 1rem;">
-            <div class="chat-msg" style="background: white; padding: 1rem; border-radius: 12px; border-bottom-left-radius: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 0.95rem; align-self: flex-start; max-width: 85%;">
-                Bonjour ! Bienvenue chez ${logoInfo.text}. Comment puis-je vous aider aujourd'hui ?
-            </div>
-        </div>
-        <div class="chat-input" style="padding: 1rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
-            <input type="text" id="chat-text" placeholder="Écrivez votre message..." style="flex: 1; border: 1px solid #e2e8f0; outline: none; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Inter';">
-            <button onclick="sendMsg()" style="background: var(--primary); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i data-lucide="send" width="18"></i></button>
-        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Nos Services</h4>
+        <ul>${services.slice(0, 4).map(s => `<li><a href="#services">${s.name}</a></li>`).join('')}</ul>
+      </div>
+      <div class="footer-col">
+        <h4>Liens Utiles</h4>
+        <ul>
+          <li><a href="#process">Notre Démarche</a></li>
+          <li><a href="#testimonials">Avis Clients</a></li>
+          <li><a href="javascript:void(0)" onclick="openLegalModal('modal-mentions')">Mentions Légales</a></li>
+          <li><a href="javascript:void(0)" onclick="openLegalModal('modal-policy')">Confidentialité</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul style="color:var(--text-light);">
+          ${phone ? `<li style="display:flex;gap:10px;margin-bottom:0.75rem;"><i data-lucide="phone" width="18" style="flex-shrink:0;"></i> ${phone}</li>` : ''}
+          ${email ? `<li style="display:flex;gap:10px;margin-bottom:0.75rem;"><i data-lucide="mail" width="18" style="flex-shrink:0;"></i> ${email}</li>` : ''}
+          ${address ? `<li style="display:flex;gap:10px;"><i data-lucide="map-pin" width="18" style="flex-shrink:0;"></i> ${address}</li>` : ''}
+        </ul>
+      </div>
     </div>
-
-    <div id="modal-mentions" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('modal-mentions')">&times;</span>
-            <h2>Mentions Légales</h2>
-            <p>Le présent site est édité par l'entreprise <strong>${companyName}</strong>, située au <strong>${address}</strong>.</p>
-            <p>Directeur de la publication : Le Gérant de ${companyName}.</p>
-            <h3>2. Hébergement</h3>
-            <p>Le site est hébergé par Vercel Inc., dont le siège social est situé au 340 S Lemon Ave #4133 Walnut, CA 91789, USA.</p>
-            <h3>3. Propriété intellectuelle</h3>
-            <p>Tous les éléments du site (textes, logos, images, icônes) sont la propriété exclusive de ${companyName} ou de ses partenaires. Toute reproduction, représentation, modification ou adaptation totale ou partielle de tout ou partie du site est interdite.</p>
-            <h3>4. Contact</h3>
-            <p>Pour toute question ou demande d'information, vous pouvez nous contacter :</p>
-            <ul>
-                <li>Par téléphone au : <strong>${phone}</strong></li>
-                <li>Par e-mail à : <strong>${email}</strong></li>
-            </ul>
-        </div>
+    <div class="footer-bottom">
+      <p>© ${new Date().getFullYear()} ${companyName}. Tous droits réservés.</p>
     </div>
+  </footer>
 
-    <div id="modal-policy" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('modal-policy')">&times;</span>
-            <h2>Politique de Confidentialité</h2>
-            <p>Chez <strong>${companyName}</strong>, nous accordons une importance capitale à la protection de vos données personnelles.</p>
-            <h3>1. Collecte des données</h3>
-            <p>Nous collectons les données que vous nous soumettez via nos formulaires de contact : Nom, Prénom, Numéro de téléphone et Adresse e-mail.</p>
-            <h3>2. Finalité du traitement</h3>
-            <p>Ces données sont uniquement utilisées pour répondre à vos demandes de renseignements, établir des devis personnalisés ou assurer le suivi de nos interventions.</p>
-            <h3>3. Conservation des données</h3>
-            <p>Les données sont conservées pendant une durée de 3 ans après notre dernier contact avec vous. Elles ne sont jamais cédées ou vendues à des tiers.</p>
-            <h3>4. Vos droits (RGPD)</h3>
-            <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ce droit, écrivez-nous à <strong>${email}</strong>.</p>
-            <h3>5. Cookies</h3>
-            <p>Notre site peut utiliser des cookies de confort pour améliorer votre expérience utilisateur. Vous pouvez les désactiver dans les paramètres de votre navigateur.</p>
-        </div>
+  <!-- Boutons flottants -->
+  ${phone ? `<a href="tel:${cleanPhoneLink}" class="float-widget float-phone" title="Appeler"><i data-lucide="phone"></i></a>` : ''}
+  <button id="chatbot-toggle" class="float-widget float-chatbot" title="Chat"><i data-lucide="message-circle"></i></button>
+  ${whatsappNumber ? `<a href="https://wa.me/${whatsappNumber}?text=Bonjour, je souhaite avoir plus d'informations." target="_blank" rel="noopener" class="float-widget float-whatsapp" title="WhatsApp"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></a>` : ''}
+
+  <!-- Chatbot -->
+  <div class="chat-window" id="chat-window">
+    <div style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;padding:1.25rem;font-family:'Outfit';font-weight:700;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px rgba(34,197,94,0.5);"></div>
+        Service Client — ${logoInfo.word1}
+      </div>
+      <button onclick="document.getElementById('chat-window').classList.remove('open')" style="background:none;border:none;color:white;cursor:pointer;display:flex;align-items:center;"><i data-lucide="x" width="24"></i></button>
     </div>
+    <div id="chat-body" style="flex:1;padding:1.5rem;overflow-y:auto;background:#f8fafc;display:flex;flex-direction:column;gap:0.5rem;">
+      <div style="background:white;padding:1rem;border-radius:12px;border-bottom-left-radius:0;box-shadow:0 2px 10px rgba(0,0,0,0.05);font-size:0.95rem;align-self:flex-start;max-width:85%;">
+        Bonjour ! Bienvenue chez ${logoInfo.text}. Comment puis-je vous aider aujourd'hui ? 😊
+      </div>
+    </div>
+    <div style="padding:1rem;background:white;border-top:1px solid #e2e8f0;display:flex;gap:10px;">
+      <input type="text" id="chat-text" placeholder="Écrivez votre message..." style="flex:1;border:1px solid #e2e8f0;outline:none;background:#f8fafc;padding:0.75rem 1rem;border-radius:100px;font-family:'Inter';">
+      <button id="chat-send-btn" onclick="sendMsg()" style="background:var(--primary);border:none;color:white;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i data-lucide="send" width="18"></i></button>
+    </div>
+  </div>
 
-    <!-- Scripts -->
-    <script>
+  <!-- Modals légaux -->
+  <div id="modal-mentions" class="modal">
+    <div class="legal-modal-content">
+      <button class="close-modal" onclick="closeLegalModal('modal-mentions')">×</button>
+      <h2 style="font-family:'Outfit';font-weight:800;color:var(--text-main);font-size:2.5rem;margin-bottom:2rem;">Mentions Légales</h2>
+      <p>Le présent site est édité par <strong>${companyName}</strong>, situé au <strong>${address}</strong>.</p>
+      <h3 style="margin-top:2rem;margin-bottom:1rem;font-family:'Outfit';">Hébergement</h3>
+      <p>Le site est hébergé par Vercel Inc., 340 S Lemon Ave #4133 Walnut, CA 91789, USA.</p>
+      <h3 style="margin-top:2rem;margin-bottom:1rem;font-family:'Outfit';">Contact</h3>
+      <p>${phone ? 'Téléphone : <strong>' + phone + '</strong><br>' : ''}${email ? 'Email : <strong>' + email + '</strong>' : ''}</p>
+    </div>
+  </div>
+  <div id="modal-policy" class="modal">
+    <div class="legal-modal-content">
+      <button class="close-modal" onclick="closeLegalModal('modal-policy')">×</button>
+      <h2 style="font-family:'Outfit';font-weight:800;color:var(--text-main);font-size:2.5rem;margin-bottom:2rem;">Politique de Confidentialité</h2>
+      <p>Chez <strong>${companyName}</strong>, nous accordons une importance capitale à la protection de vos données personnelles.</p>
+      <h3 style="margin-top:2rem;margin-bottom:1rem;font-family:'Outfit';">Collecte des données</h3>
+      <p>Nous collectons uniquement les données soumises via nos formulaires : nom, téléphone, email. Ces données sont utilisées pour répondre à vos demandes et ne sont jamais cédées à des tiers.</p>
+      <h3 style="margin-top:2rem;margin-bottom:1rem;font-family:'Outfit';">Vos droits (RGPD)</h3>
+      <p>Vous disposez d'un droit d'accès, de rectification et de suppression. Pour l'exercer : ${email ? '<strong>' + email + '</strong>' : 'contactez-nous'}</p>
+    </div>
+  </div>
+
+  <script>
+    // ── Init Lucide Icons ──
+    lucide.createIcons();
+
+    // ── Navbar scroll ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ── Mobile menu ──
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileToggle && mobileMenu) {
+      mobileToggle.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+      mobileMenu.querySelectorAll('.mobile-menu-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('open')));
+      document.addEventListener('click', e => { if (!mobileMenu.contains(e.target) && !mobileToggle.contains(e.target)) mobileMenu.classList.remove('open'); });
+    }
+
+    // ── Reveal animations ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Chatbot ──
+    const chatToggle = document.getElementById('chatbot-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatBody = document.getElementById('chat-body');
+    const chatInput = document.getElementById('chat-text');
+    let chatStep = 0, collectedName = '', collectedPhone = '', chatHistory = [];
+
+    chatToggle.addEventListener('click', () => chatWindow.classList.toggle('open'));
+
+    function addBotMsg(html) {
+      const d = document.createElement('div');
+      d.style.cssText = 'background:white;padding:1rem;border-radius:12px;border-bottom-left-radius:0;box-shadow:0 2px 10px rgba(0,0,0,0.05);font-size:0.95rem;align-self:flex-start;max-width:85%;line-height:1.5;';
+      d.innerHTML = html;
+      chatBody.appendChild(d);
+      chatBody.scrollTo(0, chatBody.scrollHeight);
+    }
+
+    function addUserMsg(text) {
+      const d = document.createElement('div');
+      d.style.cssText = 'background:var(--primary);color:white;padding:1rem;border-radius:12px;border-bottom-right-radius:0;align-self:flex-end;max-width:85%;font-size:0.95rem;';
+      d.textContent = text;
+      chatBody.appendChild(d);
+      chatBody.scrollTo(0, chatBody.scrollHeight);
+      chatHistory.push(text);
+    }
+
+    async function notifyLead() {
+      if (!${email ? `'${email}'` : 'null'}) return;
+      try {
+        const fd = new FormData();
+        fd.append('Nom', collectedName || 'Non précisé');
+        fd.append('Téléphone', collectedPhone);
+        fd.append('Source', 'Chatbot site démo');
+        fd.append('Entreprise', '${companyName}');
+        fd.append('_subject', '📱 Lead chatbot — ${companyName}');
+        fd.append('_captcha', 'false');
+        fd.append('_template', 'table');
+        fd.append('_next', 'about:blank');
+        await fetch('${formsubmitEndpoint}', { method:'POST', body:fd, mode:'no-cors' });
+      } catch(e) { console.warn('Envoi chatbot silencieux:', e); }
+    }
+
+    function sendMsg() {
+      const val = chatInput.value.trim();
+      if (!val) return;
+      addUserMsg(val);
+      chatInput.value = '';
+      const lower = val.toLowerCase();
+      setTimeout(() => {
+        if (chatStep === 0) {
+          const salut = ['bonjour','salut','bonsoir','hello','coucou','slt','bjr'].includes(lower);
+          if (salut) { addBotMsg("Bonjour ! 😊 Comment puis-je vous aider concrètement aujourd'hui ?"); }
+          else { addBotMsg("Bien reçu ! Pour mieux vous aider, puis-je avoir votre <strong>prénom</strong> ?"); chatStep++; }
+        } else if (chatStep === 1) {
+          collectedName = val;
+          addBotMsg("Merci <strong>" + collectedName + "</strong> ! 👋 Quel est votre <strong>numéro de téléphone</strong> pour qu'on vous rappelle ?");
+          chatStep++;
+        } else if (chatStep === 2) {
+          const digits = (val.match(/[0-9]/g) || []).length;
+          if (digits >= 8) {
+            collectedPhone = val; chatStep++;
+            addBotMsg("Parfait ! ✅ Un expert va vous rappeler très prochainement. Merci de votre confiance !");
+            chatInput.disabled = true;
+            chatInput.placeholder = 'Conversation terminée.';
+            document.getElementById('chat-send-btn').disabled = true;
+            notifyLead();
+          } else {
+            addBotMsg("Je n'ai pas reconnu ce numéro. Pouvez-vous le ré-écrire ? <br><span style='font-size:0.85rem;color:#9ca3af;'>Exemple : 06 12 34 56 78</span>");
+          }
+        }
+      }, 800 + Math.random() * 600);
+    }
+    chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+
+    // ── Formulaire principal ──
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('form-submit-btn');
+        const txt = document.getElementById('btn-text');
+        btn.disabled = true; txt.textContent = 'Envoi en cours...';
+        try {
+          await fetch(contactForm.action, { method:'POST', body:new FormData(contactForm), mode:'no-cors' });
+        } catch(err) {}
+        document.getElementById('form-wrapper').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
         lucide.createIcons();
+      });
+    }
 
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if(window.scrollY > 40) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
-        });
+    // ── Modal formulaire ──
+    const modalForm = document.getElementById('modal-form');
+    if (modalForm) {
+      modalForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('modal-submit-btn');
+        const txt = document.getElementById('modal-btn-text');
+        btn.disabled = true; txt.textContent = 'Envoi en cours...';
+        try {
+          await fetch(modalForm.action, { method:'POST', body:new FormData(modalForm), mode:'no-cors' });
+        } catch(err) {}
+        document.getElementById('modal-form-wrapper').style.display = 'none';
+        document.getElementById('modal-success').style.display = 'block';
+        lucide.createIcons();
+      });
+    }
 
-        // CSS Media query JS equivalent for desktop menu
-        if (window.innerWidth > 768) {
-            document.querySelector('.desktop-menu').style.display = 'flex';
-        }
+    // ── Modal helpers ──
+    function closeContactModal() {
+      document.getElementById('contact-modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    window.closeContactModal = closeContactModal;
+    window.addEventListener('click', e => { if (e.target === document.getElementById('contact-modal')) closeContactModal(); });
 
-        // Mobile Menu Toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('open');
-            });
-            
-            // Close menu when clicking on a link
-            mobileMenu.querySelectorAll('.mobile-menu-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('open');
-                });
-            });
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!mobileMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-                    mobileMenu.classList.remove('open');
-                }
-            });
-        }
+    function openLegalModal(id) { document.getElementById(id).style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+    function closeLegalModal(id) { document.getElementById(id).style.display = 'none'; document.body.style.overflow = 'auto'; }
+    window.openLegalModal = openLegalModal; window.closeLegalModal = closeLegalModal;
+    document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) { m.style.display = 'none'; document.body.style.overflow = 'auto'; } }));
 
+<<<<<<< HEAD
         // Intersection Observer for Reveal Animations
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
@@ -4806,11 +3067,21 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             }
         });
     </script>
+=======
+    // ── Auto-popup à 60% de scroll (une seule fois par session) ──
+    let popupDone = false;
+    window.addEventListener('scroll', function() {
+      if (popupDone || sessionStorage.getItem('popupShown')) return;
+      const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      if (pct > 60) {
+        popupDone = true;
+        document.getElementById('contact-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        sessionStorage.setItem('popupShown', 'true');
+      }
+    });
+  </script>
+>>>>>>> c96dc41a6d903c2bcd1fa17cb866365be9525410
 </body>
 </html>`;
-
-  // Appliquer les variations de template anti-identification
-  const finalHTML = applyTemplateVariation(htmlContent, templateVariation);
-  
-  return finalHTML;
 }
