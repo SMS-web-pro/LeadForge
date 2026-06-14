@@ -898,13 +898,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
         -ms-text-size-adjust: 100%;
       }
       
-      .container {
-        width: 100%;
-        max-width: 100%;
-        padding: 0 1rem;
-        margin: 0 auto;
-      }
-      
       /* Hero Section Mobile */
       .hero {
         min-height: 60vh;
@@ -971,13 +964,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
         display: block;
       }
       
-      /* Cards Mobile */
-      .card {
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        border-radius: 8px;
-      }
-      
       .service-card {
         text-align: center;
       }
@@ -1013,25 +999,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
       
       .form-group {
         margin-bottom: 1rem;
-      }
-      
-      /* Grid Mobile */
-      .grid {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-      
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-      
-      .grid-4 {
-        grid-template-columns: 1fr;
       }
       
       /* Contact Modal Mobile */
@@ -1080,11 +1047,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
       
       /* Tablet styles (768px and up) */
       @media (min-width: 768px) {
-        .container {
-          max-width: 768px;
-          padding: 0 2rem;
-        }
-        
         .hero {
           min-height: 70vh;
           padding: 3rem 2rem;
@@ -1102,14 +1064,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
           display: block;
         }
         
-        .grid-2 {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .grid-3 {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        
         .btn-cta, .btn-primary, .btn-secondary {
           width: auto;
         }
@@ -1117,10 +1071,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
       
       /* Desktop styles (1024px and up) */
       @media (min-width: 1024px) {
-        .container {
-          max-width: 1024px;
-        }
-        
         .hero {
           min-height: 80vh;
           padding: 4rem 2rem;
@@ -1128,10 +1078,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
         
         .hero h1 {
           font-size: 3rem;
-        }
-        
-        .grid-4 {
-          grid-template-columns: repeat(4, 1fr);
         }
         
         .footer-grid {
@@ -1143,10 +1089,6 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
       
       /* Large desktop (1440px and up) */
       @media (min-width: 1440px) {
-        .container {
-          max-width: 1440px;
-        }
-        
         .hero h1 {
           font-size: 3.5rem;
         }
