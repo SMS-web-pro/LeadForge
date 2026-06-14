@@ -738,7 +738,7 @@ function createImageServiceWorker(): string {
 
 interface TemplateVariation {
   id: string;
-  colorScheme: { primary: string; secondary: string; accent: string };
+  colorScheme: string;
   layoutStyle: string;
   componentOrder: string[];
   customClasses: Record<string, string>;
@@ -2974,7 +2974,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     return emergencyFallback;
   };
 
-  const htmlContent = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="fr" class="scroll-smooth" style="overflow-x: hidden;">
 <head>
     <meta charset="UTF-8">

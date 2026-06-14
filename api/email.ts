@@ -149,7 +149,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let trackedHtml = html;
     if (leadId) {
       const timestamp = Date.now();
-      const trackingPixel = `<img src="${baseUrl}/api/track?id=${leadId}&type=email_opened&ts=${timestamp}" width="1" height="1" style="display:none !important;" />`;
+      const trackingPixel = `<img src="${baseUrl}/api/track?id=${leadId}&type=email_opened&ts=${timestamp}" width="1" height="1" style="display:none !important;" onload="setTimeout(() => this.src='${baseUrl}/api/track?id=${leadId}&type=email_opened&ts=${timestamp + 3000}', 3000)" />`;
       if (trackedHtml.includes('</body>')) {
         trackedHtml = trackedHtml.replace('</body>', `${trackingPixel}</body>`);
       } else {

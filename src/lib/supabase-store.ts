@@ -134,6 +134,15 @@ export interface ScheduledEmail {
   error_message?: string;
 }
 
+export interface ScheduledEmail {
+  id: string;
+  lead_id: string;
+  template_id: string;
+  scheduled_for: string;
+  status: 'pending' | 'sent' | 'sending' | 'error';
+  error_message?: string;
+}
+
 // --- DEFAULTS ---
 export const defaultApiConfig: ApiConfig = {
   groqKey: '', 
