@@ -62,7 +62,7 @@ function detectImageType(url: string, filename?: string): 'logo' | 'photo' | 'ic
 }
 
 // Valider et filtrer les images du prospect
-function validateAndCategorizeImages(images: string[], isReal: boolean = true): ProcessedImage[] {
+export function validateAndCategorizeImages(images: string[], isReal: boolean = true): ProcessedImage[] {
   return images
     .filter(img => {
       if (!img || typeof img !== 'string') return false;
@@ -123,7 +123,7 @@ function generateRobustFallback(primaryUrl: string, fallbackUrls: string[]): str
 }
 
 // Sélectionner intelligemment les images pour éviter les répétitions
-function selectUniqueImages(images: ProcessedImage[], count: number): ProcessedImage[] {
+export function selectUniqueImages(images: ProcessedImage[], count: number): ProcessedImage[] {
   if (images.length <= count) return images;
   
   // Prioriser les images réelles et les photos
@@ -1109,7 +1109,7 @@ function applyTemplateVariation(html: string, variation: TemplateVariation): str
 // ── FONCTIONS AVANCÉES POUR LES VRAIS AVIS DU PROSPECT ──
 
 // Extraire et valider les vrais avis Google du prospect
-function extractAndValidateRealReviews(googleReviewsData: any[], lead: any): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal: boolean }> {
+export function extractAndValidateRealReviews(googleReviewsData: any[], lead: any): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal: boolean }> {
   if (!googleReviewsData || googleReviewsData.length === 0) {
     console.log(`⚠️ ${lead.name}: Aucun avis Google trouvé dans les données du prospect`);
     return [];
@@ -1216,7 +1216,7 @@ function extractServiceFromReview(text: string, sector: string): string {
 }
 
 // Construire la liste complète des témoignages (vrais + fallbacks)
-function buildCompleteTestimonialList(realReviews: Array<any>, sector: string, targetCount: number): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal?: boolean }> {
+export function buildCompleteTestimonialList(realReviews: Array<any>, sector: string, targetCount: number): Array<{ author: string; text: string; rating: number; date: string; service?: string; isReal?: boolean }> {
   const fallbackReviews = getAuthenticReviews(sector);
   
   // Commencer avec les vrais avis
@@ -1632,7 +1632,7 @@ function getSectorImagesFallback(sector: string): string[] {
   return getSectorImages(sector);
 }
 
-function getUltimateTemplate(sector: string) {
+export function getUltimateTemplate(sector: string) {
   const normalizedSector = (sector || '').toLowerCase();
   
   // Vérifications spécifiques avec accents et variations pour tous les secteurs
