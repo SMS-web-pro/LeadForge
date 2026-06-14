@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%231D9E75%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22sans-serif%22%20font-size%3D%2245%22%20font-weight%3D%22bold%22%20fill%3D%22white%22%20dominant-baseline%3D%22central%22%20text-anchor%3D%22middle%22%3ETE%3C%2Ftext%3E%3C%2Fsvg%3E">
-    <title>plomberie Lyon — Test Plomberie Express | Dépannage 24h/24</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%230f766e%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22sans-serif%22%20font-size%3D%2245%22%20font-weight%3D%22bold%22%20fill%3D%22white%22%20dominant-baseline%3D%22central%22%20text-anchor%3D%22middle%22%3ETE%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <title>Test Plomberie Express - plomberie à Lyon | Services Professionnels</title>
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Test Plomberie Express - plomberie professionnel à Lyon. L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon. Contactez-nous au +33 6 12 34 56 78 pour vos projets.">
@@ -27,10 +27,10 @@
     <meta name="twitter:description" content="L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon">
     <meta name="twitter:image" content="https://images.pexels.com/photos/774463/pexels-photo-774463.jpeg?auto=compress&cs=tinysrgb&w=1200">
     
-    <!-- MODIFIÉ: Plus Jakarta Sans - police unique premium -->
+    <!-- Google Fonts: Diverse Dynamic Pairings WITH LOCAL FALLBACK -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/lexend@5.0.4/lexend.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">
     
     <!-- TailwindCSS CDN for utility classes (grid, spacing, shadows, etc.) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -109,21 +109,24 @@
 
     <style>
         :root {
-            --primary: #1D9E75;
+            --primary: #0f766e;
             --secondary: #115e59;
-            --accent: #0EA5E9;
-            --primary-rgb: 29, 158, 117;
+            --accent: #14b8a6;
+            --primary-rgb: 15, 118, 110;
             
             --bg-base: #f0fdfa;
+            --bg-glass: rgba(255, 255, 255, 0.7);
             --text-main: #0f172a;
             --text-muted: #475569;
-            --text-light: #94a3b8;
+            --font-head: 'Lexend', sans-serif;
+            
+            --glow: 0 10px 40px rgba(15, 118, 110, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-base);
             color: var(--text-main);
             overflow-x: hidden;
@@ -183,6 +186,7 @@
         .active .stagger-item { opacity: 1; transform: translateY(0); }
 
         /* DYNAMIC PATTERN INJECTION - SUPPRIMÉ POUR DESIGN MODERNE */
+        .bg-pattern { display: none; }
         .pattern-waves { display: none; }
         .bg-grid { background-image: none !important; }
 
@@ -218,12 +222,81 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* MODIFIÉ: Section de base épurée */
-        section { position: relative; }
+        /* Abstract Animated Light Background */
+        .pattern-waves {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(15, 118, 110, 0.05) 50%, transparent 60%);
+            background-size: 200% 200%;
+            animation: waveFlow 15s linear infinite;
+            z-index: 0;
+        }
+        @keyframes waveFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 200%; } }
 
-        /* MODIFIÉ: Fond alterné doux */
+        section { position: relative; }
+        section::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.03;
+            background-image: radial-gradient(var(--primary) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+            background: var(--bg-base);
+        }
+        .blob {
+            position: absolute;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+        .anim-shape {
+            position: absolute; opacity: 0.08; pointer-events: none; z-index: 0;
+            animation: floatShape 14s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+        }
+        @keyframes floatShape {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            100% { transform: translateY(-80px) rotate(180deg) scale(1.2); }
+        }
+        .bg-grid {
+            background-image: radial-gradient(rgba(15, 118, 110, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
         .bg-alternate {
-            background-color: #f8fafc;
+            background-color: #f1f5f9; /* Un gris légèrement plus sombre pour un vrai contraste */
+            border-top: 1px solid rgba(0,0,0,0.05); /* Ligne de séparation subtile */
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .blob-1 {
+            background: var(--primary);
+            width: 45vw; height: 45vw;
+            top: -10vw; left: -10vw;
+        }
+        .blob-2 {
+            background: var(--secondary);
+            width: 35vw; height: 35vw;
+            bottom: -5vw; right: -5vw;
+            animation-delay: -10s;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(15vw, 15vh) scale(1.1); }
+        }
+
+        /* Modern Glassmorphism Components */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
         }
 
         /* Navigation */
@@ -264,11 +337,11 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Outfit', sans-serif;
             font-weight: 800;
             font-size: 1.25rem;
             letter-spacing: -0.5px;
-            box-shadow: 0 8px 20px rgba(29, 158, 117, 0.2);
+            box-shadow: 0 8px 20px rgba(15, 118, 110, 0.2);
         }
         .brand {
             font-size: 1.75rem;
@@ -293,338 +366,256 @@
             box-shadow: var(--glow);
         }
 
-        /* MODIFIÉ: Stats Banner */
-        .stats-banner { padding: 3rem 2rem; background: var(--primary); color: white; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; text-align: center; border-radius: 16px; margin: 0 auto; position: relative; overflow: hidden; }
-        .stat-banner-item h3 { font-size: 2.25rem; font-weight: 800; font-family: 'Plus Jakarta Sans'; margin-bottom: 0.25rem; line-height: 1; }
+        /* Stats Banner */
+        .stats-banner { padding: 4rem 2rem; background: var(--primary); color: white; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center; border-radius: 30px; margin: 0 auto; position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(var(--primary-rgb), 0.2); }
+        .stats-banner::after { content:''; position:absolute; top:0;left:0;right:0;bottom:0; background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); pointer-events:none;}
+        .stat-banner-item h3 { font-size: 3rem; font-weight: 800; font-family: 'Outfit'; margin-bottom: 0.5rem; line-height: 1; }
         
-        /* MODIFIÉ: Valeurs */
-        .valeurs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
-        .valeur-card { padding: 1.75rem; display: flex; flex-direction: column; align-items: center; text-align: center; border-radius: 16px; background: white; border: 1px solid rgba(0,0,0,0.07); transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        .valeur-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .valeur-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
-        .valeur-card h3 { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
-        .valeur-card p { color: #64748b; font-size: 0.875rem; }
+        /* Valeurs */
+        .valeurs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+        .valeur-card { padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; border-radius: 20px; background: white; border: 1px solid rgba(0,0,0,0.04); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .valeur-card:hover { transform: translateY(-5px); box-shadow: var(--glow); }
+        .valeur-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(15, 118, 110, 0.15), rgba(15, 118, 110, 0.05)); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
 
-        /* MODIFIÉ: Hero Section — fond sombre */
+        /* Hero Section */
         .hero {
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 5vw 80px;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-            z-index: 10;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, var(--hero-overlay) 100%);
-            z-index: 0;
-        }
-        .hero .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 720px;
-            width: 100%;
-        }
-        .hero-centered { text-align: center; }
-        .hero-centered .hero-content { margin: 0 auto; }
-        @media (max-width: 900px) {
-            .hero { padding: 100px 20px 60px; }
-        }
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--accent);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding: 0.375rem 0.75rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 100px;
-            background: rgba(255,255,255,0.05);
-        }
-        .hero h1 {
-            color: #ffffff;
-            font-size: clamp(2.25rem, 4vw, 3.25rem);
-            font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-        }
-        .hero h1 span {
-            color: var(--accent);
-        }
-        .hero p {
-            color: #94a3b8;
-            font-size: 1.125rem;
-            line-height: 1.7;
-            margin: 0 auto 2rem;
-        }
-        .hero-centered .hero p {
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .hero-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .hero-centered .hero-actions {
-            justify-content: center;
-        }
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            height: 48px;
-            padding: 0 24px;
-            background: var(--primary);
-            color: #fff;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            height: 48px;
-            padding: 0 24px;
-            background: transparent;
-            color: #fff;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-secondary:hover {
-            border-color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.05);
-        }
-        .trust-badges {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        .trust-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            color: #94a3b8;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        .trust-badge i { color: var(--accent); width: 14px; height: 14px; }
-
-        /* Hero Split (Variant 1 & 3) */
-        .hero-split {
+            display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
-        }
-        .hero-split .hero-content {
-            text-align: left;
-        }
-        .hero-split .hero-actions {
-            justify-content: flex-start;
-        }
-        .hero-split .trust-badges {
-            justify-content: flex-start;
-        }
-        .hero-visual {
+            align-items: center;
+            padding: 10rem 2rem 4rem;
             position: relative;
-            z-index: 1;
-            display: none;
-            border-radius: 16px;
-            overflow: hidden;
-            height: 500px;
-            background-size: cover;
-            background-position: center;
-        }
-        .layout-variant-1 .hero-split,
-        .layout-variant-3 .hero-split {
-            display: grid;
-        }
-        .layout-variant-1 .hero-visual,
-        .layout-variant-3 .hero-visual {
-            display: block;
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 10;
         }
         @media (max-width: 900px) {
-            .hero-split { grid-template-columns: 1fr; text-align: center; }
-            .hero-split .hero-content { text-align: center; }
-            .hero-split .hero-actions { justify-content: center; }
-            .hero-split .trust-badges { justify-content: center; }
-            .hero-visual { display: none !important; }
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .hero .hero-image-col { display: none; }
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            background: white;
+            border: 1px solid rgba(15, 118, 110, 0.2);
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 20px rgba(15, 118, 110, 0.08);
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .hero h1 span {
+            color: var(--primary);
+            font-weight: 800;
+        }
+        .hero p {
+            font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 3.5rem;
+            font-weight: 400;
+        }
+        .btn-cta {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            white-space: nowrap;        /* Interdit le retour à la ligne */
+            overflow: hidden;           /* Cache ce qui déborde au cas où */
+            text-overflow: ellipsis;    /* Met des "..." si c'est vraiment trop long sur un tout petit téléphone */
+            justify-content: center;
+        }
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            background: var(--secondary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* Mobile Buttons */
+        @media (max-width: 768px) {
+            .btn-cta {
+                padding: 0.875rem 2rem;
+                font-size: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
         }
 
-        /* MODIFIÉ: Bouton CTA legacy (conservé pour compatibilité) */
-
-        /* MODIFIÉ: Container & Sections — rythme 96px/56px */
+        /* Container & Sections */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 96px 5vw;
+            padding: 6rem 2rem;
             position: relative;
             z-index: 10;
         }
         .section-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
         .section-header h2 {
-            font-size: clamp(1.75rem, 3vw, 2.25rem);
-            margin-bottom: 1rem;
+            font-size: clamp(2.2rem, 4vw, 3rem);
+            margin-bottom: 1.25rem;
             font-weight: 700;
             color: #1e293b;
             letter-spacing: -0.02em;
-            line-height: 1.2;
         }
         .section-header p {
-            color: #64748b;
-            font-size: 1rem;
-            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: 1.125rem;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* MODIFIÉ: Process Section (4 Démarches) */
+        /* Process Section (4 Démarches) */
         .process-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+            gap: 2rem;
             position: relative;
         }
         .step-card {
-            padding: 1.75rem;
+            padding: 2.5rem;
             text-align: center;
             background: white;
-            border-radius: 16px;
+            border-radius: 24px;
             position: relative;
-            border: 1px solid rgba(0,0,0,0.07);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.3s;
         }
-        .step-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .step-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
         .step-number {
-            width: 44px; height: 44px;
-            border-radius: 10px;
-            background: rgba(var(--primary-rgb), 0.1);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: var(--bg-base);
             color: var(--primary);
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 800;
+            font-size: 1.5rem;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
+            border: 2px dashed var(--primary);
         }
-
-        /* MODIFIÉ: Services Grid & Cards */
+        
+        /* Services Grid */
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
+            gap: 2rem;
         }
         .card {
-            padding: 1.75rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 3rem;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
             position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100%;
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.07);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            background: white;
         }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,1), transparent 40%);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover::before { opacity: 1; }
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-color: rgba(15, 118, 110, 0.15);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
         }
+        .card > * { position: relative; z-index: 1; }
         
         .card-icon {
-            width: 44px; height: 44px;
-            border-radius: 10px;
-            background: rgba(var(--primary-rgb), 0.1);
+            width: 70px; height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.15), rgba(15, 118, 110, 0.05));
             display: flex; align-items: center; justify-content: center;
             color: var(--primary);
-            margin-bottom: 1.25rem;
+            margin-bottom: 2rem;
         }
         
-        .card h3 { font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 700; color: #1e293b; }
-        .card p { color: #64748b; margin-bottom: 1.5rem; flex-grow: 1; font-size: 0.95rem; line-height: 1.6; }
-        .feature-list { list-style: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1rem; }
-        .feature-list li { display: flex; align-items: center; gap: 0.5rem; color: #64748b; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; }
-        .feature-list i { color: var(--primary); width: 16px; height: 16px; }
+        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700; color: var(--text-main); }
+        .card p { color: var(--text-muted); margin-bottom: 2rem; flex-grow: 1; }
+        .feature-list { list-style: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem; }
+        .feature-list li { display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.95rem; font-weight: 500; }
+        .feature-list i { color: var(--primary); width: 18px; height: 18px; }
 
-        /* MODIFIÉ: Testimonials */
+        /* Testimonials */
         .testimonial-card {
-            padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between;
+            padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;
         }
-        .stars { display: flex; gap: 0.25rem; color: #f59e0b; margin-bottom: 1.25rem; }
+        .stars { display: flex; gap: 0.25rem; color: #f59e0b; margin-bottom: 1.5rem; }
         
-        /* MODIFIÉ: Map & Contact Form */
+        /* Map & Contact Form */
         .contact-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 3rem;
             background: white;
-            border-radius: 16px;
+            border-radius: 30px;
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.07);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.04);
         }
         @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
         
-        .contact-form-side { padding: 2.5rem; }
-        .form-group { margin-bottom: 1.25rem; }
+        .contact-form-side { padding: 4rem; }
+        .form-group { margin-bottom: 1.5rem; }
         .form-control {
-            width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+            width: 100%; padding: 1rem 1.5rem; border-radius: 12px;
             border: 1px solid #e2e8f0; background: #f8fafc;
-            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem;
-            transition: all 0.2s;
+            font-family: 'Inter', sans-serif; font-size: 1rem;
+            transition: all 0.3s;
         }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1); background: white; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1); background: white; }
         
-        .map-side iframe { width: 100%; height: 100%; min-height: 400px; border: none; }
+        .map-side iframe { width: 100%; height: 100%; min-height: 400px; border: none; filter: grayscale(10%) contrast(110%); }
 
-        /* MODIFIÉ: Footer */
+        /* Footer */
         footer {
-            background: #0f172a;
+            background: var(--text-main);
             color: white;
-            padding: 80px 5vw 32px;
-            margin-top: 0;
+            padding: 5rem 2rem 2rem;
+            margin-top: 4rem;
         }
         .footer-grid {
             max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem;
-            margin-bottom: 3rem;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 4rem;
+            margin-bottom: 4rem;
         }
         @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
         
-        .footer-logo { font-size: 1.5rem; font-family: 'Plus Jakarta Sans'; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
-        .footer-col h4 { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: white; }
+        .footer-logo { font-size: 2rem; font-family: 'Outfit'; font-weight: 800; color: white; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .footer-col h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: white; }
         .footer-col ul { list-style: none; }
         .footer-col ul li { margin-bottom: 0.75rem; }
         .footer-col ul li a { color: var(--text-light); text-decoration: none; transition: 0.3s; }
@@ -634,18 +625,21 @@
         /* Modal Styles */
         .modal {
             display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
         }
         .modal-content {
-            background-color: #fff; margin: 5% auto; padding: 2.5rem; border-radius: 16px;
-            width: 90%; max-width: 640px; max-height: 85vh; overflow-y: auto; position: relative;
+            background-color: #fff; margin: 3% auto; padding: 4rem; border-radius: 32px;
+            width: 90%; max-width: 1000px; max-height: 90vh; overflow-y: auto; position: relative;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3); border: 1px solid rgba(0,0,0,0.05);
         }
         .close-modal {
-            position: absolute; right: 1.5rem; top: 1.5rem; cursor: pointer;
-            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f1f5f9;
-            border: none; font-size: 1.25rem; transition: 0.2s;
+            position: absolute; right: 2rem; top: 2rem; color: #000; font-size: 32px; font-weight: 300; cursor: pointer; transition: 0.3s;
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f1f5f9;
         }
         .close-modal:hover { background: var(--primary); color: white; }
+        .modal h2 { margin-bottom: 2.5rem; font-family: 'Outfit'; font-weight: 800; color: var(--text-main); font-size: 2.5rem; letter-spacing: -1px; }
+        .modal h3 { margin-bottom: 1rem; margin-top: 2.5rem; font-family: 'Outfit'; font-weight: 700; color: var(--text-main); }
+        .modal p { margin-bottom: 1.5rem; line-height: 1.8; color: var(--text-muted); font-size: 1.05rem; }
 
         /* Floating Widgets (Unified Style 2026) */
         .float-widget {
@@ -673,63 +667,35 @@
         .chat-window.open { opacity: 1; pointer-events: all; transform: translateY(0); }
         .chat-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;
-            padding: 1.25rem; font-family: 'Plus Jakarta Sans'; font-weight: 700; display: flex; align-items: center; gap: 10px;
+            padding: 1.25rem; font-family: 'Outfit'; font-weight: 700; display: flex; align-items: center; gap: 10px;
         }
         .chat-body { flex: 1; padding: 1.5rem; overflow-y: auto; background: #f8fafc; }
         .chat-msg { background: white; padding: 1rem; border-radius: 12px; border-bottom-left-radius: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 1rem; font-size: 0.95rem; }
         .chat-input { padding: 1rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
-        .chat-input input { flex: 1; border: none; outline: none; background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Plus Jakarta Sans'; }
+        .chat-input input { flex: 1; border: none; outline: none; background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Inter'; }
         
-        /* MODIFIÉ: Mobile Sticky CTA */
-        .mobile-sticky-cta {
-            display: none;
-        }
+        /* Mobile Responsive Design */
         @media (max-width: 768px) {
-            .mobile-sticky-cta {
-                display: flex;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 56px;
-                background: var(--primary);
-                color: white;
-                z-index: 999;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                font-weight: 600;
-                font-size: 1rem;
-                text-decoration: none;
-                border: none;
-                cursor: pointer;
-            }
-        }
-
-        /* MODIFIÉ: Mobile Responsive */
-        @media (max-width: 768px) {
-            /* Hero Mobile */
+            /* Hero Section Mobile - Fix padding to avoid overlap with marquee + navbar */
             .hero {
-                padding: 100px 20px 60px;
+                grid-template-columns: 1fr;
+                padding: 9rem 1.5rem 3rem;
                 text-align: center;
-            }
-            .hero h1 {
-                font-size: clamp(1.75rem, 8vw, 2.25rem);
-            }
-            .hero p {
-                font-size: 1rem;
             }
             .hero .hero-image-col {
                 display: none;
             }
-            .hero-actions {
-                flex-direction: column;
-                width: 100%;
+            .hero h1 {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+                text-align: center;
             }
-            .hero-actions .btn-primary,
-            .hero-actions .btn-secondary {
-                width: 100%;
-                justify-content: center;
+            .hero h2 {
+                font-size: clamp(1rem, 4vw, 1.5rem);
+                text-align: center;
+            }
+            .hero p {
+                text-align: center;
+                font-size: 1rem;
             }
             .hero-badge {
                 margin: 0 auto 1.5rem;
@@ -740,45 +706,45 @@
                 justify-content: center;
             }
             
-            /* Container Mobile — 56px vertical / 20px horizontal */
+            /* Container Mobile */
             .container {
-                padding: 56px 20px;
+                padding: 3rem 1.25rem;
             }
             .section-header h2 {
-                font-size: clamp(1.5rem, 5vw, 1.75rem);
+                font-size: clamp(1.75rem, 5vw, 2.25rem);
             }
             .section-header p {
                 font-size: 0.95rem;
             }
             
-            /* Grid Mobile — 1 colonne */
+            /* Grid Mobile */
             .grid-3 {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 1.25rem;
             }
             .valeurs-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 1.25rem;
             }
             .process-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 1.25rem;
             }
             
             /* Cards Mobile */
             .card {
-                padding: 1.25rem;
+                padding: 1.5rem;
             }
             .card-icon {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 0.75rem;
+                width: 50px;
+                height: 50px;
+                margin-bottom: 1rem;
             }
             .card h3 {
-                font-size: 1.05rem;
+                font-size: 1.15rem;
             }
             .card p {
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
             
             /* Stats Banner Mobile */
@@ -788,7 +754,10 @@
                 padding: 2rem 1.25rem;
             }
             .stat-banner-item h3 {
-                font-size: 1.75rem;
+                font-size: 2rem;
+            }
+            .stat-banner-item p {
+                font-size: 0.9rem;
             }
             
             /* Contact Grid Mobile */
@@ -796,10 +765,10 @@
                 grid-template-columns: 1fr;
             }
             .contact-form-side {
-                padding: 1.5rem;
+                padding: 2rem 1.25rem;
             }
             .map-side iframe {
-                min-height: 220px;
+                min-height: 250px;
             }
             
             /* Footer Mobile */
@@ -808,7 +777,7 @@
                 gap: 1.5rem;
             }
             footer {
-                padding: 48px 20px 80px;
+                padding: 3rem 1.25rem 2rem;
             }
             
             /* Navigation Mobile */
@@ -854,12 +823,12 @@
             }
             .mobile-menu-link {
                 display: block;
-                padding: 0.75rem 1rem;
+                padding: 1rem;
                 text-decoration: none;
-                color: #1e293b;
+                color: var(--text-main);
                 font-weight: 500;
                 border-bottom: 1px solid rgba(0,0,0,0.05);
-                transition: all 0.2s;
+                transition: all 0.3s;
             }
             .mobile-menu-link:hover {
                 color: var(--primary);
@@ -875,18 +844,18 @@
             
             /* Floating Widgets Mobile */
             .float-widget {
-                width: 44px;
-                height: 44px;
+                width: 45px;
+                height: 45px;
                 right: 15px;
             }
             .float-phone {
-                bottom: 70px;
+                bottom: 20px;
             }
             .float-chatbot {
-                bottom: 124px;
+                bottom: 75px;
             }
             .float-whatsapp {
-                bottom: 178px;
+                bottom: 130px;
             }
             
             /* Chat Window Mobile */
@@ -900,20 +869,23 @@
             /* Modal Mobile */
             .modal-content {
                 width: 95%;
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
                 margin: 5% auto;
             }
             .close-modal {
-                right: 0.75rem;
-                top: 0.75rem;
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
+                right: 1rem;
+                top: 1rem;
+                width: 36px;
+                height: 36px;
+                font-size: 24px;
+            }
+            .modal h2 {
+                font-size: 1.75rem;
             }
             
             /* Top Marquee Mobile */
             .top-marquee {
-                font-size: 0.65rem;
+                font-size: 0.7rem;
                 padding: 5px 0;
             }
             .marquee-content {
@@ -926,7 +898,7 @@
                 gap: 1.5rem;
             }
             [id="about"] img {
-                height: 220px;
+                height: 280px;
             }
         }
         
@@ -992,33 +964,39 @@
             }
         }
         
-        /* MODIFIÉ: Layout Variants */
+        /* === LAYOUT VARIANTS - Dynamic structure per company === */
         .layout-variant-0 .section-process { display: block; }
         .layout-variant-0 .section-stats { display: block; }
         .layout-variant-0 .section-assurances { display: block; }
-        .layout-variant-0 .hero-centered { display: flex; }
+        .layout-variant-0 .hero-centered { display: block; }
         .layout-variant-0 .hero-split { display: none; }
         
         .layout-variant-1 .section-process { display: none; }
         .layout-variant-1 .section-stats { display: block; }
         .layout-variant-1 .section-assurances { display: block; }
         .layout-variant-1 .hero-centered { display: none; }
-        .layout-variant-1 .hero-split { display: grid; }
+        .layout-variant-1 .hero-split { display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: left; }
+        .layout-variant-1 .hero-split .hero-content { text-align: left; }
+        .layout-variant-1 .hero-split .hero-visual { display: block; }
         
         .layout-variant-2 .section-process { display: block; }
         .layout-variant-2 .section-stats { display: none; }
         .layout-variant-2 .section-assurances { display: none; }
-        .layout-variant-2 .hero-centered { display: flex; }
+        .layout-variant-2 .hero-centered { display: block; }
         .layout-variant-2 .hero-split { display: none; }
+        .layout-variant-2 .services-grid { grid-template-columns: repeat(2, 1fr); }
         
         .layout-variant-3 .section-process { display: none; }
         .layout-variant-3 .section-stats { display: none; }
         .layout-variant-3 .section-assurances { display: block; }
         .layout-variant-3 .hero-centered { display: none; }
-        .layout-variant-3 .hero-split { display: grid; }
+        .layout-variant-3 .hero-split { display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: left; }
+        .layout-variant-3 .hero-split .hero-content { text-align: left; }
+        .layout-variant-3 .hero-split .hero-visual { display: block; }
+        .layout-variant-3 .services-grid { grid-template-columns: 1fr; }
+        .layout-variant-3 .testimonial-grid { grid-template-columns: 1fr 1fr; }
         
-        .hero-split { display: none; }
-        .hero-centered { display: none; }
+        .hero-visual { display: none; }
     </style>
 
     <style>
@@ -1273,24 +1251,26 @@
         </div>
     </div>
 
-    <!-- MODIFIÉ: Navigation -->
+    <div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+
+    <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
-            <a href="#" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
+            <a href="#" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 1rem;">
                 <div class="logo-svg">TE</div>
                 <div style="display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-weight: 800; font-family: 'Plus Jakarta Sans'; color: var(--text-main); font-size: 1.25rem; line-height: 1.1;">Test Plomberie Express</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Excellence & Passion</div>
+                    <div style="font-weight: 800; font-family: 'Outfit'; color: var(--text-main); font-size: 1.5rem; line-height: 1.1;">Test Plomberie Express</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Excellence & Passion</div>
                 </div>
             </a>
             <div style="display: flex; gap: 1.5rem; align-items: center;">
                 <div style="display: none; align-items: center; gap: 1.5rem; font-weight: 500;" class="desktop-menu">
-                    <a href="#about" style="text-decoration: none; color: var(--text-main); font-size: 0.9rem;">À propos</a>
-                    <a href="#services" style="text-decoration: none; color: var(--text-main); font-size: 0.9rem;">Services</a>
-                    <a href="#testimonials" style="text-decoration: none; color: var(--text-main); font-size: 0.9rem;">Avis</a>
-                    <a href="#contact" style="text-decoration: none; color: var(--text-main); font-size: 0.9rem;">Contact</a>
+                    <a href="#about" style="text-decoration: none; color: var(--text-main);">À propos</a>
+                    <a href="#valeurs" style="text-decoration: none; color: var(--text-main);">Valeurs</a>
+                    <a href="#services" style="text-decoration: none; color: var(--text-main);">Services</a>
+                    <a href="#testimonials" style="text-decoration: none; color: var(--text-main);">Avis</a>
                 </div>
-                <a href="tel:+33612345678" class="btn-call"><i data-lucide="phone" width="16"></i> +33 6 12 34 56 78</a>
+                <a href="tel:+33612345678" class="btn-call"><i data-lucide="phone" width="18"></i> Nous appeler</a>
                 <button class="mobile-menu-toggle" id="mobile-menu-toggle" style="display: none; background: none; border: none; cursor: pointer; padding: 0.5rem;">
                     <i data-lucide="menu" width="28" height="28" style="color: var(--text-main);"></i>
                 </button>
@@ -1299,80 +1279,101 @@
         <!-- Mobile Menu -->
         <div class="mobile-menu" id="mobile-menu">
             <a href="#about" class="mobile-menu-link">À propos</a>
+            <a href="#valeurs" class="mobile-menu-link">Valeurs</a>
             <a href="#services" class="mobile-menu-link">Services</a>
             <a href="#testimonials" class="mobile-menu-link">Avis</a>
             <a href="#contact" class="mobile-menu-link">Contact</a>
-            <a href="tel:+33612345678" class="mobile-menu-link mobile-call-link"><i data-lucide="phone" width="16" style="margin-right: 8px;"></i> +33 6 12 34 56 78</a>
+            <a href="tel:+33612345678" class="mobile-menu-link mobile-call-link"><i data-lucide="phone" width="18" style="margin-right: 8px;"></i> +33 6 12 34 56 78</a>
         </div>
     </nav>
 
-    <!-- MODIFIÉ: Hero Centered (Variant 0 & 2) -->
-    <section class="hero hero-centered" style="background-image: url('https://images.pexels.com/photos/774463/pexels-photo-774463.jpeg?auto=compress&cs=tinysrgb&w=1200'); --hero-overlay: rgba(0,0,0,0.6);">
-        <div class="hero-content">
-            <div class="eyebrow"><i data-lucide="zap" width="12"></i> Dépannage rapide garanti · Lyon</div>
-            <h1>Test Plomberie Express — <span>Excellence & Passion</span></h1>
-            <p>L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon</p>
-            <div class="hero-actions">
-                <a href="tel:+33612345678" class="btn-primary">
-                    <i data-lucide="phone" width="16"></i> Demandez un devis
-                </a>
-                <a href="#contact" class="btn-secondary">
-                    Demander un devis <i data-lucide="arrow-right" width="16"></i>
-                </a>
+    <!-- Hero Centered (Variant 0 & 2) -->
+    <section class="hero bg-grid hero-centered" style="text-align: center; padding: 140px 20px 100px;">
+        <div class="bg-pattern"></div>
+        <div class="hero-content reveal active" style="position: relative; z-index: 1; max-width: 800px; margin: 0 auto;">
+            <div class="hero-badge" style="display: inline-flex;"><i data-lucide="zap" width="18"></i> Dépannage rapide garanti</div>
+            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 0.5rem; line-height: 1.1; color: var(--text-main);">
+                Test <span style="color: var(--primary);">Plomberie express</span>
+            </h1>
+            <h2 style="font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-family: 'Outfit'; color: var(--text-main); font-weight: 700; margin-bottom: 1.5rem; opacity: 0.8;">Excellence & Passion</h2>
+            <p style="margin-bottom: 2.5rem; font-size: 1.15rem; max-width: 600px; margin-left: auto; margin-right: auto;">L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon</p>
+            <button onclick="document.getElementById('contact-modal').style.display='block'; document.body.style.overflow='hidden';" class="btn-cta" style="border: none; margin: 0 auto; display: inline-flex;">
+                Demandez un devis <i data-lucide="arrow-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Hero Split (Variant 1 & 3) -->
+    <section class="hero bg-grid hero-split">
+        <div class="bg-pattern"></div>
+        <!-- Désactivé : animations géométriques pour design plus propre -->
+        <!-- <div class="pattern-waves"></div> -->
+        <div class="hero-content reveal active" style="position: relative; z-index: 1;">
+            <div class="hero-badge"><i data-lucide="zap" width="18"></i> Dépannage rapide garanti</div>
+            <h1 style="text-align: left; font-size: clamp(3rem, 6vw, 5rem); margin-bottom: 0.5rem; line-height: 1.1; color: var(--text-main);">
+                Test <span style="color: var(--primary);">Plomberie express</span>
+            </h1>
+            <h2 style="text-align: left; font-size: clamp(1.2rem, 3vw, 2rem); font-family: 'Outfit'; color: var(--text-main); font-weight: 700; margin-bottom: 1.5rem; opacity: 0.8;">Excellence & Passion</h2>
+            <p style="text-align: left; margin-bottom: 2.5rem; font-size: 1.15rem;">L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon</p>
+            
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 2rem; justify-content: flex-start; ">
+                <div style="display: flex; color: #f59e0b;">
+                    <i data-lucide="star" fill="currentColor"></i>
+                    <i data-lucide="star" fill="currentColor"></i>
+                    <i data-lucide="star" fill="currentColor"></i>
+                    <i data-lucide="star" fill="currentColor"></i>
+                    <i data-lucide="star" fill="currentColor" opacity="0.5"></i>
+                </div>
+                <div style="font-weight: 700; color: var(--text-main); font-size: 1.1rem;">4.5/5</div>
+                <div style="color: var(--text-muted); font-size: 0.9rem;">(Basé sur 128 avis certifiés)</div>
             </div>
-            <div class="trust-badges">
-                <div class="trust-badge"><i data-lucide="star" fill="currentColor"></i><span>4.5/5 — 128 avis</span></div>
-                <div class="trust-badge"><i data-lucide="clock"></i><span>Disponible 7j/7</span></div>
-                <div class="trust-badge"><i data-lucide="shield-check"></i><span>Assuré et certifié</span></div>
+
+            <div style="text-align: left;">
+                <button onclick="document.getElementById('contact-modal').style.display='block'; document.body.style.overflow='hidden';" class="btn-cta" style="border: none;">
+                    Demandez un devis <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="hero-image-col reveal reveal-left" style="position: relative; z-index: 1;">
+            <!-- Les éléments décoratifs (les mêmes que dans About) -->
+            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: radial-gradient(var(--primary) 2px, transparent 2px); background-size: 10px 10px; z-index: 0; opacity: 0.2;"></div>
+            <div style="position: absolute; bottom: -20px; right: -20px; border: 4px solid var(--primary); width: 80%; height: 80%; border-radius: 30px; z-index: 0; opacity: 0.1;"></div>
+            
+            <div style="position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); z-index: 1; border: 8px solid white; background: white;">
+                <!-- NOTE IMPORTANTE: J'ai mis object-fit: contain; au cas où c'est un logo -->
+                <img src="https://images.pexels.com/photos/774463/pexels-photo-774463.jpeg?auto=compress&cs=tinysrgb&w=1200" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/9242824/pexels-photo-9242824.jpeg?auto=compress&cs=tinysrgb&w=1200'" alt="Test Plomberie Express" style="width: 100%; height: 450px; display: block; object-fit: cover;">
             </div>
         </div>
     </section>
 
-    <!-- MODIFIÉ: Hero Split (Variant 1 & 3) -->
-    <section class="hero hero-split" style="--hero-overlay: rgba(0,0,0,0.6);">
-        <div class="hero-content">
-            <div class="eyebrow"><i data-lucide="zap" width="12"></i> Dépannage rapide garanti · Lyon</div>
-            <h1>Test Plomberie Express — <span>Excellence & Passion</span></h1>
-            <p>L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète à Lyon</p>
-            <div class="hero-actions">
-                <a href="tel:+33612345678" class="btn-primary">
-                    <i data-lucide="phone" width="16"></i> Demandez un devis
-                </a>
-                <a href="#contact" class="btn-secondary">
-                    Demander un devis <i data-lucide="arrow-right" width="16"></i>
-                </a>
-            </div>
-            <div class="trust-badges">
-                <div class="trust-badge"><i data-lucide="star" fill="currentColor"></i><span>4.5/5 — 128 avis</span></div>
-                <div class="trust-badge"><i data-lucide="clock"></i><span>Disponible 7j/7</span></div>
-                <div class="trust-badge"><i data-lucide="shield-check"></i><span>Assuré et certifié</span></div>
-            </div>
-        </div>
-        <div class="hero-visual" style="background-image: url('https://images.pexels.com/photos/774463/pexels-photo-774463.jpeg?auto=compress&cs=tinysrgb&w=1200');">
-        </div>
-    </section>
-
-    <!-- MODIFIÉ: A Propos -->
+    <!-- A Propos -->
     <section class="container bg-alternate" id="about">
+        <div class="bg-pattern"></div>
         <div class="section-header reveal">
-            <h2>Qui sommes-nous ?</h2>
+            <h2>Un professionnel de confiance à votre service</h2>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; align-items: center; position: relative; z-index: 1;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 4rem; align-items: center; position: relative; z-index: 1;">
             <div class="reveal reveal-left" style="position: relative;">
-                <div style="position: relative; border-radius: 16px; overflow: hidden;">
-                    <!-- REMPLACER PAR : photo réelle du commerce/prospect -->
-                    <img src="https://images.pexels.com/photos/6419126/pexels-photo-6419126.jpeg?auto=compress&cs=tinysrgb&w=1200" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/6419126/pexels-photo-6419126.jpeg?auto=compress&cs=tinysrgb&w=1200'" alt="Test Plomberie Express" style="width: 100%; height: 400px; object-fit: cover; display: block;">
+                <!-- Decorative background elements -->
+                <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: radial-gradient(var(--primary) 2px, transparent 2px); background-size: 10px 10px; z-index: 0; opacity: 0.2;"></div>
+                <div style="position: absolute; bottom: -20px; right: -20px; border: 4px solid var(--primary); width: 80%; height: 80%; border-radius: 30px; z-index: 0; opacity: 0.1;"></div>
+                
+                <div style="position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); z-index: 1; border: 8px solid white;">
+                    <img src="https://images.pexels.com/photos/6419126/pexels-photo-6419126.jpeg?auto=compress&cs=tinysrgb&w=1200" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/6419126/pexels-photo-6419126.jpeg?auto=compress&cs=tinysrgb&w=1200'" alt="Test Plomberie Express" style="width: 100%; height: 450px; object-fit: cover; display: block;">
                 </div>
             </div>
             <div class="reveal reveal-right">
-                <p style="color: #475569; font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem;">
+                <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 1.5rem; font-family: 'Outfit';">
+                    Qui sommes-nous ?
+                </h2>
+                <p style="color: var(--text-muted); font-size: 1.125rem; line-height: 1.8; margin-bottom: 2.5rem;">
                     Artisan plombier professionnel depuis 15 ans
                 </p>
-                <ul style="list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;"><i data-lucide="check-circle-2" style="color: var(--primary); width: 18px;"></i> Dépannage 24h/24</li>
-                    <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;"><i data-lucide="clock" style="color: var(--primary); width: 18px;"></i> Intervention sous 24h</li>
-                    <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;"><i data-lucide="file-text" style="color: var(--primary); width: 18px;"></i> Devis gratuit et transparent</li>
-                    <li style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569;"><i data-lucide="star" style="color: var(--primary); width: 18px;"></i> 4.5/5 — 128 avis clients</li>
+                <ul style="list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <li style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main);"><i data-lucide="check-circle-2" style="color: var(--primary);"></i> Expertise reconnue</li>
+                    <li style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main);"><i data-lucide="check-circle-2" style="color: #10b981;"></i> Solutions sur-mesure</li>
+                    <li style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main);"><i data-lucide="check-circle-2" style="color: #f59e0b;"></i> Accompagnement total</li>
+                    <li style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main);"><i data-lucide="check-circle-2" style="color: #8b5cf6;"></i> Réactivité garantie</li>
                 </ul>
             </div>
         </div>
@@ -1388,32 +1389,32 @@
             
             <div class="valeur-card reveal" style="transition-delay: 0ms">
                 <div class="valeur-icon"><i data-lucide="shield-check" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.35rem; margin-bottom: 1rem;">Garantie Décennale</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Décennale.</p>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; margin-bottom: 1rem;">Garantie Décennale</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
             </div>
             
             <div class="valeur-card reveal" style="transition-delay: 100ms">
                 <div class="valeur-icon"><i data-lucide="clock" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.35rem; margin-bottom: 1rem;">Intervention < 2h</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Intervention < 2h.</p>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; margin-bottom: 1rem;">Intervention < 2h</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
             </div>
             
             <div class="valeur-card reveal" style="transition-delay: 200ms">
                 <div class="valeur-icon"><i data-lucide="file-text" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.35rem; margin-bottom: 1rem;">Devis Gratuit</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Devis Gratuit.</p>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; margin-bottom: 1rem;">Devis Gratuit</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
             </div>
             
             <div class="valeur-card reveal" style="transition-delay: 300ms">
                 <div class="valeur-icon"><i data-lucide="check-square" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.35rem; margin-bottom: 1rem;">Artisan Qualifié</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Artisan Qualifié.</p>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; margin-bottom: 1rem;">Artisan Qualifié</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
             </div>
             
         </div>
     </section>
 
-    <!-- MODIFIÉ: Nos Chiffres Clés -->
+    <!-- Nos Chiffres Clés -->
     <section class="container section-stats" style="padding-top: 2rem; padding-bottom: 2rem;">
         <div class="stats-banner reveal">
             <div class="stat-banner-item">
@@ -1430,12 +1431,43 @@
             </div>
             <div class="stat-banner-item">
                 <h3>100%</h3>
-                <div style="font-weight: 500; opacity: 0.9;">Clients satisfaits</div>
+                <div style="font-weight: 500; opacity: 0.9;">Satisfaction</div>
             </div>
         </div>
     </section>
 
-    <!-- MODIFIÉ: Process -->
+    <!-- Garanties & Assurances -->
+    <section class="container bg-alternate section-assurances" id="garanties" style="background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); margin: 3rem auto; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05);">
+        <div class="section-header reveal">
+            <h2>Garanties & Assurances</h2>
+            <p>Travaillez l'esprit serein grâce à nos couvertures complètes conformes à la législation.</p>
+        </div>
+        <div class="valeurs-grid">
+            
+            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: 0ms; background: white;">
+                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="shield-check" width="32" height="32"></i></div>
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Garantie Décennale</h3>
+            </div>
+            
+            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: 100ms; background: white;">
+                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="clock" width="32" height="32"></i></div>
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Intervention < 2h</h3>
+            </div>
+            
+            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: 200ms; background: white;">
+                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="file-text" width="32" height="32"></i></div>
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Devis Gratuit</h3>
+            </div>
+            
+            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: 300ms; background: white;">
+                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="check-square" width="32" height="32"></i></div>
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Artisan Qualifié</h3>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Process (4 Démarches) -->
     <section class="container section-process" id="process">
         <!-- Supprimé : anim-shape pour design plus propre -->
         <div class="section-header reveal">
@@ -1443,340 +1475,351 @@
             <p>Une méthodologie claire et transparente pour garantir le succès de votre projet.</p>
         </div>
         <div class="process-grid reveal">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Prise de contact</h3>
-                    <p>Nous étudions ensemble votre besoin et définissons les priorités.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>Devis détaillé</h3>
-                    <p>Un chiffrage précis et transparent, sans aucun frais caché.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Intervention</h3>
-                    <p>Réalisation de la prestation par nos experts qualifiés.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">4</div>
-                    <h3>Suivi qualité</h3>
-                    <p>Nous nous assurons de votre entière satisfaction après livraison.</p>
-                </div>
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Prise de contact</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Nous étudions ensemble votre besoin et définissons les priorités.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Devis détaillé</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un chiffrage précis et transparent, sans aucun frais caché.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Intervention</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Réalisation de la prestation par nos experts qualifiés.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Suivi qualité</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Nous nous assurons de votre entière satisfaction après livraison.</p>
+            </div>
         </div>
     </section>
 
     <!-- SECTIONS DYNAMIQUES SPÉCIFIQUES AU SECTEUR -->
     
-    <section id="emergency" style="padding: 80px 5vw; background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; text-align: center;">
-      <div style="max-width: 600px; margin: 0 auto;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
-          <i data-lucide="alert-triangle" width="28" style="color: white;"></i>
-        </div>
-        <h2 style="font-family: 'Plus Jakarta Sans'; font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; margin-bottom: 16px;">
-          Urgence Plomberie
-        </h2>
-        <p style="font-size: 1rem; margin-bottom: 32px; opacity: 0.9;">
-          Fuite d'eau, panne de chauffage, obstruction ? Nous intervenons 24h/24 et 7j/7
-        </p>
-        <div style="border-radius: 16px; padding: 28px; background: rgba(255,255,255,0.1); max-width: 400px; margin: 0 auto;">
-          <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px;">
-            <i data-lucide="phone" width="24"></i>
-            <span style="font-size: 1.5rem; font-weight: 700;">+33 6 12 34 56 78</span>
+    <!-- EMERGENCY SECTION -->
+    <section id="emergency" class="py-20 bg-red-600 text-white">
+      <div class="container mx-auto px-6">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
+            <i data-lucide="alert-triangle" class="w-10 h-10"></i>
           </div>
-          <p style="font-size: 0.9rem; margin-bottom: 20px; opacity: 0.8;">Intervention sous 1h30 garantie</p>
-          <a href="tel:+33612345678" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; background: white; color: #dc2626; border-radius: 8px; font-weight: 700; text-decoration: none;">
-            <i data-lucide="phone-call" width="18"></i> Appeler d'urgence
-          </a>
+          <h2 class="text-4xl md:text-5xl font-bold mb-4">
+            Urgence Plomberie
+          </h2>
+          <p class="text-xl mb-8 max-w-2xl mx-auto">
+            Fuite d'eau, panne de chauffage, obstruction ? Nous intervenons 24h/24 et 7j/7
+          </p>
+          
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-md mx-auto">
+            <div class="flex items-center justify-center mb-6">
+              <i data-lucide="phone" class="w-8 h-8 mr-3"></i>
+              <span class="text-3xl font-bold">+33 6 12 34 56 78</span>
+            </div>
+            <p class="text-lg mb-4">Intervention sous 1h30 garantie</p>
+            <button class="w-full px-8 py-4 bg-white text-red-600 rounded-full font-bold hover:bg-gray-100 transition-colors duration-300">
+              Appeler d'urgence
+            </button>
+          </div>
         </div>
       </div>
     </section>
   
-    <section id="services" class="section-alt">
-      <div class="section-header" style="text-align: center; max-width: 640px; margin: 0 auto 56px;">
-        <h2 style="font-family: 'Plus Jakarta Sans'; font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.02em;">
-          Nos Services
-        </h2>
-        <p style="color: #64748b; font-size: 1rem; line-height: 1.7;">
-          Des solutions professionnelles adaptées à vos besoins
-        </p>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4" style="color: #0f766e">
+            Nos Services
+          </h2>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Des solutions professionnelles adaptées à vos besoins
+          </p>
+        </div>
         
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Dépannage 24h/24</h3>
+              <p class="text-gray-600 mb-6">Intervention d'urgence sur toutes fuites et pannes</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Disponible 7j/7
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Arrivée sous 1h30
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Sans surprise tarifaire
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Dépannage 24h/24</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Intervention d'urgence sur toutes fuites et pannes</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Disponible 7j/7
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Arrivée sous 1h30
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Sans surprise tarifaire
-                </li>
-              
-            </ul>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Installation Sanitaire</h3>
+              <p class="text-gray-600 mb-6">Pose et remplacement de vos appareils</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Robinetterie
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Éviers
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    WC
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Douches
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Installation Sanitaire</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Pose et remplacement de vos appareils</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Robinetterie
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Éviers
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  WC
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Douches
-                </li>
-              
-            </ul>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Chauffage & Chaudière</h3>
+              <p class="text-gray-600 mb-6">Installation et réparation chauffage</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Chaudières gaz/fioul
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Pompes à chaleur
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Détartrage
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Chauffage & Chaudière</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Installation et réparation chauffage</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Chaudières gaz/fioul
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Pompes à chaleur
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Détartrage
-                </li>
-              
-            </ul>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Détection de Fuites</h3>
+              <p class="text-gray-600 mb-6">Localisation précise sans casse</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Caméra thermique
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Gaz traceur
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Colmatage immédiat
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Détection de Fuites</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Localisation précise sans casse</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Caméra thermique
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Gaz traceur
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Colmatage immédiat
-                </li>
-              
-            </ul>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Rénovation Salle de Bain</h3>
+              <p class="text-gray-600 mb-6">Création et rénovation complète</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Devis gratuit
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Aide au choix
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Clé en main
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Rénovation Salle de Bain</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Création et rénovation complète</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Devis gratuit
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Aide au choix
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Clé en main
-                </li>
-              
-            </ul>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #0EA5E918;">
-              <i data-lucide="wrench" style="color: #0EA5E9;" width="22"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center mb-6" style="background-color: #0f766e">
+                <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4" style="color: #0f766e">Entretien Annuel</h3>
+              <p class="text-gray-600 mb-6">Maintenance préventive</p>
+              <ul class="space-y-3">
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Contrôle chauffage
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Détartrage
+                  </li>
+                
+                  <li class="flex items-center text-sm text-gray-700">
+                    <i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i>
+                    Mise aux normes
+                  </li>
+                
+              </ul>
             </div>
-            <h3 style="font-family: 'Plus Jakarta Sans'; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Entretien Annuel</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">Maintenance préventive</p>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Contrôle chauffage
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Détartrage
-                </li>
-              
-                <li style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569;">
-                  <i data-lucide="check" style="color: var(--primary); min-width: 16px;" width="16"></i>
-                  Mise aux normes
-                </li>
-              
-            </ul>
-          </div>
-        
+          
+        </div>
       </div>
     </section>
   
-    <section id="testimonials" class="section">
-      <div class="section-header" style="text-align: center; max-width: 640px; margin: 0 auto 56px;">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 16px;">
-          <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="20"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="20"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="20"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="20"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="20"></i>
-          <span style="font-weight: 600; margin-left: 8px;">4.5/5</span>
+    <!-- TESTIMONIALS SECTION -->
+    <section id="testimonials" class="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4" style="color: #0f766e">
+            Témoignages Clients
+          </h2>
+          <div class="flex items-center justify-center mb-4">
+            <i data-lucide="star" class="w-6 h-6 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-6 h-6 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-6 h-6 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-6 h-6 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-6 h-6 text-yellow-400 fill-current"></i>
+            <span class="ml-3 text-lg font-semibold">4.5/5</span>
+          </div>
+          <p class="text-xl text-gray-600">128 avis clients vérifiés</p>
         </div>
-        <h2 style="font-family: 'Plus Jakarta Sans'; font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.02em;">
-          Témoignages Clients
-        </h2>
-        <p style="color: #64748b; font-size: 0.95rem;">128 avis clients vérifiés</p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
         
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Intervention d'urgence pour une fuite majeure. Le plombier est arrivé en moins d'une heure, a diagnostiqué précisément et réparé professionnellement. Très sérieux et tarifs transparents.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
               </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Marc Dubois</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 3 jours</div>
-              </div>
-            </div>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Rénovation complète de notre salle de bain. Travail impeccable, respect des délais et budget respecté. Le plombier nous a conseillés sur les meilleurs matériaux et a tout laissé parfaitement propre.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
-              </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Sophie Martin</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 1 semaine</div>
+              <p class="text-gray-700 mb-6 italic">"Intervention d'urgence pour une fuite majeure. Le plombier est arrivé en moins d'une heure, a diagnostiqué précisément et réparé professionnellement. Très sérieux et tarifs transparents."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Marc Dubois</div>
+                  <div class="text-sm text-gray-600">Il y a 3 jours</div>
+                </div>
               </div>
             </div>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Installation d'un nouveau chauffe-eau. Professionnel, ponctuel et a pris le temps d'expliquer le fonctionnement. Prix très compétitif pour la qualité de service.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
               </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Pierre Bernard</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 2 semaines</div>
-              </div>
-            </div>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Debouchage de canalisation bouchée. Intervention rapide avec matériel moderne. Le plombier a protégé nos sols et a tout nettoyé après intervention.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
-              </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Claire Petit</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 3 semaines</div>
+              <p class="text-gray-700 mb-6 italic">"Rénovation complète de notre salle de bain. Travail impeccable, respect des délais et budget respecté. Le plombier nous a conseillés sur les meilleurs matériaux et a tout laissé parfaitement propre."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Sophie Martin</div>
+                  <div class="text-sm text-gray-600">Il y a 1 semaine</div>
+                </div>
               </div>
             </div>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Diagnostic complet de notre installation avant achat maison. Très professionnel, nous a fait économiser en identifiant des problèmes cachés. Devis détaillé et sans surprise.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
               </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Jean-Louis Robert</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 1 mois</div>
-              </div>
-            </div>
-          </div>
-        
-          <div class="card" style="border-radius: 16px; border: 1px solid rgba(0,0,0,0.07); padding: 28px; background: white; transition: all 0.2s ease;">
-            <div style="display: flex; gap: 4px; margin-bottom: 16px;">
-              <i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i><i data-lucide="star" style="color: #f59e0b; fill: currentColor;" width="16"></i>
-            </div>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic;">&ldquo;Changement robinetterie salle de bain. Travail soigné, matériel de qualité. Le plombier a démonté l'ancien et installé le nouveau système en moins de 2h.&rdquo;</p>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i data-lucide="user" style="color: #64748b;" width="18"></i>
-              </div>
-              <div>
-                <div style="font-weight: 600; font-size: 0.9rem;">Marie Leroy</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Il y a 1 mois</div>
+              <p class="text-gray-700 mb-6 italic">"Installation d'un nouveau chauffe-eau. Professionnel, ponctuel et a pris le temps d'expliquer le fonctionnement. Prix très compétitif pour la qualité de service."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Pierre Bernard</div>
+                  <div class="text-sm text-gray-600">Il y a 2 semaines</div>
+                </div>
               </div>
             </div>
-          </div>
-        
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">"Debouchage de canalisation bouchée. Intervention rapide avec matériel moderne. Le plombier a protégé nos sols et a tout nettoyé après intervention."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Claire Petit</div>
+                  <div class="text-sm text-gray-600">Il y a 3 semaines</div>
+                </div>
+              </div>
+            </div>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">"Diagnostic complet de notre installation avant achat maison. Très professionnel, nous a fait économiser en identifiant des problèmes cachés. Devis détaillé et sans surprise."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Jean-Louis Robert</div>
+                  <div class="text-sm text-gray-600">Il y a 1 mois</div>
+                </div>
+              </div>
+            </div>
+          
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div class="flex mb-4">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">"Changement robinetterie salle de bain. Travail soigné, matériel de qualité. Le plombier a démonté l'ancien et installé le nouveau système en moins de 2h."</p>
+              <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                  <i data-lucide="user" class="w-6 h-6 text-gray-600"></i>
+                </div>
+                <div>
+                  <div class="font-semibold">Marie Leroy</div>
+                  <div class="text-sm text-gray-600">Il y a 1 mois</div>
+                </div>
+              </div>
+            </div>
+          
+        </div>
       </div>
     </section>
   
@@ -1784,8 +1827,8 @@
     <!-- Maps & Contact -->
     <section class="container bg-alternate" id="contact">
         <div class="section-header reveal">
-            <h2>Contactez-nous</h2>
-            <p>Basé à Lyon, nous intervenons dans toute la région.</p>
+            <h2>Passez à l'action dès aujourd'hui</h2>
+            <p>Notre équipe est prête à intervenir. Contactez-nous pour un diagnostic rapide.</p>
         </div>
         <div class="contact-grid reveal">
             <div class="map-side">
@@ -1795,7 +1838,7 @@
                 </iframe>
             </div>
             <div class="contact-form-side">
-                <h3 style="font-size: 2rem; font-family: 'Plus Jakarta Sans'; margin-bottom: 2rem;">Envoyez-nous un message</h3>
+                <h3 style="font-size: 2rem; font-family: 'Outfit'; margin-bottom: 2rem;">Envoyez-nous un message</h3>
                 <form onsubmit="event.preventDefault(); alert('Message envoyé avec succès. Nous vous contacterons très vite !');">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Votre nom complet" required>
@@ -1830,10 +1873,10 @@
         
         <form onsubmit="event.preventDefault(); alert('Demande envoyée ! Nous vous rappelons très vite.'); document.getElementById('contact-modal').style.display='none'; document.body.style.overflow='auto';">
             <div style="margin-bottom: 1rem;">
-                <input type="text" placeholder="Votre nom" required style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-family: 'Plus Jakarta Sans';">
+                <input type="text" placeholder="Votre nom" required style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-family: 'Inter';">
             </div>
             <div style="margin-bottom: 1rem;">
-                <input type="tel" placeholder="Votre numéro de téléphone" required style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-family: 'Plus Jakarta Sans';">
+                <input type="tel" placeholder="Votre numéro de téléphone" required style="width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-family: 'Inter';">
             </div>
             <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
                 <i data-lucide="phone-call" width="20"></i> Être rappelé(e)
@@ -1876,9 +1919,9 @@
             <div class="footer-col">
                 <h4>Contact Info</h4>
                 <ul style="color: var(--text-light);">
-                    <li style="display: flex; gap: 10px;"><i data-lucide="phone"></i> <a href="tel:+33612345678" style="color: var(--text-light); text-decoration: none;">+33 6 12 34 56 78</a></li>
-                    <li style="display: flex; gap: 10px;"><i data-lucide="mail"></i> <a href="mailto:contact@test-plomberie.fr" style="color: var(--text-light); text-decoration: underline; text-underline-offset: 3px;">contact@test-plomberie.fr</a></li>
-                    <li style="display: flex; gap: 10px;"><i data-lucide="map-pin"></i> <a href="https://maps.google.com/?q=Centre%20Ville%2C%20Lyon" target="_blank" rel="noopener" style="color: var(--text-light); text-decoration: underline; text-underline-offset: 3px;">Centre Ville, Lyon</a></li>
+                    <li style="display: flex; gap: 10px;"><i data-lucide="phone"></i> +33 6 12 34 56 78</li>
+                    <li style="display: flex; gap: 10px;"><i data-lucide="mail"></i> contact@test-plomberie.fr</li>
+                    <li style="display: flex; gap: 10px;"><i data-lucide="map-pin"></i> Centre Ville, Lyon</li>
                 </ul>
             </div>
         </div>
@@ -1902,7 +1945,7 @@
 
     <!-- Chatbot Window -->
     <div class="chat-window" id="chat-window">
-        <div class="chat-header" style="background: var(--primary); color: white; padding: 1.25rem; font-family: 'Plus Jakarta Sans'; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+        <div class="chat-header" style="background: var(--primary); color: white; padding: 1.25rem; font-family: 'Outfit'; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="width: 12px; height: 12px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px rgba(34,197,94,0.5);"></div>
                 Service Client - Test
@@ -1917,7 +1960,7 @@
             </div>
         </div>
         <div class="chat-input" style="padding: 1rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
-            <input type="text" id="chat-text" placeholder="Écrivez votre message..." style="flex: 1; border: 1px solid #e2e8f0; outline: none; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Plus Jakarta Sans';">
+            <input type="text" id="chat-text" placeholder="Écrivez votre message..." style="flex: 1; border: 1px solid #e2e8f0; outline: none; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 100px; font-family: 'Inter';">
             <button onclick="sendMsg()" style="background: var(--primary); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i data-lucide="send" width="18"></i></button>
         </div>
     </div>
@@ -2133,12 +2176,6 @@
             }
         });
     </script>
-
-    <!-- MODIFIÉ: Mobile Sticky CTA -->
-    <a href="tel:+33612345678" class="mobile-sticky-cta">
-        <i data-lucide="phone" class="w-5 h-5"></i>
-        Appeler — +33 6 12 34 56 78
-    </a>
 <div class="chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
         <button style="background: #dc2626; color: white; border: none; padding: 12px; border-radius: 50%; cursor: pointer;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
