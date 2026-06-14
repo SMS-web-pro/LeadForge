@@ -4,203 +4,6 @@
 import { getSectorImages, SECTOR_PEXELS_IMAGES } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 
-// ── AVIS FALLBACK SECTORIELS ──
-// Des avis spécifiques à chaque secteur pour plus de crédibilité
-const SECTOR_FALLBACK_REVIEWS: Record<string, Array<{ author: string; text: string; rating: number; date: string }>> = {
-  plomberie: [
-    { author: 'M. Dupont', text: "Intervention rapide pour une fuite d'eau en pleine nuit. Plombier professionnel et tarifs justes. Je recommande !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Martin', text: "Chauffage réparé en 1h, impeccable. Un vrai pro qui connait son métier.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Pierre L.', text: "Remplacement complet de la salle de bain. Travail soigné, respect des délais.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Sophie R.', text: "Détection de fuite sans casse. Technologie au top et prix raisonnable.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Jean-Claude B.', text: "Entretien annuel de la chaudière. Consciencieux et sympathique.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Marie T.', text: "Débouchage d'urgence. Arrivé en 45min, problème résolu. Merci !", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  electricien: [
-    { author: 'Sylvie M.', text: "Mise aux normes complète de ma maison ancienne. Travail propre et conforme.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Marc D.', text: "Installation de ma borne de recharge voiture électrique. Parfait !", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Nathalie P.', text: "Domotique installée dans toute la maison. Un vrai confort au quotidien.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Philippe R.', text: "Court-circuit réparé en urgence. Intervention rapide et efficace.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Isabelle G.', text: "Éclairage LED dans tout l'appartement. Économies d'énergie garanties.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'François L.', text: "Diagnostic complet avant achat immobilier. Rassurant et professionnel.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  coiffeur: [
-    { author: 'Sophie L.', text: "Coupe parfaite, exactement ce que je voulais. Le visagisme fait toute la différence !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Thomas H.', text: "Barbier au top, rasage à l'ancienne de qualité. Ambiance masculine garantie.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Camille D.', text: "Coloration balayage magnifique. Des compliments tous les jours !", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Laura M.', text: "Soins kératine pour mes cheveux abîmés. Résultat spectaculaire.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Emma B.', text: "Chignon de mariage exceptionnel. Tenu toute la journée et la nuit.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Nicolas P.', text: "Extensions naturelles, on ne voit pas la différence. Super travail.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  restaurant: [
-    { author: 'Julie M.', text: "Menu dégustation exceptionnel. Une explosion de saveurs à chaque plat !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Antoine D.', text: "Service impeccable et cadre magnifique. Parfait pour les occasions spéciales.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Sarah K.', text: "Produits locaux et cuisine créative. Une belle découverte gastronomique.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'David L.', text: "Brunch de qualité, copieux et fait maison. On reviendra !", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Claire P.', text: "Accueil chaleureux comme à la maison. Une cuisine avec du cœur.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Romain G.', text: "Carte des vins excellente et conseils avisés. Soirée parfaite.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  garage: [
-    { author: 'Stéphane B.', text: "Réparation moteur complexe résolue en 2 jours. Mécanicien de talent !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Aurélie M.', text: "Pneus changés et géométrie faite. Prix compétitif et rapide.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Christophe L.', text: "Diagnostic électronique précis. Enfin un garage honnête !", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Marie-Jeanne T.', text: "Carrosserie réparée impeccablement. On ne voit plus la rayure.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Pierre D.', text: "Révision complète à prix juste. Pas de travaux inutiles proposés.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Sandrine H.', text: "Climatisation rechargée et nettoyée. Parfait pour l'été.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  nettoyage: [
-    { author: 'Mme Bernard', text: "Appartement rendu impeccable après déménagement. Propreté impeccable !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'M. Leroy', text: "Bureaux entreprise nettoyés tous les soirs. Service fiable et discret.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Famille Dubois', text: "Nettoyage après travaux. Poussière et débris partout enlevés. Bravo !", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Petit', text: "Canapé et moquettes nettoyés à domicile. Comme neuf, odeurs disparues.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Moreau', text: "Vitres immeuble 4 étages sans traces. Équipe courageuse !", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Roux', text: "Désinfection complète post-covid. Rassurant et professionnel.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  jardin: [
-    { author: 'M. Fontaine', text: "Jardin totalement transformé. Un vrai havre de paix maintenant !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Chevalier', text: "Taille de haies millimétrée. Géométrie parfaite et nettoyé.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Lambert', text: "Terrasse bois rénovée et traitée. Protégée pour des années.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Simon', text: "Massif fleuri créé de A à Z. Plantes parfaitement adaptées.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Roussel', text: "Pelouse semée et arrosage automatique installé. Zéro entretien !", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Garnier', text: "Élagage dangereux d'un grand chêne. Pro sans risques.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  fitness: [
-    { author: 'Nicolas V.', text: "Programme perte de poids efficace -8kg en 3 mois. Coach motivant !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Caroline M.', text: "Remise en forme post-grossesse adaptée. Exercices sur mesure.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Alexandre K.', text: "Préparation marathon réussie. Temps visé atteint grâce au suivi.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Émilie R.', text: "Cours collectifs dynamiques. Ambiance top et résultats garantis.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Julien B.', text: "Nutrition + sport = résultats durables. Accompagnement complet.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Sophie G.', text: "Musculation sans blessure grâce aux conseils techniques.", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  medical: [
-    { author: 'M. Durand', text: "Consultation à l'écoute et diagnostic précis. Enfin un médecin disponible !", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Lefebvre', text: "Kiné compétente pour ma rééducation genou. Progrès rapides.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Michel', text: "Dentiste doux et patient. Phobie du dentiste vaincue !", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Fournier', text: "Infirmière à domicile régulière et professionnelle. Rassurante.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Girard', text: "Pédicure soignante pour diabétique. Extrêmement précautionneuse.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Bonnet', text: "Ostéo qui soulage enfin mes maux de dos chroniques. Un soulagement !", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  avocat: [
-    { author: 'M. Lemaire', text: "Divorce compliqué géré avec professionnalisme et empathie.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Duval', text: "Succès en appel pour mon licenciement abusif. Défense exemplaire !", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Bernard', text: "Contrat commercial rédigé avec précision. Zéro zone grise.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Morin', text: "Succession familiale débloquée rapidement. Fin des conflits.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Petit', text: "Conseil fiscal pertinent qui m'a fait économiser beaucoup.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Giraud', text: "Défense pénale efficace. Acquittement obtenu. Excellence !", rating: 5, date: 'Il y a 2 mois' }
-  ],
-  default: [
-    { author: 'Emma L.', text: "Une expérience tout simplement majestueuse...", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Arthur D.', text: "Service d'excellence du début à la fin...", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Sophie M.', text: "Je recommande vivement cette entreprise...", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Lucas P.', text: "Professionnalisme et expertise remarquables...", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Marie B.', text: "Un service client irréprochable...", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Thomas R.', text: "Excellence et qualité au rendez-vous...", rating: 5, date: 'Il y a 2 mois' }
-  ]
-};
-
-// Fonction pour obtenir les avis fallback d'un secteur
-function getSectorFallbackReviews(sector: string): Array<{ author: string; text: string; rating: number; date: string }> {
-  const normalizedSector = (sector || '').toLowerCase();
-  
-  for (const [key, reviews] of Object.entries(SECTOR_FALLBACK_REVIEWS)) {
-    if (normalizedSector.includes(key)) {
-      return reviews;
-    }
-  }
-  
-  return SECTOR_FALLBACK_REVIEWS.default;
-}
-
-// Fonction pour générer le texte "about" dynamique avec l'expérience réelle
-function generateAboutText(templateText: string, lead: any): string {
-  let years = 'plusieurs';
-  
-  // Si on a une année de création, calculer les années d'expérience
-  if (lead.establishedYear && typeof lead.establishedYear === 'number') {
-    const currentYear = new Date().getFullYear();
-    const calculatedYears = currentYear - lead.establishedYear;
-    if (calculatedYears > 0 && calculatedYears < 100) {
-      years = calculatedYears.toString();
-    }
-  } 
-  // Fallback: extraire des années du texte du lead ou IA si disponible
-  else if (lead.description) {
-    const yearMatch = lead.description.match(/(\d+)\s*ans?\s+d['']exp[eé]rience/i);
-    if (yearMatch) {
-      years = yearMatch[1];
-    }
-  }
-  
-  // Remplacer "15 ans" par le nombre calculé
-  return templateText.replace(/depuis plus de 15 ans/gi, `depuis ${years} ans`)
-                     .replace(/15 ans d['']exp[eé]rience/gi, `${years} ans d'expérience`);
-}
-
-// Fonction pour générer des features cohérentes basées sur le service
-function generateFeaturesFromService(name: string, description: string, sector: string): string[] {
-  const serviceName = (name || '').toLowerCase();
-  const serviceDesc = (description || '').toLowerCase();
-  const normalizedSector = (sector || '').toLowerCase();
-  
-  // Features génériques de qualité
-  const defaultFeatures = ['Service professionnel', 'Intervention garantie', 'Devis gratuit'];
-  
-  // Dictionnaire de features par type de service
-  const featureDictionary: Record<string, string[]> = {
-    // Plomberie
-    'urgence': ['Disponible 24h/24', 'Intervention rapide', 'Déplacement inclus'],
-    'depannage': ['Réparation durable', 'Pièces garanties', 'Tarifs transparents'],
-    'installation': ['Pose certifiée', 'Conformité normes', 'Garantie décennale'],
-    'chauffage': ['Économies énergie', 'Installation propre', 'Entretien annuel'],
-    'sanitaire': ['Matériel qualité', 'Finitions soignées', 'Délai respecté'],
-    // Électricité
-    'mise aux normes': ['Conformité NFC 15-100', 'Certification Consuel', 'Sécurité garantie'],
-    'domotique': ['Configuration incluse', 'App smartphone', 'Support technique'],
-    'éclairage': ['Design moderne', 'LED économique', 'Installation discrète'],
-    // Coiffure
-    'coupe': ['Visagisme personnalisé', 'Conseil entretien', 'Produits adaptés'],
-    'coloration': ['Coloration végétale', 'Protection cheveux', 'Brillance longue durée'],
-    'barbier': ['Rasage précis', 'Soins barbe', 'Ambiance masculine'],
-    // Restaurant
-    'menu': ['Produits frais', 'Cuisine maison', 'Accord mets-vins'],
-    'livraison': ['Emballage qualité', 'Livraison rapide', 'Commande en ligne'],
-    // Garage
-    'moteur': ['Diagnostic précis', 'Réparation garantie', 'Pièces d\'origine'],
-    'pneus': ['Montage rapide', 'Géométrie 3D', 'Stockage hiver'],
-    'carrosserie': ['Peinture neuve', 'Débosselage sans peinture', 'Garantie vie'],
-    // Nettoyage
-    'ménage': ['Produits écologiques', 'Équipe formée', 'Intervention régulière'],
-    'vitres': ['Sans traces garanti', 'Accès difficile', 'Sécurité maximale'],
-    'désinfection': ['Produits certifiés', 'Zones sensibles', 'Certificat fourni'],
-    // Jardin
-    'taille': ['Forme parfaite', 'Évacuation déchets', 'Santé végétaux'],
-    'pelouse': ['Semence adaptée', 'Arrosage auto', 'Entretien minime'],
-    // Fitness
-    'coaching': ['Programme personnalisé', 'Suivi nutrition', 'Résultats mesurables'],
-    'musculation': ['Technique sécurisée', 'Progression adaptée', 'Sans blessure'],
-    // Médical
-    'consultation': ['À l\'écoute', 'Diagnostic précis', 'Disponibilité rapide'],
-    'kiné': ['Rééducation active', 'Appareillage moderne', 'Progrès rapides'],
-    // Juridique
-    'divorce': ['Discrétion totale', 'Médiation possible', 'Protection intérêts'],
-    'contrat': ['Rédaction précise', 'Clauses protectrices', 'Relecture gratuite'],
-  };
-  
-  // Chercher des correspondances dans le dictionnaire
-  for (const [keyword, features] of Object.entries(featureDictionary)) {
-    if (serviceName.includes(keyword) || serviceDesc.includes(keyword)) {
-      return features;
-    }
-  }
-  
-  // Fallback: extraire des mots-clés de la description
-  const keywords = serviceDesc.match(/\b(installation|réparation|remplacement|rénovation|entretien|dépannage|conseil|sur-mesure|professionnel|certifié|garanti|rapide|qualité|économique)\b/g);
-  if (keywords && keywords.length > 0) {
-    return keywords.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1) + ' garanti');
-  }
-  
-  return defaultFeatures;
-}
-
 export interface UltimateContent {
   companyName: string;
   sector: string;
@@ -608,32 +411,27 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
   
-  const rawDescription = aiContent?.aboutText || lead.description || template.aboutText;
-  const description = generateAboutText(rawDescription, lead);
+  const description = aiContent?.aboutText || lead.description || template.aboutText;
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
   
-  // CTA avec limite augmentée à 50 caractères pour plus de personnalisation
+  // Remplacer la logique compliquée de slice() par ceci :
   let ctaText = aiContent?.cta || template.ctaText || "Demander un devis";
-  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
+  // Si l'IA sort une phrase de plus de 22 caractères, on force un texte court standard
+  if (ctaText.length > 22) {
+      ctaText = "Demander un devis";
+  }
   
-  // Services avec fallback - Features IA générées dynamiquement si disponibles
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
-    finalServices = aiContent.services.map((s: any, idx: number) => {
-      let features = s.features;
-      if (!features || features.length === 0) {
-        features = generateFeaturesFromService(s.name, s.description, lead.sector);
-      }
-      return {
-        name: s.name || `Service ${idx+1}`,
-        description: s.description || '',
-        features: features.slice(0, 3)
-      };
-    });
+    finalServices = aiContent.services.map((s: any, idx: number) => ({
+      name: s.name || `Service ${idx+1}`,
+      description: s.description || '',
+      features: template.services[idx % template.services.length].features
+    }));
   }
 
-  // Avis avec fallback sectoriels spécifiques
+  // 6 avis demandés (si le lead en a moins, on complète)
   let testimonials = (lead.googleReviewsData || []).map((review: any) => ({
     author: review.author || 'Client VIP',
     text: review.text || "Une prestation exceptionnelle.",
@@ -641,8 +439,14 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     date: review.date || 'Récemment'
   }));
 
-  // Utiliser les avis fallback sectoriels
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
+  const fallbackReviews = [
+    { author: 'Emma L.', text: "Une expérience tout simplement majestueuse. Rapidité, précision et professionnalisme impressionnant. Merci à toute l'équipe pour ce travail d'orfèvre.", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Arthur D.', text: "Service d'excellence du début à la fin. Les promesses sont tenues et même dépassées. C'est rare de trouver des professionnels aussi dévoués.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Sophie M.', text: "Très satisfaite de l'intervention. Une équipe à l'écoute, réactive et des résultats visibles immédiatement. Je recommande fortement.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Lucas T.', text: "Intervention rapide et propre. Tarifs clairs sans mauvaises surprises. Je garde le numéro précieusement.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Marie J.', text: "Je n'ai jamais vu un tel niveau de finition. Ils ont un vrai sens du détail. Tout a été livré en temps et en heure.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Hugo N.', text: "Contact fluide, devis respecté, personnel respectueux des lieux. Un professionnalisme comme on n'en fait plus !", rating: 5, date: 'Il y a 2 mois' }
+  ];
   
   while (testimonials.length < 6) {
     testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
@@ -762,8 +566,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
   
-  const rawDescription = aiContent?.aboutText || lead.description || template.aboutText;
-  const description = generateAboutText(rawDescription, lead);
+  const description = aiContent?.aboutText || lead.description || template.aboutText;
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
   
@@ -811,24 +614,17 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     allImages.push(combinedImages[imageIndex]);
   }
 
-  // Services avec fallback - Features IA générées dynamiquement si disponibles
+  // Services avec fallback
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
-    finalServices = aiContent.services.map((s: any, idx: number) => {
-      // Si l'IA fournit des features, les utiliser; sinon générer des features cohérentes
-      let features = s.features;
-      if (!features || features.length === 0) {
-        features = generateFeaturesFromService(s.name, s.description, lead.sector);
-      }
-      return {
-        name: s.name || `Service ${idx+1}`,
-        description: s.description || '',
-        features: features.slice(0, 3) // Max 3 features
-      };
-    });
+    finalServices = aiContent.services.map((s: any, idx: number) => ({
+      name: s.name || `Service ${idx+1}`,
+      description: s.description || '',
+      features: template.services[idx % template.services.length].features
+    }));
   }
 
-  // Avis avec fallback sectoriels spécifiques
+  // Avis
   let testimonials = (lead.googleReviewsData || []).map((review: any) => ({
     author: review.author || 'Client VIP',
     text: review.text || "Une prestation exceptionnelle.",
@@ -836,20 +632,23 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     date: review.date || 'Récemment'
   }));
 
-  // Utiliser les avis fallback sectoriels au lieu des avis génériques
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
+  const fallbackReviews = [
+    { author: 'Emma L.', text: "Une expérience tout simplement majestueuse...", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Arthur D.', text: "Service d'excellence du début à la fin...", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Sophie M.', text: "Je recommande vivement cette entreprise...", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Lucas P.', text: "Professionnalisme et expertise remarquables...", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Marie B.', text: "Un service client irréprochable...", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Thomas R.', text: "Excellence et qualité au rendez-vous...", rating: 5, date: 'Il y a 2 mois' }
+  ];
 
   while (testimonials.length < 6) {
     testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   }
   testimonials = testimonials.slice(0, 6);
 
-  // CTA - Accepte les textes plus longs (jusqu'à 50 caractères) pour plus de personnalisation
+  // CTA
   let ctaText = aiContent?.cta || template.ctaText || "Demander un devis";
-  if (ctaText.length > 50) {
-    // Tronquer intelligemment si trop long
-    ctaText = ctaText.substring(0, 47) + '...';
-  }
+  if (ctaText.length > 22) ctaText = "Demander un devis";
 
   const content: UltimateContent = {
     companyName, 
