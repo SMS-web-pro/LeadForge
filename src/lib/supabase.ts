@@ -60,6 +60,15 @@ export interface Database {
           temperature?: string;
           tags?: string[];
           generated_prompt?: string;
+          site_html?: string;
+          sent_steps?: string[];
+          site_clicked?: boolean;
+          devis_clicked?: boolean;
+          payment_deposit_clicked?: boolean;
+          payment_final_clicked?: boolean;
+          invoice_deposit_clicked?: boolean;
+          invoice_final_clicked?: boolean;
+          follow_ups?: number;
           created_at: string;
           updated_at: string;
         };
@@ -81,6 +90,11 @@ export interface Database {
           gmail_smtp_from_name?: string;
           gmail_smtp_from_email?: string;
           gmail_smtp_secure?: boolean;
+          nvidia_key?: string;
+          gemini_key?: string;
+          default_llm?: string;
+          whop_deposit_link?: string;
+          whop_final_payment_link?: string;
           created_at: string;
           updated_at: string;
         };
