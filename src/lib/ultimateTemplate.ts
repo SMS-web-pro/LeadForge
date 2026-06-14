@@ -2367,20 +2367,12 @@ function generateStandardContactSection(content: UltimateContent, template: any)
         
         <div class="grid lg:grid-cols-2 gap-12">
           <div>
-            <form class="space-y-6" action="${formSubmitEndpoint}" method="POST" target="_blank" id="contactForm">
-              <!-- Protection CSRF avancée -->
-              <input type="hidden" name="_csrf_token" value="${generateCSRFToken()}">
-              <input type="hidden" name="_form_timestamp" value="${Date.now()}">
-              <input type="hidden" name="_form_id" value="contact_${companyName.replace(/[^a-zA-Z0-9]/g, '_')}">
-              
-              <!-- Champ caché pour éviter le spam (honeypot) -->
-              <input type="text" name="_honey" style="display:none;" aria-label="Ne pas remplir ce champ" tabindex="-1" autocomplete="off">
+            <form class="space-y-6" action="${formSubmitEndpoint}" method="POST" target="_blank">
+              <!-- Champ caché pour éviter le spam -->
+              <input type="text" name="_honey" style="display:none;">
               <input type="hidden" name="_subject" value="Nouvelle demande de contact - ${companyName}">
               <input type="hidden" name="_template" value="box">
               <input type="hidden" name="_captcha" value="false">
-              
-              <!-- Validation JavaScript côté client -->
-              <input type="hidden" name="_js_enabled" value="false">
               
               <div>
                 <label class="block text-sm font-medium mb-2">Nom complet *</label>
@@ -2594,153 +2586,43 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     return emergencyFallback;
   };
 
-  // Fonction de génération de token CSRF
-  function generateCSRFToken(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let token = '';
-    for (let i = 0; i < 64; i++) {
-      token += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return token;
-  }
-
   return `<!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr" class="scroll-smooth" style="overflow-x: hidden;">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="icon" type="image/svg+xml" href="${faviconDataUrl}">
-  
-  <!-- SEO Meta Tags améliorés -->
-  <title>${companyName} — ${content.sector} professionnel${city ? ' à ' + city : ''} | Expert ${content.sector}</title>
-  <meta name="description" content="${companyName}, ${content.sector} professionnel${city ? ' à ' + city : ''}. ${heroSubtitle}. ${rating ? 'Note ' + rating + '/5' : 'Excellence garantie'}${reviews ? ' - ' + reviews + ' avis clients' : ''}.${phone ? ' Contactez-nous au ' + phone : ''}">
-  <meta name="keywords" content="${content.sector}, ${city}, professionnel, expert, artisan, ${companyName}, intervention rapide, devis gratuit${phone ? ', ' + phone.replace(/\s/g, '') : ''}${city ? ', ' + city.toLowerCase() : ''}">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="author" content="${companyName}">
-  <meta name="language" content="fr">
-  <meta name="geo.region" content="FR">
-  <meta name="geo.placename" content="${city || 'France'}">
-  <meta name="ICBM" content="${city ? '48.8566, 2.3522' : '48.8566, 2.3522'}">
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="${website || '#'}">
-  <meta property="og:title" content="${companyName} — ${content.sector} professionnel${city ? ' à ' + city : ''}">
-  <meta property="og:description" content="${heroSubtitle}">
-  <meta property="og:image" content="${heroImage}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="${companyName} - ${content.sector}">
-  <meta property="og:locale" content="fr_FR">
-  <meta property="og:site_name" content="${companyName}">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@${companyName.toLowerCase().replace(/\s+/g, '')}">
-  <meta name="twitter:creator" content="@${companyName.toLowerCase().replace(/\s+/g, '')}">
-  <meta name="twitter:title" content="${companyName} — ${content.sector} professionnel">
-  <meta name="twitter:description" content="${heroSubtitle}">
-  <meta name="twitter:image" content="${heroImage}">
-  <meta name="twitter:image:alt" content="${companyName} - ${content.sector}">
-
-  <!-- Favicon et ressources -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  ${fontPair === 0 ? `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/outfit@5.0.13/outfit.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">` :
-    fontPair === 1 ? `<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.1.0/plus-jakarta-sans.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">` :
-    `<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/lexend@5.0.4/lexend.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">`}
-
-  <!-- ✅ Lucide v1.11.0 — version fixée, CDN jsDelivr -->
-  <script src="https://cdn.jsdelivr.net/npm/lucide@1.11.0/dist/umd/lucide.min.js"></script>
-
-  <!-- Schema.org structuré amélioré -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": "${website || '#organization'}",
-    "name": "${companyName}",
-    "alternateName": "${logoInfo.text}",
-    "description": "${heroSubtitle}",
-    "url": "${website || '#'}",
-    "image": "${heroImage}",
-    "telephone": "${phone}",
-    "email": "${email}",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "${address}",
-      "addressLocality": "${city}",
-      "addressRegion": "${city ? (city.includes('75') ? 'Île-de-France' : city.includes('69') ? 'Auvergne-Rhône-Alpes' : city.includes('13') ? 'Provence-Alpes-Côte d\'Azur' : '') : ''}",
-      "postalCode": "${address.match(/\b\d{5}\b/) ? address.match(/\b\d{5}\b/)[0] : ''}",
-      "addressCountry": "FR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "48.8566",
-      "longitude": "2.3522"
-    },
-    "openingHours": "Mo-Fr 09:00-18:00",
-    "priceRange": "$$",
-    "paymentAccepted": "Cash, Credit Card, Bank Transfer",
-    "currenciesAccepted": "EUR",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "${rating}",
-      "reviewCount": "${reviews}",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": [
-      ${finalTestimonials.slice(0, 3).map((review: any) => `{
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "${review.author}"
-        },
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "${review.rating}",
-          "bestRating": "5"
-        },
-        "reviewBody": "${review.text.replace(/"/g, '\\"')}"
-      }`).join(',')}
-
-    ],
-    "serviceType": "${content.sector}",
-    "slogan": "${slogan}",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Services ${content.sector}",
-      "itemListElement": [
-        ${finalServices.slice(0, 3).map((service: any, index: number) => `{
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "${service.name}",
-            "description": "${service.description.replace(/"/g, '\\"')}"
-          }
-        }`).join(',')}
-
-      ]
-    }
-  }
-  </script>
-
-  <!-- Canonical URL -->
-  <link rel="canonical" href="${website || '#'}">
-  
-  <!-- Préchargement des ressources critiques -->
-  <link rel="preload" href="${heroImage}" as="image">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=${fontHead.includes('Outfit') ? 'Outfit:wght@300;400;500;700;800' : fontHead.includes('Plus') ? 'Plus+Jakarta+Sans:wght@300;400;500;700;800' : 'Lexend:wght@300;400;500;700;800'}&family=Inter:wght@300;400;500;600;700&display=swap" as="style">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/svg+xml" href="${faviconDataUrl}">
+    <title>${companyName} - ${content.sector} à ${city} | Services Professionnels</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="${companyName} - ${content.sector} professionnel à ${city}. ${heroSubtitle}. Contactez-nous au ${phone} pour vos projets.">
+    <meta name="keywords" content="${content.sector}, ${city}, ${companyName}, professionnel, services, intervention rapide, qualité">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <link rel="canonical" href="${website || '#'}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="${website || '#'}">
+    <meta property="og:title" content="${companyName} - ${content.sector} à ${city}">
+    <meta property="og:description" content="${heroSubtitle}">
+    <meta property="og:image" content="${heroImage}">
+    <meta property="og:locale" content="fr_FR">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="${website || '#'}">
+    <meta name="twitter:title" content="${companyName} - ${content.sector} à ${city}">
+    <meta name="twitter:description" content="${heroSubtitle}">
+    <meta name="twitter:image" content="${heroImage}">
+    
+    <!-- Google Fonts: Diverse Dynamic Pairings WITH LOCAL FALLBACK -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     ${fontPair === 0 ? `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/outfit@5.0.13/outfit.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">` :
       fontPair === 1 ? `<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.1.0/plus-jakarta-sans.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">` :
       `<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="this.onerror=null;this.href='data:text/css,@import url(https://cdn.jsdelivr.net/npm/@fontsource/lexend@5.0.4/lexend.css');@import url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/inter.css);'">`}
     
     <!-- Lucide Icons WITH LOCAL FALLBACK -->
-{{ ... }
     <script src="https://unpkg.com/lucide@latest" onerror="this.onerror=null;this.src='data:text/javascript,/* Lucide Icons Fallback */ function createIcon(name){const svg={phone:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.6-6.6A19.79 19.79 0 0 1 3 4.18 2 2 0 0 1 5 2.08v3a2 2 0 0 0 2.18 2c.28.04.54.1.82.14a2 2 0 0 1 1.82 1.82c.04.28.1.54.14.82A2 2 0 0 0 7.08 16H10a2 2 0 0 0 2-2.18 2 2 0 0 1-.14-.82 2 2 0 0 1-1.82-1.82c-.28-.04-.54-.1-.82-.14A2 2 0 0 0 7.08 12H4a2 2 0 0 1-2-2.18 2 2 0 0 1 .14-.82 2 2 0 0 1 1.82-1.82c.28-.04.54-.1.82-.14A2 2 0 0 0 5 8.92V5.92A2 2 0 0 1 7.18 4 19.79 19.79 0 0 1 15.81 1.07 19.5 19.5 0 0 1 22.41 7.67 19.79 19.79 0 0 1 23 16.92Z\\"/></svg>',mail:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><rect x=\\"2\\" y=\\"4\\" width=\\"20\\" height=\\"16\\" rx=\\"2\\"/><path d=\\"m22 7-10 5L2 7\\"/></svg>',map:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M21 10c0 7-9 13-9 13a9.75 9.75 0 0 1-6.74 2.74L3 8l3.74-1.5A9.75 9.75 0 0 1 12 3c7 0 9 6 9 13Z\\"/><path d=\\"M12 7v5l3 3\\"/></svg>',check:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 6L9 17l-5-5\\"/></svg>',star:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><polygon points=\\"12 2 15.09 8.26 22 9 17 14.14 19.18 21.02 12 17.77 4.82 21.02 7 14.14 2 9 8.91 8.26 12 2\\"/></svg>',user:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\\"/><circle cx=\\"12\\" cy=\\"7\\" r=\\"4\\"/></svg>',send:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"m22 2-7 20-10-9Z\\"/><path d=\\"M15 13 22 2l-7 7Z\\"/></svg>',calendar:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><rect x=\\"3\\" y=\\"4\\" width=\\"18\\" height=\\"18\\" rx=\\"2\\" ry=\\"2\\"/><line x1=\\"16\\" y1=\\"2\\" x2=\\"16\\" y2=\\"6\\"/><line x1=\\"8\\" y1=\\"2\\" x2=\\"8\\" y2=\\"6\\"/><line x1=\\"3\\" y1=\\"10\\" x2=\\"21\\" y2=\\"10\\"/></svg>',wrench:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\\"/></svg>',utensils:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\\"/><path d=\\"M7 2v20\\"/><path d=\\"M21 15V2v0a4 4 0 0 0-4 4h3.5Z\\"/><path d=\\"M3.5 18.5a4.5 4.5 0 0 1 0 9Z\\"/></svg>',download:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\\"/><polyline points=\\"7 10 12 15 17 10\\"/><line x1=\\"12\\" y1=\\"15\\" x2=\\"12\\" y2=\\"3\\"/></svg>',shield:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 12a8 8 0 0 0-16 0c0 5.4 3.6 9.9 8 12a8 8 0 0 0 8-12Z\\"/><path d=\\"M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0Z\\"/></svg>',clock:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><circle cx=\\"12\\" cy=\\"12\\" r=\\"10\\"/><polyline points=\\"12 6 12 12 16 14\\"/></svg>',award:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><circle cx=\\"12\\" cy=\\"8\\" r=\\"7\\"/><polyline points=\\"8.21 13.89 7 23 9 12 15 12 17 23 15.79 13.89\\"/></svg>',alert:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z\\"/><line x1=\\"12\\" y1=\\"9\\" x2=\\"12\\" y2=\\"13\\"/><line x1=\\"12\\" y1=\\"17\\" x2=\\"12.01\\" y2=\\"17\\"/></svg>',check:'<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\" stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\"><path d=\\"M20 6L9 17l-5-5\\"/></svg>'};return svg[name]||svg.star;};window.lucide=createIcon;document.querySelectorAll(\\"[data-lucide]\\").forEach(el=>{const name=el.getAttribute(\\"data-lucide\\");if(name){el.innerHTML=createIcon(name);}});'"></script>
 
     <!-- TRACKING MASK SCRIPT -->
@@ -4034,17 +3916,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div style="position: absolute; bottom: -20px; right: -20px; border: 4px solid var(--primary); width: 80%; height: 80%; border-radius: 30px; z-index: 0; opacity: 0.1;"></div>
             
             <div style="position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); z-index: 1; border: 8px solid white; background: white;">
-                <!-- Lazy loading avec placeholder -->
-                <div class="lazy-image-container" style="position: relative; width: 100%; height: 450px; background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0); background-size: 20px 20px; animation: shimmer 1.5s infinite linear;">
-                    <img 
-                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" 
-                        data-src="${heroImage}" 
-                        ${imgErr(0)} 
-                        alt="${companyName}" 
-                        class="lazy-image" 
-                        style="width: 100%; height: 450px; display: block; object-fit: cover; transition: opacity 0.3s ease;"
-                        loading="lazy">
-                </div>
+                <!-- NOTE IMPORTANTE: J'ai mis object-fit: contain; au cas où c'est un logo -->
+                <img src="${heroImage}" ${imgErr(0)} alt="${companyName}" style="width: 100%; height: 450px; display: block; object-fit: cover;">
             </div>
         </div>
     </section>
@@ -4062,16 +3935,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div style="position: absolute; bottom: -20px; right: -20px; border: 4px solid var(--primary); width: 80%; height: 80%; border-radius: 30px; z-index: 0; opacity: 0.1;"></div>
                 
                 <div style="position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); z-index: 1; border: 8px solid white;">
-                    <div class="lazy-image-container" style="position: relative; width: 100%; height: 450px; background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0); background-size: 20px 20px; animation: shimmer 1.5s infinite linear;">
-                        <img 
-                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" 
-                            data-src="${getImg(1)}" 
-                            ${imgErr(1)} 
-                            alt="${companyName}" 
-                            class="lazy-image" 
-                            style="width: 100%; height: 450px; display: block; object-fit: cover; transition: opacity 0.3s ease;"
-                            loading="lazy">
-                    </div>
+                    <img src="${getImg(1)}" ${imgErr(1)} alt="${companyName}" style="width: 100%; height: 450px; object-fit: cover; display: block;">
                 </div>
             </div>
             <div class="reveal reveal-right">
@@ -4569,240 +4433,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             if (event.target === modal) {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-            }
-        });
-
-        // === LAZY LOADING AVANCÉ ===
-        // Lazy loading avec Intersection Observer
-        const lazyImages = document.querySelectorAll('.lazy-image');
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    const src = img.dataset.src;
-                    
-                    if (src) {
-                        // Charger l'image réelle
-                        img.src = src;
-                        img.onload = () => {
-                            // Animation de fondu
-                            img.style.opacity = '1';
-                            // Cacher le placeholder shimmer
-                            const container = img.closest('.lazy-image-container');
-                            if (container) {
-                                container.style.background = 'none';
-                                container.style.animation = 'none';
-                            }
-                        };
-                        
-                        // Nettoyer l'observer
-                        observer.unobserve(img);
-                    }
-                }
-            });
-        }, {
-            rootMargin: '50px 0px', // Charger 50px avant qu'elle ne soit visible
-            threshold: 0.01
-        });
-
-        // Observer toutes les images lazy
-        lazyImages.forEach(img => {
-            // Initialiser avec opacité 0 pour le fondu
-            img.style.opacity = '0';
-            imageObserver.observe(img);
-        });
-
-        // Fallback pour les navigateurs qui ne supportent pas Intersection Observer
-        if (!('IntersectionObserver' in window)) {
-            lazyImages.forEach(img => {
-                const src = img.dataset.src;
-                if (src) {
-                    img.src = src;
-                    img.style.opacity = '1';
-                    const container = img.closest('.lazy-image-container');
-                    if (container) {
-                        container.style.background = 'none';
-                        container.style.animation = 'none';
-                    }
-                }
-            });
-        }
-
-        // === PROTECTION CSRF AVANCÉE ===
-        // Génération de token CSRF
-        function generateCSRFToken() {
-            const array = new Uint8Array(32);
-            crypto.getRandomValues(array);
-            return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Validation et protection des formulaires
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            // Marquer que JavaScript est activé
-            const jsField = form.querySelector('input[name="_js_enabled"]');
-            if (jsField) {
-                jsField.value = 'true';
-            }
-
-            // Validation avant soumission
-            form.addEventListener('submit', function(e) {
-                const submitTime = Date.now();
-                const timestampField = form.querySelector('input[name="_form_timestamp"]');
-                const formIdField = form.querySelector('input[name="_form_id"]');
-                const csrfField = form.querySelector('input[name="_csrf_token"]');
-                const honeyField = form.querySelector('input[name="_honey"]');
-
-                // Vérifier le honeypot (anti-spam)
-                if (honeyField && honeyField.value.trim() !== '') {
-                    e.preventDefault();
-                    console.warn('Honeypot field filled - possible spam bot');
-                    return false;
-                }
-
-                // Vérifier le timestamp (anti-brute force)
-                if (timestampField) {
-                    const formTime = parseInt(timestampField.value);
-                    const timeDiff = submitTime - formTime;
-                    
-                    // Si le formulaire est soumis trop rapidement (< 3 secondes) ou trop lentement (> 1 heure)
-                    if (timeDiff < 3000 || timeDiff > 3600000) {
-                        e.preventDefault();
-                        console.warn('Invalid form submission timing - possible bot');
-                        return false;
-                    }
-                }
-
-                // Vérifier le token CSRF
-                if (csrfField) {
-                    const token = csrfField.value;
-                    if (!token || token.length !== 64) {
-                        e.preventDefault();
-                        console.warn('Invalid CSRF token');
-                        return false;
-                    }
-                }
-
-                // Validation des champs requis
-                const requiredFields = form.querySelectorAll('[required]');
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.classList.add('error');
-                        
-                        // Afficher un message d'erreur
-                        const errorMsg = document.createElement('div');
-                        errorMsg.className = 'field-error';
-                        errorMsg.textContent = 'Ce champ est obligatoire';
-                        errorMsg.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
-                        
-                        const existingError = field.parentNode.querySelector('.field-error');
-                        if (!existingError) {
-                            field.parentNode.appendChild(errorMsg);
-                        }
-                    } else {
-                        field.classList.remove('error');
-                        const errorMsg = field.parentNode.querySelector('.field-error');
-                        if (errorMsg) {
-                            errorMsg.remove();
-                        }
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    return false;
-                }
-
-                // Validation email
-                const emailField = form.querySelector('input[type="email"]');
-                if (emailField && emailField.value) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(emailField.value)) {
-                        e.preventDefault();
-                        emailField.classList.add('error');
-                        
-                        const errorMsg = document.createElement('div');
-                        errorMsg.className = 'field-error';
-                        errorMsg.textContent = 'Veuillez entrer une adresse email valide';
-                        errorMsg.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
-                        
-                        const existingError = emailField.parentNode.querySelector('.field-error');
-                        if (!existingError) {
-                            emailField.parentNode.appendChild(errorMsg);
-                        }
-                        return false;
-                    }
-                }
-
-                // Validation téléphone (si présent)
-                const phoneField = form.querySelector('input[type="tel"]');
-                if (phoneField && phoneField.value) {
-                    const phoneRegex = /^[+]?[\d\s\-\(\)]+$/;
-                    if (!phoneRegex.test(phoneField.value) || phoneField.value.replace(/\D/g, '').length < 10) {
-                        e.preventDefault();
-                        phoneField.classList.add('error');
-                        
-                        const errorMsg = document.createElement('div');
-                        errorMsg.className = 'field-error';
-                        errorMsg.textContent = 'Veuillez entrer un numéro de téléphone valide';
-                        errorMsg.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
-                        
-                        const existingError = phoneField.parentNode.querySelector('.field-error');
-                        if (!existingError) {
-                            phoneField.parentNode.appendChild(errorMsg);
-                        }
-                        return false;
-                    }
-                }
-
-                // Ajouter des headers de sécurité supplémentaires
-                const formData = new FormData(form);
-                formData.append('_user_agent', navigator.userAgent);
-                formData.append('_referrer', document.referrer);
-                formData.append('_origin', window.location.origin);
-                
-                // Marquer le formulaire comme soumis pour éviter les doubles soumissions
-                const submitButton = form.querySelector('button[type="submit"]');
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Envoi en cours...';
-                    
-                    // Réactiver après 10 secondes (au cas où la soumission échoue)
-                    setTimeout(() => {
-                        submitButton.disabled = false;
-                        submitButton.textContent = submitButton.getAttribute('data-original-text') || 'Envoyer';
-                    }, 10000);
-                }
-            });
-
-            // Nettoyer les erreurs lors de la saisie
-            const inputs = form.querySelectorAll('input, textarea');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    input.classList.remove('error');
-                    const errorMsg = input.parentNode.querySelector('.field-error');
-                    if (errorMsg) {
-                        errorMsg.remove();
-                    }
-                });
-            });
-        });
-
-        // Protection contre le clic multiple rapide
-        document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'BUTTON' && e.target.type === 'submit') {
-                const form = e.target.closest('form');
-                if (form && form.dataset.submitting === 'true') {
-                    e.preventDefault();
-                    return false;
-                }
-                form.dataset.submitting = 'true';
-                setTimeout(() => {
-                    form.dataset.submitting = 'false';
-                }, 5000);
             }
         });
     </script>
