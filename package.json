@@ -19,9 +19,9 @@
     "test:all": "npm run test && npm run test:e2e",
     "test:ci": "npm run test && npm run test:e2e",
     "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "generate:sample": "tsx scripts/generate-sample.ts"
-  },
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+      "generate:sample": "tsx scripts/generate-sample.ts"
+    },
   "dependencies": {
     "@e965/xlsx": "^0.20.3",
     "@supabase/supabase-js": "^2.104.0",
