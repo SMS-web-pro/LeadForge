@@ -91,6 +91,36 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const processedImages = validateAndCategorizeImages(combinedImages, false);
   return renderUltimateTemplate(content, processedImages);
 }
+    { author: 'Emma Rousseau', text: "Soins kératine pour mes cheveux abîmés. Résultat spectaculaire, mes cheveux sont douces et brillants. Le coiffeur m'a donné des conseils d'entretien.", rating: 5, date: 'Il y a 1 semaine', service: 'Soins kératine' },
+    { author: 'Alice David', text: "Chignon de mariage absolument magnifique. A tenu toute la journée et la nuit malgré la chaleur. Le coiffeur a été patient et créatif.", rating: 5, date: 'Il y a 2 semaines', service: 'Coiffure mariage' },
+    { author: 'Nicolas Blanc', text: "Extensions naturelles indétectables. Même ma coiffeuse habituelle n'a pas vu la différence! Pose professionnelle et conseils d'entretien.", rating: 5, date: 'Il y a 3 semaines', service: 'Extensions' },
+    { author: 'Julie Fontaine', text: "Coupe homme moderne avec soin barbe. Ambiance masculine très sympa, conseil sur produits adaptés et résultat très soigné. Je recommande vivement.", rating: 5, date: 'Il y a 1 mois', service: 'Coupe homme' }
+  ],
+  restaurant: [
+    { author: 'Antoine Chevalier', text: "Menu dégustation exceptionnel. Chaque plat était une découverte, associations de saveurs audacieuses mais équilibrées. Service attentif et vins parfaitement accordés.", rating: 5, date: 'Il y a 1 jour', service: 'Menu dégustation' },
+    { author: 'Marie Dupont', text: "Soirée anniversaire organisée parfaitement. Cadre magnifique, service impeccable et menu personnalisé sur mesure. Vraiment un moment inoubliable.", rating: 5, date: 'Il y a 3 jours', service: 'Événement privé' },
+    { author: 'Sarah Lemoine', text: "Brunch du dimanche excellent. Produits frais de saison, présentation soignée et atmosphere chaleureuse. Rapport qualité/prix imbattable.", rating: 5, date: 'Il y a 1 semaine', service: 'Brunch' },
+    { author: 'David Rousseau', text: "Accord mets et vins remarquable. Le sommelier nous a guidés avec expertise et patience. Découverte de pépites vinicoles.", rating: 5, date: 'Il y a 2 semaines', service: 'Accord mets-vins' },
+    { author: 'Claire Bernard', text: "Accueil chaleureux comme à la maison. L'équipe nous a traités comme des habitués malgré notre première visite. Cuisine authentique et généreuse.", rating: 5, date: 'Il y a 3 semaines', service: 'Repas du soir' },
+    { author: 'Romain Petit', text: "Carte des vins exceptionnelle. Sélection variée avec des pépites accessibles. Le personnel connaît parfaitement sa cave et conseille très bien.", rating: 5, date: 'Il y a 1 mois', service: 'Cave à vins' }
+  ],
+  garage: [
+    { author: 'Stéphane Weber', text: "Réparation moteur complexe sur notre berline. Diagnostic précis avec outil de diagnostic moderne, pièces d'origine et main d'œuvre raisonnable. Voiture comme neuve!", rating: 5, date: 'Il y a 2 jours', service: 'Réparation moteur' },
+    { author: 'Aurélie Meyer', text: "Changement 4 pneus et géométrie complète. Service rapide, pneus de qualité et réglage précis. Conduite plus sécurisée immédiatement.", rating: 5, date: 'Il y a 4 jours', service: 'Pneus et géométrie' },
+    { author: 'Christophe Fischer', text: "Diagnostic électronique sur problème intermittent. Le garagiste a identifié la panne en 30min alors que d'autres n'avaient rien trouvé. Honnête et compétent.", rating: 5, date: 'Il y a 1 semaine', service: 'Diagnostic électronique' },
+    { author: 'Marie-Jeanne Hoffmann', text: "Carrosserie réparation après petit accrochage. Travail de peinture impeccable, couleur parfaitement assortie et finition parfaite. On ne voit plus rien.", rating: 5, date: 'Il y a 2 semaines', service: 'Carrosserie' },
+    { author: 'Pierre Schneider', text: "Révision complète avant grand voyage. Contrôle pointilleux, vidange, filtres changés et vérification pneus. Prix très juste pour la qualité.", rating: 5, date: 'Il y a 3 semaines', service: 'Révision' },
+    { author: 'Sandrine Mueller', text: "Climatisation réglée et rechargée. Température parfaite maintenant, même en pleine canicule. Le garagiste a expliqué comment l'entretenir.", rating: 5, date: 'Il y a 1 mois', service: 'Climatisation' }
+  ],
+  nettoyage: [
+    { author: 'Laurent Weber', text: "Nettoyage de fin de chantier impeccable. L'équipe a transformé notre chantier en espace habitable en 2 jours. Travail sérieux et efficace.", rating: 5, date: 'Il y a 3 jours', service: 'Fin de chantier' },
+    { author: 'Sophie Klein', text: "Nettoyage bureaux mensuel contractuel. Équipe ponctuelle, travail discret et résultat toujours parfait. Vraiment professionnel et fiable.", rating: 5, date: 'Il y a 1 semaine', service: 'Nettoyage bureaux' },
+    { author: 'Marie Schmidt', text: "Grand ménage de printemps. Équipe dynamique et équipée, ont nettoyé des endroits inaccessibles depuis des années. Maison comme neuve!", rating: 5, date: 'Il y a 2 semaines', service: 'Grand ménage' },
+    { author: 'Jean-Marc Bauer', text: "Nettoyage vitres professionnel. Résultat sans traces, cadre métallique nettoyé également. Travaux en hauteur sans problème avec toutes sécurités.", rating: 5, date: 'Il y a 3 semaines', service: 'Nettoyage vitres' },
+    { author: 'Isabelle Wagner', text: "Shampooing de tapis et moquettes. Taches tenaces éliminées, séchage rapide et odeur agréable. Tapis comme neufs!", rating: 5, date: 'Il y a 1 mois', service: 'Shampooing tapis' },
+    { author: 'Thomas Becker', text: "Nettoyage industriel après arrêt machine. Équipe spécialisée, produits adaptés et respect des normes sécurité. Production relancée rapidement.", rating: 5, date: 'Il y a 1 mois', service: 'Nettoyage industriel' }
+  ]
+};
 
 // ── SYSTÈME DE VALIDATION DES DONNÉES AVANT GÉNÉRATION ──
 
