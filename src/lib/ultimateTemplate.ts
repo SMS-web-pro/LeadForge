@@ -1279,12 +1279,20 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             background-size: 30px 30px;
         }
         
-        /* Hero Backgrounds - Subtle and Professional */
+        /* Hero Gradient Overlay Premium */
+        .hero-gradient-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
         .hero-centered {
-            background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.04), transparent 70%);
+            background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent 60%);
         }
         .hero-split {
-            background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.04), transparent 60%);
+            background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.06), transparent 50%);
         }
         .bg-alternate {
             background-color: #f1f5f9; /* Un gris légèrement plus sombre pour un vrai contraste */
@@ -1395,17 +1403,16 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .valeur-card:hover { transform: translateY(-5px); box-shadow: var(--glow); }
         .valeur-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(${primaryRgb}, 0.15), rgba(${primaryRgb}, 0.05)); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
 
-        /* Gallery - Professional Masonry Layout */
-        .gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.5rem; }
-        .gallery-item { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; }
-        .gallery-item:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.15); }
-        .gallery-item-main { grid-row: 1 / -1; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .gallery-item:hover img { transform: scale(1.03); }
-        .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); display: flex; align-items: flex-end; padding: 1.5rem; opacity: 0; transition: opacity 0.3s; }
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1rem; }
+        .gallery-item { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
+        .gallery-item-main { grid-row: 1 / -1; aspect-ratio: auto; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem 1.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.6)); opacity: 0; transition: opacity 0.3s; }
         .gallery-item:hover .gallery-overlay { opacity: 1; }
-        .gallery-overlay span { color: white; font-weight: 600; font-size: 0.95rem; font-family: 'Outfit'; }
-        @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr 1fr; gap: 1rem; } .gallery-item-main { grid-row: auto; } }
+        .gallery-overlay span { color: white; font-weight: 700; font-size: 1rem; font-family: 'Outfit'; }
+        @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr 1fr; } .gallery-item-main { grid-row: auto; } }
         @media (max-width: 480px) { .gallery-grid { grid-template-columns: 1fr; } }
 
         /* Hero Section */
@@ -2088,14 +2095,15 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <!-- Hero Centered (Variant 0 & 2) -->
     <section class="hero bg-grid hero-centered" style="text-align: center; padding: 140px 20px 100px;">
+        <div class="hero-gradient-overlay"></div>
         <div class="bg-pattern"></div>
         <div class="hero-content reveal active" style="position: relative; z-index: 1; max-width: 800px; margin: 0 auto;">
             <div class="hero-badge" style="display: inline-flex;"><i data-lucide="${heroBadge.icon}" width="18"></i> ${heroBadge.text}</div>
-            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 0.5rem; line-height: 1.1; color: var(--text-main); font-weight: 800;">
+            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 0.5rem; line-height: 1.1; color: var(--text-main);">
                 ${logoInfo.word1} <span style="color: var(--primary);">${logoInfo.word2}</span>
             </h1>
-            <h2 style="font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-family: 'Outfit'; color: var(--text-main); font-weight: 600; margin-bottom: 1.5rem; opacity: 0.9;">${slogan}</h2>
-            <p style="margin-bottom: 2.5rem; font-size: 1.125rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7; color: var(--text-muted);">${heroSubtitle}</p>
+            <h2 style="font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-family: 'Outfit'; color: var(--text-main); font-weight: 700; margin-bottom: 1.5rem; opacity: 0.8;">${slogan}</h2>
+            <p style="margin-bottom: 2.5rem; font-size: 1.15rem; max-width: 600px; margin-left: auto; margin-right: auto;">${heroSubtitle}</p>
             <button onclick="document.getElementById('contact-modal').style.display='block'; document.body.style.overflow='hidden';" class="btn-cta" style="border: none; margin: 0 auto; display: inline-flex;">
                 ${ctaText} <i data-lucide="arrow-right"></i>
             </button>
@@ -2146,12 +2154,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <!-- À Propos -->
+    <!-- A Propos -->
     <section class="container bg-alternate" id="about">
         <div class="bg-pattern"></div>
         <div class="section-header reveal">
-            <h2>Qui sommes-nous ?</h2>
-            <p>Découvrez notre expertise et notre engagement envers l'excellence dans chaque intervention.</p>
+            <h2>Un professionnel de confiance à votre service</h2>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 4rem; align-items: center; position: relative; z-index: 1;">
             <div class="reveal reveal-left" style="position: relative;">
@@ -2165,13 +2172,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
             <div class="reveal reveal-right">
                 <h2 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 1.5rem; font-family: 'Outfit';">
-                    Notre expertise
+                    Qui sommes-nous ?
                 </h2>
                 <p style="color: var(--text-muted); font-size: 1.125rem; line-height: 1.8; margin-bottom: 2.5rem;">
                     ${aboutText}
-                </p>
-                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 2rem;">
-                    Avec plus de 15 ans d'expérience dans notre secteur, nous nous engageons à fournir des services de qualité supérieure, en utilisant des techniques modernes et en respectant les normes les plus strictes. Notre équipe de professionnels qualifiés est dédiée à votre satisfaction et à la réussite de chaque projet.
                 </p>
                 <ul style="list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
                     <li style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main);"><i data-lucide="check-circle-2" style="color: var(--primary);"></i> Expertise reconnue</li>
@@ -2193,8 +2197,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${template.guarantees.map((garantie: any, index: number) => `
             <div class="valeur-card reveal" style="transition-delay: ${index * 100}ms">
                 <div class="valeur-icon"><i data-lucide="${garantie.icon}" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">${garantie.title}</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; margin-bottom: 1rem;">${garantie.title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Un engagement pris pour votre satisfaction et votre sécurité.</p>
             </div>
             `).join('')}
         </div>
@@ -2205,19 +2209,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         <div class="stats-banner reveal">
             <div class="stat-banner-item">
                 <h3>${(reviews || 0) > 0 ? (reviews || 0) + '+' : '100%'}</h3>
-                <div style="font-weight: 600; opacity: 0.9;">Avis Vérifiés</div>
+                <div style="font-weight: 500; opacity: 0.9;">Avis Vérifiés</div>
             </div>
             <div class="stat-banner-item">
                 <h3>24/7</h3>
-                <div style="font-weight: 600; opacity: 0.9;">Disponibilité</div>
+                <div style="font-weight: 500; opacity: 0.9;">Disponibilité</div>
             </div>
             <div class="stat-banner-item">
                 <h3>${rating}/5</h3>
-                <div style="font-weight: 600; opacity: 0.9;">Note Google</div>
+                <div style="font-weight: 500; opacity: 0.9;">Note Google</div>
             </div>
             <div class="stat-banner-item">
                 <h3>100%</h3>
-                <div style="font-weight: 600; opacity: 0.9;">Satisfaction</div>
+                <div style="font-weight: 500; opacity: 0.9;">Satisfaction</div>
             </div>
         </div>
     </section>
@@ -2226,7 +2230,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="container section-gallery" id="galerie">
         <div class="section-header reveal">
             <h2>Ils nous font confiance</h2>
-            <p>Quelques réalisations récentes qui témoignent de notre savoir-faire et de notre engagement envers l'excellence.</p>
+            <p>Quelques réalisations récentes qui témoignent de notre savoir-faire.</p>
         </div>
         <div class="gallery-grid reveal">
             <div class="gallery-item gallery-item-main">
@@ -2265,20 +2269,20 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <!-- Process (4 Étapes Sectorielles) -->
     <section class="container section-process" id="process">
         <div class="section-header reveal">
-            <h2>Notre méthodologie professionnelle</h2>
-            <p>Un processus structuré et transparent pour garantir des résultats exceptionnels à chaque étape.</p>
+            <h2>Notre démarche en 4 étapes</h2>
+            <p>Une méthodologie claire et transparente pour garantir le succès de votre projet.</p>
         </div>
         <div class="process-grid reveal">
             ${(template.process || [
-              { title: 'Diagnostic', icon: 'search', desc: 'Évaluation approfondie de vos besoins et analyse complète de la situation.' },
-              { title: 'Devis', icon: 'file-text', desc: 'Proposition détaillée et transparente avec breakdown complet des coûts.' },
-              { title: 'Intervention', icon: 'tool', desc: 'Exécution professionnelle par nos experts qualifiés avec respect des délais.' },
-              { title: 'Suivi', icon: 'check-circle', desc: 'Validation finale et accompagnement post-intervention pour une satisfaction totale.' }
+              { title: 'Prise de contact', icon: 'phone', desc: 'Nous étudions ensemble votre besoin et définissons les priorités.' },
+              { title: 'Devis détaillé', icon: 'file-text', desc: 'Un chiffrage précis et transparent, sans aucun frais caché.' },
+              { title: 'Intervention', icon: 'settings', desc: 'Réalisation de la prestation par nos experts qualifiés.' },
+              { title: 'Suivi qualité', icon: 'heart-handshake', desc: 'Nous nous assurons de votre entière satisfaction après livraison.' }
             ]).map((step: any, index: number) => `
             <div class="step-card reveal" style="transition-delay: ${index * 100}ms">
                 <div class="step-icon"><i data-lucide="${step.icon}" width="32" height="32"></i></div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">${step.title}</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">${step.desc}</p>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">${step.desc}</p>
             </div>
             `).join('')}
         </div>
@@ -2287,8 +2291,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <!-- Services -->
     <section class="container bg-alternate" id="services">
         <div class="section-header reveal" style="position: relative; z-index: 1;">
-            <h2>Nos Services Professionnels</h2>
-            <p>Des prestations complètes et sur mesure, réalisées dans le respect des normes et des délais les plus stricts.</p>
+            <h2>Nos Services et Interventions</h2>
+            <p>Des prestations de qualité, réalisées dans le respect des normes et des délais.</p>
         </div>
         <div class="grid-3">
             ${services.map((s, i) => `
@@ -2297,7 +2301,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <i data-lucide="${['zap', 'wrench', 'home', 'shield-check', 'settings', 'check-circle'][i%6]}" width="40" height="40" style="color: var(--primary);"></i>
                 </div>
                 <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">${s.name}</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">${s.description}</p>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">${s.description}</p>
                 <ul style="list-style: none; padding: 0;">
                     ${s.features.map(f => `
                         <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
@@ -2318,15 +2322,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
             <h2>Ils l'ont vérifié, ils l'ont approuvé</h2>
             <p>Découvrez pourquoi 100% de nos clients nous recommandent à leur entourage.</p>
-        </div>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 3rem;">
-            <div style="font-size: 3rem; font-weight: 800; color: var(--text-main); line-height: 1;">${rating}</div>
-            <div>
-                <div style="display: flex; color: #f59e0b; gap: 4px; margin-bottom: 4px;">
-                    <i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i><i data-lucide="star" fill="currentColor"></i>
-                </div>
-                <div style="color: var(--text-muted); font-weight: 500;">Basé sur ${reviews} avis Google</div>
-            </div>
         </div>
         
         <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 3rem;">
