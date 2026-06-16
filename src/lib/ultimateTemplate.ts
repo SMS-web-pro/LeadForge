@@ -904,13 +904,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   const primaryRgb = hexToRgb(template.primary);
   
-  // Variation Logic (gardé pour les patterns et animations)
+  // Variation Logic basée sur le hash du nom
+  // nameHash permet de varier la typo et le slogan de façon déterministe par entreprise
   let nameHash = 0;
   for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
-  const patternType = nameHash % 4;
+  // fontPair : sélection dynamique de la typo (0 = Outfit, 1 = Plus Jakarta Sans, 2 = Lexend)
   const fontPair = nameHash % 3;
-  const animStyle = nameHash % 2;
-  const shapesType = nameHash % 3;
 
   const logoInfo = getLogoInfo(companyName, content.sector);
   const heroBadge = getHeroBadge(content.sector);
@@ -2296,9 +2295,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 </div>
                 <p style="color: var(--text-light); margin-bottom: 2rem;">${aboutText.substring(0, 120)}...</p>
                 <div style="display: flex; gap: 1rem;">
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="facebook"></i></a>
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="instagram"></i></a>
-                    <a href="#" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="linkedin"></i></a>
+                    <a href="javascript:void(0)" aria-label="Facebook" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="facebook"></i></a>
+                    <a href="javascript:void(0)" aria-label="Instagram" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="instagram"></i></a>
+                    <a href="javascript:void(0)" aria-label="LinkedIn" style="color: white; opacity: 0.7; transition: 0.3s;"><i data-lucide="linkedin"></i></a>
                 </div>
             </div>
             <div class="footer-col">
