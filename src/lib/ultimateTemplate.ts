@@ -570,7 +570,7 @@ function getLogoInfo(name: string, sector: string = 'default') {
 function getHeroBadge(sector: string): { icon: string; text: string } {
   const s = (sector || '').toLowerCase();
   
-  if (s.includes('plombber') || s.includes('plomb')) {
+  if (s.includes('plomber') || s.includes('plomb')) {
     return { icon: 'zap', text: 'Dépannage rapide garanti' };
   }
   if (s.includes('électricien') || s.includes('electric')) {
@@ -793,7 +793,26 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     // Fallback sur les images statiques
     combinedImages = getSectorImagesFallback(lead.sector);
   }
-  
+
+  // Filtrer les images d'illustration pour le Hero (éviter logos, icônes, plans...) 
+  const isGoodHeroImage = (url: string) => {
+    if (!url) return false;
+    const low = url.toLowerCase();
+    // Exclure les logos / éléments techniques
+    if (
+      low.includes('logo') ||
+      low.includes('icon') ||
+      low.includes('badge') ||
+      low.includes('map') ||
+      low.includes('plan') ||
+      low.includes('favicon') ||
+      low.includes('sprite')
+    ) return false;
+    return true;
+  };
+
+  const heroPoolImages = (combinedImages || []).filter(isGoodHeroImage);
+
   // Hash robuste pour distribution unique
   let imageHash = 0;
   for (let i = 0; i < companyName.length; i++) {
@@ -801,9 +820,10 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     imageHash |= 0;
   }
   imageHash = Math.abs(imageHash);
-  
-  const startIndex = imageHash % combinedImages.length;
-  const heroImage = combinedImages[startIndex];
+
+  const startIndex = (heroPoolImages.length > 0 ? imageHash % heroPoolImages.length : 0);
+  const heroImage = heroPoolImages.length > 0 ? heroPoolImages[startIndex] : (combinedImages[0] || getSectorImagesFallback(lead.sector)[0]);
+
   
   const allImages = [];
   for (let i = 1; i <= 5; i++) {
@@ -1446,7 +1466,26 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
         }
+
+        /* Services premium (asymétriques) */
+        .services-container {
+            width: 100%;
+        }
+        .services-container > .card {
+            min-height: 320px;
+        }
+        @media (max-width: 768px) {
+            .services-container {
+                grid-template-columns: 1fr !important;
+            }
+            .services-container > .card {
+                grid-column: span 1 !important;
+                min-height: unset;
+            }
+        }
+
         .card {
+
             padding: 3rem;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
             position: relative;
@@ -2102,27 +2141,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <!-- Garanties & Assurances -->
-    <section class="container bg-alternate section-assurances" id="garanties" style="background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); margin: 3rem auto; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05);">
-        <div class="section-header reveal">
-            <h2>Garanties & Assurances</h2>
-            <p>Travaillez l'esprit serein grâce à nos couvertures complètes conformes à la législation.</p>
-        </div>
-        <div class="valeurs-grid">
-            ${(template.guarantees || [
-              { title: 'Garantie Décennale', icon: 'shield-check' },
-              { title: 'Assurance RC Pro', icon: 'briefcase' },
-              { title: 'Certification Qualité', icon: 'award' },
-              { title: 'Satisfaction Garantie', icon: 'heart' }
-            ]).map((g: any, i: number) => `
-            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: ${i * 100}ms; background: white;">
-                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="${g.icon}" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">${g.title}</h3>
-            </div>
-            `).join('')}
-        </div>
-    </section>
-
     <!-- Process (4 Démarches) -->
     <section class="container section-process" id="process">
         <!-- Supprimé : anim-shape pour design plus propre -->
@@ -2160,23 +2178,36 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <h2>Nos Services et Interventions</h2>
             <p>Des prestations de qualité, réalisées dans le respect des normes et des délais.</p>
         </div>
-        <div class="grid-3">
-            ${services.map((s, i) => `
-            <div class="card glass reveal zoom-hover" style="transition-delay: ${i * 100}ms">
-                <div class="card-icon" style="background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                    <i data-lucide="${['zap', 'wrench', 'home', 'shield-check', 'settings', 'check-circle'][i%6]}" width="40" height="40" style="color: var(--primary);"></i>
-                </div>
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">${s.name}</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">${s.description}</p>
-                <ul style="list-style: none; padding: 0;">
-                    ${s.features.map(f => `
-                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
-                            <i data-lucide="check-circle-2" style="color: var(--primary);"></i> ${f}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;" class="services-container">
+            ${services.map((s, i) => {
+              const isMainService = i === 0;
+              return `
+              <div class="card glass reveal zoom-hover" style="grid-column: ${isMainService ? 'span 2' : 'span 1'}; padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; transition-delay: ${i * 100}ms;">
+                  <div>
+                      <div class="card-icon" style="width: 44px; height: 44px; border-radius: 12px; background: rgba(${primaryRgb}, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                          <i data-lucide="${
+                            s.name.toLowerCase().includes('dépannage') || s.name.toLowerCase().includes('fuite')
+                              ? 'wrench'
+                              : s.name.toLowerCase().includes('installation') || s.name.toLowerCase().includes('pose')
+                              ? 'plus-circle'
+                              : s.name.toLowerCase().includes('chauffage') || s.name.toLowerCase().includes('chaudière')
+                              ? 'thermometer'
+                              : 'settings'
+                          }" width="20" height="20"></i>
+                      </div>
+                      <h3 style="font-family: 'Outfit'; font-size: ${isMainService ? '1.5rem' : '1.2rem'}; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-main);">${s.name}</h3>
+                      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">${s.description}</p>
+                  </div>
+                  <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; border-top: 1px solid rgba(15, 23, 42, 0.05); padding-top: 1rem;">
+                      ${s.features.map(f => `
+                        <li style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; color: var(--text-muted); background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 100px;">
+                          <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--primary);"></span> ${f}
                         </li>
-                    `).join('')}
-                </ul>
-            </div>
-            `).join('')}
+                      `).join('')}
+                  </ul>
+              </div>
+              `;
+            }).join('')}
         </div>
     </section>
 
