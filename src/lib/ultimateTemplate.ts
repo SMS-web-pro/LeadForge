@@ -225,10 +225,12 @@ export interface UltimateContent {
 
 const SECTOR_ULTIMATE_TEMPLATES = {
   plomberie: {
-    primary: '#0f766e',
-    secondary: '#115e59',
-    accent: '#14b8a6',
+    primary: '#0d9488',
+    secondary: '#0f766e',
+    accent: '#2dd4bf',
     background: '#f0fdfa',
+    gradientFrom: '#0d9488',
+    gradientTo: '#0f766e',
     services: [
       { name: 'Dépannage 24h/24', description: 'Intervention d\'urgence sur toutes fuites et pannes', features: ['Disponible 7j/7', 'Arrivée sous 1h30', 'Sans surprise tarifaire'] },
       { name: 'Installation Sanitaire', description: 'Pose et remplacement de vos appareils', features: ['Robinetterie', 'Éviers', 'WC', 'Douches'] },
@@ -243,16 +245,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Devis Gratuit', icon: 'file-text' },
       { title: 'Artisan Qualifié', icon: 'check-square' }
     ],
+    process: [
+      { title: 'Diagnostic', icon: 'search', desc: 'Nous localisons précisément la panne avec nos outils thermiques.' },
+      { title: 'Devis', icon: 'file-text', desc: 'Un chiffrage clair et détaillé, validé avant toute intervention.' },
+      { title: 'Intervention', icon: 'tool', desc: 'Réparation soignée par un plombier chauffagiste expérimenté.' },
+      { title: 'Suivi', icon: 'heart-handshake', desc: 'Vérification de la bonne exécution et conseils d\'entretien.' }
+    ],
     heroTitle: 'Artisan Plombier',
     heroSubtitle: "L'artisan du tuyau à votre service - De la fuite d'eau à la rénovation complète",
     aboutText: "Plombier chauffagiste depuis plus de 15 ans, je mets mon savoir-faire au service de vos installations. Artisan passionné, je garantis un travail soigné, des délais respectés et des tarifs transparents.",
     ctaText: 'Demandez un devis'
   },
   electricien: {
-    primary: '#1e40af',
-    secondary: '#1e3a8a',
-    accent: '#2563eb',
-    background: '#f8fafc',
+    primary: '#2563eb',
+    secondary: '#1d4ed8',
+    accent: '#60a5fa',
+    background: '#eff6ff',
+    gradientFrom: '#2563eb',
+    gradientTo: '#1e3a8a',
     services: [
       { name: 'Mise aux Normes', description: 'Remise à neuf de votre installation électrique', features: ['Norme NFC 15-100', 'Tableau électrique neuf', 'Mise à la terre'] },
       { name: 'Dépannage Électrique', description: 'Pannes, court-circuits, disjonctions', features: ['Intervention rapide', 'Diagnostic complet', 'Réparation durable'] },
@@ -267,16 +277,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Intervention < 2h', icon: 'clock' },
       { title: 'Devis Gratuit', icon: 'file-text' }
     ],
+    process: [
+      { title: 'Audit', icon: 'clipboard-check', desc: 'Analyse complète de votre installation électrique existante.' },
+      { title: 'Conception', icon: 'blueprint', desc: 'Schéma électrique sur mesure adapté à vos besoins.' },
+      { title: 'Installation', icon: 'zap', desc: 'Pose et raccordement dans les règles de l\'art NFC 15-100.' },
+      { title: 'Certification', icon: 'award', desc: 'Mise en service avec attestation Consuel de conformité.' }
+    ],
     heroTitle: 'Électricien Agréé',
     heroSubtitle: "Votre expert électricien pour des installations sûres et modernes",
     aboutText: "Électricien certifié Consuel avec 15 ans d'expérience. Je sécurise votre habitat grâce à des installations conformes et durables. Artisan sérieux, intervention rapide et devis transparent.",
     ctaText: 'Contactez-moi'
   },
   coiffeur: {
-    primary: '#6b21a8',
-    secondary: '#581c87',
-    accent: '#7c3aed',
-    background: '#f8fafc',
+    primary: '#7c3aed',
+    secondary: '#6d28d9',
+    accent: '#c084fc',
+    background: '#f5f3ff',
+    gradientFrom: '#7c3aed',
+    gradientTo: '#a21caf',
     services: [
       { name: 'Coupes & Styles', description: 'Coupe sur-mesure femme et homme', features: ['Visagisme personnalisé', 'Techniques actuelles', 'Conseil entretien'] },
       { name: 'Barbier Traditionnel', description: 'Rasage et soins barbe', features: ['Rasage à l\'ancienne', 'Taille précise', 'Soins barbe'] },
@@ -291,16 +309,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Formation Continue', icon: 'scissors' },
       { title: 'Satisfait ou Refait', icon: 'heart' }
     ],
+    process: [
+      { title: 'Accueil', icon: 'coffee', desc: 'Échange personnalisé pour comprendre vos envies et votre style.' },
+      { title: 'Conseil', icon: 'sparkles', desc: 'Analyse visagiste et recommandation sur mesure.' },
+      { title: 'Réalisation', icon: 'scissors', desc: 'Coupe, couleur ou soin exécuté avec précision et passion.' },
+      { title: 'Finition', icon: 'star', desc: 'Coiffage final et conseils d\'entretien personnalisés.' }
+    ],
     heroTitle: 'Coiffeur Visagiste',
     heroSubtitle: "L'art de sublimer vos cheveux avec passion et expertise",
     aboutText: "Coiffeur passionné depuis 15 ans, je crée des looks qui vous ressemblent. Spécialiste du visagisme et des techniques modernes, je veille à la santé de vos cheveux avec des produits naturels et de qualité.",
     ctaText: 'Prendre rendez-vous'
   },
   restaurant: {
-    primary: '#c2410c',
-    secondary: '#9a3412',
-    accent: '#ea580c',
-    background: '#f8fafc',
+    primary: '#ea580c',
+    secondary: '#c2410c',
+    accent: '#f97316',
+    background: '#fff7ed',
+    gradientFrom: '#ea580c',
+    gradientTo: '#dc2626',
     services: [
       { name: 'Cuisine Maison', description: 'Plats préparés sur place', features: ['Produits locaux', 'Recettes authentiques', 'Fait minute'] },
       { name: 'Menu du Jour', description: 'Formule déjeuner économique', features: ['Entrée + Plat + Dessert', 'Produits frais', 'Cuisson minute'] },
@@ -309,16 +335,30 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Service Traiteur', description: 'Livraison et à emporter', features: ['Plateaux repas', 'Buffets', 'Livraison pro'] },
       { name: 'Boissons & Vins', description: 'Carte des vins et cocktails', features: ['Vins régionaux', 'Cocktails maison', 'Bières artisanales'] }
     ],
+    guarantees: [
+      { title: 'Produits Frais', icon: 'leaf' },
+      { title: 'Cuisine Ouverte', icon: 'eye' },
+      { title: 'Terrasse Chauffée', icon: 'sun' },
+      { title: 'Service Traiteur', icon: 'truck' }
+    ],
+    process: [
+      { title: 'Accueil', icon: 'smile', desc: 'Réception chaleureuse dans notre établissement ou prise de commande.' },
+      { title: 'Préparation', icon: 'cooking-pot', desc: 'Cuisine maison avec des produits frais du marché.' },
+      { title: 'Dégustation', icon: 'utensils-crossed', desc: 'Service soigné et présentation soignée de chaque plat.' },
+      { title: 'Fidélisation', icon: 'heart', desc: 'Nous restons à l\'écoute de vos retours pour nous améliorer.' }
+    ],
     heroTitle: 'Restaurant Traditionnel',
     heroSubtitle: "Cuisine authentique et accueil chaleureux depuis 2009",
     aboutText: "Chef passionné depuis 15 ans, je cuisine avec cœur des plats généreux et savoureux. Produits frais du marché, recettes authentiques et ambiance conviviale vous attendent dans notre établissement.",
     ctaText: 'Réserver une table'
   },
   garage: {
-    primary: '#166534',
-    secondary: '#14532d',
-    accent: '#059669',
-    background: '#f8fafc',
+    primary: '#059669',
+    secondary: '#047857',
+    accent: '#34d399',
+    background: '#ecfdf5',
+    gradientFrom: '#059669',
+    gradientTo: '#0d9488',
     services: [
       { name: 'Mécanique Générale', description: 'Entretien et réparation toutes marques', features: ['Révisions constructeur', 'Courroies', 'Freins'] },
       { name: 'Diagnostic Auto', description: 'Analyse électronique complète', features: ['Valise multimarque', 'Effacement défauts', 'Paramétrage'] },
@@ -333,16 +373,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Intervention Rapide', icon: 'clock' },
       { title: 'Véhicule de Courtoisie', icon: 'car' }
     ],
+    process: [
+      { title: 'Diagnostic', icon: 'search', desc: 'Passage à la valise électronique pour identifier les défauts.' },
+      { title: 'Devis', icon: 'file-text', desc: 'Proposition claire avec pièces et main-d\'œuvre détaillées.' },
+      { title: 'Réparation', icon: 'wrench', desc: 'Intervention mécanique soignée par un professionnel qualifié.' },
+      { title: 'Contrôle', icon: 'check-circle', desc: 'Test routier et vérification complète avant restitution.' }
+    ],
     heroTitle: 'Garage Automobile',
     heroSubtitle: "Mécanicien passionné, votre véhicule entre de bonnes mains",
     aboutText: "Mécanicien automobile depuis 15 ans, j'entretiens et répare toutes marques avec passion. Diagnostic précis, devis transparents et respect des délais. Votre sécurité routière est ma priorité.",
     ctaText: 'Demandez un RDV'
   },
   nettoyage: {
-    primary: '#059669',
-    secondary: '#047857',
-    accent: '#10b981',
-    background: '#f0fdf4',
+    primary: '#0891b2',
+    secondary: '#0e7490',
+    accent: '#22d3ee',
+    background: '#ecfeff',
+    gradientFrom: '#0891b2',
+    gradientTo: '#059669',
     services: [
       { name: 'Nettoyage de Bureaux', description: 'Entretien quotidien de vos locaux professionnels', features: ['Poussière, sols, vitres', 'Produits écolabels', 'Horaires flexibles'] },
       { name: 'Nettoyage Vitres', description: 'Vitres intérieures et extérieures', features: ['Accès difficile', 'Sans traces garanti', 'Bâtiments R+10'] },
@@ -357,16 +405,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Intervention Fiable', icon: 'clock' },
       { title: 'Assurance Responsabilité', icon: 'shield-check' }
     ],
+    process: [
+      { title: 'Évaluation', icon: 'clipboard-list', desc: 'Visite des lieux pour établir un plan de nettoyage adapté.' },
+      { title: 'Devis', icon: 'file-text', desc: 'Proposition transparente avec fréquence et produits utilisés.' },
+      { title: 'Intervention', icon: 'spray-can', desc: 'Nettoyage professionnel par une équipe formée et équipée.' },
+      { title: 'Inspection', icon: 'search-check', desc: 'Contrôle qualité rigoureux avant validation du service.' }
+    ],
     heroTitle: 'Société de Nettoyage',
     heroSubtitle: "Propreté professionnelle et écologique pour vos espaces",
     aboutText: "Entreprise de nettoyage depuis 15 ans, nos équipes formées interviennent avec rigueur et discrétion. Produits écolabels, matériel professionnel et engagement qualité pour des locaux toujours impeccables.",
     ctaText: 'Demandez un devis'
   },
   jardin: {
-    primary: '#14532d',
-    secondary: '#166534',
-    accent: '#15803d',
+    primary: '#16a34a',
+    secondary: '#15803d',
+    accent: '#4ade80',
     background: '#f0fdf4',
+    gradientFrom: '#16a34a',
+    gradientTo: '#0d9488',
     services: [
       { name: 'Création de Jardins', description: 'Aménagement paysager complet', features: ['Plan sur mesure', 'Plantations adaptées', 'Gazon en rouleaux'] },
       { name: 'Tonte & Entretien', description: 'Pelouse et massifs entretenus', features: ['Tonte régulière', 'Taille haies', 'Désherbage manuel'] },
@@ -381,16 +437,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Conseils Saisonniers', icon: 'sun' },
       { title: 'Paysagiste Qualifié', icon: 'tree-deciduous' }
     ],
+    process: [
+      { title: 'Conseil', icon: 'message-square', desc: 'Échange sur vos envies et analyse du terrain et de l\'exposition.' },
+      { title: 'Conception', icon: 'palette', desc: 'Plan paysager détaillé avec sélection végétale adaptée.' },
+      { title: 'Aménagement', icon: 'trees', desc: 'Plantation, engazonnement et installation des structures.' },
+      { title: 'Entretien', icon: 'droplets', desc: 'Suivi régulier et conseils saisonniers pour un jardin durable.' }
+    ],
     heroTitle: 'Jardinier Paysagiste',
     heroSubtitle: "Création et entretien de jardins uniques et harmonieux",
     aboutText: "Paysagiste passionné depuis 15 ans, je conçois et entretiens des espaces verts qui vivent au rythme des saisons. De la création paysagère à l'élagage expert, chaque geste est pensé pour la santé de vos plantes.",
     ctaText: 'Demandez un devis'
   },
   fitness: {
-    primary: '#dc2626',
-    secondary: '#b91c1c',
-    accent: '#ef4444',
+    primary: '#ef4444',
+    secondary: '#dc2626',
+    accent: '#f87171',
     background: '#fef2f2',
+    gradientFrom: '#ef4444',
+    gradientTo: '#f59e0b',
     services: [
       { name: 'Coaching Personnel', description: 'Accompagnement individuel sur mesure', features: ['Bilan morpho', 'Programme adapté', 'Suivi hebdo'] },
       { name: 'Cours Collectifs', description: 'Groupes dynamiques et motivants', features: ['HIIT', 'Yoga', 'Zumba', 'Musculation guidée'] },
@@ -405,16 +469,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Sans Engagement', icon: 'check-circle' },
       { title: 'Accès 6h-23h', icon: 'clock' }
     ],
+    process: [
+      { title: 'Bilan', icon: 'clipboard-check', desc: 'Évaluation morphologique et objectifs pour un programme sur mesure.' },
+      { title: 'Programme', icon: 'calendar', desc: 'Plan d\'entraînement adapté à votre niveau et vos disponibilités.' },
+      { title: 'Entraînement', icon: 'dumbbell', desc: 'Sessions coaching intensives avec suivi technique personnalisé.' },
+      { title: 'Suivi', icon: 'trending-up', desc: 'Ajustements réguliers et mesures de progression pour rester motivé.' }
+    ],
     heroTitle: 'Coach Sportif',
     heroSubtitle: "Votre coach personnel pour atteindre vos objectifs fitness",
     aboutText: "Coach sportif diplômé d'État avec 15 ans d'expérience. Que vous cherchiez à perdre du poids, gagner en muscle ou préparer une compétition, je vous accompagne avec des programmes personnalisés.",
     ctaText: 'Essai offert'
   },
   medical: {
-    primary: '#1e40af',
-    secondary: '#1e3a8a',
-    accent: '#2563eb',
-    background: '#eff6ff',
+    primary: '#0ea5e9',
+    secondary: '#0284c7',
+    accent: '#38bdf8',
+    background: '#f0f9ff',
+    gradientFrom: '#0ea5e9',
+    gradientTo: '#2563eb',
     services: [
       { name: 'Médecine Générale', description: 'Consultations et suivi de santé', features: ['Bilan annuel', 'Vaccinations', 'Certificats'] },
       { name: 'Kinésithérapie', description: 'Rééducation et réadaptation', features: ['Massages médicaux', 'Rééducation post-op', 'Posturologie'] },
@@ -429,16 +501,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'RDV sous 48h', icon: 'calendar' },
       { title: 'Équipe Pluridisciplinaire', icon: 'users' }
     ],
+    process: [
+      { title: 'Prise RDV', icon: 'calendar', desc: 'Prise de rendez-vous en ligne ou par téléphone sans attente.' },
+      { title: 'Consultation', icon: 'stethoscope', desc: 'Examen approfondi et diagnostic précis par un professionnel de santé.' },
+      { title: 'Diagnostic', icon: 'search', desc: 'Prescription d\'examens complémentaires si nécessaire.' },
+      { title: 'Suivi', icon: 'heart-pulse', desc: 'Accompagnement thérapeutique et prévention personnalisée.' }
+    ],
     heroTitle: 'Cabinet Médical',
     heroSubtitle: "Votre santé entre les mains de professionnels qualifiés",
     aboutText: "Médecin généraliste depuis 15 ans, je vous accueille dans un cabinet moderne et chaleureux. Écoute, diagnostic précis et suivi personnalisé. Collaboration avec une équipe de spécialistes pour une prise en charge complète.",
     ctaText: 'Prendre rendez-vous'
   },
   avocat: {
-    primary: '#1e3a8a',
-    secondary: '#172554',
-    accent: '#2563eb',
-    background: '#f8fafc',
+    primary: '#1d4ed8',
+    secondary: '#1e3a8a',
+    accent: '#6366f1',
+    background: '#eef2ff',
+    gradientFrom: '#1d4ed8',
+    gradientTo: '#4338ca',
     services: [
       { name: 'Droit Civil & Famille', description: 'Divorce, succession, bail', features: ['Divorce amiable/contentieux', 'Régime matrimonial', 'Garde alternée'] },
       { name: 'Droit Pénal', description: 'Défense et assistance victimes', features: ['Garde à vue', 'Tribunal correctionnel', 'Victimes préjudice'] },
@@ -453,16 +533,24 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { title: 'Défense Déterminée', icon: 'sword' },
       { title: 'Honoraires Transparent', icon: 'file-text' }
     ],
+    process: [
+      { title: 'Consultation', icon: 'message-square', desc: 'Premier entretien confidentiel pour comprendre votre situation.' },
+      { title: 'Stratégie', icon: 'scale', desc: 'Analyse juridique et définition de la meilleure approche légale.' },
+      { title: 'Procédure', icon: 'file-text', desc: 'Rédaction des actes et représentation devant les juridictions.' },
+      { title: 'Résolution', icon: 'check-circle', desc: 'Suivi jusqu\'à la décision finale et accompagnement post-jugement.' }
+    ],
     heroTitle: 'Avocat à la Cour',
     heroSubtitle: "Conseil juridique personnalisé et défense de vos droits",
     aboutText: "Avocat inscrit au Barreau depuis 15 ans, je défends vos intérêts avec rigueur et détermination. Droit civil, pénal, travail ou affaires, chaque dossier mérite une stratégie sur mesure et une écoute attentive.",
     ctaText: 'Prendre rendez-vous'
   },
   default: {
-    primary: '#1e293b',
-    secondary: '#334155',
-    accent: '#475569',
+    primary: '#0f172a',
+    secondary: '#1e293b',
+    accent: '#64748b',
     background: '#f8fafc',
+    gradientFrom: '#0f172a',
+    gradientTo: '#334155',
     services: [
       { name: 'Prestation Sur Mesure', description: 'Services adaptés à vos besoins spécifiques', features: ['Étude personnalisée', 'Devis détaillé', 'Écoute attentive'] },
       { name: 'Intervention Pro', description: 'Travail soigné et professionnel', features: ['Matériel adapté', 'Techniques actuelles', 'Respect des normes'] },
@@ -470,6 +558,18 @@ const SECTOR_ULTIMATE_TEMPLATES = {
       { name: 'Service Rapide', description: 'Réactivité et respect des délais', features: ['Intervention rapide', 'Horaires flexibles', 'Urgences traitées'] },
       { name: 'Garantie Qualité', description: 'Engagement résultat et satisfaction', features: ['Contrôle qualité', 'Corrections incluses', 'SAV réactif'] },
       { name: 'Tarifs Transparents', description: 'Honoraires clairs et justifiés', features: ['Devis gratuit', 'Pas de surprise', 'Facilités paiement'] }
+    ],
+    guarantees: [
+      { title: 'Qualité Garantie', icon: 'shield-check' },
+      { title: 'Devis Transparent', icon: 'file-text' },
+      { title: 'Intervention Rapide', icon: 'clock' },
+      { title: 'Satisfaction Client', icon: 'star' }
+    ],
+    process: [
+      { title: 'Contact', icon: 'phone', desc: 'Prise de contact et écoute attentive de votre besoin.' },
+      { title: 'Devis', icon: 'file-text', desc: 'Proposition claire et détaillée sans engagement.' },
+      { title: 'Réalisation', icon: 'settings', desc: 'Intervention professionnelle dans le respect des délais.' },
+      { title: 'Suivi', icon: 'heart-handshake', desc: 'Vérification de votre satisfaction et service après-vente.' }
     ],
     heroTitle: 'Artisan Professionnel',
     heroSubtitle: "Votre expert de confiance pour des prestations de qualité",
@@ -881,7 +981,28 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
   const { companyName, heroTitle, heroSubtitle, aboutText, services, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages } = content;
   
-  // Simplification du fallback d'images - pas de JS inline qui bloque
+  // ── IMAGE DISTRIBUTION INTELLIGENTE PAR SLOT ──
+  const emergencyFallback = (combinedImages && combinedImages[0]) || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80';
+  
+  let companyHash = 0;
+  for (let i = 0; i < companyName.length; i++) {
+    companyHash = ((companyHash << 5) - companyHash) + companyName.charCodeAt(i);
+    companyHash |= 0;
+  }
+  companyHash = Math.abs(companyHash);
+  
+  const getImg = (slot: number): string => {
+    const uniqueIndex = (companyHash + slot) % (combinedImages.length || 1);
+    if (combinedImages && combinedImages.length > 0 && combinedImages[uniqueIndex]) {
+      const selectedImg = combinedImages[uniqueIndex];
+      if (selectedImg && selectedImg.startsWith('https://')) return selectedImg;
+    }
+    if (allImages && allImages[slot % allImages.length] && allImages[slot % allImages.length].startsWith('https://')) {
+      return allImages[slot % allImages.length];
+    }
+    return emergencyFallback;
+  };
+  
   const imgErr = (fallbackSlot: number) => {
     const fallbackUrl = getImg(fallbackSlot);
     return `onerror="this.onerror=null;this.src='${fallbackUrl}'"`;
@@ -891,6 +1012,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
   const accentColor = template.accent;
+  const gradientFrom = template.gradientFrom || template.primary;
+  const gradientTo = template.gradientTo || template.secondary;
 
   // Convertir le HEX primaire en RGB pour les effets de fond
   const hexToRgb = (hex: string) => {
@@ -921,40 +1044,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
   // On l'encode pour pouvoir le mettre directement dans le href
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
-
-  // ── IMAGE DISTRIBUTION INTELLIGENTE PAR SLOT ──
-  // Chaque section a sa propre image, pas de rotation aveugle.
-  // Si une image réelle existe pour ce slot → on l'utilise.
-  // Sinon → fallback sectoriel neutre garanti.
-  const emergencyFallback = combinedImages[0] || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80';
-  
-  // Hash du nom pour distribution UNIQUE des images par entreprise
-  let companyHash = 0;
-  for (let i = 0; i < companyName.length; i++) {
-    companyHash = ((companyHash << 5) - companyHash) + companyName.charCodeAt(i);
-    companyHash |= 0;
-  }
-  companyHash = Math.abs(companyHash);
-  
-  const getImg = (slot: number): string => {
-    // Calculer un index UNIQUE basé sur le hash du nom + le slot
-    // Ainsi "A.Leont" slot 1 ≠ "Sooo" slot 1 — images différentes garanties !
-    const uniqueIndex = (companyHash + slot) % (combinedImages.length || 1);
-    
-    // PRIORITÉ : image du pool combiné (réelles + Pexels) selon le hash
-    if (combinedImages && combinedImages.length > 0 && combinedImages[uniqueIndex]) {
-      const selectedImg = combinedImages[uniqueIndex];
-      if (selectedImg && selectedImg.startsWith('https://')) return selectedImg;
-    }
-    
-    // Fallback : rotation classique sur allImages
-    if (allImages && allImages[slot % allImages.length] && allImages[slot % allImages.length].startsWith('https://')) {
-      return allImages[slot % allImages.length];
-    }
-    
-    // Fallback ultime garanti
-    return emergencyFallback;
-  };
 
   return `<!DOCTYPE html>
 <html lang="fr" class="scroll-smooth" style="overflow-x: hidden;">
@@ -1032,6 +1121,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             --secondary: ${secondaryColor};
             --accent: ${accentColor};
             --primary-rgb: ${primaryRgb};
+            --gradient-from: ${gradientFrom};
+            --gradient-to: ${gradientTo};
             
             --bg-base: ${template.background};
             --bg-glass: rgba(255, 255, 255, 0.7);
@@ -1187,6 +1278,22 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             background-image: radial-gradient(rgba(${primaryRgb}, 0.1) 1px, transparent 1px);
             background-size: 30px 30px;
         }
+        
+        /* Hero Gradient Overlay Premium */
+        .hero-gradient-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-centered {
+            background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent 60%);
+        }
+        .hero-split {
+            background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.06), transparent 50%);
+        }
         .bg-alternate {
             background-color: #f1f5f9; /* Un gris légèrement plus sombre pour un vrai contraste */
             border-top: 1px solid rgba(0,0,0,0.05); /* Ligne de séparation subtile */
@@ -1295,6 +1402,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .valeur-card { padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; border-radius: 20px; background: white; border: 1px solid rgba(0,0,0,0.04); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         .valeur-card:hover { transform: translateY(-5px); box-shadow: var(--glow); }
         .valeur-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(${primaryRgb}, 0.15), rgba(${primaryRgb}, 0.05)); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1rem; }
+        .gallery-item { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
+        .gallery-item-main { grid-row: 1 / -1; aspect-ratio: auto; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem 1.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.6)); opacity: 0; transition: opacity 0.3s; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay span { color: white; font-weight: 700; font-size: 1rem; font-family: 'Outfit'; }
+        @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr 1fr; } .gallery-item-main { grid-row: auto; } }
+        @media (max-width: 480px) { .gallery-grid { grid-template-columns: 1fr; } }
 
         /* Hero Section */
         .hero {
@@ -1428,16 +1547,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             transition: transform 0.3s;
         }
         .step-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .step-number {
-            width: 60px; height: 60px;
+        .step-icon {
+            width: 64px; height: 64px;
             border-radius: 50%;
-            background: var(--bg-base);
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 1.5rem;
-            border: 2px dashed var(--primary);
+            box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.25);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .step-card:hover .step-icon {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(var(--primary-rgb), 0.35);
         }
         
         /* Services Grid */
@@ -1973,6 +2095,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <!-- Hero Centered (Variant 0 & 2) -->
     <section class="hero bg-grid hero-centered" style="text-align: center; padding: 140px 20px 100px;">
+        <div class="hero-gradient-overlay"></div>
         <div class="bg-pattern"></div>
         <div class="hero-content reveal active" style="position: relative; z-index: 1; max-width: 800px; margin: 0 auto;">
             <div class="hero-badge" style="display: inline-flex;"><i data-lucide="${heroBadge.icon}" width="18"></i> ${heroBadge.text}</div>
@@ -1989,6 +2112,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <!-- Hero Split (Variant 1 & 3) -->
     <section class="hero bg-grid hero-split">
+        <div class="hero-gradient-overlay"></div>
         <div class="bg-pattern"></div>
         <!-- Désactivé : animations géométriques pour design plus propre -->
         <!-- <div class="pattern-waves"></div> -->
@@ -2102,55 +2226,65 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <!-- Garanties & Assurances -->
-    <section class="container bg-alternate section-assurances" id="garanties" style="background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); margin: 3rem auto; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05);">
+    <!-- Galerie Photos Réelles -->
+    <section class="container section-gallery" id="galerie">
         <div class="section-header reveal">
-            <h2>Garanties & Assurances</h2>
-            <p>Travaillez l'esprit serein grâce à nos couvertures complètes conformes à la législation.</p>
+            <h2>Ils nous font confiance</h2>
+            <p>Quelques réalisations récentes qui témoignent de notre savoir-faire.</p>
         </div>
-        <div class="valeurs-grid">
-            ${(template.guarantees || [
-              { title: 'Garantie Décennale', icon: 'shield-check' },
-              { title: 'Assurance RC Pro', icon: 'briefcase' },
-              { title: 'Certification Qualité', icon: 'award' },
-              { title: 'Satisfaction Garantie', icon: 'heart' }
-            ]).map((g: any, i: number) => `
-            <div class="valeur-card reveal" style="border-top: 4px solid var(--primary); transition-delay: ${i * 100}ms; background: white;">
-                <div class="valeur-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary);"><i data-lucide="${g.icon}" width="32" height="32"></i></div>
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">${g.title}</h3>
+        <div class="gallery-grid reveal">
+            <div class="gallery-item gallery-item-main">
+                <img src="${getImg(1)}" ${imgErr(1)} alt="Réalisation ${companyName}" loading="lazy">
+                <div class="gallery-overlay">
+                    <span>Projet récent</span>
+                </div>
             </div>
-            `).join('')}
+            <div class="gallery-item">
+                <img src="${getImg(2)}" ${imgErr(2)} alt="Réalisation ${companyName}" loading="lazy">
+                <div class="gallery-overlay">
+                    <span>Expertise</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="${getImg(3)}" ${imgErr(3)} alt="Réalisation ${companyName}" loading="lazy">
+                <div class="gallery-overlay">
+                    <span>Qualité</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="${getImg(4)}" ${imgErr(4)} alt="Réalisation ${companyName}" loading="lazy">
+                <div class="gallery-overlay">
+                    <span>Professionnalisme</span>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="${getImg(5)}" ${imgErr(5)} alt="Réalisation ${companyName}" loading="lazy">
+                <div class="gallery-overlay">
+                    <span>Satisfaction</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Process (4 Démarches) -->
+    <!-- Process (4 Étapes Sectorielles) -->
     <section class="container section-process" id="process">
-        <!-- Supprimé : anim-shape pour design plus propre -->
         <div class="section-header reveal">
             <h2>Notre démarche en 4 étapes</h2>
             <p>Une méthodologie claire et transparente pour garantir le succès de votre projet.</p>
         </div>
         <div class="process-grid reveal">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Prise de contact</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Nous étudions ensemble votre besoin et définissons les priorités.</p>
+            ${(template.process || [
+              { title: 'Prise de contact', icon: 'phone', desc: 'Nous étudions ensemble votre besoin et définissons les priorités.' },
+              { title: 'Devis détaillé', icon: 'file-text', desc: 'Un chiffrage précis et transparent, sans aucun frais caché.' },
+              { title: 'Intervention', icon: 'settings', desc: 'Réalisation de la prestation par nos experts qualifiés.' },
+              { title: 'Suivi qualité', icon: 'heart-handshake', desc: 'Nous nous assurons de votre entière satisfaction après livraison.' }
+            ]).map((step: any, index: number) => `
+            <div class="step-card reveal" style="transition-delay: ${index * 100}ms">
+                <div class="step-icon"><i data-lucide="${step.icon}" width="32" height="32"></i></div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">${step.title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">${step.desc}</p>
             </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Devis détaillé</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Un chiffrage précis et transparent, sans aucun frais caché.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Intervention</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Réalisation de la prestation par nos experts qualifiés.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; font-family: 'Outfit';">Suivi qualité</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Nous nous assurons de votre entière satisfaction après livraison.</p>
-            </div>
+            `).join('')}
         </div>
     </section>
 
