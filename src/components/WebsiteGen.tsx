@@ -77,8 +77,6 @@ function getSectorPalette(sector: string) {
   return SECTOR_PALETTES.default;
 }
 
-let mountedInstances = 0;
-
 export default function WebsiteGen({ leads, updateLead, apiConfig, loadLeads }: Props) {
   // Utiliser l'état local de processing pour WebsiteGen
   const { isProcessing, isPaused, progress, startProcessing, updateProgress, stopProcessing, pauseProcessing, resumeProcessing } = useWebsiteGenState();
@@ -106,22 +104,25 @@ export default function WebsiteGen({ leads, updateLead, apiConfig, loadLeads }: 
     leadsRef.current = leads;
   }, [leads]);
 
+  // Debug pour comprendre pourquoi la génération ne marche pas
+  console.log('🔍 WebsiteGen Debug:');
+  console.log('🔍 Total leads:', leads.length);
+  console.log('🔍 Leads with score > 0:', leads.filter(l => l.score > 0).length);
+  console.log('🔍 Leads not generated:', leads.filter(l => !l.siteGenerated).length);
+  console.log('🔍 Enriched (score > 0 && !siteGenerated):', enriched.length);
+  console.log('🔍 Generated:', generated.length);
+  console.log('🔍 Has LLM:', hasLLM);
+
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages, chatLoading]);
 
-  // ── LIFECYCLE STABLE : gestion du démontage avec compteur d'instances ──
-  // React StrictMode monte/démonte deux fois en dev : mountedInstances empêche
-  // stopProcessing() d'être appelé sur le premier démontage "fantôme".
-  // stopProcessing() n'est exécuté que lorsque le DERNIER vrai montage disparaît.
+  // PROPOSITION 4: Stabilisation Lifecycle
+  // Cleanup retiré temporairement pour éviter l'interruption des générations en React Strict Mode
   useEffect(() => {
-    mountedInstances++;
     return () => {
-      mountedInstances--;
-      if (mountedInstances === 0) {
-        console.log('🛑 WebsiteGen: dernière instance démontée, arrêt du processing.');
-        stopProcessing();
-      }
-    };
-  }, [stopProcessing]);
+      console.log('🛑 WebsiteGen unmounted.');
+      // stopProcessing() retiré car causait l'arrêt immédiat lors des re-renders !
+    }
+  }, []);
 
   // ── SHORTER, MORE EFFECTIVE AI PROMPT ──
   const buildShortPrompt = (lead: Lead, styleHint?: string): { prompt: string; system: string } => {
@@ -513,7 +514,10 @@ Tout en français. Spécifique au secteur "${lead.sector || 'professionnel'}".`;
         
         const fileName = `${lead.id}.html`;
         await supabase.storage.from('websites').upload(fileName, emergencyHtml, { contentType: 'text/html', cacheControl: '3600', upsert: true });
+        const { data: publicUrlData } = supabase.storage.from('websites').getPublicUrl(fileName);
+        const siteUrl = publicUrlData.publicUrl;
         
+        return emergencyHtml; // Retourner le code HTML de fallback
         const baseUrl = 'https://www.services-siteup.online';
         const cleanUrl = `${baseUrl}/api/sites/${lead.id}`;
         
@@ -525,8 +529,7 @@ Tout en français. Spécifique au secteur "${lead.sector || 'professionnel'}".`;
           stage: lead.stage === 'new' || lead.stage === 'enriched' ? 'site_generated' : lead.stage,
         });
         
-        console.log(`🔄 Site fallback généré avec succès pour: ${lead.name}`);
-        return emergencyHtml;
+        console.log(`🔄 Site fallback généré pour: ${lead.name}`);
       } catch (fallbackError) {
         console.error(`❌ Erreur critique - même le fallback a échoué pour ${lead.name}:`, fallbackError);
         // Marquer quand même comme traité pour éviter les boucles infinies

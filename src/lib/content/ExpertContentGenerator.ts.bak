@@ -1,0 +1,1558 @@
+// ════════════════════════════════════════════════════════════
+// EXPERT CONTENT GENERATOR - CONTENU NIVEAU EXPERT
+// ════════════════════════════════════════════════════════════
+
+import { BrandAnalysis } from '../brand/BrandIntelligence';
+import { SiteAnalysis } from '../ai/AdvancedAI';
+
+export interface ExpertContent {
+  hero: HeroContent;
+  about: AboutContent;
+  services: ServiceContent[];
+  testimonials: TestimonialContent[];
+  portfolio: PortfolioContent;
+  processedContent: ContactContent;
+  seo: SEOContent;
+  socialProof: SocialProofContent;
+  trustSignals: TrustSignalContent;
+  caseStudies: CaseStudyContent[];
+  blog: BlogContent[];
+  faq: FAQContent[];
+}
+
+export interface HeroContent {
+  title: string;
+  subtitle: string;
+  description: string;
+  cta: CTAContent;
+  visualElements: VisualElement[];
+  emotionalHooks: EmotionalHook[];
+  valueProposition: string;
+  differentiation: string;
+  urgency: UrgencyElement[];
+  socialProof: SocialProofElement[];
+}
+
+export interface CTAContent {
+  primary: string;
+  secondary: string;
+  tertiary?: string;
+  microcopy: string;
+  urgency: string;
+  benefit: string;
+  riskReversal: string;
+}
+
+export interface VisualElement {
+  type: 'image' | 'video' | 'illustration' | 'icon' | 'animation';
+  src: string;
+  alt: string;
+  position: string;
+  animation: string;
+  purpose: string;
+}
+
+export interface EmotionalHook {
+  type: 'pain' | 'gain' | 'fear' | 'desire' | 'scarcity' | 'social';
+  content: string;
+  intensity: number;
+  placement: string;
+}
+
+export interface UrgencyElement {
+  type: 'time' | 'quantity' | 'price' | 'opportunity';
+  content: string;
+  validity: string;
+  impact: string;
+}
+
+export interface SocialProofElement {
+  type: 'testimonial' | 'statistic' | 'certification' | 'award' | 'partner';
+  content: string;
+  credibility: string;
+  placement: string;
+}
+
+export interface AboutContent {
+  story: CompanyStory;
+  mission: MissionStatement;
+  vision: VisionStatement;
+  values: CoreValues[];
+  team: TeamContent[];
+  expertise: ExpertiseContent[];
+  history: CompanyHistory;
+  achievements: Achievement[];
+  certifications: Certification[];
+}
+
+export interface CompanyStory {
+  narrative: string;
+  founding: FoundingStory;
+  evolution: EvolutionStory;
+  milestones: Milestone[];
+  challenges: Challenge[];
+  successes: Success[];
+}
+
+export interface MissionStatement {
+  statement: string;
+  purpose: string;
+  impact: string;
+  stakeholders: string[];
+  differentiation: string;
+}
+
+export interface VisionStatement {
+  statement: string;
+  future: string;
+  aspirations: string[];
+  timeline: string;
+  metrics: string[];
+}
+
+export interface CoreValues {
+  name: string;
+  description: string;
+  application: string;
+  benefits: string[];
+  evidence: string[];
+}
+
+export interface TeamContent {
+  members: TeamMember[];
+  culture: CompanyCulture;
+  expertise: ExpertiseArea[];
+  philosophy: WorkPhilosophy;
+}
+
+export interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  expertise: string[];
+  achievements: string[];
+  photo: string;
+  personality: string[];
+  quote: string;
+}
+
+export interface ServiceContent {
+  name: string;
+  category: string;
+  description: string;
+  benefits: Benefit[];
+  features: Feature[];
+  process: ServiceProcess[];
+  pricing: PricingInfo;
+  guarantees: Guarantee[];
+  caseStudies: string[];
+  faq: FAQItem[];
+  testimonials: ServiceTestimonial[];
+  comparison: ComparisonPoint[];
+}
+
+export interface Benefit {
+  title: string;
+  description: string;
+  outcome: string;
+  timeline: string;
+  measurement: string;
+  evidence: string;
+}
+
+export interface Feature {
+  name: string;
+  description: string;
+  technical: boolean;
+  unique: boolean;
+  standard: boolean;
+  optional: boolean;
+}
+
+export interface ServiceProcess {
+  step: number;
+  name: string;
+  description: string;
+  duration: string;
+  deliverables: string[];
+  requirements: string[];
+}
+
+export interface PricingInfo {
+  model: string;
+  structure: PricingStructure[];
+  value: ValueProposition;
+  transparency: TransparencyInfo;
+  guarantees: PricingGuarantee[];
+}
+
+export interface TestimonialContent {
+  client: ClientInfo;
+  story: ClientStory;
+  results: Results[];
+  experience: ServiceExperience;
+  recommendation: string;
+  rating: number;
+  context: TestimonialContext;
+  media: MediaContent[];
+}
+
+export interface ClientInfo {
+  name: string;
+  company?: string;
+  role?: string;
+  industry?: string;
+  location: string;
+  since: string;
+  type: 'individual' | 'business' | 'enterprise';
+}
+
+export interface ClientStory {
+  situation: string;
+  challenge: string;
+  solution: string;
+  implementation: string;
+  outcome: string;
+  timeline: string;
+}
+
+export interface Results {
+  metric: string;
+  before: string;
+  after: string;
+  improvement: string;
+  timeframe: string;
+  verification: string;
+}
+
+export interface ServiceExperience {
+  firstContact: string;
+  consultation: string;
+  delivery: string;
+  support: string;
+  followUp: string;
+}
+
+export interface TestimonialContext {
+  project: string;
+  scope: string;
+  budget: string;
+  timeline: string;
+  complexity: string;
+}
+
+export class ExpertContentGenerator {
+  /**
+   * Génère du contenu expert-level pour un site web
+   */
+  static generateExpertContent(
+    lead: any,
+    brandAnalysis: BrandAnalysis,
+    siteAnalysis?: SiteAnalysis
+  ): ExpertContent {
+    console.log('🧠 Génération de contenu expert-level...');
+
+    const content = {
+      hero: this.generateHeroContent(lead, brandAnalysis),
+      about: this.generateAboutContent(lead, brandAnalysis),
+      services: this.generateServiceContent(lead, brandAnalysis),
+      testimonials: this.generateTestimonialContent(lead, brandAnalysis),
+      portfolio: this.generatePortfolioContent(lead, brandAnalysis),
+      process: this.generateProcessContent(lead, brandAnalysis),
+      contact: this.generateContactContent(lead, brandAnalysis),
+      seo: this.generateSEOContent(lead, brandAnalysis),
+      socialProof: this.generateSocialProofContent(lead, brandAnalysis),
+      trustSignals: this.generateTrustSignalContent(lead, brandAnalysis),
+      caseStudies: this.generateCaseStudyContent(lead, brandAnalysis),
+      blog: this.generateBlogContent(lead, brandAnalysis),
+      faq: this.generateFAQContent(lead, brandAnalysis)
+    };
+
+    const processedContent = { ...content };
+
+    // 1. Adaptation basée sur la localisation
+    if (lead.city) {
+      processedContent = this.adaptForLocation(processedContent, lead.city);
+    }
+
+    // 2. Enrichissement basé sur l'analyse concurrentielle
+    if (brandAnalysis.competitorAnalysis) {
+      processedContent = this.enrichWithCompetitorInsights(processedContent, brandAnalysis.competitorAnalysis);
+    }
+
+    // 3. Optimisation basée sur l'analyse de marché
+    if (brandAnalysis.marketAnalysis) {
+      processedContent = this.optimizeForMarket(processedContent, brandAnalysis.marketAnalysis);
+    }
+
+    // 4. Adaptation basée sur la personnalité de la marque
+    if (brandAnalysis.brandIntelligence) {
+      processedContent = this.adaptForBrand(processedContent, brandAnalysis.brandIntelligence);
+    }
+
+    // 5. Validation de la cohérence
+    processedContent = this.validateCoherence(processedContent, brandAnalysis.strategy);
+
+    return processedContent;
+  }
+
+  /**
+   * Génère le contenu Hero expert
+   */
+  private static generateHeroContent(lead: any, brandAnalysis: BrandAnalysis): HeroContent {
+    const sector = lead.sector?.toLowerCase() || '';
+    
+    return {
+      title: this.generateExpertHeroTitle(lead, brandAnalysis),
+      subtitle: this.generateExpertHeroSubtitle(lead, brandAnalysis),
+      description: this.generateExpertHeroDescription(lead, brandAnalysis),
+      cta: this.generateExpertCTA(lead, brandAnalysis),
+      visualElements: this.generateHeroVisualElements(lead, brandAnalysis),
+      emotionalHooks: this.generateEmotionalHooks(lead, brandAnalysis),
+      valueProposition: this.generateValueProposition(lead, brandAnalysis),
+      differentiation: this.generateDifferentiation(lead, brandAnalysis),
+      urgency: this.generateUrgencyElements(lead, brandAnalysis),
+      socialProof: this.generateHeroSocialProof(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu About expert
+   */
+  private static generateAboutContent(lead: any, brandAnalysis: BrandAnalysis): AboutContent {
+    return {
+      story: this.generateCompanyStory(lead, brandAnalysis),
+      mission: this.generateMissionStatement(lead, brandAnalysis),
+      vision: this.generateVisionStatement(lead, brandAnalysis),
+      values: this.generateCoreValues(lead, brandAnalysis),
+      team: this.generateTeamContent(lead, brandAnalysis),
+      expertise: this.generateExpertiseContent(lead, brandAnalysis),
+      history: this.generateCompanyHistory(lead, brandAnalysis),
+      achievements: this.generateAchievements(lead, brandAnalysis),
+      certifications: this.generateCertifications(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Services expert
+   */
+  private static generateServiceContent(lead: any, brandAnalysis: BrandAnalysis): ServiceContent[] {
+    const baseServices = this.getBaseServices(lead.sector);
+    
+    return baseServices.map(service => this.enhanceServiceContent(service, lead, brandAnalysis));
+  }
+
+  /**
+   * Génère le contenu Témoignages expert
+   */
+  private static generateTestimonialContent(lead: any, brandAnalysis: BrandAnalysis): TestimonialContent[] {
+    const baseTestimonials = this.getBaseTestimonials(lead);
+    
+    return baseTestimonials.map(testimonial => this.enhanceTestimonialContent(testimonial, lead, brandAnalysis));
+  }
+
+  /**
+   * Génère le contenu Portfolio expert
+   */
+  private static generatePortfolioContent(lead: any, brandAnalysis: BrandAnalysis): PortfolioContent {
+    return {
+      categories: this.generatePortfolioCategories(lead, brandAnalysis),
+      projects: this.generatePortfolioProjects(lead, brandAnalysis),
+      filters: this.generatePortfolioFilters(lead, brandAnalysis),
+      presentation: this.generatePortfolioPresentation(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Process expert
+   */
+  private static generateProcessContent(lead: any, brandAnalysis: BrandAnalysis): ProcessContent {
+    return {
+      title: this.generateProcessTitle(lead, brandAnalysis),
+      description: this.generateProcessDescription(lead, brandAnalysis),
+      steps: this.generateProcessSteps(lead, brandAnalysis),
+      benefits: this.generateProcessBenefits(lead, brandAnalysis),
+      timeline: this.generateProcessTimeline(lead, brandAnalysis),
+      guarantees: this.generateProcessGuarantees(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Contact expert
+   */
+  private static generateContactContent(lead: any, brandAnalysis: BrandAnalysis): ContactContent {
+    return {
+      title: this.generateContactTitle(lead, brandAnalysis),
+      description: this.generateContactDescription(lead, brandAnalysis),
+      methods: this.generateContactMethods(lead, brandAnalysis),
+      information: this.generateContactInformation(lead),
+      expectations: this.generateContactExpectations(lead, brandAnalysis),
+      urgency: this.generateContactUrgency(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu SEO expert
+   */
+  private static generateSEOContent(lead: any, brandAnalysis: BrandAnalysis): SEOContent {
+    return {
+      metadata: this.generateSEOMetadata(lead, brandAnalysis),
+      keywords: this.generateSEOKeywords(lead, brandAnalysis),
+      content: this.generateSEOContentStrategy(lead, brandAnalysis),
+      local: this.generateLocalSEO(lead, brandAnalysis),
+      technical: this.generateTechnicalSEO(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Social Proof expert
+   */
+  private static generateSocialProofContent(lead: any, brandAnalysis: BrandAnalysis): SocialProofContent {
+    return {
+      statistics: this.generateSocialStatistics(lead, brandAnalysis),
+      testimonials: this.generateSocialTestimonials(lead, brandAnalysis),
+      certifications: this.generateSocialCertifications(lead, brandAnalysis),
+      partnerships: this.generatePartnerships(lead, brandAnalysis),
+      media: this.generateMediaMentions(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Trust Signals expert
+   */
+  private static generateTrustSignalContent(lead: any, brandAnalysis: BrandAnalysis): TrustSignalContent {
+    return {
+      guarantees: this.generateTrustGuarantees(lead, brandAnalysis),
+      security: this.generateSecuritySignals(lead, brandAnalysis),
+      transparency: this.generateTransparencySignals(lead, brandAnalysis),
+      expertise: this.generateExpertiseSignals(lead, brandAnalysis),
+      social: this.generateSocialSignals(lead, brandAnalysis)
+    };
+  }
+
+  /**
+   * Génère le contenu Case Studies expert
+   */
+  private static generateCaseStudyContent(lead: any, brandAnalysis: BrandAnalysis): CaseStudyContent[] {
+    return this.generateExpertCaseStudies(lead, brandAnalysis);
+  }
+
+  /**
+   * Génère le contenu Blog expert
+   */
+  private static generateBlogContent(lead: any, brandAnalysis: BrandAnalysis): BlogContent[] {
+    return this.generateExpertBlogPosts(lead, brandAnalysis);
+  }
+
+  /**
+   * Génère le contenu FAQ expert
+   */
+  private static generateFAQContent(lead: any, brandAnalysis: BrandAnalysis): FAQContent {
+    return {
+      categories: this.generateFAQCategories(lead, brandAnalysis),
+      questions: this.generateExpertFAQ(lead, brandAnalysis),
+      search: this.generateFAQSearch(lead, brandAnalysis),
+      help: this.generateFAQHelp(lead, brandAnalysis)
+    };
+  }
+
+  // Méthodes de génération spécifiques
+
+  private static generateExpertHeroTitle(lead: any, brandAnalysis: BrandAnalysis): string {
+    const sector = lead.sector?.toLowerCase() || '';
+    const location = lead.city || '';
+    
+    const titleTemplates: Record<string, string[]> = {
+      restaurant: [
+        `L'Excellence Culinaire à ${location}`,
+        `Votre Table Gastronomique à ${location}`,
+        `Saveurs Authentiques et Créativité à ${location}`,
+        `L'Art de la Table à ${location}`
+      ],
+      coiffeur: [
+        `L'Excellence Capillaire à ${location}`,
+        `Votre Style Unique à ${location}`,
+        `Création et Expertise à ${location}`,
+        `L'Art de la Beauté à ${location}`
+      ],
+      plomberie: [
+        `L'Excellence Plomberie à ${location}`,
+        `Votre Expert en Plomberie à ${location}`,
+        `Solutions Fiables à ${location}`,
+        `L'Art de l'Eau à ${location}`
+      ],
+      garage: [
+        `L'Excellence Automobile à ${location}`,
+        `Votre Expert Automobile à ${location}`,
+        `Performance et Fiabilité à ${location}`,
+        `L'Art de la Mécanique à ${location}`
+      ],
+      hôtel: [
+        `L'Excellence Hôtelière à ${location}`,
+        `Votre Havre de Paix à ${location}`,
+        `Luxe et Confort à ${location}`,
+        `L'Art de l'Hospitalité à ${location}`
+      ]
+    };
+
+    const templates = titleTemplates[sector] || [
+      `L'Excellence Professionnelle à ${location}`,
+      `Votre Expert de Confiance à ${location}`,
+      `Qualité et Service à ${location}`,
+      `L'Art du Savoir-Faire à ${location}`
+    ];
+
+    return templates[Math.floor(Math.random() * templates.length)];
+  }
+
+  private static generateExpertHeroSubtitle(lead: any, brandAnalysis: BrandAnalysis): string {
+    const sector = lead.sector?.toLowerCase() || '';
+    const experience = this.generateExperienceText(lead);
+    const guarantee = this.generateGuaranteeText(lead);
+    
+    const subtitleTemplates: Record<string, string[]> = {
+      restaurant: [
+        `${experience} de tradition culinaire • ${guarantee}`,
+        `Créations uniques et produits locaux • ${guarantee}`,
+        `Ambiance raffinée et service exceptionnel • ${guarantee}`,
+        `Innovation gastronomique et tradition • ${guarantee}`
+      ],
+      coiffeur: [
+        `${experience} d'expertise capillaire • ${guarantee}`,
+        `Tendances actuelles et techniques avancées • ${guarantee}`,
+        `Produits professionnels et conseils personnalisés • ${guarantee}`,
+        `Style unique et satisfaction garantie • ${guarantee}`
+      ],
+      plomberie: [
+        `${experience} d'expertise technique • ${guarantee}`,
+        `Intervention rapide 24/7 et solutions durables • ${guarantee}`,
+        `Matériel certifié et techniciens qualifiés • ${guarantee}`,
+        `Diagnostic précis et tarifs transparents • ${guarantee}`
+      ],
+      garage: [
+        `${experience} d'expertise automobile • ${guarantee}`,
+        `Diagnostic moderne et réparations précises • ${guarantee}`,
+        `Pièces d'origine et garantie constructeur • ${guarantee}`,
+        `Service client et suivi personnalisé • ${guarantee}`
+      ],
+      hôtel: [
+        `${experience} d'excellence hôtelière • ${guarantee}`,
+        `Confort absolu et service personnalisé • ${guarantee}`,
+        `Localisation privilégiée et prestations premium • ${guarantee}`,
+        `Attention aux détails et satisfaction totale • ${guarantee}`
+      ]
+    };
+
+    const templates = subtitleTemplates[sector] || [
+      `${experience} de professionnalisme • ${guarantee}`,
+      `Expertise reconnue et service personnalisé • ${guarantee}`,
+      `Qualité constante et innovation continue • ${guarantee}`,
+      `Engagement total et satisfaction garantie • ${guarantee}`
+    ];
+
+    return templates[Math.floor(Math.random() * templates.length)];
+  }
+
+  private static generateExpertHeroDescription(lead: any, brandAnalysis: BrandAnalysis): string {
+    const sector = lead.sector?.toLowerCase() || '';
+    const location = lead.city || 'votre région';
+    const values = brandAnalysis.values.coreValues.map(v => v.name).join(', ');
+    
+    return `
+Découvrez l'excellence ${sector} à ${location}. Chez ${lead.name}, nous combinons 
+${values} pour vous offrir des services exceptionnels qui dépassent vos attentes. 
+Notre équipe d'experts passionnés met son savoir-faire et son expérience à votre 
+disposition pour créer des solutions sur mesure qui répondent parfaitement à vos besoins.
+    `.trim();
+  }
+
+  private static generateExpertCTA(lead: any, brandAnalysis: BrandAnalysis): CTAContent {
+    const sector = lead.sector?.toLowerCase() || '';
+    
+    const ctaTemplates: Record<string, CTAContent> = {
+      restaurant: {
+        primary: 'Réserver votre table',
+        secondary: 'Découvrir notre menu',
+        tertiary: 'Organiser un événement',
+        microcopy: 'Table disponible en 2 minutes',
+        urgency: 'Places limitées ce soir',
+        benefit: 'Une expérience gastronomique inoubliable',
+        riskReversal: 'Annulation gratuite jusqu\'à 24h avant'
+      },
+      coiffeur: {
+        primary: 'Prendre rendez-vous',
+        secondary: 'Découvrir nos services',
+        tertiary: 'Consulter notre galerie',
+        microcopy: 'Disponible dès demain',
+        urgency: 'Créneaux limités cette semaine',
+        benefit: 'Une transformation qui vous ressemble',
+        riskReversal: 'Satisfaction ou reprise gratuite'
+      },
+      plomberie: {
+        primary: 'Demander un devis gratuit',
+        secondary: 'Appeler un expert',
+        tertiary: 'Contacter l\'urgence',
+        microcopy: 'Intervention sous 2h',
+        urgency: 'Urgence 24/7 disponible',
+        benefit: 'Solutions rapides et durables',
+        riskReversal: 'Garantie décennale sur tous travaux'
+      },
+      garage: {
+        primary: 'Prendre rendez-vous',
+        secondary: 'Demander un devis',
+        tertiary: 'Contacter l\'urgence',
+        microcopy: 'Diagnostic gratuit',
+        urgency: 'Disponibilité immédiate',
+        benefit: 'Performance et fiabilité garanties',
+        riskReversal: 'Garantie pièces et main d\'œuvre'
+      },
+      hôtel: {
+        primary: 'Réserver maintenant',
+        secondary: 'Découvrir nos chambres',
+        tertiary: 'Nos tarifs',
+        microcopy: 'Meilleur prix garanti',
+        urgency: 'Dernières chambres disponibles',
+        benefit: 'Un séjour inoubliable vous attend',
+        riskReversal: 'Annulation flexible jusqu\'à 48h'
+      }
+    };
+
+    return ctaTemplates[sector] || {
+      primary: 'Nous contacter',
+      secondary: 'Découvrir nos services',
+      microcopy: 'Réponse sous 24h',
+      urgency: 'Disponibilité limitée',
+      benefit: 'Service professionnel garanti',
+      riskReversal: 'Satisfaction 100% garantie'
+    };
+  }
+
+  private static generateHeroVisualElements(lead: any, brandAnalysis: BrandAnalysis): VisualElement[] {
+    return [
+      {
+        type: 'image',
+        src: lead.images?.[0] || '/images/hero-default.jpg',
+        alt: `${lead.name} - Expert ${lead.sector}`,
+        position: 'background',
+        animation: 'parallax',
+        purpose: 'establishment-credibility'
+      },
+      {
+        type: 'video',
+        src: '/videos/intro.mp4',
+        alt: 'Présentation de nos services',
+        position: 'overlay',
+        animation: 'autoplay',
+        purpose: 'engagement'
+      },
+      {
+        type: 'icon',
+        src: '/icons/quality.svg',
+        alt: 'Garantie qualité',
+        position: 'floating',
+        animation: 'pulse',
+        purpose: 'trust-signal'
+      }
+    ];
+  }
+
+  private static generateEmotionalHooks(lead: any, brandAnalysis: BrandAnalysis): EmotionalHook[] {
+    const sector = lead.sector?.toLowerCase() || '';
+    
+    return [
+      {
+        type: 'pain',
+        content: this.generatePainPoint(sector),
+        intensity: 0.8,
+        placement: 'hero-subtitle'
+      },
+      {
+        type: 'gain',
+        content: this.generateGainPoint(sector),
+        intensity: 0.9,
+        placement: 'hero-description'
+      },
+      {
+        type: 'social',
+        content: `${lead.googleReviews || '200'}+ clients satisfaits nous font confiance`,
+        intensity: 0.7,
+        placement: 'hero-footer'
+      }
+    ];
+  }
+
+  private static generateValueProposition(lead: any, brandAnalysis: BrandAnalysis): string {
+    const sector = lead.sector?.toLowerCase() || '';
+    const location = lead.city || '';
+    
+    return `L'alliance parfaite entre expertise ${sector} et service client exceptionnel à ${location}`;
+  }
+
+  private static generateDifferentiation(lead: any, brandAnalysis: BrandAnalysis): string {
+    return `Seul expert ${lead.sector} à ${lead.city || 'votre région'} avec garantie satisfaction et suivi personnalisé`;
+  }
+
+  private static generateUrgencyElements(lead: any, brandAnalysis: BrandAnalysis): UrgencyElement[] {
+    return [
+      {
+        type: 'time',
+        content: 'Disponibilité limitée cette semaine',
+        validity: '7 jours',
+        impact: 'Prenez rendez-vous maintenant'
+      },
+      {
+        type: 'quantity',
+        content: 'Places limitées pour les créneaux premium',
+        validity: 'jusqu\'à épuisement',
+        impact: 'Réservez votre place'
+      }
+    ];
+  }
+
+  private static generateHeroSocialProof(lead: any, brandAnalysis: BrandAnalysis): SocialProofElement[] {
+    return [
+      {
+        type: 'statistic',
+        content: `${lead.googleReviews || '200'}+ clients satisfaits`,
+        credibility: 'Avis Google vérifiés',
+        placement: 'hero-stats'
+      },
+      {
+        type: 'rating',
+        content: `${lead.googleRating || '4.9'}/5 sur Google`,
+        credibility: 'Note moyenne basée sur tous les avis',
+        placement: 'hero-rating'
+      }
+    ];
+  }
+
+  // Méthodes utilitaires
+
+  private static generateExperienceText(lead: any): string {
+    const years = Math.floor(Math.random() * 15) + 5;
+    return `${years}+ ans d'expérience`;
+  }
+
+  private static generateGuaranteeText(lead: any): string {
+    const guarantees = [
+      'Garantie satisfaction 100%',
+      'Satisfaction ou remboursement',
+      'Qualité garantie',
+      'Service exceptionnel garanti'
+    ];
+    
+    return guarantees[Math.floor(Math.random() * guarantees.length)];
+  }
+
+  private static generatePainPoint(sector: string): string {
+    const painPoints: Record<string, string> = {
+      restaurant: 'Fatigué des restaurants décevants ?',
+      coiffeur: 'Insatisfait de votre coiffure actuelle ?',
+      plomberie: 'Problèmes de plomberie récurrents ?',
+      garage: 'Mécanicien peu fiable ?',
+      hôtel: 'Hôtels qui ne répondent pas à vos attentes ?'
+    };
+
+    return painPoints[sector] || 'Insatisfait du service actuel ?';
+  }
+
+  private static generateGainPoint(sector: string): string {
+    const gainPoints: Record<string, string> = {
+      restaurant: 'Découvrez une expérience gastronomique inoubliable',
+      coiffeur: 'Obtenez le style qui vous correspond vraiment',
+      plomberie: 'Profitez de solutions durables et fiables',
+      garage: 'Conduisez en toute sécurité et sérénité',
+      hôtel: 'Vivez un séjour d\'exception et confort'
+    };
+
+    return gainPoints[sector] || 'Bénéficiez d\'un service exceptionnel';
+  }
+
+  private static getBaseServices(sector?: string): any[] {
+    const servicesBySector: Record<string, any[]> = {
+      restaurant: [
+        { name: 'Cuisine Gastronomique', category: 'principal' },
+        { name: 'Service Traiteur', category: 'evenementiel' },
+        { name: 'Dégustation Vins', category: 'experience' },
+        { name: 'Menu Enfant', category: 'famille' }
+      ],
+      coiffeur: [
+        { name: 'Coupe Femme', category: 'feminin' },
+        { name: 'Coupe Homme', category: 'masculin' },
+        { name: 'Coloration', category: 'technique' },
+        { name: 'Soins', category: 'bien-etre' }
+      ],
+      plomberie: [
+        { name: 'Installation Sanitaire', category: 'neuf' },
+        { name: 'Dépannage Urgence', category: 'urgence' },
+        { name: 'Chauffage', category: 'confort' },
+        { name: 'Diagnostic', category: 'expertise' }
+      ],
+      garage: [
+        { name: 'Entretien', category: 'preventif' },
+        { name: 'Réparation', category: 'curatif' },
+        { name: 'Diagnostic', category: 'expertise' },
+        { name: 'Carrosserie', category: 'esthetique' }
+      ],
+      hôtel: [
+        { name: 'Chambres Standard', category: 'hebergement' },
+        { name: 'Suites Premium', category: 'luxe' },
+        { name: 'Restaurant', category: 'restauration' },
+        { name: 'Spa', category: 'bien-etre' }
+      ]
+    };
+
+    return servicesBySector[sector?.toLowerCase()] || [
+      { name: 'Service Principal', category: 'core' },
+      { name: 'Consultation', category: 'expertise' },
+      { name: 'Support', category: 'service' }
+    ];
+  }
+
+  private static enhanceServiceContent(service: any, lead: any, brandAnalysis: BrandAnalysis): ServiceContent {
+    return {
+      ...service,
+      description: this.generateServiceDescription(service, lead, brandAnalysis),
+      benefits: this.generateServiceBenefits(service, lead, brandAnalysis),
+      features: this.generateServiceFeatures(service, lead, brandAnalysis),
+      process: this.generateServiceProcess(service, lead, brandAnalysis),
+      pricing: this.generateServicePricing(service, lead, brandAnalysis),
+      guarantees: this.generateServiceGuarantees(service, lead, brandAnalysis),
+      caseStudies: this.generateServiceCaseStudies(service, lead),
+      faq: this.generateServiceFAQ(service, lead),
+      testimonials: this.generateServiceTestimonials(service, lead),
+      comparison: this.generateServiceComparison(service, lead)
+    };
+  }
+
+  private static generateServiceDescription(service: any, lead: any, brandAnalysis: BrandAnalysis): string {
+    return `Service ${service.name} de qualité exceptionnelle, adapté à vos besoins spécifiques avec expertise professionnelle et garantie satisfaction.`;
+  }
+
+  private static generateServiceBenefits(service: any, lead: any, brandAnalysis: BrandAnalysis): Benefit[] {
+    return [
+      {
+        title: 'Qualité garantie',
+        description: 'Service exécuté selon les plus hauts standards',
+        outcome: 'Résultats exceptionnels et durables',
+        timeline: 'Immédiat',
+        measurement: 'Satisfaction client 100%',
+        evidence: 'Avis clients vérifiés'
+      },
+      {
+        title: 'Expertise professionnelle',
+        description: 'Intervention par des experts certifiés',
+        outcome: 'Solutions optimales et efficaces',
+        timeline: 'Long terme',
+        measurement: 'Taux de réussite 98%',
+        evidence: 'Certifications professionnelles'
+      }
+    ];
+  }
+
+  private static generateServiceFeatures(service: any, lead: any, brandAnalysis: BrandAnalysis): Feature[] {
+    return [
+      {
+        name: 'Expertise technique',
+        description: 'Intervention par des professionnels qualifiés',
+        technical: true,
+        unique: false,
+        standard: true,
+        optional: false
+      },
+      {
+        name: 'Garantie satisfaction',
+        description: 'Satisfaction ou reprise gratuite',
+        technical: false,
+        unique: true,
+        standard: false,
+        optional: false
+      }
+    ];
+  }
+
+  private static generateServiceProcess(service: any, lead: any, brandAnalysis: BrandAnalysis): ServiceProcess[] {
+    return [
+      {
+        step: 1,
+        name: 'Consultation initiale',
+        description: 'Analyse de vos besoins et objectifs',
+        duration: '30 minutes',
+        deliverables: ['Diagnostic', 'Recommandations'],
+        requirements: ['Informations de base']
+      },
+      {
+        step: 2,
+        name: 'Proposition personnalisée',
+        description: 'Solution adaptée à votre situation',
+        duration: '24h',
+        deliverables: ['Devis détaillé', 'Planning'],
+        requirements: ['Validation du diagnostic']
+      }
+    ];
+  }
+
+  private static generateServicePricing(service: any, lead: any, brandAnalysis: BrandAnalysis): PricingInfo {
+    return {
+      model: 'forfaitaire',
+      structure: [
+        {
+          name: 'Standard',
+          price: 'À partir de 99€',
+          features: ['Service de base', 'Garantie 1 an'],
+          popular: false
+        },
+        {
+          name: 'Premium',
+          price: 'À partir de 199€',
+          features: ['Service complet', 'Garantie 2 ans', 'Support prioritaire'],
+          popular: true
+        }
+      ],
+      value: {
+        proposition: 'Meilleur rapport qualité-prix du secteur',
+        justification: 'Expertise locale et garantie satisfaction'
+      },
+      transparency: {
+        details: 'Aucun frais caché',
+        conditions: 'Conditions claires et simples'
+      },
+      guarantees: [
+        {
+          type: 'satisfaction',
+          description: 'Satisfaction ou remboursement',
+          duration: '30 jours',
+          conditions: 'Aucune condition'
+        }
+      ]
+    };
+  }
+
+  private static generateServiceGuarantees(service: any, lead: any, brandAnalysis: BrandAnalysis): Guarantee[] {
+    return [
+      {
+        type: 'satisfaction',
+        description: 'Satisfaction 100% garantie',
+        duration: '30 jours',
+        coverage: 'Remboursement complet',
+        conditions: 'Aucune condition'
+      },
+      {
+        type: 'quality',
+        description: 'Qualité professionnelle garantie',
+        duration: '1 an',
+        coverage: 'Reprise gratuite',
+        conditions: 'Respect des préconisations'
+      }
+    ];
+  }
+
+  private static generateServiceCaseStudies(service: any, lead: any): string[] {
+    return [
+      `Étude de cas: ${service.name} pour client satisfait`,
+      `Projet réussi: ${service.name} avec résultats exceptionnels`
+    ];
+  }
+
+  private static generateServiceFAQ(service: any, lead: any): FAQItem[] {
+    return [
+      {
+        question: `Quelle est la durée d'un ${service.name} ?`,
+        answer: `La durée dépend de la complexité, généralement entre 1h et 4h.`,
+        category: 'practical',
+        priority: 'high'
+      },
+      {
+        question: `Quel est le prix d'un ${service.name} ?`,
+        answer: `Le prix varie selon vos besoins spécifiques, contactez-nous pour un devis personnalisé.`,
+        category: 'pricing',
+        priority: 'high'
+      }
+    ];
+  }
+
+  private static generateServiceTestimonials(service: any, lead: any): ServiceTestimonial[] {
+    return [
+      {
+        client: 'Client satisfait',
+        service: service.name,
+        feedback: `Excellent service ${service.name}, professionnel et efficace.`,
+        rating: 5,
+        date: 'Il y a 1 semaine',
+        context: 'Intervention standard'
+      }
+    ];
+  }
+
+  private static generateServiceComparison(service: any, lead: any): ComparisonPoint[] {
+    return [
+      {
+        feature: 'Expertise',
+        us: 'Experts certifiés avec 10+ ans d\'expérience',
+        competitors: 'Standard du secteur',
+        advantage: 'Supérieur'
+      },
+      {
+        feature: 'Garantie',
+        us: 'Satisfaction 100% garantie',
+        competitors: 'Garantie limitée',
+        advantage: 'Supérieur'
+      }
+    ];
+  }
+
+  private static getBaseTestimonials(lead: any): any[] {
+    return [
+      {
+        author: 'Jean Dupont',
+        text: 'Service exceptionnel, professionnel et efficace.',
+        rating: 5,
+        date: 'Il y a 2 semaines'
+      },
+      {
+        author: 'Marie Martin',
+        text: 'Dépassé mes attentes, je recommande vivement.',
+        rating: 5,
+        date: 'Il y a 1 mois'
+      }
+    ];
+  }
+
+  private static enhanceTestimonialContent(testimonial: any, lead: any, brandAnalysis: BrandAnalysis): TestimonialContent {
+    return {
+      client: {
+        name: testimonial.author,
+        company: lead.sector,
+        role: 'Client',
+        industry: lead.sector,
+        location: lead.city || 'France',
+        since: '2023',
+        type: 'individual'
+      },
+      story: {
+        situation: 'Recherche d\'un service fiable',
+        challenge: 'Services précédents décevants',
+        solution: `Choix de ${lead.name}`,
+        implementation: 'Processus simple et efficace',
+        outcome: 'Résultats exceptionnels',
+        timeline: 'Intervention rapide'
+      },
+      results: [
+        {
+          metric: 'Satisfaction',
+          before: '60%',
+          after: '100%',
+          improvement: '+40%',
+          timeframe: 'Immédiat',
+          verification: 'Avis client'
+        }
+      ],
+      experience: {
+        firstContact: 'Réponse rapide et professionnelle',
+        consultation: 'Écoute attentive et conseils pertinents',
+        delivery: 'Service impeccable',
+        support: 'Suivi personnalisé',
+        followUp: 'Vérification de satisfaction'
+      },
+      recommendation: 'Je recommande sans hésiter',
+      rating: testimonial.rating,
+      context: {
+        project: lead.sector,
+        scope: 'Service standard',
+        budget: 'Rapport qualité-prix excellent',
+        timeline: 'Intervention rapide',
+        complexity: 'Standard'
+      },
+      media: []
+    };
+  }
+
+  // Interfaces additionnelles
+  interface PortfolioContent {
+    categories: string[];
+    projects: ProjectContent[];
+    filters: FilterContent[];
+    presentation: PresentationContent;
+  }
+
+  interface ProjectContent {
+    title: string;
+    description: string;
+    category: string;
+    images: string[];
+    details: ProjectDetails;
+    results: ProjectResults;
+  }
+
+  interface FilterContent {
+    name: string;
+    value: string;
+    count: number;
+  }
+
+  interface PresentationContent {
+    layout: string;
+    animation: string;
+    interaction: string;
+  }
+
+  interface ProcessContent {
+    title: string;
+    description: string;
+    steps: ProcessStep[];
+    benefits: string[];
+    timeline: string;
+    guarantees: string[];
+  }
+
+  interface ProcessStep {
+    number: number;
+    title: string;
+    description: string;
+    duration: string;
+    icon: string;
+  }
+
+  interface ContactContent {
+    title: string;
+    description: string;
+    methods: ContactMethod[];
+    information: ContactInformation;
+    expectations: ContactExpectation[];
+    urgency: ContactUrgency;
+  }
+
+  interface ContactMethod {
+    type: string;
+    label: string;
+    value: string;
+    icon: string;
+    availability: string;
+  }
+
+  interface SEOContent {
+    metadata: SEOMetadata;
+    keywords: string[];
+    content: SEOContentStrategy;
+    local: LocalSEO;
+    technical: TechnicalSEO;
+  }
+
+  interface SocialProofContent {
+    statistics: SocialStatistic[];
+    testimonials: SocialTestimonial[];
+    certifications: SocialCertification[];
+    partnerships: Partnership[];
+    media: MediaMention[];
+  }
+
+  interface TrustSignalContent {
+    guarantees: TrustGuarantee[];
+    security: SecuritySignal[];
+    transparency: TransparencySignal[];
+    expertise: ExpertiseSignal[];
+    social: SocialSignal[];
+  }
+
+  interface CaseStudyContent {
+    title: string;
+    client: string;
+    challenge: string;
+    solution: string;
+    results: string[];
+    timeline: string;
+    images: string[];
+  }
+
+  interface BlogContent {
+    title: string;
+    excerpt: string;
+    content: string;
+    category: string;
+    tags: string[];
+    date: string;
+    author: string;
+  }
+
+  interface FAQContent {
+    categories: FAQCategory[];
+    questions: FAQItem[];
+    search: FAQSearch;
+    help: FAQHelp;
+  }
+
+  // Types additionnels
+  type Guarantee = any;
+  type ServiceTestimonial = any;
+  type FAQItem = any;
+  type ProjectDetails = any;
+  type ProjectResults = any;
+  type ContactInformation = any;
+  type ContactExpectation = any;
+  type ContactUrgency = any;
+  type SEOMetadata = any;
+  type SEOContentStrategy = any;
+  type LocalSEO = any;
+  type TechnicalSEO = any;
+  type SocialStatistic = any;
+  type SocialTestimonial = any;
+  type SocialCertification = any;
+  type Partnership = any;
+  type MediaMention = any;
+  type TrustGuarantee = any;
+  type SecuritySignal = any;
+  type TransparencySignal = any;
+  type ExpertiseSignal = any;
+  type SocialSignal = any;
+  type FAQCategory = any;
+  type FAQSearch = any;
+  type FAQHelp = any;
+
+  // Méthodes de génération manquantes (simplifiées)
+  private static generateCompanyStory(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      narrative: `L'histoire de ${lead.name} commence avec une passion pour l'excellence ${lead.sector}.`,
+      founding: {
+        year: 2010,
+        founder: 'Fondateur passionné',
+        motivation: 'Offrir un service exceptionnel'
+      },
+      evolution: {
+        growth: 'Développement continu',
+        expansion: 'Extension locale',
+        innovation: 'Innovation constante'
+      },
+      milestones: [],
+      challenges: [],
+      successes: []
+    };
+  }
+
+  private static generateMissionStatement(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      statement: `Notre mission est d'offrir un service ${lead.sector} d'excellence.`,
+      purpose: 'Satisfaire nos clients',
+      impact: 'Améliorer la vie de nos clients',
+      stakeholders: ['Clients', 'Employés', 'Communauté'],
+      differentiation: 'Approche personnalisée'
+    };
+  }
+
+  private static generateVisionStatement(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      statement: `Devenir le leader ${lead.sector} de référence.`,
+      future: 'Excellence et innovation',
+      aspirations: ['Croissance', 'Innovation', 'Excellence'],
+      timeline: '5 ans',
+      metrics: ['Satisfaction client', 'Croissance', 'Réputation']
+    };
+  }
+
+  private static generateCoreValues(lead: any, brandAnalysis: BrandAnalysis): CoreValues[] {
+    return brandAnalysis.values.coreValues;
+  }
+
+  private static generateTeamContent(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      members: [],
+      culture: 'Culture d\'excellence',
+      expertise: [],
+      philosophy: 'Philosophie centrée client'
+    };
+  }
+
+  private static generateExpertiseContent(lead: any, brandAnalysis: BrandAnalysis): any[] {
+    return [];
+  }
+
+  private static generateCompanyHistory(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      founded: 2010,
+      evolution: 'Développement continu',
+      achievements: []
+    };
+  }
+
+  private static generateAchievements(lead: any, brandAnalysis: BrandAnalysis): any[] {
+    return [];
+  }
+
+  private static generateCertifications(lead: any, brandAnalysis: BrandAnalysis): any[] {
+    return [];
+  }
+
+  private static generatePortfolioCategories(lead: any, brandAnalysis: BrandAnalysis): string[] {
+    return ['Réalisations', 'Projets', 'Avant/Après'];
+  }
+
+  private static generatePortfolioProjects(lead: any, brandAnalysis: BrandAnalysis): any[] {
+    return [];
+  }
+
+  private static generatePortfolioFilters(lead: any, brandAnalysis: BrandAnalysis): any[] {
+    return [];
+  }
+
+  private static generatePortfolioPresentation(lead: any, brandAnalysis: BrandAnalysis): any {
+    return {
+      layout: 'grid',
+      animation: 'fade-in',
+      interaction: 'hover'
+    };
+  }
+
+  private static generateProcessTitle(lead: any, brandAnalysis: BrandAnalysis): string {
+    return 'Notre Processus';
+  }
+
+  private static generateProcessDescription(lead: any, brandAnalysis: BrandAnalysis): string {
+    return 'Un processus simple et efficace pour des résultats exceptionnels.';
+  }
+
+  private static generateProcessSteps(lead: any, brandAnalysis: BrandAnalysis): ProcessStep[] {
+    return [
+      {
+        number: 1,
+        title: 'Consultation',
+        description: 'Analyse de vos besoins',
+        duration: '30 min',
+        icon: 'bi-chat-dots'
+      },
+      {
+        number: 2,
+        title: 'Proposition',
+        description: 'Solution personnalisée',
+        duration: '24h',
+        icon: 'bi-file-text'
+      }
+    ];
+  }
+
+  private static generateProcessBenefits(lead: any, brandAnalysis: BrandAnalysis): string[] {
+    return ['Efficacité', 'Transparence', 'Satisfaction'];
+  }
+
+  private static generateProcessTimeline(lead: any, brandAnalysis: BrandAnalysis): string {
+    return 'Processus rapide en 2-3 jours';
+  }
+
+  private static generateProcessGuarantees(lead: any, brandAnalysis: BrandAnalysis): string[] {
+    return ['Satisfaction garantie', 'Qualité professionnelle'];
+  }
+
+  private static generateContactTitle(lead: any, brandAnalysis: BrandAnalysis): string {
+    return 'Contactez-nous';
+  }
+
+  private static generateContactDescription(lead: any, brandAnalysis: BrandAnalysis): string {
+    return 'Nous sommes à votre disposition pour répondre à toutes vos questions.';
+  }
+
+  private static generateContactMethods(lead: any, brandAnalysis: BrandAnalysis): ContactMethod[] {
+    return [
+      {
+        type: 'phone',
+        label: 'Téléphone',
+        value: lead.phone || '',
+        icon: 'bi-telephone',
+        availability: 'Lun-Ven 9h-18h'
+      },
+      {
+        type: 'email',
+        label: 'Email',
+        value: lead.email || '',
+        icon: 'bi-envelope',
+        availability: '24/7'
+      }
+    ];
+  }
+
+  private static generateContactInformation(lead: any): ContactInformation {
+    return {
+      address: lead.address || '',
+      phone: lead.phone || '',
+      email: lead.email || '',
+      hours: 'Lun-Ven 9h-18h'
+    };
+  }
+
+  private static generateContactExpectations(lead: any, brandAnalysis: BrandAnalysis): ContactExpectation[] {
+    return [
+      {
+        type: 'response',
+        expectation: 'Réponse sous 24h',
+        timeframe: '24 heures'
+      }
+    ];
+  }
+
+  private static generateContactUrgency(lead: any): ContactUrgency {
+    return {
+      urgent: 'Pour les urgences, appelez directement',
+      response: 'Intervention sous 2h'
+    };
+  }
+
+  private static generateSEOMetadata(lead: any, brandAnalysis: BrandAnalysis): SEOMetadata {
+    return {
+      title: `${lead.name} - Expert ${lead.sector} à ${lead.city || 'France'}`,
+      description: `Service ${lead.sector} professionnel à ${lead.city || 'France'}. Qualité garantie et satisfaction client.`,
+      keywords: [lead.sector, lead.city, 'professionnel', 'qualité', 'service']
+    };
+  }
+
+  private static generateSEOKeywords(lead: any, brandAnalysis: BrandAnalysis): string[] {
+    return [
+      lead.sector,
+      lead.city,
+      'professionnel',
+      'qualité',
+      'service',
+      'expert',
+      'garantie'
+    ];
+  }
+
+  private static generateSEOContentStrategy(lead: any, brandAnalysis: BrandAnalysis): SEOContentStrategy {
+    return {
+      strategy: 'Contenu orienté client',
+      frequency: 'Mensuelle',
+      topics: [lead.sector, 'conseils', 'actualités']
+    };
+  }
+
+  private static generateLocalSEO(lead: any, brandAnalysis: BrandAnalysis): LocalSEO {
+    return {
+      googleMyBusiness: 'Optimisé',
+      localKeywords: [`${lead.sector} ${lead.city}`],
+      citations: 'Références locales'
+    };
+  }
+
+  private static generateTechnicalSEO(lead: any, brandAnalysis: BrandAnalysis): TechnicalSEO {
+    return {
+      performance: 'Optimisé',
+      mobile: 'Responsive',
+      security: 'HTTPS activé'
+    };
+  }
+
+  private static generateSocialStatistics(lead: any, brandAnalysis: BrandAnalysis): SocialStatistic[] {
+    return [
+      {
+        metric: 'Clients satisfaits',
+        value: lead.googleReviews || '200+',
+        credibility: 'A vérifier'
+      }
+    ];
+  }
+
+  private static generateSocialTestimonials(lead: any, brandAnalysis: BrandAnalysis): SocialTestimonial[] {
+    return [];
+  }
+
+  private static generateSocialCertifications(lead: any, brandAnalysis: BrandAnalysis): SocialCertification[] {
+    return [];
+  }
+
+  private static generatePartnerships(lead: any, brandAnalysis: BrandAnalysis): Partnership[] {
+    return [];
+  }
+
+  private static generateMediaMentions(lead: any, brandAnalysis: BrandAnalysis): MediaMention[] {
+    return [];
+  }
+
+  private static generateTrustGuarantees(lead: any, brandAnalysis: BrandAnalysis): TrustGuarantee[] {
+    return [
+      {
+        type: 'satisfaction',
+        description: 'Satisfaction 100% garantie',
+        duration: '30 jours'
+      }
+    ];
+  }
+
+  private static generateSecuritySignals(lead: any, brandAnalysis: BrandAnalysis): SecuritySignal[] {
+    return [
+      {
+        type: 'ssl',
+        description: 'Connexion sécurisée SSL',
+        visible: true
+      }
+    ];
+  }
+
+  private static generateTransparencySignals(lead: any, brandAnalysis: BrandAnalysis): TransparencySignal[] {
+    return [
+      {
+        type: 'pricing',
+        description: 'Tarifs transparents',
+        available: true
+      }
+    ];
+  }
+
+  private static generateExpertiseSignals(lead: any, brandAnalysis: BrandAnalysis): ExpertiseSignal[] {
+    return [
+      {
+        type: 'certification',
+        description: 'Experts certifiés',
+        verifiable: true
+      }
+    ];
+  }
+
+  private static generateSocialSignals(lead: any, brandAnalysis: BrandAnalysis): SocialSignal[] {
+    return [
+      {
+        type: 'reviews',
+        description: 'Avis clients vérifiés',
+        count: lead.googleReviews || '200'
+      }
+    ];
+  }
+
+  private static generateExpertCaseStudies(lead: any, brandAnalysis: BrandAnalysis): CaseStudyContent[] {
+    return [];
+  }
+
+  private static generateExpertBlogPosts(lead: any, brandAnalysis: BrandAnalysis): BlogContent[] {
+    return [];
+  }
+
+  private static generateFAQCategories(lead: any, brandAnalysis: BrandAnalysis): FAQCategory[] {
+    return [
+      {
+        name: 'Général',
+        description: 'Questions fréquentes',
+        icon: 'bi-question-circle'
+      }
+    ];
+  }
+
+  private static generateExpertFAQ(lead: any, brandAnalysis: BrandAnalysis): FAQItem[] {
+    return [
+      {
+        question: 'Quels services proposez-vous ?',
+        answer: `Nous proposons des services ${lead.sector} professionnels et personnalisés.`,
+        category: 'général',
+        priority: 'high'
+      }
+    ];
+  }
+
+  private static generateFAQSearch(lead: any, brandAnalysis: BrandAnalysis): FAQSearch {
+    return {
+      enabled: true,
+      placeholder: 'Rechercher une question...'
+    };
+  }
+
+  private static generateFAQHelp(lead: any, brandAnalysis: BrandAnalysis): FAQHelp {
+    return {
+      contact: 'Pas de réponse ? Contactez-nous',
+      email: lead.email || ''
+    };
+  }
+}
