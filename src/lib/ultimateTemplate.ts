@@ -228,7 +228,7 @@ const SECTOR_ULTIMATE_TEMPLATES = {
     primary: '#0f766e',
     secondary: '#115e59',
     accent: '#14b8a6',
-    background: '#f8fafc',
+    background: '#f0fdfa',
     services: [
       { name: 'Dépannage 24h/24', description: 'Intervention d\'urgence sur toutes fuites et pannes', features: ['Disponible 7j/7', 'Arrivée sous 1h30', 'Sans surprise tarifaire'] },
       { name: 'Installation Sanitaire', description: 'Pose et remplacement de vos appareils', features: ['Robinetterie', 'Éviers', 'WC', 'Douches'] },
@@ -1188,16 +1188,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             z-index: -1;
             background: var(--bg-base);
         }
-        /* Ombres / halos : réduits pour un rendu premium, neutre et non “tacheux” */
         .blob {
             position: absolute;
-            filter: blur(140px);
-            opacity: 0.04;
+            filter: blur(100px);
+            opacity: 0.15;
             animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 50%;
-            pointer-events: none;
         }
-
         .anim-shape {
             position: absolute; opacity: 0.08; pointer-events: none; z-index: 0;
             animation: floatShape 14s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
