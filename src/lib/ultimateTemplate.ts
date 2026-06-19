@@ -498,42 +498,38 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   }
 
   let testimonials = (lead.googleReviewsData || [])
-    .filter((review: any) => !isEnglishText(review.text))
+    .filter((review: any) => !isEnglishText(review.text) && review.text && review.text.trim().length >= 25)
     .map((review: any) => ({
-      author: review.author || 'Client VIP', text: review.text || "Une prestation exceptionnelle.",
+      author: review.author || 'Client', text: review.text.trim(),
       rating: review.rating || 5, date: review.date || 'Récemment'
     }));
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
-  testimonials = testimonials.slice(0, 6);
+  while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 3);
 
   let nameHash = 0;
   for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = aiContent?.slogan || sloganVariations[nameHash % sloganVariations.length];
 
-  const BLOCKED_KEYWORDS = ['food', 'fruit', 'legume', 'carrot', 'salmon', 'kitchen', 'cooking', 'recipe', 'meal', 'dessert', 'cake', 'pizza', 'burger', 'restaurant-menu', 'portrait', 'face', 'selfie', 'person', 'man ', 'woman ', 'people', 'crowd', 'group', 'logo', 'badge', 'stamp', 'seal', 'emblem', 'watermark', 'text-overlay', 'gradient-overlay'];
-  const BLOCKED_DOMAINS = ['tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 'pagesjaunes.fr', 'google.com', 'gstatic.com', 'cloudfront.net'];
+  const BLOCKED_KEYWORDS = ['food', 'fruit', 'legume', 'carrot', 'salmon', 'kitchen', 'cooking', 'recipe', 'meal', 'dessert', 'cake', 'pizza', 'burger', 'restaurant-menu', 'portrait', 'face', 'selfie', 'person', 'man ', 'woman ', 'people', 'crowd', 'group', 'logo', 'badge', 'stamp', 'seal', 'emblem', 'watermark', 'text-overlay', 'gradient-overlay', 'phone number', 'tel:', 'numero'];
+  const BLOCKED_DOMAINS = ['tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 'pagesjaunes.fr', 'google.com', 'gstatic.com', 'cloudfront.net', 'googleusercontent.com', 'maps.google', 'lh3.', 'ggpht.com', 'googleapis.com'];
+
+  const sectorImages = getSectorImages(lead.sector);
+  const heroImage = sectorImages[nameHash % sectorImages.length];
+
   const rawLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])].filter(img => {
     if (!img || typeof img !== 'string' || !img.startsWith('https://')) return false;
+    if (img === heroImage) return false;
     const low = img.toLowerCase();
     if (BLOCKED_KEYWORDS.some(kw => low.includes(kw))) return false;
     if (BLOCKED_DOMAINS.some(d => low.includes(d))) return false;
     if (low.includes('favicon') || low.includes('sprite') || low.includes('pixel')) return false;
     return true;
-  });
+  }).slice(0, 3);
 
-  const sectorImages = getSectorImages(lead.sector);
-  const combinedImages = [...rawLeadImages];
-  while (combinedImages.length < 6) combinedImages.push(sectorImages[combinedImages.length % sectorImages.length]);
-
-  let imageHash = 0;
-  for (let i = 0; i < companyName.length; i++) { imageHash = ((imageHash << 5) - imageHash) + companyName.charCodeAt(i); imageHash |= 0; }
-  imageHash = Math.abs(imageHash);
-  const startIndex = imageHash % combinedImages.length;
-  const heroImage = combinedImages[startIndex];
-  const allImages = [];
-  for (let i = 1; i <= 5; i++) allImages.push(combinedImages[(startIndex + i) % combinedImages.length]);
+  const combinedImages = [heroImage, ...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...rawLeadImages];
+  const allImages = combinedImages.slice(0, 5);
 
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
@@ -565,17 +561,22 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = aiContent?.slogan || sloganVariations[nameHash % sloganVariations.length];
 
-  let combinedImages: string[] = [];
-  try { combinedImages = await getImagesForLead(lead, 6); }
-  catch { combinedImages = getSectorImages(lead.sector); }
+  const sectorImages = getSectorImages(lead.sector);
+  const heroImage = sectorImages[nameHash % sectorImages.length];
 
-  let imageHash = 0;
-  for (let i = 0; i < companyName.length; i++) { imageHash = ((imageHash << 5) - imageHash) + companyName.charCodeAt(i); imageHash |= 0; }
-  imageHash = Math.abs(imageHash);
-  const startIndex = imageHash % (combinedImages.length || 1);
-  const heroImage = combinedImages[startIndex] || '';
-  const allImages = [];
-  for (let i = 1; i <= 5; i++) allImages.push(combinedImages[(startIndex + i) % (combinedImages.length || 1)]);
+  let combinedImages: string[] = [];
+  try {
+    const raw = await getImagesForLead(lead, 6);
+    const BLOCKED = ['googleusercontent', 'maps.google', 'ggpht', 'favicon', 'sprite', 'pixel', 'logo', 'badge'];
+    combinedImages = raw.filter((img: string) => {
+      if (!img || !img.startsWith('https://')) return false;
+      if (img === heroImage) return false;
+      const low = img.toLowerCase();
+      return !BLOCKED.some(kw => low.includes(kw));
+    }).slice(0, 3);
+  } catch {}
+
+  const allImages = [...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...combinedImages].slice(0, 5);
 
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -587,14 +588,14 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   }
 
   let testimonials = (lead.googleReviewsData || [])
-    .filter((review: any) => !isEnglishText(review.text))
+    .filter((review: any) => !isEnglishText(review.text) && review.text && review.text.trim().length >= 25)
     .map((review: any) => ({
-      author: review.author || 'Client VIP', text: review.text || "Une prestation exceptionnelle.",
+      author: review.author || 'Client', text: review.text.trim(),
       rating: review.rating || 5, date: review.date || 'Récemment'
     }));
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
-  testimonials = testimonials.slice(0, 6);
+  while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 3);
 
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
@@ -1124,11 +1125,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div>
                     <div class="footer-brand">${logoInfo.text}</div>
                     <p class="footer-desc">${aboutText.substring(0,120)}...</p>
-                    <div class="footer-social">
-                        <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                        <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-                        <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
-                    </div>
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul>${services.slice(0,5).map(s=>`<li><a href="#services">${s.name}</a></li>`).join('')}</ul></div>
                 <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#about">À propos</a></li><li><a href="#why">Pourquoi nous</a></li><li><a href="#testimonials">Avis clients</a></li><li><a href="#contact">Contact</a></li></ul></div>
