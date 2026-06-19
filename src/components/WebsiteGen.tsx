@@ -60,15 +60,15 @@ interface Props {
 interface ChatMessage { role: 'user' | 'assistant'; text: string; }
 
 const SECTOR_PALETTES: Record<string, { p: string; p2: string; dk: string; lt: string; font: string }> = {
-  restaurant: { p: '#E8590C', p2: '#FB923C', dk: '#1c1917', lt: '#FFF7ED', font: 'Playfair Display' },
-  coiffeur: { p: '#7C3AED', p2: '#A78BFA', dk: '#1e1040', lt: '#F5F3FF', font: 'Cormorant Garamond' },
-  salon: { p: '#DB2777', p2: '#F472B6', dk: '#2d0a20', lt: '#FDF2F8', font: 'Cormorant Garamond' },
-  spa: { p: '#0D9488', p2: '#2DD4BF', dk: '#042f2e', lt: '#F0FDFA', font: 'Tenor Sans' },
-  médecin: { p: '#2563EB', p2: '#60A5FA', dk: '#172554', lt: '#EFF6FF', font: 'Inter' },
-  dentiste: { p: '#0891B2', p2: '#22D3EE', dk: '#0c4a6e', lt: '#ECFEFF', font: 'Inter' },
-  avocat: { p: '#1e3a5f', p2: '#3b82f6', dk: '#0f172a', lt: '#F1F5F9', font: 'Libre Baskerville' },
-  hôtel: { p: '#B45309', p2: '#F59E0B', dk: '#1c1917', lt: '#FFFBEB', font: 'Cormorant Garamond' },
-  default: { p: '#D4500A', p2: '#F97316', dk: '#1c1917', lt: '#FFF7ED', font: 'Plus Jakarta Sans' },
+  restaurant: { p: '#c2410c', p2: '#ea580c', dk: '#1c1917', lt: '#fff7ed', font: 'Playfair Display' },
+  coiffeur: { p: '#6b21a8', p2: '#a855f7', dk: '#1e1040', lt: '#faf5ff', font: 'Cormorant Garamond' },
+  salon: { p: '#be185d', p2: '#ec4899', dk: '#2d0a20', lt: '#fdf2f8', font: 'Cormorant Garamond' },
+  spa: { p: '#0f766e', p2: '#14b8a6', dk: '#042f2e', lt: '#f0fdfa', font: 'Plus Jakarta Sans' },
+  médecin: { p: '#1e40af', p2: '#3b82f6', dk: '#172554', lt: '#eff6ff', font: 'Inter' },
+  dentiste: { p: '#0e7490', p2: '#06b6d4', dk: '#0c4a6e', lt: '#ecfeff', font: 'Inter' },
+  avocat: { p: '#1e3a5f', p2: '#3b82f6', dk: '#0f172a', lt: '#f1f5f9', font: 'Playfair Display' },
+  hôtel: { p: '#92400e', p2: '#d97706', dk: '#1c1917', lt: '#fffbeb', font: 'Cormorant Garamond' },
+  default: { p: '#1e293b', p2: '#475569', dk: '#0f172a', lt: '#f8fafc', font: 'Plus Jakarta Sans' },
 };
 
 function getSectorPalette(sector: string) {
@@ -561,86 +561,70 @@ Tout en français. Spécifique au secteur "${lead.sector || 'professionnel'}".`;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${n} - ${sec}${city ? ' à ' + city : ''}</title>
     <meta name="description" content="${desc.substring(0, 160)}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.6; color: #333; }
-        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 0; text-align: center; }
-        .hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 20px; }
-        .hero p { font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9; }
-        .btn-primary { background: #ff6b6b; border: none; padding: 15px 30px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
-        .btn-primary:hover { background: #ff5252; transform: translateY(-2px); }
-        .section { padding: 80px 0; }
-        .info-card { background: #f8f9fa; border-radius: 15px; padding: 30px; margin: 20px 0; border: 1px solid #e9ecef; }
-        .contact-info { background: #ffffff; border-radius: 15px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .footer { background: #2d3436; color: white; padding: 40px 0; text-align: center; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;line-height:1.7;color:#1a1a2e;background:#fafaf9}
+        .hero{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:#fff;padding:100px 0 80px;text-align:center}
+        .hero h1{font-size:2.8rem;font-weight:800;margin-bottom:16px;letter-spacing:-.02em}
+        .hero p{font-size:1.15rem;margin-bottom:32px;opacity:.85;max-width:600px;margin-left:auto;margin-right:auto}
+        .btn{display:inline-block;background:#fff;color:#1e293b;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.2)}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.3)}
+        .container{max-width:900px;margin:0 auto;padding:0 24px}
+        .section{padding:72px 0}
+        .section h2{font-size:2rem;font-weight:800;margin-bottom:24px;letter-spacing:-.02em}
+        .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:24px}
+        .card{background:#fff;border:1px solid #e8e8ef;border-radius:14px;padding:28px;transition:all .3s}
+        .card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,.08)}
+        .card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+        .card p{color:#555770;font-size:.92rem}
+        .contact{background:#fff;border:1px solid #e8e8ef;border-radius:16px;padding:40px;margin-top:24px}
+        .contact-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+        .contact-item{display:flex;align-items:center;gap:12px;font-size:.95rem;color:#555770}
+        .contact-item strong{color:#1a1a2e}
+        footer{background:#1e293b;color:#fff;padding:36px 0;text-align:center;font-size:.88rem;opacity:.8}
+        @media(max-width:768px){.hero h1{font-size:2rem}.hero{padding:80px 0 60px}}
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h1>${n}</h1>
             <p>${desc}</p>
-            <a href="#contact" class="btn-primary">Contactez-nous</a>
+            ${ph ? `<a href="tel:${ph.replace(/[^0-9+]/g, '')}" class="btn">Contactez-nous</a>` : '<a href="#contact" class="btn">Contactez-nous</a>'}
         </div>
     </section>
 
-    <!-- About Section -->
     <section class="section">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="info-card">
-                        <h2>Notre Expertise</h2>
-                        <p>${sec} professionnel avec années d'expérience${city ? ' à ' + city : ''}. Nous garantissons un service de qualité.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="info-card">
-                        <h2>Nos Services</h2>
-                        <ul>
-                            <li>Service professionnel</li>
-                            <li>Intervention rapide</li>
-                            <li>Devis gratuit</li>
-                            <li>Garantie satisfaction</li>
-                        </ul>
-                    </div>
-                </div>
+            <h2>Notre Expertise</h2>
+            <p style="color:#555770;font-size:1.02rem;margin-bottom:16px">${sec} professionnel${city ? ' à ' + city : ''}. Nous garantissons un service de qualité.</p>
+            <div class="cards">
+                <div class="card"><h3>Service Professionnel</h3><p>Travail soigné et conforme aux normes en vigueur.</p></div>
+                <div class="card"><h3>Intervention Rapide</h3><p>Déplacement rapide et intervention dans les meilleurs délais.</p></div>
+                <div class="card"><h3>Devis Gratuit</h3><p>Devis détaillé et transparent, sans engagement.</p></div>
+                <div class="card"><h3>Garantie Satisfaction</h3><p>Nous garantissons la qualité de notre travail.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section class="section" id="contact">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="contact-info">
-                        <h2 class="text-center mb-4">Contactez-nous</h2>
-                        <div class="row">
-                            ${ph ? `<div class="col-md-6 mb-3"><strong>Téléphone:</strong><br><a href="tel:${ph}">${ph}</a></div>` : ''}
-                            ${em ? `<div class="col-md-6 mb-3"><strong>Email:</strong><br><a href="mailto:${em}">${em}</a></div>` : ''}
-                            ${addr ? `<div class="col-12 mb-3"><strong>Adresse:</strong><br>${addr}</div>` : ''}
-                        </div>
-                        <div class="text-center mt-4">
-                            <a href="tel:${ph || '#'}" class="btn-primary">Appeler maintenant</a>
-                        </div>
-                    </div>
+            <h2>Contactez-nous</h2>
+            <div class="contact">
+                <div class="contact-row">
+                    ${ph ? `<div class="contact-item"><strong>Téléphone:</strong> <a href="tel:${ph.replace(/[^0-9+]/g, '')}" style="color:inherit;text-decoration:none">${ph}</a></div>` : ''}
+                    ${em ? `<div class="contact-item"><strong>Email:</strong> <a href="mailto:${em}" style="color:inherit;text-decoration:none">${em}</a></div>` : ''}
+                    ${addr ? `<div class="contact-item"><strong>Adresse:</strong> ${addr}</div>` : ''}
                 </div>
+                ${ph ? `<div style="text-align:center;margin-top:24px"><a href="tel:${ph.replace(/[^0-9+]/g, '')}" class="btn" style="background:#1e293b;color:#fff">Appeler maintenant</a></div>` : ''}
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 ${n}. Tous droits réservés.</p>
-        </div>
+    <footer>
+        <p>&copy; ${new Date().getFullYear()} ${n}. Tous droits réservés.</p>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>`;
   };
