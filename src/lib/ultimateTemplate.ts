@@ -179,6 +179,14 @@ export interface UltimateContent {
   slogan: string;
   heroImage: string;
   allImages: string[];
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    twitter?: string;
+    youtube?: string;
+    tiktok?: string;
+  };
 }
 
 const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
@@ -498,11 +506,27 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   }
 
   let testimonials = (lead.googleReviewsData || [])
-    .filter((review: any) => !isEnglishText(review.text) && review.text && review.text.trim().length >= 25)
+    .filter((review: any) => {
+      if (!review.text || review.text.trim().length < 25) return false;
+      if (isEnglishText(review.text)) return false;
+      const text = review.text.trim().toLowerCase();
+      const spamIndicators = ['http', 'www.', '@', 'click here', 'buy now', 'free money'];
+      if (spamIndicators.some(ind => text.includes(ind))) return false;
+      return true;
+    })
     .map((review: any) => ({
-      author: review.author || 'Client', text: review.text.trim(),
-      rating: review.rating || 5, date: review.date || 'Récemment'
+      author: review.author || 'Client',
+      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
+      rating: Math.min(5, Math.max(1, review.rating || 5)),
+      date: review.date || 'Récemment'
     }));
+  const seenTexts = new Set<string>();
+  testimonials = testimonials.filter((t: any) => {
+    const normalized = t.text.toLowerCase().substring(0, 50);
+    if (seenTexts.has(normalized)) return false;
+    seenTexts.add(normalized);
+    return true;
+  });
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
   while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 3);
@@ -531,10 +555,12 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const combinedImages = [heroImage, ...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...rawLeadImages];
   const allImages = combinedImages.slice(0, 5);
 
+  const socialLinks = lead.socialLinks || {};
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, testimonials,
-    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages
+    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
+    socialLinks
   };
 
   const layoutVariant = nameHash % 4;
@@ -588,19 +614,37 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   }
 
   let testimonials = (lead.googleReviewsData || [])
-    .filter((review: any) => !isEnglishText(review.text) && review.text && review.text.trim().length >= 25)
+    .filter((review: any) => {
+      if (!review.text || review.text.trim().length < 25) return false;
+      if (isEnglishText(review.text)) return false;
+      const text = review.text.trim().toLowerCase();
+      const spamIndicators = ['http', 'www.', '@', 'click here', 'buy now', 'free money'];
+      if (spamIndicators.some(ind => text.includes(ind))) return false;
+      return true;
+    })
     .map((review: any) => ({
-      author: review.author || 'Client', text: review.text.trim(),
-      rating: review.rating || 5, date: review.date || 'Récemment'
+      author: review.author || 'Client',
+      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
+      rating: Math.min(5, Math.max(1, review.rating || 5)),
+      date: review.date || 'Récemment'
     }));
+  const seenTextsAsync = new Set<string>();
+  testimonials = testimonials.filter((t: any) => {
+    const normalized = t.text.toLowerCase().substring(0, 50);
+    if (seenTextsAsync.has(normalized)) return false;
+    seenTextsAsync.add(normalized);
+    return true;
+  });
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
   while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 3);
 
+  const socialLinks = lead.socialLinks || {};
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, testimonials,
-    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages
+    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
+    socialLinks
   };
 
   return buildUltimateHTML(content, template, combinedImages, nameHash % 4);
@@ -628,10 +672,16 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const companyHash = (() => { let h = 0; for (let i = 0; i < companyName.length; i++) { h = ((h << 5) - h) + companyName.charCodeAt(i); h |= 0; } return Math.abs(h); })();
   const emergencyFallback = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80';
   const allImgs = content.allImages || [];
+  const usedImages = new Set<string>();
   const getImg = (slot: number): string => {
-    const uniqueIndex = (companyHash + slot) % (combinedImages.length || 1);
-    if (combinedImages[uniqueIndex] && combinedImages[uniqueIndex].startsWith('https://')) return combinedImages[uniqueIndex];
-    if (allImgs[slot % allImgs.length] && allImgs[slot % allImgs.length].startsWith('https://')) return allImgs[slot % allImgs.length];
+    const candidates = [...combinedImages, ...allImgs].filter(img => img && img.startsWith('https://') && !usedImages.has(img));
+    if (candidates.length > 0) {
+      const selected = candidates[(companyHash + slot) % candidates.length];
+      usedImages.add(selected);
+      return selected;
+    }
+    const fallbackPool = [...combinedImages, ...allImgs].filter(img => img && img.startsWith('https://'));
+    if (fallbackPool.length > 0) return fallbackPool[slot % fallbackPool.length];
     return emergencyFallback;
   };
   const imgErr = (fallbackSlot: number) => `onerror="this.onerror=null;this.src='${getImg(fallbackSlot)}';this.style.opacity='0.8'"`;
@@ -673,15 +723,20 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .4s cubic-bezier(.4,0,.2,1)}
         .navbar.scrolled{background:rgba(255,255,255,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:10px 0;box-shadow:0 2px 30px rgba(0,0,0,.08)}
         .navbar-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center}
-        .navbar-brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text)}
+        .navbar-brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:color .3s}
+        .navbar:not(.scrolled) .navbar-brand{color:#fff}
         .navbar-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.3);flex-shrink:0}
-        .navbar-name{font-weight:700;font-size:1.15rem;color:var(--text);white-space:nowrap}
+        .navbar-name{font-weight:700;font-size:1.15rem;color:var(--text);white-space:nowrap;transition:color .3s}
+        .navbar:not(.scrolled) .navbar-name{color:#fff}
         .navbar-links{display:flex;align-items:center;gap:32px}
         .navbar-links a{text-decoration:none;color:var(--text-s);font-size:.9rem;font-weight:500;transition:color .25s;position:relative}
+        .navbar:not(.scrolled) .navbar-links a{color:rgba(255,255,255,.85)}
+        .navbar:not(.scrolled) .navbar-links a:hover{color:#fff}
         .navbar-links a:hover{color:var(--primary)}
         .navbar-cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff!important;padding:11px 24px;border-radius:10px;font-weight:600;font-size:.9rem;transition:all .25s;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .navbar-cta:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 6px 20px rgba(var(--primary-rgb),.35)}
         .mobile-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;border-radius:8px;transition:background .2s}
+        .navbar:not(.scrolled) .mobile-toggle i{color:#fff}
         .mobile-toggle:hover{background:rgba(0,0,0,.05)}
         .mobile-menu{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;box-shadow:0 12px 40px rgba(0,0,0,.1)}
         .mobile-menu.open{display:block}
@@ -1137,6 +1192,15 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div>
                     <div class="footer-brand">${logoInfo.text}</div>
                     <p class="footer-desc">${aboutText.substring(0,120)}...</p>
+                    ${content.socialLinks && Object.values(content.socialLinks).some(v => v) ? `
+                    <div class="footer-social">
+                        ${content.socialLinks.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
+                        ${content.socialLinks.instagram ? `<a href="${content.socialLinks.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" width="18"></i></a>` : ''}
+                        ${content.socialLinks.linkedin ? `<a href="${content.socialLinks.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn"><i data-lucide="linkedin" width="18"></i></a>` : ''}
+                        ${content.socialLinks.twitter ? `<a href="${content.socialLinks.twitter}" target="_blank" rel="noopener" aria-label="Twitter"><i data-lucide="twitter" width="18"></i></a>` : ''}
+                        ${content.socialLinks.youtube ? `<a href="${content.socialLinks.youtube}" target="_blank" rel="noopener" aria-label="YouTube"><i data-lucide="youtube" width="18"></i></a>` : ''}
+                        ${content.socialLinks.tiktok ? `<a href="${content.socialLinks.tiktok}" target="_blank" rel="noopener" aria-label="TikTok"><i data-lucide="music" width="18"></i></a>` : ''}
+                    </div>` : ''}
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul>${services.slice(0,5).map(s=>`<li><a href="#services">${s.name}</a></li>`).join('')}</ul></div>
                 <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#about">À propos</a></li><li><a href="#why">Pourquoi nous</a></li><li><a href="#testimonials">Avis clients</a></li><li><a href="#contact">Contact</a></li></ul></div>
