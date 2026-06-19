@@ -7,136 +7,81 @@ const PEXELS_API_KEY = process.env.PEXELS_API_KEY || '';
 // Ces URLs sont des liens directs vers des images vérifiées
 export const SECTOR_PEXELS_IMAGES: Record<string, string[]> = {
   plomberie: [
-    'https://images.pexels.com/photos/774463/pexels-photo-774463.jpeg?auto=compress&cs=tinysrgb&w=1200', // Plombier réparant évier - ACTION
-    'https://images.pexels.com/photos/6419126/pexels-photo-6419126.jpeg?auto=compress&cs=tinysrgb&w=1200', // Artisan plombier au travail sous évier
-    'https://images.pexels.com/photos/8972710/pexels-photo-8972710.jpeg?auto=compress&cs=tinysrgb&w=1200', // Plombier installant robinetterie
-    'https://images.pexels.com/photos/4497743/pexels-photo-4497743.jpeg?auto=compress&cs=tinysrgb&w=1200', // Outils plomberie professionnels en action
-    'https://images.pexels.com/photos/3634830/pexels-photo-3634830.jpeg?auto=compress&cs=tinysrgb&w=1200', // Réparation tuyauterie - mains artisan
-    'https://images.pexels.com/photos/9242824/pexels-photo-9242824.jpeg?auto=compress&cs=tinysrgb&w=1200', // Plombier dans salle de bain installation
-    'https://images.pexels.com/photos/6444259/pexels-photo-6444259.jpeg?auto=compress&cs=tinysrgb&w=1200', // Travaux plomberie cuisine professionnelle
-    'https://images.pexels.com/photos/1571458/pexels-photo-1571458.jpeg?auto=compress&cs=tinysrgb&w=1200', // Clé à molette plombier - métier en action
-    'https://images.pexels.com/photos/10683471/pexels-photo-10683471.jpeg?auto=compress&cs=tinysrgb&w=1200', // Installation sanitaire artisan qualifié
-    'https://images.pexels.com/photos/9242828/pexels-photo-9242828.jpeg?auto=compress&cs=tinysrgb&w=1200', // Plombier réparant fuite - intervention
+    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1200&q=80', // Salle de bain plomberie moderne
+    'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&q=80', // Réparation évier cuisine
+    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200&q=80', // Artisan avec outils de plomberie
+    'https://images.unsplash.com/photo-1607472586893-edb5ca08f55d?w=1200&q=80', // Tuyaux et vannes en action
+    'https://images.unsplash.com/photo-1542013936693-8848e574047a?w=1200&q=80', // Installation tuyauterie cuivre
   ],
   electricien: [
-    'https://images.pexels.com/photos/2760243/pexels-photo-2760243.jpeg?auto=compress&cs=tinysrgb&w=1200', // Électricien travaillant sur tableau électrique - ACTION
-    'https://images.pexels.com/photos/4491881/pexels-photo-4491881.jpeg?auto=compress&cs=tinysrgb&w=1200', // Technicien électricien en intervention
-    'https://images.pexels.com/photos/3760263/pexels-photo-3760263.jpeg?auto=compress&cs=tinysrgb&w=1200', // Électricien installant luminaire
-    'https://images.pexels.com/photos/6474917/pexels-photo-6474917.jpeg?auto=compress&cs=tinysrgb&w=1200', // Électricien professionnel réparation
-    'https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=1200', // Outils électricien en action
-    'https://images.pexels.com/photos/8973566/pexels-photo-8973566.jpeg?auto=compress&cs=tinysrgb&w=1200', // Câblage électrique artisan
-    'https://images.pexels.com/photos/3760265/pexels-photo-3760265.jpeg?auto=compress&cs=tinysrgb&w=1200', // Installation électrique résidentielle
-    'https://images.pexels.com/photos/6474918/pexels-photo-6474918.jpeg?auto=compress&cs=tinysrgb&w=1200', // Électricien avec casque et outils
-    'https://images.pexels.com/photos/4491918/pexels-photo-4491918.jpeg?auto=compress&cs=tinysrgb&w=1200', // Réparation électrique professionnelle
-    'https://images.pexels.com/photos/4491882/pexels-photo-4491882.jpeg?auto=compress&cs=tinysrgb&w=1200', // Électricien mesurant tension
+    'https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=1200&q=80', // Électricien devant tableau électrique
+    'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&q=80', // Ingénieur électricien professionnel
+    'https://images.unsplash.com/photo-1460518451285-cd3ab4204666?w=1200&q=80', // Câblage électrique installation
+    'https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=1200&q=80', // Réparation prises et câbles
+    'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=1200&q=80', // Prise et ampoule concept éclairage
   ],
   coiffeur: [
-    'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coiffeur coupant cheveux client - ACTION
-    'https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=1200', // Barbier rasage traditionnel
-    'https://images.pexels.com/photos/3065096/pexels-photo-3065096.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coiffeur professionnel au travail
-    'https://images.pexels.com/photos/1804654/pexels-photo-1804654.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coiffeur avec ciseaux en action
-    'https://images.pexels.com/photos/3065214/pexels-photo-3065214.jpeg?auto=compress&cs=tinysrgb&w=1200', // Brushing et coiffage
-    'https://images.pexels.com/photos/1327683/pexels-photo-1327683.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coloration cheveux salon
-    'https://images.pexels.com/photos/1813267/pexels-photo-1813267.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coupe homme barbier
-    'https://images.pexels.com/photos/3065206/pexels-photo-3065206.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coiffeur femme en action
-    'https://images.pexels.com/photos/3356171/pexels-photo-3356171.jpeg?auto=compress&cs=tinysrgb&w=1200', // Salon coiffure artisan
-    'https://images.pexels.com/photos/3065216/pexels-photo-3065216.jpeg?auto=compress&cs=tinysrgb&w=1200', // Miroir et coiffeur au travail
+    'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=80', // Coupe de cheveux salon femme
+    'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1200&q=80', // Salon de coiffure intérieur
+    'https://images.unsplash.com/photo-1605497746444-052d5b593485?w=1200&q=80', // Barbier en action taille barbe
+    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&q=80', // Ciseaux et peigne coiffeur
+    'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80', // Fauteuil classique barbershop
   ],
   restaurant: [
-    'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1200', // Chef cuisinant en cuisine - ACTION
-    'https://images.pexels.com/photos/3357024/pexels-photo-3357024.jpeg?auto=compress&cs=tinysrgb&w=1200', // Cuisinier professionnel au fourneau
-    'https://images.pexels.com/photos/2253551/pexels-photo-2253551.jpeg?auto=compress&cs=tinysrgb&w=1200', // Chef préparant plat gastronomique
-    'https://images.pexels.com/photos/2544829/pexels-photo-2544829.jpeg?auto=compress&cs=tinysrgb&w=1200', // Cuisine restaurant en action
-    'https://images.pexels.com/photos/3756523/pexels-photo-3756523.jpeg?auto=compress&cs=tinysrgb&w=1200', // Boulanger artisan au travail
-    'https://images.pexels.com/photos/4252135/pexels-photo-4252135.jpeg?auto=compress&cs=tinysrgb&w=1200', // Pâtissier décoration gâteau
-    'https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&cs=tinysrgb&w=1200', // Pizzaïolo four à bois
-    'https://images.pexels.com/photos/3298633/pexels-photo-3298633.jpeg?auto=compress&cs=tinysrgb&w=1200', // Barman préparant cocktail
-    'https://images.pexels.com/photos/3341541/pexels-photo-3341541.jpeg?auto=compress&cs=tinysrgb&w=1200', // Service en salle restaurant
-    'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1200', // Ambiance restaurant chaleureux
+    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80', // Intérieur de restaurant chic
+    'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=1200&q=80', // Cuisine de restaurant professionnelle
+    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80', // Plat gastronomique soigné
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80', // Tables dressées en salle
+    'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=80', // Service client restaurant chaleureux
   ],
   garage: [
-    'https://images.pexels.com/photos/4489737/pexels-photo-4489737.jpeg?auto=compress&cs=tinysrgb&w=1200', // Mécanicien réparant voiture - ACTION
-    'https://images.pexels.com/photos/4489736/pexels-photo-4489736.jpeg?auto=compress&cs=tinysrgb&w=1200', // Technicien auto sous véhicule
-    'https://images.pexels.com/photos/279949/pexels-photo-279949.jpeg?auto=compress&cs=tinysrgb&w=1200', // Mécanicien moteur en action
-    'https://images.pexels.com/photos/162553/pexels-photo-162553.jpeg?auto=compress&cs=tinysrgb&w=1200', // Outils garage mécanique
-    'https://images.pexels.com/photos/2244748/pexels-photo-2244748.jpeg?auto=compress&cs=tinysrgb&w=1200', // Réparation automobile atelier
-    'https://images.pexels.com/photos/4489738/pexels-photo-4489738.jpeg?auto=compress&cs=tinysrgb&w=1200', // Mécanicien contrôlant niveau
-    'https://images.pexels.com/photos/2244750/pexels-photo-2244750.jpeg?auto=compress&cs=tinysrgb&w=1200', // Pneu et roue changement
-    'https://images.pexels.com/photos/279947/pexels-photo-279947.jpeg?auto=compress&cs=tinysrgb&w=1200', // Garage automobile outillage
-    'https://images.pexels.com/photos/163696/unplugged-plug-in-electricity-163696.jpeg?auto=compress&cs=tinysrgb&w=1200', // Diagnostic auto électronique
-    'https://images.pexels.com/photos/2736497/pexels-photo-2736497.jpeg?auto=compress&cs=tinysrgb&w=1200', // Carrossier réparation véhicule
+    'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=1200&q=80', // Mécanicien sous une voiture
+    'https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?w=1200&q=80', // Diagnostic moteur ouvert
+    'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1200&q=80', // Garage automobile pont élévateur
+    'https://images.unsplash.com/photo-1507767439269-2c64f107e609?w=1200&q=80', // Clé de serrage mécanique
+    'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1200&q=80', // Détail carrosserie automobile propre
   ],
   nettoyage: [
-    'https://images.pexels.com/photos/4098710/pexels-photo-4098710.jpeg?auto=compress&cs=tinysrgb&w=1200', // Femme de ménage aspirateur - ACTION
-    'https://images.pexels.com/photos/5691653/pexels-photo-5691653.jpeg?auto=compress&cs=tinysrgb&w=1200', // Nettoyage vitres professionnel
-    'https://images.pexels.com/photos/6195129/pexels-photo-6195129.jpeg?auto=compress&cs=tinysrgb&w=1200', // Nettoyeur spray action
-    'https://images.pexels.com/photos/6195137/pexels-photo-6195137.jpeg?auto=compress&cs=tinysrgb&w=1200', // Agent nettoyage bureau
-    'https://images.pexels.com/photos/4098712/pexels-photo-4098712.jpeg?auto=compress&cs=tinysrgb&w=1200', // Serpillière nettoyage sol
-    'https://images.pexels.com/photos/6195108/pexels-photo-6195108.jpeg?auto=compress&cs=tinysrgb&w=1200', // Désinfection surface
-    'https://images.pexels.com/photos/4098713/pexels-photo-4098713.jpeg?auto=compress&cs=tinysrgb&w=1200', // Nettoyage cuisine professionnelle
-    'https://images.pexels.com/photos/5691651/pexels-photo-5691651.jpeg?auto=compress&cs=tinysrgb&w=1200', // Nettoyage industriel
-    'https://images.pexels.com/photos/6195130/pexels-photo-6195130.jpeg?auto=compress&cs=tinysrgb&w=1200', // Produit nettoyage professionnel
-    'https://images.pexels.com/photos/4098711/pexels-photo-4098711.jpeg?auto=compress&cs=tinysrgb&w=1200', // Équipe nettoyage en action
+    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80', // Gants et produits de nettoyage
+    'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1200&q=80', // Nettoyage de vitres résidentiel
+    'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?w=1200&q=80', // Désinfection bureau professionnel
+    'https://images.unsplash.com/photo-1603712726208-4617905499f9?w=1200&q=80', // Nettoyage du sol serpillière
+    'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1200&q=80', // Salle de bain étincelante
   ],
   jardin: [
-    'https://images.pexels.com/photos/1301856/pexels-photo-1301856.jpeg?auto=compress&cs=tinysrgb&w=1200', // Jardinier tondeuse pelouse - ACTION
-    'https://images.pexels.com/photos/169523/pexels-photo-169523.jpeg?auto=compress&cs=tinysrgb&w=1200', // Paysagiste aménagement
-    'https://images.pexels.com/photos/5945638/pexels-photo-5945638.jpeg?auto=compress&cs=tinysrgb&w=1200', // Jardinier taille haie
-    'https://images.pexels.com/photos/4491871/pexels-photo-4491871.jpeg?auto=compress&cs=tinysrgb&w=1200', // Plantation fleurs jardin
-    'https://images.pexels.com/photos/169505/pexels-photo-169505.jpeg?auto=compress&cs=tinysrgb&w=1200', // Tonte pelouse professionnelle
-    'https://images.pexels.com/photos/403571/pexels-photo-403571.jpeg?auto=compress&cs=tinysrgb&w=1200', // Élagage arbre expert
-    'https://images.pexels.com/photos/2132171/pexels-photo-2132171.jpeg?auto=compress&cs=tinysrgb&w=1200', // Jardin fleuri création
-    'https://images.pexels.com/photos/2440299/pexels-photo-2440299.jpeg?auto=compress&cs=tinysrgb&w=1200', // Aménagement paysager
-    'https://images.pexels.com/photos/1582619/pexels-photo-1582619.jpeg?auto=compress&cs=tinysrgb&w=1200', // Taille haie professionnel
-    'https://images.pexels.com/photos/4491882/pexels-photo-4491882.jpeg?auto=compress&cs=tinysrgb&w=1200', // Outils jardinage artisan
+    'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80', // Beau jardin fleuri aménagé
+    'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=1200&q=80', // Paysagiste taillant des arbres
+    'https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1200&q=80', // Pot de terre et outils de jardin
+    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80', // Grand jardin paysager vert
+    'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1200&q=80', // Coupe-bordure gazon
   ],
   fitness: [
-    'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=1200', // Coach haltères en action - ACTION
-    'https://images.pexels.com/photos/416778/pexels-photo-416778.jpeg?auto=compress&cs=tinysrgb&w=1200', // Personal trainer coaching
-    'https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg?auto=compress&cs=tinysrgb&w=1200', // Salle musculation active
-    'https://images.pexels.com/photos/2827392/pexels-photo-2827392.jpeg?auto=compress&cs=tinysrgb&w=1200', // Entraînement intensif
-    'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=1200', // Cours collectif fitness
-    'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=1200', // Cardio training tapis
-    'https://images.pexels.com/photos/4752861/pexels-photo-4752861.jpeg?auto=compress&cs=tinysrgb&w=1200', // Crossfit soulevé terre
-    'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200', // Yoga instructeur
-    'https://images.pexels.com/photos/39308/pexels-photo-39308.jpeg?auto=compress&cs=tinysrgb&w=1200', // Dumbbells training
-    'https://images.pexels.com/photos/3253508/pexels-photo-3253508.jpeg?auto=compress&cs=tinysrgb&w=1200', // Treadmill course
+    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&q=80', // Poids et haltères fitness
+    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=80', // Coach sportif guidant un client
+    'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80', // Personne courant sur tapis de course
+    'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80', // Exercice étirement salle
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80', // Haltères alignées en salle de sport
   ],
   medical: [
-    'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1200', // Médecin consultation patient - ACTION
-    'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=1200', // Médecin examen patient
-    'https://images.pexels.com/photos/5206943/pexels-photo-5206943.jpeg?auto=compress&cs=tinysrgb&w=1200', // Infirmière soins
-    'https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg?auto=compress&cs=tinysrgb&w=1200', // Dentiste patient enfant
-    'https://images.pexels.com/photos/263337/pexels-photo-263337.jpeg?auto=compress&cs=tinysrgb&w=1200', // Clinique moderne accueil
-    'https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=1200', // Stethoscope consultation
-    'https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=1200', // Équipe médicale hôpital
-    'https://images.pexels.com/photos/5327656/pexels-photo-5327656.jpeg?auto=compress&cs=tinysrgb&w=1200', // Kinésithérapeute rééducation
-    'https://images.pexels.com/photos/5207104/pexels-photo-5207104.jpeg?auto=compress&cs=tinysrgb&w=1200', // Analyse laboratoire
-    'https://images.pexels.com/photos/6129042/pexels-photo-6129042.jpeg?auto=compress&cs=tinysrgb&w=1200', // Vaccination soignant
+    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1200&q=80', // Poignée de main médecin et patient
+    'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80', // Médecin examinant un patient en clinique
+    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80', // Stéthoscope et outils médicaux
+    'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1200&q=80', // Consultation médicale conseil
+    'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=1200&q=80', // Laboratoire de recherche santé
   ],
   avocat: [
-    'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1200', // Avocat consultation client - ACTION
-    'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1200', // Signature contrat légal
-    'https://images.pexels.com/photos/5669619/pexels-photo-5669619.jpeg?auto=compress&cs=tinysrgb&w=1200', // Recherche droit bibliothèque
-    'https://images.pexels.com/photos/5668474/pexels-photo-5668474.jpeg?auto=compress&cs=tinysrgb&w=1200', // Réunion juridique cabinet
-    'https://images.pexels.com/photos/5669617/pexels-photo-5669617.jpeg?auto=compress&cs=tinysrgb&w=1200', // Marteau justice tribunal
-    'https://images.pexels.com/photos/5668859/pexels-photo-5668859.jpeg?auto=compress&cs=tinysrgb&w=1200', // Audience tribunal plaidoirie
-    'https://images.pexels.com/photos/5668469/pexels-photo-5668469.jpeg?auto=compress&cs=tinysrgb&w=1200', // Cabinet avocat professionnel
-    'https://images.pexels.com/photos/5669620/pexels-photo-5669620.jpeg?auto=compress&cs=tinysrgb&w=1200', // Analyse documents juridiques
-    'https://images.pexels.com/photos/5668475/pexels-photo-5668475.jpeg?auto=compress&cs=tinysrgb&w=1200', // Conseil juridique entreprise
-    'https://images.pexels.com/photos/5669621/pexels-photo-5669621.jpeg?auto=compress&cs=tinysrgb&w=1200', // Avocat au travail bureau
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80', // Balance de la justice en bois
+    'https://images.unsplash.com/photo-1505664194779-8bebcb3f9e5c?w=1200&q=80', // Livres juridiques et table de loi
+    'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1200&q=80', // Balance de la justice en gros plan
+    'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=1200&q=80', // Relecture de contrats officiels
+    'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=1200&q=80', // Signature documents tribunal
   ],
   default: [
-    'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200', // Business
-    'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1200', // Office
-    'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1200', // Meeting
-    'https://images.pexels.com/photos/3184303/pexels-photo-3184303.jpeg?auto=compress&cs=tinysrgb&w=1200', // Team
-    'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200', // Professional
-    'https://images.pexels.com/photos/3184466/pexels-photo-3184466.jpeg?auto=compress&cs=tinysrgb&w=1200', // Work
-    'https://images.pexels.com/photos/3184467/pexels-photo-3184467.jpeg?auto=compress&cs=tinysrgb&w=1200', // Corporate
-    'https://images.pexels.com/photos/3184468/pexels-photo-3184468.jpeg?auto=compress&cs=tinysrgb&w=1200', // Business team
-    'https://images.pexels.com/photos/3184469/pexels-photo-3184469.jpeg?auto=compress&cs=tinysrgb&w=1200', // Office work
-    'https://images.pexels.com/photos/3184470/pexels-photo-3184470.jpeg?auto=compress&cs=tinysrgb&w=1200', // Success
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80', // Immeuble de bureaux moderne
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80', // Bureau professionnel propre
+    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1200&q=80', // Intérieur salle de réunion moderne
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80', // Bureau d'ordinateur propre
+    'https://images.unsplash.com/photo-1521791136368-1a8be852934b?w=1200&q=80', // Poignée de main accord professionnel
   ]
 };
 

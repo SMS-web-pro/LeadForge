@@ -29,6 +29,18 @@ const BLOCKED_IMAGE_KEYWORDS = [
   'breakfast', 'lunch', 'dinner', 'brunch', 'appetizer'
 ];
 
+// Mots-clés à éviter de manière très stricte pour les images récupérées du lead (profils, logos, designs, etc.)
+const BLOCKED_LEAD_IMAGE_KEYWORDS = [
+  'logo', 'badge', 'icon', 'favicon', 'sprite', 'pixel', 'avatar', 'profile', 
+  'map', 'marker', 'banner', 'sign', 'button', 'menu', 'advertisement', 'promo',
+  'flyer', 'poster', 'facebook', 'instagram', 'twitter', 'linkedin', 'yelp', 
+  'tripadvisor', 'pagesjaunes', 'google', 'gstatic', 'cloudfront', 'lh3.', 
+  'googleusercontent', 'ggpht', 'googleapis', 'food', 'fruit', 'vegetable', 
+  'carrot', 'salmon', 'pizza', 'burger', 'dessert', 'cake', 'meal', 'dish',
+  'portrait', 'selfie', 'face', 'person', 'man', 'woman', 'people', 'team',
+  'client', 'owner', 'staff', 'pose', 'headshot', 'photo-de-profil'
+];
+
 interface PexelsPhoto {
   id: number;
   width: number;
@@ -182,16 +194,14 @@ export async function getImagesForLead(
   const leadId = lead.id;
   const sector = lead.sector || 'default';
   
-  // 1. Récupérer les images réelles du lead (filtrées)
+  // 1. Récupérer les images réelles du lead (filtrées avec le blocklist strict)
   const rawLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])]
     .filter(img => {
       if (!img || typeof img !== 'string') return false;
       if (!img.startsWith('https://')) return false;
       const low = img.toLowerCase();
-      // Bloquer les images de nourriture
-      if (BLOCKED_IMAGE_KEYWORDS.some(kw => low.includes(kw))) return false;
-      // Bloquer les domaines suspects
-      if (low.includes('tripadvisor') || low.includes('yelp.com') || low.includes('facebook.com')) return false;
+      // Bloquer les images du blocklist strict pour le lead (logos, selfies, etc.)
+      if (BLOCKED_LEAD_IMAGE_KEYWORDS.some(kw => low.includes(kw))) return false;
       return true;
     });
   
