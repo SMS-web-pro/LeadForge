@@ -4,84 +4,84 @@
 const PEXELS_API_KEY = process.env.PEXELS_API_KEY || '';
 
 // URLs Pexels fiables et professionnelles par secteur
-// Ces URLs sont des liens directs vers des images vérifiées
+// Images HD professionnelles représentant le secteur et les services
 export const SECTOR_PEXELS_IMAGES: Record<string, string[]> = {
   plomberie: [
-    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1200&q=80', // Salle de bain plomberie moderne
-    'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&q=80', // Réparation évier cuisine
-    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200&q=80', // Artisan avec outils de plomberie
-    'https://images.unsplash.com/photo-1607472586893-edb5ca08f55d?w=1200&q=80', // Tuyaux et vannes en action
-    'https://images.unsplash.com/photo-1542013936693-8848e574047a?w=1200&q=80', // Installation tuyauterie cuivre
+    'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1920&q=80', // Artisan plombier travaillant sur tuyaux
+    'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1920&q=80', // Installation sanitaire cuisine moderne
+    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1920&q=80', // Plombier professionnel avec outils
+    'https://images.unsplash.com/photo-1607472586893-edb5ca08f55d?w=1920&q=80', // Salle de bain rénovée design
+    'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=80', // Robinet eau moderne haute qualité
   ],
   electricien: [
-    'https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=1200&q=80', // Électricien devant tableau électrique
-    'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&q=80', // Ingénieur électricien professionnel
-    'https://images.unsplash.com/photo-1460518451285-cd3ab4204666?w=1200&q=80', // Câblage électrique installation
-    'https://images.unsplash.com/photo-1605647540924-852290f6b0d5?w=1200&q=80', // Réparation prises et câbles
-    'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=1200&q=80', // Prise et ampoule concept éclairage
+    'https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=1920&q=80', // Électricien installant tableau électrique
+    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80', // Câblage électrique professionnel
+    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1920&q=80', // Installation éclairage moderne
+    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80', // Panneau électrique industriel
+    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1920&q=80', // Borne recharge véhicule électrique
   ],
   coiffeur: [
-    'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=80', // Coupe de cheveux salon femme
-    'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1200&q=80', // Salon de coiffure intérieur
-    'https://images.unsplash.com/photo-1605497746444-052d5b593485?w=1200&q=80', // Barbier en action taille barbe
-    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&q=80', // Ciseaux et peigne coiffeur
-    'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80', // Fauteuil classique barbershop
+    'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1920&q=80', // Salon de coiffure professionnel luxe
+    'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1920&q=80', // Intérieur salon coiffure moderne
+    'https://images.unsplash.com/photo-1605497746444-052d5b593485?w=1920&q=80', // Barbier professionnel taille barbe
+    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1920&q=80', // Outils coiffeur professionnels
+    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1920&q=80', // Coupe femme moderne salon
   ],
   restaurant: [
-    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80', // Intérieur de restaurant chic
-    'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=1200&q=80', // Cuisine de restaurant professionnelle
-    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80', // Plat gastronomique soigné
-    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80', // Tables dressées en salle
-    'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=80', // Service client restaurant chaleureux
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80', // Restaurant gastronomique intérieur
+    'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=1920&q=80', // Cuisine restaurant professionnelle
+    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80', // Plat gastronomique artistique
+    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80', // Terrasse restaurant élégante
+    'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80', // Service restaurant chaleureux
   ],
   garage: [
-    'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=1200&q=80', // Mécanicien sous une voiture
-    'https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?w=1200&q=80', // Diagnostic moteur ouvert
-    'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1200&q=80', // Garage automobile pont élévateur
-    'https://images.unsplash.com/photo-1507767439269-2c64f107e609?w=1200&q=80', // Clé de serrage mécanique
-    'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1200&q=80', // Détail carrosserie automobile propre
+    'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=1920&q=80', // Mécanicien automobile professionnel
+    'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1920&q=80', // Garage pont élévateur moderne
+    'https://images.unsplash.com/photo-1517524206127-48bbd363f3d7?w=1920&q=80', // Diagnostic moteur automobile
+    'https://images.unsplash.com/photo-1507767439269-2c64f107e609?w=1920&q=80', // Outils mécanique professionnels
+    'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1920&q=80', // Réparation carrosserie auto
   ],
   nettoyage: [
-    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80', // Gants et produits de nettoyage
-    'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1200&q=80', // Nettoyage de vitres résidentiel
-    'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?w=1200&q=80', // Désinfection bureau professionnel
-    'https://images.unsplash.com/photo-1603712726208-4617905499f9?w=1200&q=80', // Nettoyage du sol serpillière
-    'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1200&q=80', // Salle de bain étincelante
+    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1920&q=80', // Équipe nettoyage professionnel
+    'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1920&q=80', // Nettoyage vitres professionnel
+    'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?w=1920&q=80', // Bureau désinfecté professionnel
+    'https://images.unsplash.com/photo-1603712726208-4617905499f9?w=1920&q=80', // Nettoyage sol industriel
+    'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1920&q=80', // Salle de bain impeccable
   ],
   jardin: [
-    'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80', // Beau jardin fleuri aménagé
-    'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=1200&q=80', // Paysagiste taillant des arbres
-    'https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1200&q=80', // Pot de terre et outils de jardin
-    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80', // Grand jardin paysager vert
-    'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1200&q=80', // Coupe-bordure gazon
+    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80', // Paysagiste aménagement jardin
+    'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=1920&q=80', // Jardin paysager professionnel
+    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&q=80', // Grand jardin vert entretenu
+    'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1920&q=80', // Entretien pelouse professionnel
+    'https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1920&q=80', // Outils jardinage professionnels
   ],
   fitness: [
-    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&q=80', // Poids et haltères fitness
-    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=80', // Coach sportif guidant un client
-    'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80', // Personne courant sur tapis de course
-    'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80', // Exercice étirement salle
-    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80', // Haltères alignées en salle de sport
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80', // Salle de sport moderne équipée
+    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80', // Coach sportif personnel entraînement
+    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1920&q=80', // Espace musculation professionnel
+    'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&q=80', // Cardio zone équipements modernes
+    'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1920&q=80', // Cours collectif fitness dynamique
   ],
   medical: [
-    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1200&q=80', // Poignée de main médecin et patient
-    'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80', // Médecin examinant un patient en clinique
-    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80', // Stéthoscope et outils médicaux
-    'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1200&q=80', // Consultation médicale conseil
-    'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=1200&q=80', // Laboratoire de recherche santé
+    'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1920&q=80', // Médecin consultation cabinet moderne
+    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&q=80', // Stéthoscope outils médicaux
+    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1920&q=80', // Médecin patient consultation
+    'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1920&q=80', // Cabinet médical professionnel
+    'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=1920&q=80', // Laboratoire santé moderne
   ],
   avocat: [
-    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80', // Balance de la justice en bois
-    'https://images.unsplash.com/photo-1505664194779-8bebcb3f9e5c?w=1200&q=80', // Livres juridiques et table de loi
-    'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1200&q=80', // Balance de la justice en gros plan
-    'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=1200&q=80', // Relecture de contrats officiels
-    'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=1200&q=80', // Signature documents tribunal
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80', // Bureau avocat scale justice
+    'https://images.unsplash.com/photo-1505664194779-8bebcb3f9e5c?w=1920&q=80', // Livres juridiques bureau avocat
+    'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=1920&q=80', // Contrats documents juridiques
+    'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1920&q=80', // Justice balance symbole
+    'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=1920&q=80', // Signature documents professionnels
   ],
   default: [
-    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80', // Immeuble de bureaux moderne
-    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80', // Bureau professionnel propre
-    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1200&q=80', // Intérieur salle de réunion moderne
-    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80', // Bureau d'ordinateur propre
-    'https://images.unsplash.com/photo-1521791136368-1a8be852934b?w=1200&q=80', // Poignée de main accord professionnel
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80', // Immeuble bureaux moderne
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80', // Bureau professionnel premium
+    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1920&q=80', // Salle réunion moderne
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80', // Espace travail professionnel
+    'https://images.unsplash.com/photo-1521791136368-1a8be852934b?w=1920&q=80', // Accord professionnel main
   ]
 };
 

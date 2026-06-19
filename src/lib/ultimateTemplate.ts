@@ -745,8 +745,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @media(max-width:768px){.navbar-links{display:none!important}.mobile-toggle{display:block}}
 
         .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--dark)}
-        .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;transition:opacity .6s}
-        .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(var(--dark-rgb),.88) 0%,rgba(var(--dark-rgb),.55) 50%,rgba(var(--dark-rgb),.75) 100%)}
+        .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.6;transition:opacity .6s}
+        .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--dark-rgb),.7) 0%,rgba(var(--dark-rgb),.5) 40%,rgba(var(--dark-rgb),.8) 100%)}
         .hero-inner{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:140px 24px 80px;width:100%;display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:center}
         .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:8px 20px;border-radius:100px;color:#fff;font-size:.8rem;font-weight:600;margin-bottom:24px;letter-spacing:.8px;text-transform:uppercase;backdrop-filter:blur(10px)}
         .hero h1{font-size:clamp(2.5rem,5.5vw,4.2rem);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.1}
