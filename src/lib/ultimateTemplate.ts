@@ -553,18 +553,24 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const BLOCKED_DOMAINS = ['tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 'pagesjaunes.fr', 'google.com', 'gstatic.com', 'cloudfront.net', 'googleusercontent.com', 'maps.google', 'lh3.', 'ggpht.com', 'googleapis.com'];
 
   const sectorImages = getSectorImages(lead.sector);
-  const heroImageIndex = ((combinedHash * 2654435761) >>> 0) % sectorImages.length;
-  const heroImage = sectorImages[heroImageIndex];
 
-  const rawLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])].filter(img => {
+  const allLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])].filter((img: string) => {
     if (!img || typeof img !== 'string' || !img.startsWith('https://')) return false;
-    if (img === heroImage) return false;
     const low = img.toLowerCase();
     if (BLOCKED_KEYWORDS.some(kw => low.includes(kw))) return false;
     if (BLOCKED_DOMAINS.some(d => low.includes(d))) return false;
     if (low.includes('favicon') || low.includes('sprite') || low.includes('pixel')) return false;
     return true;
-  }).slice(0, 3);
+  });
+
+  let heroImage: string;
+  if (allLeadImages.length > 0) {
+    heroImage = allLeadImages[((combinedHash * 2654435761) >>> 0) % allLeadImages.length];
+  } else {
+    heroImage = sectorImages[((combinedHash * 2654435761) >>> 0) % sectorImages.length];
+  }
+
+  const rawLeadImages = allLeadImages.filter(img => img !== heroImage).slice(0, 3);
 
   const combinedImages = [heroImage, ...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...rawLeadImages];
   const allImages = combinedImages.slice(0, 5);
@@ -615,22 +621,28 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
 
   const sectorImages = await getSectorImagesAsync(lead.sector);
-  const heroImageIndex = ((combinedHash * 2654435761) >>> 0) % sectorImages.length;
-  const heroImage = sectorImages[heroImageIndex];
 
-  let combinedImages: string[] = [];
+  const BLOCKED = ['googleusercontent', 'maps.google', 'ggpht', 'favicon', 'sprite', 'pixel', 'logo', 'badge'];
+  let allLeadImages: string[] = [];
   try {
-    const raw = await getImagesForLead(lead, 6);
-    const BLOCKED = ['googleusercontent', 'maps.google', 'ggpht', 'favicon', 'sprite', 'pixel', 'logo', 'badge'];
-    combinedImages = raw.filter((img: string) => {
+    const raw = await getImagesForLead(lead, 10);
+    allLeadImages = raw.filter((img: string) => {
       if (!img || !img.startsWith('https://')) return false;
-      if (img === heroImage) return false;
       const low = img.toLowerCase();
       return !BLOCKED.some(kw => low.includes(kw));
-    }).slice(0, 3);
+    });
   } catch {}
 
-  const allImages = [...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...combinedImages].slice(0, 5);
+  let heroImage: string;
+  if (allLeadImages.length > 0) {
+    heroImage = allLeadImages[((combinedHash * 2654435761) >>> 0) % allLeadImages.length];
+  } else {
+    heroImage = sectorImages[((combinedHash * 2654435761) >>> 0) % sectorImages.length];
+  }
+
+  const rawLeadImages = allLeadImages.filter(img => img !== heroImage).slice(0, 3);
+
+  const allImages = [...sectorImages.filter(s => s !== heroImage).slice(0, 2), ...rawLeadImages].slice(0, 5);
 
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -675,7 +687,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     socialLinks
   };
 
-  return buildUltimateHTML(content, template, combinedImages, combinedHash % 4);
+  return buildUltimateHTML(content, template, allImages, combinedHash % 4);
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
