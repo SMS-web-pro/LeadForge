@@ -542,7 +542,9 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const nameHash = computeHash(companyName);
   const cityHash = computeHash(city || 'france');
   const sectorHash = computeHash(lead.sector || 'default');
-  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
+  const phoneHash = computeHash(phone || '0');
+  const emailHash = computeHash(email || 'x');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
   
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
@@ -551,7 +553,8 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const BLOCKED_DOMAINS = ['tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 'pagesjaunes.fr', 'google.com', 'gstatic.com', 'cloudfront.net', 'googleusercontent.com', 'maps.google', 'lh3.', 'ggpht.com', 'googleapis.com'];
 
   const sectorImages = getSectorImages(lead.sector);
-  const heroImage = sectorImages[combinedHash % sectorImages.length];
+  const heroImageIndex = ((combinedHash * 2654435761) >>> 0) % sectorImages.length;
+  const heroImage = sectorImages[heroImageIndex];
 
   const rawLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])].filter(img => {
     if (!img || typeof img !== 'string' || !img.startsWith('https://')) return false;
@@ -604,13 +607,16 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const nameHash = computeHash(companyName);
   const cityHash = computeHash(city || 'france');
   const sectorHash = computeHash(lead.sector || 'default');
-  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
+  const phoneHash = computeHash(phone || '0');
+  const emailHash = computeHash(email || 'x');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
   
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
 
   const sectorImages = getSectorImages(lead.sector);
-  const heroImage = sectorImages[combinedHash % sectorImages.length];
+  const heroImageIndex = ((combinedHash * 2654435761) >>> 0) % sectorImages.length;
+  const heroImage = sectorImages[heroImageIndex];
 
   let combinedImages: string[] = [];
   try {
