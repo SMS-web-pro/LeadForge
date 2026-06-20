@@ -531,16 +531,27 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 3);
 
-  let nameHash = 0;
-  for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
+  const computeHash = (str: string): number => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+  const nameHash = computeHash(companyName);
+  const cityHash = computeHash(city || 'france');
+  const sectorHash = computeHash(lead.sector || 'default');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
+  
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
-  const finalSlogan = aiContent?.slogan || sloganVariations[nameHash % sloganVariations.length];
+  const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
 
   const BLOCKED_KEYWORDS = ['food', 'fruit', 'legume', 'carrot', 'salmon', 'kitchen', 'cooking', 'recipe', 'meal', 'dessert', 'cake', 'pizza', 'burger', 'restaurant-menu', 'portrait', 'face', 'selfie', 'person', 'man ', 'woman ', 'people', 'crowd', 'group', 'logo', 'badge', 'stamp', 'seal', 'emblem', 'watermark', 'text-overlay', 'gradient-overlay', 'phone number', 'tel:', 'numero'];
   const BLOCKED_DOMAINS = ['tripadvisor.com', 'yelp.com', 'facebook.com', 'instagram.com', 'pagesjaunes.fr', 'google.com', 'gstatic.com', 'cloudfront.net', 'googleusercontent.com', 'maps.google', 'lh3.', 'ggpht.com', 'googleapis.com'];
 
   const sectorImages = getSectorImages(lead.sector);
-  const heroImage = sectorImages[nameHash % sectorImages.length];
+  const heroImage = sectorImages[combinedHash % sectorImages.length];
 
   const rawLeadImages = [...(lead.images || []), ...(lead.websiteImages || [])].filter(img => {
     if (!img || typeof img !== 'string' || !img.startsWith('https://')) return false;
@@ -563,7 +574,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     socialLinks
   };
 
-  const layoutVariant = nameHash % 4;
+  const layoutVariant = combinedHash % 4;
   return buildUltimateHTML(content, template, combinedImages, layoutVariant);
 }
 
@@ -582,13 +593,24 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
   if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
-  let nameHash = 0;
-  for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
+  const computeHash = (str: string): number => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+  const nameHash = computeHash(companyName);
+  const cityHash = computeHash(city || 'france');
+  const sectorHash = computeHash(lead.sector || 'default');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
+  
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
-  const finalSlogan = aiContent?.slogan || sloganVariations[nameHash % sloganVariations.length];
+  const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
 
   const sectorImages = getSectorImages(lead.sector);
-  const heroImage = sectorImages[nameHash % sectorImages.length];
+  const heroImage = sectorImages[combinedHash % sectorImages.length];
 
   let combinedImages: string[] = [];
   try {
@@ -647,7 +669,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     socialLinks
   };
 
-  return buildUltimateHTML(content, template, combinedImages, nameHash % 4);
+  return buildUltimateHTML(content, template, combinedImages, combinedHash % 4);
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
@@ -658,8 +680,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const hexToRgb = (hex: string) => { let r = 0, g = 0, b = 0; if (hex.length === 7) { r = parseInt(hex.substring(1, 3), 16); g = parseInt(hex.substring(3, 5), 16); b = parseInt(hex.substring(5, 7), 16); } return `${r}, ${g}, ${b}`; };
   const primaryRgb = hexToRgb(primaryColor);
 
-  let nameHash = 0;
-  for (let i = 0; i < companyName.length; i++) nameHash += companyName.charCodeAt(i);
+  const computeHash = (str: string): number => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+  const nameHash = computeHash(companyName);
+  const cityHash = computeHash(city || 'france');
+  const sectorHash = computeHash(content.sector || 'default');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
 
   const logoInfo = getLogoInfo(companyName, content.sector);
   const heroBadge = getHeroBadge(content.sector);
@@ -690,7 +722,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   const imgErr = (fallbackSlot: number) => `onerror="this.onerror=null;this.src='${getImg(fallbackSlot)}';this.style.opacity='0.8'"`;
 
-  const fontPair = nameHash % 4;
+  const fontPair = combinedHash % 4;
   const headingFont = fontPair === 0 ? "'DM Sans'" : fontPair === 1 ? "'Plus Jakarta Sans'" : fontPair === 2 ? "'Playfair Display'" : "'Cormorant Garamond'";
 
   return `<!DOCTYPE html>
