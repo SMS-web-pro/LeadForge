@@ -2017,57 +2017,11 @@ export async function searchLeadImages(serperKey: string, lead: Lead): Promise<{
     }
   }
 
-  // 3. Images professionnelles — spécifiques au business d'abord, secteur ensuite
-  //    FILTRÉ: blocklist unifiée + vérification dimension (min 400px large)
-  if (result.websiteImages.length < 6) {
-    try {
-      const professionalQueries = [
-        `"${lead.name}" ${lead.city || ''} ${lead.sector || ''}`.trim(),
-        `${lead.name} ${lead.sector || ''} ${lead.city || ''} professionnel`.trim(),
-        `${lead.sector || lead.name} ${lead.city || ''} travail`,
-        `${lead.sector || lead.name} ${lead.city || ''} entreprise`
-      ];
-
-      for (const query of professionalQueries) {
-        const profResult = await serperFetch(serperKey, 'images', { q: query, gl: 'fr', hl: 'fr', num: 8 });
-        if (profResult && Array.isArray(profResult.images)) {
-          for (const img of profResult.images) {
-            if (img && typeof img === 'object') {
-              const imgObj = img as Record<string, unknown>;
-              const url = safeStr(imgObj.imageUrl || imgObj.thumbnailUrl);
-              const title = safeStr(imgObj.title || '');
-              const source = safeStr(imgObj.source || '');
-
-              if (!url || !url.startsWith('http')) continue;
-              if (result.websiteImages.includes(url)) continue;
-
-              // Filtrer avec la blocklist unifiée (URL + titre + source)
-              if (isImageBlocked(url, title)) continue;
-              if (isImageBlocked(source)) continue;
-
-              // Vérifier la dimension minimale (≥400px de large)
-              const width = typeof imgObj.width === 'number' ? imgObj.width : 0;
-              const height = typeof imgObj.height === 'number' ? imgObj.height : 0;
-              if (width > 0 && width < 400) continue;
-              if (height > 0 && height < 300) continue;
-
-              // Rejeter les images trop allongées ou trop écrasées (ratio > 3:1)
-              if (width > 0 && height > 0) {
-                const ratio = width / height;
-                if (ratio > 3 || ratio < 0.33) continue;
-              }
-
-              result.websiteImages.push(url);
-              if (result.websiteImages.length >= 12) break;
-            }
-          }
-        }
-        if (result.websiteImages.length >= 12) break;
-      }
-    } catch (error) {
-      console.error('❌ Professional images search failed:', error);
-    }
-  }
+  // 3. [DÉSACTIVÉ] Images professionnelles via Google Images générique
+  //    → Source de photos volées à des concurrents + images non pertinentes
+  //    → Remplacé par les images Pexels spécifiques par service (imageAgent.ts / pexelsImages.ts)
+  //    → Seules les images du site web du lead (étape 2) et les images Pexels sont utilisées
+  console.log(`ℹ️ Étape 3 désactivée: images professionnelles via Google Images générique`);
 
   // 4. Logo par défaut depuis knowledge graph si pas trouvé
   if (!result.logo && lead.website) {
