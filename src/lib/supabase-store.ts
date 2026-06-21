@@ -683,6 +683,11 @@ export function useApiConfig() {
       const supabaseConfig = await configService.get();
       console.log('Config loaded:', supabaseConfig);
       setConfig(supabaseConfig);
+      // Injecter la clé Pexels dans le module pexelsImages
+      if (supabaseConfig.pexelsKey) {
+        const { setPexelsApiKey } = await import('./pexelsImages');
+        setPexelsApiKey(supabaseConfig.pexelsKey);
+      }
     } catch (err) {
       console.error('Failed to load config:', err);
       setError(err instanceof Error ? err.message : 'Failed to load config');
