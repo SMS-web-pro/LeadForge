@@ -182,6 +182,9 @@ export interface UltimateContent {
   slogan: string;
   heroImage: string;
   allImages: string[];
+  galleryTitle?: string;
+  aboutTitle?: string;
+  servicesTitle?: string;
   socialLinks?: {
     facebook?: string;
     instagram?: string;
@@ -291,7 +294,7 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
     guarantees: [
       { title: 'Devis Gratuit', icon: 'file-text' },
       { title: 'Garantie Pièces', icon: 'shield-check' },
-      { title: 'Intervention Rapide', icon: 'clock' },
+      { title: 'Équipe Qualifiée', icon: 'clock' },
       { title: 'Véhicule de Courtoisie', icon: 'car' }
     ],
     heroTitle: 'Garage Automobile', heroSubtitle: "Mécanicien passionné, votre véhicule entre de bonnes mains",
@@ -402,20 +405,20 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
     primary: '#1e293b', secondary: '#334155', accent: '#475569', background: '#f8fafc',
     services: [
       { name: 'Prestation Sur Mesure', description: 'Services adaptés à vos besoins', features: ['Étude personnalisée', 'Devis détaillé', 'Écoute attentive'] },
-      { name: 'Intervention Pro', description: 'Travail soigné et professionnel', features: ['Matériel adapté', 'Techniques actuelles', 'Respect des normes'] },
-      { name: 'Conseil Expert', description: 'Accompagnement et recommandations', features: ['Diagnostic complet', 'Solutions pertinentes', 'Suivi personnalisé'] },
-      { name: 'Service Rapide', description: 'Réactivité et respect des délais', features: ['Intervention rapide', 'Horaires flexibles', 'Urgences traitées'] },
-      { name: 'Garantie Qualité', description: 'Engagement résultat et satisfaction', features: ['Contrôle qualité', 'Corrections incluses', 'SAV réactif'] },
-      { name: 'Tarifs Transparents', description: 'Honoraires clairs et justifiés', features: ['Devis gratuit', 'Pas de surprise', 'Facilités paiement'] }
+      { name: 'Service Professionnel', description: 'Un travail soigné et de qualité', features: ['Matériel adapté', 'Techniques actuelles', 'Respect des normes'] },
+      { name: 'Conseil & Accompagnement', description: 'Un accompagnement de A à Z', features: ['Diagnostic complet', 'Solutions pertinentes', 'Suivi personnalisé'] },
+      { name: 'Réactivité', description: 'Un service à votre rythme', features: ['Réponse rapide', 'Horaires flexibles', 'Prise en charge efficace'] },
+      { name: 'Qualité Garantie', description: 'Un engagement sur le résultat', features: ['Contrôle qualité', 'Corrections incluses', 'SAV réactif'] },
+      { name: 'Tarifs Clairs', description: 'Des honoraires transparents', features: ['Devis préalable', 'Pas de surprise', 'Facilités de paiement'] }
     ],
     guarantees: [
-      { title: 'Artisan Certifié', icon: 'badge-check' },
-      { title: 'Devis Gratuit', icon: 'file-text' },
-      { title: 'Intervention Rapide', icon: 'clock' },
-      { title: 'Satisfaction Garantie', icon: 'heart' }
+      { title: 'Équipe Qualifiée', icon: 'badge-check' },
+      { title: 'Devis Clair', icon: 'file-text' },
+      { title: 'Réactivité', icon: 'clock' },
+      { title: 'Satisfaction Client', icon: 'heart' }
     ],
-    heroTitle: 'Artisan Professionnel', heroSubtitle: "Votre expert de confiance pour des prestations de qualité",
-    aboutText: "Artisan passionné depuis 15 ans, je mets mon savoir-faire et mon expertise à votre service. Qualité, transparence et satisfaction sont mes priorités.",
+    heroTitle: 'Notre Établissement', heroSubtitle: "Un service de qualité, à l'écoute de vos besoins",
+    aboutText: "Notre équipe met un point d'honneur à offrir un service personnalisé et de qualité. Avec des années d'expérience, nous mettons notre expertise au service de votre satisfaction.",
     ctaText: 'Contactez-nous'
   }
 };
@@ -731,7 +734,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle } = content;
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
   const accentColor = template.accent;
@@ -1085,29 +1088,26 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="hero-hours-row"><span class="hero-hours-day">Dimanche</span><span class="hero-hours-time" style="color:var(--accent)">Urgences uniquement</span></div>
                 </div>
                 ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
-                <div class="hero-card-note">Appel gratuit · Devis immédiat</div>
+                <div class="hero-card-note">Réponse rapide · Sans engagement</div>
             </div>
         </div>
     </section>
 
     <div class="trust-bar">
         <div class="trust-inner">
-            <div class="trust-item"><i data-lucide="badge-check" width="16"></i> Artisan Agréé</div>
-            <div class="trust-div"></div>
-            <div class="trust-item"><i data-lucide="zap" width="16"></i> Intervention Rapide</div>
-            <div class="trust-div"></div>
-            <div class="trust-item"><i data-lucide="file-text" width="16"></i> Devis Transparent</div>
-            <div class="trust-div"></div>
-            <div class="trust-item"><i data-lucide="shield-check" width="16"></i> Travaux Garantis</div>
+            ${template.guarantees.map((g: { title: string; icon: string }, i: number) => `
+            <div class="trust-item"><i data-lucide="${g.icon}" width="16"></i> ${g.title}</div>
+            ${i < template.guarantees.length - 1 ? '<div class="trust-div"></div>' : ''}
+            `).join('')}
         </div>
     </div>
 
     <section class="section" id="services">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Ce que nous faisons</span>
-                <h2>Nos Prestations</h2>
-                <p>Des interventions professionnelles avec compétence et rigueur.</p>
+                <span class="section-label">${content.servicesTitle || 'Ce que nous proposons'}</span>
+                <h2>Nos Services</h2>
+                <p>Des prestations pensées pour répondre à vos besoins avec soin et expertise.</p>
             </div>
             <div class="svc-grid">
                 ${services.map((s, i) => {
@@ -1141,14 +1141,14 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="about-badge"><div class="about-badge-num">15+</div><div class="about-badge-text">Ans d'expérience</div></div>
                 </div>
                 <div class="about-text reveal">
-                    <span class="section-label">À propos de nous</span>
-                    <h2>Artisan de Confiance au Cœur de ${city || 'votre région'}</h2>
+                    <span class="section-label">${aboutTitle || 'À propos de nous'}</span>
+                    <h2>${content.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> Intervention d'urgence 7j/7</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Devis gratuit, sans engagement</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Matériaux certifiés et garantis</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Respect rigoureux des délais</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[0]?.title || 'Qualité professionnelle'}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[1]?.title || 'À votre écoute'}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[2]?.title || 'Satisfaction garantie'}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[3]?.title || 'Service de confiance'}</li>
                     </ul>
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
@@ -1161,13 +1161,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="why-grid">
                 <div class="why-text reveal">
                     <span class="section-label">Pourquoi nous choisir ?</span>
-                    <h2>La Différence d'un Vrai Professionnel</h2>
-                    <p>Nous ne nous contentons pas de réparer — nous conseillons, anticipons et garantissons. Notre approche professionnelle alliée à des équipements modernes permet d'offrir un service sans compromis.</p>
+                    <h2>${content.aboutTitle || 'Notre Approche'}</h2>
+                    <p>${aboutText.substring(0, 200)}...</p>
                     <div class="why-stats">
-                        <div class="why-stat"><div class="why-stat-num">24h</div><div class="why-stat-label">Service urgence</div></div>
-                        <div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">Devis honnêtes</div></div>
-                        <div class="why-stat"><div class="why-stat-num">NF</div><div class="why-stat-label">Normes respectées</div></div>
-                        <div class="why-stat"><div class="why-stat-num">0€</div><div class="why-stat-label">Frais de déplacement</div></div>
+                        <div class="why-stat"><div class="why-stat-num">${rating || '4.5'}</div><div class="why-stat-label">Note Google</div></div>
+                        <div class="why-stat"><div class="why-stat-num">${reviews || '50+'}</div><div class="why-stat-label">Avis Clients</div></div>
+                        <div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">Satisfaction</div></div>
+                        <div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">Ans d'Expérience</div></div>
                     </div>
                 </div>
                 <div class="why-img reveal">
@@ -1179,25 +1179,25 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">${reviews || '100+'}</div><div class="stat-label">Chantiers Réalisés</div></div>
+        <div class="stat-item"><div class="stat-num">${reviews || '50+'}</div><div class="stat-label">Avis Clients</div></div>
         <div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Ans d'Expérience</div></div>
-        <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Clients Satisfaits</div></div>
-        <div class="stat-item"><div class="stat-num">30min</div><div class="stat-label">Délai d'Intervention</div></div>
+        <div class="stat-item"><div class="stat-num">${rating || '4.5'}/5</div><div class="stat-label">Note Google</div></div>
+        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Satisfaction</div></div>
     </div>
 
     <section class="section section-alt" id="process">
         <div class="container">
             <div class="section-hdr reveal">
                 <span class="section-label">Comment ça marche</span>
-                <h2>Nos Démarches en 5 Étapes</h2>
-                <p>Un processus clair et transparent du premier contact à la livraison finale.</p>
+                <h2>Un Accompagnement Sur Mesure</h2>
+                <p>Du premier contact à la réalisation, nous vous accompagnons à chaque étape.</p>
             </div>
             <div class="proc-grid">
-                <div class="proc-step reveal"><div class="proc-num">01</div><h3>Contact</h3><p>Appelez-nous ou envoyez un message. Nous répondons sous 30 minutes.</p></div>
-                <div class="proc-step reveal reveal-d1"><div class="proc-num">02</div><h3>Diagnostic</h3><p>Déplacement gratuit, diagnostic précis et évaluation de l'intervention.</p></div>
-                <div class="proc-step reveal reveal-d2"><div class="proc-num">03</div><h3>Devis</h3><p>Devis détaillé, transparent et sans surprise, soumis pour approbation.</p></div>
-                <div class="proc-step reveal reveal-d2"><div class="proc-num">04</div><h3>Intervention</h3><p>Réalisation des travaux dans les règles de l'art, avec matériaux de qualité.</p></div>
-                <div class="proc-step reveal reveal-d3"><div class="proc-num">05</div><h3>Garantie</h3><p>Réception des travaux et suivi post-intervention avec garantie écrite.</p></div>
+                <div class="proc-step reveal"><div class="proc-num">01</div><h3>Contact</h3><p>Échangez avec nous pour nous exposer votre besoin.</p></div>
+                <div class="proc-step reveal reveal-d1"><div class="proc-num">02</div><h3>Analyse</h3><p>Nous étudions votre demande et identifions la meilleure solution.</p></div>
+                <div class="proc-step reveal reveal-d2"><div class="proc-num">03</div><h3>Proposition</h3><p>Recevez une offre claire, adaptée à votre budget et vos attentes.</p></div>
+                <div class="proc-step reveal reveal-d2"><div class="proc-num">04</div><h3>Réalisation</h3><p>Notre équipe intervient avec soin et professionnalisme.</p></div>
+                <div class="proc-step reveal reveal-d3"><div class="proc-num">05</div><h3>Suivi</h3><p>Nous assurons un suivi qualité pour votre entière satisfaction.</p></div>
             </div>
             <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a></div>
         </div>
@@ -1206,9 +1206,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="section">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Nos réalisations</span>
-                <h2>Galerie de Projets</h2>
-                <p>Découvrez quelques-unes de nos réalisations récentes — chaque projet reflète notre engagement pour la qualité.</p>
+                <span class="section-label">Découvrir</span>
+                <h2>${content.galleryTitle || 'Nos Réalisations'}</h2>
+                <p>${content.galleryTitle === 'Notre Espace' ? 'Plongez dans l\'univers de ' + companyName + '.' : content.galleryTitle === 'Ambiance' ? 'L\'ambiance qui fait la différence.' : 'Quelques coups de projecteur sur ce que nous proposons.'}</p>
             </div>
             <div class="gal-grid reveal">
                 <div class="gal-item gal-main"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
@@ -1240,8 +1240,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <section class="cta-banner">
         <div class="container reveal">
-            <h2>Prêt à démarrer votre projet ?</h2>
-            <p>Contactez-nous dès maintenant pour un devis gratuit et sans engagement.</p>
+            <h2>Envie d'en savoir plus ?</h2>
+            <p>Contactez-nous pour découvrir comment nous pouvons vous accompagner.</p>
             <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
@@ -1250,8 +1250,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         <div class="container">
             <div class="section-hdr reveal">
                 <span class="section-label">Nous contacter</span>
-                <h2>Demandez votre Devis Gratuit</h2>
-                <p>Remplissez le formulaire ci-dessous ou appelez-nous directement. Réponse sous 30 minutes.</p>
+                <h2>Prenez Contact avec Nous</h2>
+                <p>Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.</p>
             </div>
             <div class="contact-wrap reveal">
                 <div class="contact-form">
@@ -1262,7 +1262,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                         <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" placeholder="votre@email.com"></div>
                         <div class="form-group"><label class="form-label">Décrivez votre besoin *</label><textarea class="form-control" rows="4" placeholder="Décrivez le problème ou les travaux souhaités..." required></textarea></div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> Envoyer ma Demande →</button>
-                        <p class="form-note">Réponse garantie sous 30 minutes · Devis gratuit & sans engagement</p>
+                        <p class="form-note">Nous vous répondrons dans les meilleurs délais.</p>
                     </form>
                 </div>
                 <div class="contact-sidebar">
@@ -1304,18 +1304,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul>${services.slice(0,5).map(s=>`<li><a href="#services">${s.name}</a></li>`).join('')}</ul></div>
                 <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#about">À propos</a></li><li><a href="#why">Pourquoi nous</a></li><li><a href="#testimonials">Avis clients</a></li><li><a href="#contact">Contact</a></li></ul></div>
-                <div class="footer-col"><h4>Contact Rapide</h4>
+                <div class="footer-col"><h4>Contact</h4>
                     ${phone?`<div class="footer-contact-item"><i data-lucide="phone" width="14"></i> ${phone}</div>`:''}
                     ${email?`<div class="footer-contact-item"><i data-lucide="mail" width="14"></i> ${email}</div>`:''}
                     ${address?`<div class="footer-contact-item"><i data-lucide="map-pin" width="14"></i> ${address}</div>`:''}
-                    ${phone?`<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:12px;padding:10px 20px;font-size:.85rem;width:fit-content">Appel Urgent 24h/24</a>`:''}
+                    ${phone?`<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:12px;padding:10px 20px;font-size:.85rem;width:fit-content">Nous Appeler</a>`:''}
                 </div>
             </div>
             <div class="footer-bottom">&copy; ${new Date().getFullYear()} ${companyName}. Tous droits réservés. Créé par Services-Siteup.</div>
         </div>
     </footer>
 
-    ${phone ? `<a href="tel:${cleanPhoneLink}" class="float-urgent"><i data-lucide="phone" width="18"></i> Appel Urgent 24h/24</a>` : ''}
+    ${phone ? `<a href="tel:${cleanPhoneLink}" class="float-urgent"><i data-lucide="phone" width="18"></i> Nous Appeler</a>` : ''}
 
     <script>
         lucide.createIcons();

@@ -355,24 +355,24 @@ Retourne UNIQUEMENT le HTML complet.`;
     
     const content: SC = {
       heroTitle: lead.name,
-      heroSubtitle: lead.description || `Artisan ${lead.sector || 'professionnel'} qualifié à ${lead.city || 'votre région'}. Intervention rapide et travail garanti.`,
-      aboutText: lead.description || `${lead.name} est votre ${lead.sector || 'partenaire professionnel'} de confiance${lead.city ? ` à ${lead.city}` : ''}. Plus de 15 ans d'expérience dans le secteur.`,
+      heroSubtitle: lead.description || `${lead.name} — ${lead.sector || 'professionnel'}${lead.city ? ` à ${lead.city}` : ''}. Découvrez notre approche et nos prestations.`,
+      aboutText: lead.description || `${lead.name} est un ${lead.sector || 'établissement'}${lead.city ? ` situé à ${lead.city}` : ''}. Notre équipe met un point d'honor à offrir un service de qualité, à l'écoute de vos besoins.`,
       services: getServices().map((name, i) => ({ 
         name, 
-        description: `Intervention ${name.toLowerCase()} professionnelle et rapide.`,
-        icon: ['⚡', '🔧', '🏆', '💎', '🛡️', '📞'][i] 
+        description: `${name} — un service pensé pour répondre à vos attentes avec soin et professionnalisme.`,
+        icon: ['✦', '◆', '●', '◇', '○', '▹'][i] 
       })),
-      cta: 'Appelez maintenant',
+      cta: 'Contactez-nous',
       testimonials: (lead.googleReviewsData || []).map(r => ({ author: safeStr(r.author), text: safeStr(r.text), rating: r.rating || 5, date: safeStr(r.date) })),
-      galleryTitle: 'Nos Travaux',
-      aboutTitle: 'Qui sommes-nous',
+      galleryTitle: 'Nos Réalisations',
+      aboutTitle: 'Notre Établissement',
       servicesTitle: 'Nos Services',
       contactTitle: 'Contact',
       whyChooseUs: [
-        'Artisan qualifié et expérimenté',
-        'Devis gratuit avant intervention',
-        'Intervention sous 24h',
-        'Garantie de satisfaction'
+        'Équipe qualifiée et à l\'écoute',
+        'Devis clair et transparent',
+        'Satisfaction client prioritaire',
+        'Un service adapté à vos besoins'
       ],
       // 🎨 VARIATIONS UNIQUES
       heroStyle: heroStyles[hash % heroStyles.length],
@@ -388,16 +388,25 @@ Retourne UNIQUEMENT le HTML complet.`;
 
 Contexte: ${basePrompt.substring(0, 1500)}
 
+⚠️ INTERDICTIONS — JAMAIS utiliser ces mots:
+- "Artisan", "Artisan de Confiance", "Artisan Agréé", "Artisan Qualifié", "Artisan Certifié"
+- "Travaux Garantis", "Travaux Réalisés"
+- "Intervention Rapide", "Intervention d'urgence"
+- "Devis Transparent", "Devis Gratuit"
+- "Vrai Professionnel"
+Ces termes sont réservés aux métiers du bâtiment. Pour coiffeur, restaurant, avocat, médecin etc., utiliser un vocabulaire adapté au secteur.
+
 Retourne UNIQUEMENT du JSON avec ces champs:
 - heroTitle: titre accrocheur avec le nom "${lead.name}" (max 8 mots)
-- heroSubtitle: sous-titre 2-3 phrases captivantes
-- aboutText: paragraphe narratif de 5+ phrases (pas corporate)
-- servicesTitle: titre créatif pour la section services
-- aboutTitle: titre créatif pour la section à propos
-- services: array de 6 objets {name, description (2-3 phrases), icon (emoji)}
-- whyChooseUs: array de 4 raisons spécifiques au secteur
-- cta: texte du bouton CTA
-Tout en français. Spécifique au secteur "${lead.sector || 'professionnel'}".`;
+- heroSubtitle: sous-titre 2-3 phrases, spécifique au secteur
+- aboutText: paragraphe de 5+ phrases, chaleureux et authentique
+- servicesTitle: titre pour la section services
+- aboutTitle: titre pour la section à propos
+- galleryTitle: titre galerie adapté (ex: "Notre Espace", "Nos Créations", "Ambiance" — PAS "Galerie de Projets")
+- services: array de 6 {name, description (2-3 phrases), icon (emoji)}
+- whyChooseUs: array de 4 raisons SPÉCIFIQUES au secteur "${lead.sector}"
+- cta: bouton CTA adapté au secteur
+Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 'professionnel'}".`;
 
         const response = await callLLM(apiConfig, prompt, 'Copywriter web expert français. Retourne UNIQUEMENT du JSON valide sans markdown.');
         if (response) {
@@ -429,6 +438,7 @@ Tout en français. Spécifique au secteur "${lead.sector || 'professionnel'}".`;
             if (data.aboutText) content.aboutText = safeStr(data.aboutText);
             if (data.servicesTitle) content.servicesTitle = safeStr(data.servicesTitle);
             if (data.aboutTitle) content.aboutTitle = safeStr(data.aboutTitle);
+            if (data.galleryTitle) content.galleryTitle = safeStr(data.galleryTitle);
             if (data.cta) content.cta = safeStr(data.cta);
             if (Array.isArray(data.services) && data.services.length >= 3) {
               content.services = data.services.slice(0, 6).map((s: Record<string, unknown>) => ({
