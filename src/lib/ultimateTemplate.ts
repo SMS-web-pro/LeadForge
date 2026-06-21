@@ -1,7 +1,7 @@
 // ── PREMIUM LOCAL BUSINESS TEMPLATE ──
 // Design épuré, luxe, professionnel. Zero gimmicks, zero popups agressifs.
 
-import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI } from './pexelsImages';
+import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 
@@ -173,6 +173,7 @@ export interface UltimateContent {
   reviews?: number;
   services: Array<{ name: string; description: string; features: string[] }>;
   serviceImages: string[];
+  galleryImages: string[];
   testimonials: Array<{ author: string; text: string; rating: number; date?: string }>;
   heroTitle: string;
   heroSubtitle: string;
@@ -575,12 +576,27 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     }
   }
 
+  // Pool galerie distinct — pioche le reliquat non utilisé
+  const galleryImages: string[] = [];
+  for (const img of sectorImages) {
+    if (galleryImages.length >= 5) break;
+    if (!usedServiceImages.has(img)) {
+      galleryImages.push(img);
+      usedServiceImages.add(img);
+    }
+  }
+  // Compléter si besoin avec des images du pool qui ne sont pas hero
+  while (galleryImages.length < 5) {
+    const remaining = sectorImages.filter(img => !galleryImages.includes(img) && img !== heroImage);
+    if (remaining.length === 0) break;
+    galleryImages.push(remaining[galleryImages.length % remaining.length]);
+  }
+
   const socialLinks = lead.socialLinks || {};
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
-    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, testimonials,
+    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    socialLinks
   };
 
   const layoutVariant = combinedHash % 4;
@@ -662,13 +678,13 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 3);
 
-  // Récupérer une image Pexels dédiée pour chaque service — dédupliquée
+  // Récupérer une image Pexels dédiée pour chaque service — requête exacte, pas sectorielle
   const serviceImages: string[] = [];
   const usedServiceImages = new Set<string>([heroImage]);
   for (const service of finalServices) {
     try {
       const query = getServiceImageQuery(service.name);
-      const imgs = await fetchSectorImagesFromAPI(`${lead.sector} ${query}`);
+      const imgs = await fetchServiceImages(`${lead.sector} ${query}`, 4);
       let picked = imgs.find(img => !usedServiceImages.has(img));
       if (!picked) picked = sectorImages.find(img => !usedServiceImages.has(img)) || heroImage;
       serviceImages.push(picked);
@@ -680,10 +696,33 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     }
   }
 
+  // Pool galerie distinct — pioche le reliquat du pool sectoriel non utilisé
+  const galleryImages: string[] = [];
+  for (const img of sectorImages) {
+    if (galleryImages.length >= 5) break;
+    if (!usedServiceImages.has(img)) {
+      galleryImages.push(img);
+      usedServiceImages.add(img);
+    }
+  }
+  // Compléter avec des requêtes Pexels dédiées galerie si besoin
+  if (galleryImages.length < 5) {
+    try {
+      const extra = await fetchServiceImages(`${lead.sector} professional results portfolio`, 5);
+      for (const img of extra) {
+        if (galleryImages.length >= 5) break;
+        if (!usedServiceImages.has(img)) {
+          galleryImages.push(img);
+          usedServiceImages.add(img);
+        }
+      }
+    } catch {}
+  }
+
   const socialLinks = lead.socialLinks || {};
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
-    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, testimonials,
+    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
     socialLinks
   };
@@ -692,7 +731,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages } = content;
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
   const accentColor = template.accent;
@@ -1172,11 +1211,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <p>Découvrez quelques-unes de nos réalisations récentes — chaque projet reflète notre engagement pour la qualité.</p>
             </div>
             <div class="gal-grid reveal">
-                <div class="gal-item gal-main"><img src="${serviceImages[0] || getImg(1)}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${serviceImages[1] || getImg(2)}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${serviceImages[2] || getImg(3)}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${serviceImages[3] || getImg(4)}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${serviceImages[4] || getImg(5)}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gal-main"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${galleryImages[1] || serviceImages[1] || getImg(2)}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${galleryImages[2] || serviceImages[2] || getImg(3)}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${galleryImages[3] || serviceImages[3] || getImg(4)}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${galleryImages[4] || serviceImages[4] || getImg(5)}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
             </div>
         </div>
     </section>

@@ -110,6 +110,43 @@ async function fetchPexelsSearch(query: string, count: number = 4): Promise<stri
 }
 
 /**
+ * Cache par requête de service exacte (pas par secteur)
+ */
+const serviceImagesCache: Record<string, string[]> = {};
+
+/**
+ * Récupère des images Pexels pour une requête de service spécifique.
+ * Appelle Pexels directement avec la requête exacte — aucun mapping sectoriel.
+ * Cache par requête exacte pour éviter les appels répétés.
+ */
+export async function fetchServiceImages(query: string, count: number = 4): Promise<string[]> {
+  const cacheKey = `svc_${query}`;
+  if (serviceImagesCache[cacheKey]) {
+    return serviceImagesCache[cacheKey];
+  }
+
+  if (!PEXELS_API_KEY) return [];
+
+  try {
+    const response = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape&size=medium`,
+      { headers: { Authorization: PEXELS_API_KEY } }
+    );
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    const images = (data.photos || [])
+      .map((p: any) => p?.src?.large2x || p?.src?.large || p?.src?.medium || '')
+      .filter(Boolean);
+
+    serviceImagesCache[cacheKey] = images;
+    return images;
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Récupère toutes les images uniques d'un secteur via l'API Pexels
  * 5 requêtes × 4 images = jusqu'à 20 images uniques
  */
