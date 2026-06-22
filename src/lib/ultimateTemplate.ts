@@ -1193,12 +1193,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @media(max-width:768px){.info-bar{font-size:.75rem}.info-bar-item{padding:0 18px;gap:5px}}
 
-        .chatbot-float{position:fixed;bottom:28px;right:28px;z-index:91;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-        @media(max-width:768px){.chatbot-float{bottom:20px;right:20px}}
-        .chatbot-btn{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 35px rgba(var(--primary-rgb),.4);transition:all .3s;animation:pulse-chat 2.5s infinite;position:relative}
-        .chatbot-btn:hover{transform:scale(1.08);box-shadow:0 12px 45px rgba(var(--primary-rgb),.5)}
+        .chatbot-float{position:fixed;bottom:96px;right:28px;z-index:91;display:flex;flex-direction:column;align-items:flex-end}
+        @media(max-width:768px){.chatbot-float{bottom:88px;right:20px}}
+        .chatbot-btn{display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:16px 28px;border-radius:100px;border:none;cursor:pointer;font-weight:700;font-size:.92rem;box-shadow:0 8px 35px rgba(var(--primary-rgb),.4);transition:all .3s;animation:pulse-chat 2.5s infinite;position:relative;font-family:inherit}
+        .chatbot-btn:hover{transform:translateY(-3px);box-shadow:0 12px 45px rgba(var(--primary-rgb),.5)}
         @keyframes pulse-chat{0%,100%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}50%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.6),0 0 0 10px rgba(var(--primary-rgb),.1)}}
-        .chatbot-btn svg{width:26px;height:26px;transition:transform .3s}
+        .chatbot-btn svg{width:20px;height:20px;transition:transform .3s;flex-shrink:0}
         .chatbot-btn.open svg{transform:rotate(90deg)}
         .chatbot-badge{position:absolute;top:-4px;right:-4px;width:20px;height:20px;background:#ef4444;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;animation:chatBadge 2s ease infinite}
         @keyframes chatBadge{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
@@ -1555,7 +1555,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
         </div>
         <button class="chatbot-btn" id="chatbot-toggle" aria-label="Ouvrir le chat">
-            <i data-lucide="message-circle" width="26"></i>
+            <i data-lucide="message-circle" width="20"></i> Chat en ligne
             <div class="chatbot-badge" id="chatbot-badge">1</div>
         </button>
     </div>
@@ -1756,8 +1756,164 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         const t=document.getElementById('mobile-toggle'),m=document.getElementById('mobile-menu');
         if(t&&m){t.addEventListener('click',()=>{const o=m.classList.toggle('open');t.setAttribute('aria-expanded',String(o))});m.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{m.classList.remove('open');t.setAttribute('aria-expanded','false')}));document.addEventListener('click',e=>{if(!m.contains(e.target)&&!t.contains(e.target)){m.classList.remove('open');t.setAttribute('aria-expanded','false')}})}
         if('IntersectionObserver' in window){const r=document.querySelectorAll('.reveal');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');o.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -60px 0px'});r.forEach(el=>o.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('active'))}
-        document.addEventListener('keydown',e=>{if(e.key==='Escape'){const pm=document.getElementById('privacy-modal');if(pm&&pm.classList.contains('open'))pm.classList.remove('open');const mm=document.getElementById('mobile-menu');if(mm&&mm.classList.contains('open')){mm.classList.remove('open');t&&t.setAttribute('aria-expanded','false')}}});
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'){const pm=document.getElementById('privacy-modal');if(pm&&pm.classList.contains('open'))pm.classList.remove('open');const mm=document.getElementById('mobile-menu');if(mm&&mm.classList.contains('open')){mm.classList.remove('open');t&&t.setAttribute('aria-expanded','false')}const cw=document.getElementById('chatbot-window');if(cw&&cw.classList.contains('open')){cw.classList.remove('open');const cb=document.getElementById('chatbot-toggle');if(cb)cb.classList.remove('open')}}});
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
+
+        (function(){
+            const btn=document.getElementById('chatbot-toggle');
+            const win=document.getElementById('chatbot-window');
+            const msgs=document.getElementById('chatbot-messages');
+            const input=document.getElementById('chatbot-input');
+            const sendBtn=document.getElementById('chatbot-send');
+            const closeBtn=document.getElementById('chatbot-close');
+            const badge=document.getElementById('chatbot-badge');
+            const quickBtns=document.getElementById('chatbot-quick');
+            if(!btn||!win)return;
+
+            const chatPhone='${phone || ''}';
+            const chatEmail='${email || ''}';
+            const chatAddress='${address || ''}';
+            const chatCity='${city || ''}';
+            const chatName='${companyName.replace(/'/g, "\\'")}';
+            const chatSector='${(content.sector || '').replace(/'/g, "\\'")}';
+            const chatRating='${rating || ''}';
+            const chatReviews='${reviews || ''}';
+            const chatServices=[${services.map((s: {name:string}) => `"${s.name.replace(/"/g, '\\"').replace(/'/g, "\\'")}"`).join(',')}];
+
+            let isOpen=false;
+            let hasGreeted=false;
+            let greetTimeout=null;
+
+            btn.addEventListener('click',()=>{
+                isOpen=!isOpen;
+                win.classList.toggle('open',isOpen);
+                btn.classList.toggle('open',isOpen);
+                if(isOpen){
+                    badge.style.display='none';
+                    if(greetTimeout){clearTimeout(greetTimeout);greetTimeout=null}
+                    input.focus();
+                    if(!hasGreeted){hasGreeted=true;setTimeout(()=>addBotMsg(greet()),500)}
+                    lucide.createIcons();
+                }
+            });
+            closeBtn.addEventListener('click',()=>{isOpen=false;win.classList.remove('open');btn.classList.remove('open')});
+
+            greetTimeout=setTimeout(()=>{
+                if(!isOpen&&!hasGreeted){badge.style.display='flex';badge.textContent='1'}
+            },8000);
+
+            function greet(){
+                const h=new Date().getHours();
+                const tg=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
+                return tg+' ! 👋 Je suis l\'assistant virtuel de <strong>'+chatName+'</strong>. '+
+                    (chatSector?'Spécialiste en <strong>'+chatSector+'</strong>, ':'')+
+                    'je suis là pour répondre à vos questions. Comment puis-je vous aider ?';
+            }
+
+            function addBotMsg(text){
+                const d=document.createElement('div');d.className='chatbot-msg bot';d.innerHTML=text;
+                msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+            }
+            function addUserMsg(text){
+                const d=document.createElement('div');d.className='chatbot-msg user';d.textContent=text;
+                msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+            }
+            function showTyping(){
+                const d=document.createElement('div');d.className='chatbot-typing';d.id='typing-indicator';
+                d.innerHTML='<span></span><span></span><span></span>';msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+            }
+            function hideTyping(){const t=document.getElementById('typing-indicator');if(t)t.remove()}
+
+            function getReply(msg){
+                const m=msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+                const phoneLink=chatPhone?'<a href="tel:'+chatPhone.replace(/[^0-9+]/g,'')+'">'+chatPhone+'</a>':'';
+                const emailLink=chatEmail?'<a href="mailto:'+chatEmail+'">'+chatEmail+'</a>':'';
+
+                if(m.match(/hour|horaire|ouvert|ferme|quand|samedi|dimanche|lundi|mardi|mercredi|jeudi|vendredi|heure|a quelle/))
+                    return '🕐 Voici nos horaires :<br><br>• <strong>Lundi – Vendredi</strong> : 08h00 – 18h00<br>• <strong>Samedi</strong> : 09h00 – 14h00<br>• <strong>Dimanche</strong> : Fermé<br><br>'+(chatPhone?'Pour toute urgence, appelez-nous au '+phoneLink+'.':'N\'hésitez pas à nous contacter par email.');
+
+                if(m.match(/service|prestation|quoi|propos|faire|offre|propos|specialit|propos/)){
+                    let sList=chatServices.length>0?chatServices.map(s=>'• '+s).join('<br>'):'• Consultation personnalisée<br>• Service professionnel<br>• Accompagnement sur-mesure';
+                    return '✨ Voici nos prestations :<br><br>'+sList+'<br><br>Vous souhaitez en savoir plus sur l\'une de ces prestations ? N\'hésitez pas !';
+                }
+
+                if(m.match(/contact|telephone|tel|appel|mail|email|joindre|parler|ecrire|me joindre|numeros?/)){
+                    let r='📞 Voici comment nous contacter :<br><br>';
+                    if(chatPhone)r+='• <strong>Téléphone</strong> : '+phoneLink+'<br>';
+                    if(chatEmail)r+='• <strong>Email</strong> : '+emailLink+'<br>';
+                    if(chatAddress)r+='• <strong>Adresse</strong> : '+chatAddress+(chatCity?', '+chatCity:'')+'<br>';
+                    r+='<br>Notre équipe vous répondra dans les meilleurs délais ! 😊';
+                    return r;
+                }
+
+                if(m.match(/adresse|situ|local|trouver|venir|ou|map|plan|direction|gps|commentaller/)){
+                    let r='📍 Vous nous trouverez ici :<br><br>';
+                    if(chatAddress)r+='<strong>'+chatAddress+(chatCity?', '+chatCity:'')+'</strong><br><br>';
+                    if(chatAddress)r+='📍 <a href="https://maps.google.com/?q='+encodeURIComponent(chatAddress+(chatCity?', '+chatCity:''))+'" target="_blank" rel="noopener">Voir sur Google Maps</a><br><br>';
+                    r+='Nous vous attendons avec plaisir ! 😊';
+                    return r;
+                }
+
+                if(m.match(/tarif|prix|cout|combien|cher|gratuit|devis|budget|payement|paiement|tarif|tarifs|coute/))
+                    return '💰 Concernant nos tarifs :<br><br>Chaque prestation est unique et tarifée selon vos besoins. Je vous propose de demander un <strong>devis gratuit et sans engagement</strong>.<br><br>'+
+                        (chatPhone?'📞 Appelez-nous au '+phoneLink+' ou':'')+
+                        ' envoyez-nous un message et nous vous enverrons un devis détaillé sous 24h !';
+
+                if(m.match(/rendez|rdv|reser|book|prendre|disponib|planning|agenda|reserver/))
+                    return '📅 Pour prendre rendez-vous :<br><br>Contactez-nous directement :<br><br>'+
+                        (chatPhone?'• 📞 Par téléphone : '+phoneLink+'<br>':'')+
+                        (chatEmail?'• ✉️ Par email : '+emailLink+'<br>':'')+
+                        '<br>Nous ferons tout notre possible pour vous trouver un créneau qui vous convient !';
+
+                if(m.match(/avis|note|google|reputation|satisf|opinion|temoignage|retours?/))
+                    return '⭐ <strong>'+chatName+'</strong> est noté <strong>'+chatRating+'/5</strong> sur Google, basé sur <strong>'+chatReviews+' avis</strong> vérifiés !<br><br>Nos clients apprécient particulièrement la qualité de notre service. Consultez nos avis pour vous en convaincre ! 😊';
+
+                if(m.match(/merci|remerci|parfait|super|excellent|bravo|genial|top/))
+                    return 'Avec plaisir ! 😊 N\'hésitez pas si vous avez d\'autres questions, je suis toujours là pour vous aider.';
+
+                if(m.match(/salut|bonjour|bonsoir|hello|hey|coucou|bonne nuit|coucou|ca va|commentca|comment allez/))
+                    return greet();
+
+                if(m.match(/qui|presentation|histoire|etabli|cree|depuis|fondateur|team|equipe|vousetes|vous etes|voustravaillez/))
+                    return '🏢 <strong>'+chatName+'</strong>'+(chatCity?' est situé à '+chatCity+'. ':' ') +
+                        (chatSector?'Spécialiste en '+chatSector+', ':'')+
+                        'nous offrons un service de qualité avec une équipe professionnelle et passionnée. '+(chatRating?'Notre note Google de '+chatRating+'/5 témoigne de notre engagement.':'')+' 😊';
+
+                if(m.match(/urgence|urgent|vite|rapidement|maintenant|directement|despresse|asap/))
+                    return '🚨 Pour une urgence :<br><br>'+
+                        (chatPhone?'<strong>Appelez-nous directement</strong> au '+phoneLink+'<br><br>':'')+
+                        'Notre équipe est réactive et fera tout son possible pour vous répondre rapidement.';
+
+                if(m.match(/bon|daccord|ok|compris|c'est bon|noted|noté|c note|daccord|oui|ouais/))
+                    return 'Parfait ! 😊 N\'hésitez pas à revenir si vous avez d\'autres questions.';
+
+                if(m.match(/non|pas|jamais|non merci|non merci/))
+                    return 'Pas de souci ! 😊 Je reste disponible si vous changez d\'avis ou si vous avez la moindre question.';
+
+                return 'Merci pour votre message ! 😊 Je transmets votre demande à notre équipe qui vous répondra très rapidement.<br><br>En attendant, vous pouvez aussi :<br>'+
+                    (chatPhone?'• 📞 Nous appeler : '+phoneLink+'<br>':'')+
+                    (chatEmail?'• ✉️ Nous écrire : '+emailLink+'<br>':'')+
+                    '• 📋 Remplir notre <a href="#contact">formulaire de contact</a>';
+            }
+
+            function handleSend(){
+                const msg=input.value.trim();if(!msg)return;
+                addUserMsg(msg);input.value='';
+                showTyping();
+                const delay=600+Math.random()*800;
+                setTimeout(()=>{hideTyping();addBotMsg(getReply(msg))},delay);
+            }
+
+            sendBtn.addEventListener('click',handleSend);
+            input.addEventListener('keydown',e=>{if(e.key==='Enter')handleSend()});
+            quickBtns.addEventListener('click',e=>{
+                if(e.target.tagName==='BUTTON'&&e.target.dataset.msg){
+                    const msg=e.target.dataset.msg;
+                    addUserMsg(msg);showTyping();
+                    setTimeout(()=>{hideTyping();addBotMsg(getReply(msg))},600+Math.random()*800);
+                }
+            });
+        })();
     </script>
 </body>
 </html>`;
