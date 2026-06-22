@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Lead, ApiConfig, callLLM, callLLMForWebsite, generateWebsitePrompt, safeStr, proxyImg } from '../lib/supabase-store';
-import { generateUltimateSite, generateUltimateSiteAsync } from '../lib/ultimateTemplate';
+import { generateUltimateSite, generateUltimateSiteAsync, detectLanguage } from '../lib/ultimateTemplate';
 import { useWebsiteGenState, websiteGenState } from '../lib/websitegen-state';
 import { supabase } from '../lib/supabase';
 
@@ -353,22 +353,30 @@ Retourne UNIQUEMENT le HTML complet.`;
       'layout-magazine', 'layout-cards', 'layout-minimal'
     ];
     
+    const lang = detectLanguage(lead);
+    const isEn = lang === 'en';
+
     const content: SC = {
       heroTitle: lead.name,
-      heroSubtitle: lead.description || `${lead.name} — ${lead.sector || 'professionnel'}${lead.city ? ` à ${lead.city}` : ''}. Découvrez notre approche et nos prestations.`,
-      aboutText: lead.description || `${lead.name} est un ${lead.sector || 'établissement'}${lead.city ? ` situé à ${lead.city}` : ''}. Notre équipe met un point d'honor à offrir un service de qualité, à l'écoute de vos besoins.`,
+      heroSubtitle: lead.description || `${lead.name} — ${lead.sector || (isEn ? 'professional' : 'professionnel')}${lead.city ? (isEn ? ` in ${lead.city}` : ` à ${lead.city}`) : ''}. ${isEn ? 'Discover our approach and services.' : 'Découvrez notre approche et nos prestations.'}`,
+      aboutText: lead.description || `${lead.name} ${isEn ? 'is a' : 'est un'} ${lead.sector || (isEn ? 'business' : 'établissement')}${lead.city ? (isEn ? ` located in ${lead.city}` : ` situé à ${lead.city}`) : ''}. ${isEn ? 'Our team is committed to delivering quality service, attentive to your needs.' : 'Notre équipe met un point d\'honneur à offrir un service de qualité, à l\'écoute de vos besoins.'}`,
       services: getServices().map((name, i) => ({ 
         name, 
-        description: `${name} — un service pensé pour répondre à vos attentes avec soin et professionnalisme.`,
+        description: `${name} — ${isEn ? 'a service designed to meet your expectations with care and professionalism.' : 'un service pensé pour répondre à vos attentes avec soin et professionnalisme.'}`,
         icon: ['✦', '◆', '●', '◇', '○', '▹'][i] 
       })),
-      cta: 'Contactez-nous',
+      cta: isEn ? 'Contact Us' : 'Contactez-nous',
       testimonials: (lead.googleReviewsData || []).map(r => ({ author: safeStr(r.author), text: safeStr(r.text), rating: r.rating || 5, date: safeStr(r.date) })),
-      galleryTitle: 'Nos Réalisations',
-      aboutTitle: 'Notre Établissement',
-      servicesTitle: 'Nos Services',
+      galleryTitle: isEn ? 'Our Portfolio' : 'Nos Réalisations',
+      aboutTitle: isEn ? 'Our Business' : 'Notre Établissement',
+      servicesTitle: isEn ? 'Our Services' : 'Nos Services',
       contactTitle: 'Contact',
-      whyChooseUs: [
+      whyChooseUs: isEn ? [
+        'Qualified team that listens',
+        'Clear and transparent quotes',
+        'Customer satisfaction first',
+        'A service adapted to your needs'
+      ] : [
         'Équipe qualifiée et à l\'écoute',
         'Devis clair et transparent',
         'Satisfaction client prioritaire',
@@ -384,7 +392,28 @@ Retourne UNIQUEMENT le HTML complet.`;
     if (hasLLM) {
       try {
         const basePrompt = lead.generatedPrompt || generateWebsitePrompt(lead);
-        const prompt = `Génère du contenu RICHE et SPÉCIFIQUE pour "${lead.name}" (${lead.sector || 'professionnel'} à ${lead.city || 'France'}).
+        const prompt = isEn
+          ? `Generate RICH and SPECIFIC content for "${lead.name}" (${lead.sector || 'professional'} in ${lead.city || 'USA'}).
+
+Context: ${basePrompt.substring(0, 1500)}
+
+⚠️ FORBIDDEN WORDS — NEVER use:
+- "Handyman", "Trusted Tradesman", "Certified Contractor", "Professional Artisan"
+- "Guaranteed Work", "Fast Intervention", "Free Quote", "Transparent Estimate"
+These are reserved for trade businesses. For hairdressers, restaurants, lawyers, doctors etc., use sector-appropriate vocabulary.
+
+Return ONLY JSON with these fields:
+- heroTitle: catchy title with "${lead.name}" (max 8 words)
+- heroSubtitle: 2-3 captivating sentences, sector-specific
+- aboutText: 5+ sentence paragraph, warm and authentic
+- servicesTitle: title for services section
+- aboutTitle: title for about section
+- galleryTitle: gallery title (e.g., "Our Space", "Our Creations", "Ambiance" — NOT "Project Gallery")
+- services: array of 6 {name, description (2-3 sentences), icon (emoji)}
+- whyChooseUs: array of 4 reasons SPECIFIC to the "${lead.sector}" sector
+- cta: sector-appropriate CTA button text
+All in English. ORIGINAL and SPECIFIC to the "${lead.sector || 'professional'}" sector.`
+          : `Génère du contenu RICHE et SPÉCIFIQUE pour "${lead.name}" (${lead.sector || 'professionnel'} à ${lead.city || 'France'}).
 
 Contexte: ${basePrompt.substring(0, 1500)}
 
@@ -408,7 +437,7 @@ Retourne UNIQUEMENT du JSON avec ces champs:
 - cta: bouton CTA adapté au secteur
 Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 'professionnel'}".`;
 
-        const response = await callLLM(apiConfig, prompt, 'Copywriter web expert français. Retourne UNIQUEMENT du JSON valide sans markdown.');
+        const response = await callLLM(apiConfig, prompt, isEn ? 'Expert English web copywriter. Return ONLY valid JSON, no markdown.' : 'Copywriter web expert français. Retourne UNIQUEMENT du JSON valide sans markdown.');
         if (response) {
           const jsonStr = response.replace(/```json?\s*/gi, '').replace(/```\s*/g, '').trim();
           const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);

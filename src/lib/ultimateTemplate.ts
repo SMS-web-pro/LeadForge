@@ -165,6 +165,7 @@ export interface UltimateContent {
   sector: string;
   city: string;
   description: string;
+  lang?: 'fr' | 'en';
   phone?: string;
   email?: string;
   address?: string;
@@ -558,6 +559,74 @@ function isEnglishText(text: string): boolean {
   return matches.length >= 2;
 }
 
+export function detectLanguage(lead: any): 'fr' | 'en' {
+  const city = (lead.city || '').toLowerCase();
+  const desc = (lead.description || '').toLowerCase();
+  const name = (lead.name || '').toLowerCase();
+  const sector = (lead.sector || '').toLowerCase();
+  const reviews = (lead.googleReviewsData || []).map((r: any) => (r.text || '').toLowerCase()).join(' ');
+
+  const englishCities = ['london', 'new york', 'manhattan', 'brooklyn', 'chicago', 'los angeles', 'san francisco', 'miami', 'boston', 'seattle', 'austin', 'denver', 'atlanta', 'houston', 'phoenix', 'philadelphia', 'dallas', 'toronto', 'vancouver', 'montreal', 'sydney', 'melbourne', 'berlin', 'munich', 'amsterdam', 'barcelona', 'madrid', 'rome', 'milan', 'dubai', 'singapore', 'tokyo', 'hong kong'];
+  const frenchCities = ['paris', 'lyon', 'marseille', 'toulouse', 'nice', 'nantes', 'strasbourg', 'montpellier', 'bordeaux', 'lille', 'rennes', 'reims', 'toulon', 'saint-étienne', 'le havre', 'grenoble', 'dijon', 'angers', 'nîmes', 'villeurbanne', 'clermont-ferrand', 'aix-en-provence', 'brest', 'tours', 'limoges', 'amiens', 'perpignan', 'metz', 'pau', 'besançon'];
+
+  if (englishCities.some(c => city.includes(c))) return 'en';
+
+  const text = `${name} ${desc} ${sector} ${reviews}`;
+  const enScore = englishCities.filter(c => text.includes(c)).length + (isEnglishText(text) ? 3 : 0);
+  const frScore = frenchCities.filter(c => text.includes(c)).length + (text.includes('à ') || text.includes('de ') || text.includes('le ') || text.includes('la ') ? 2 : 0);
+
+  if (enScore > frScore) return 'en';
+  if (frScore > 0) return 'fr';
+  return 'fr';
+}
+
+const UI = {
+  fr: {
+    lang: 'fr', hreflang: 'fr',
+    navAbout: 'À propos', navServices: 'Services', navWhy: 'Pourquoi nous', navAvis: 'Avis', navContact: 'Contact',
+    heroCall: 'Appeler Maintenant', heroHours: 'Horaires & Urgences', heroNote: 'Réponse rapide · Sans engagement',
+    monLunVen: 'Lun – Ven', monSam: 'Samedi', monDim: 'Dimanche', monDimUrg: 'Urgences uniquement',
+    trustDefault: 'Professionnel certifié',
+    svcLabel: 'Ce que nous proposons', svcTitle: 'Nos Services', svcDesc: 'Des prestations pensées pour répondre à vos besoins avec soin et expertise.', svcLink: 'En savoir plus',
+    aboutLabel: 'À propos de nous', aboutBadge: 'Ans d\'expérience',
+    whyLabel: 'Pourquoi nous choisir ?', whySatisfaction: 'Satisfaction', whyExp: 'Ans d\'Expérience',
+    statsAvis: 'Avis Clients', statsExp: 'Ans d\'Expérience', statsNote: 'Note Google', statsSat: 'Satisfaction',
+    procLabel: 'Comment ça marche', procTitle: 'Un Accompagnement Sur Mesure', procDesc: 'Du premier contact à la réalisation, nous vous accompagnons à chaque étape.',
+    galleryLabel: 'Découvrir', galleryDesc: 'Quelques moments qui reflètent notre univers et notre engagement.',
+    testLabel: 'Avis Clients', testTitle: 'Ce que disent nos clients', testDesc: 'La satisfaction de nos clients est notre meilleure carte de visite.', testGoogle: 'sur Google', testBasé: 'Basé sur', testAvis: 'avis vérifiés',
+    ctaTitle: 'Envie d\'en savoir plus ?', ctaDesc: 'Contactez-nous pour découvrir comment nous pouvons vous accompagner.',
+    contactLabel: 'Nous contacter', contactTitle: 'Prenez Contact avec Nous', contactDesc: 'Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.',
+    formTitle: 'Envoyez votre demande', formDesc: 'Nous vous répondrons dans les plus brefs délais.', formName: 'Nom complet *', formPhone: 'Téléphone *', formEmail: 'Email', formMsg: 'Décrivez votre besoin *', formSubmit: 'Envoyer ma Demande →', formNote: 'Nous vous répondrons dans les meilleurs délais.',
+    hoursTitle: 'Horaires d\'Ouverture', hoursLunVen: 'Lundi – Vendredi', hoursSam: 'Samedi', hoursDim: 'Dimanche',
+    contactCall: 'Nous Appeler', footerNav: 'Navigation', footerContact: 'Contact', footerPrivacy: 'Politique de confidentialité',
+    privacyTitle: 'Politique de Confidentialité',
+    formPlaceholderName: 'Votre nom', formPlaceholderPhone: '06 XX XX XX XX', formPlaceholderEmail: 'votre@email.com', formPlaceholderMsg: 'Décrivez le problème ou les travaux souhaités...',
+    whatsapp: 'WhatsApp',
+  },
+  en: {
+    lang: 'en', hreflang: 'en',
+    navAbout: 'About', navServices: 'Services', navWhy: 'Why Us', navAvis: 'Reviews', navContact: 'Contact',
+    heroCall: 'Call Now', heroHours: 'Hours & Availability', heroNote: 'Quick response · No commitment',
+    monLunVen: 'Mon – Fri', monSam: 'Saturday', monDim: 'Sunday', monDimUrg: 'Emergencies only',
+    trustDefault: 'Certified Professional',
+    svcLabel: 'What We Offer', svcTitle: 'Our Services', svcDesc: 'Services designed to meet your needs with care and expertise.', svcLink: 'Learn more',
+    aboutLabel: 'About Us', aboutBadge: 'Years of Experience',
+    whyLabel: 'Why Choose Us?', whySatisfaction: 'Satisfaction', whyExp: 'Years of Experience',
+    statsAvis: 'Client Reviews', statsExp: 'Years Experience', statsNote: 'Google Rating', statsSat: 'Satisfaction',
+    procLabel: 'How It Works', procTitle: 'A Tailored Approach', procDesc: 'From first contact to completion, we guide you every step of the way.',
+    galleryLabel: 'Discover', galleryDesc: 'A glimpse into our world and what we stand for.',
+    testLabel: 'Client Reviews', testTitle: 'What Our Clients Say', testDesc: 'Client satisfaction is our best recommendation.', testGoogle: 'on Google', testBasé: 'Based on', testAvis: 'verified reviews',
+    ctaTitle: 'Want to Learn More?', ctaDesc: 'Contact us to discover how we can help you.',
+    contactLabel: 'Get in Touch', contactTitle: 'Contact Us', contactDesc: 'Send us a message or give us a call. We respond quickly.',
+    formTitle: 'Send Your Request', formDesc: 'We\'ll get back to you as soon as possible.', formName: 'Full Name *', formPhone: 'Phone *', formEmail: 'Email', formMsg: 'Describe your need *', formSubmit: 'Send Request →', formNote: 'We\'ll respond within 24 hours.',
+    hoursTitle: 'Opening Hours', hoursLunVen: 'Monday – Friday', hoursSam: 'Saturday', hoursDim: 'Sunday',
+    contactCall: 'Call Us', footerNav: 'Navigation', footerContact: 'Contact', footerPrivacy: 'Privacy Policy',
+    privacyTitle: 'Privacy Policy',
+    formPlaceholderName: 'Your name', formPlaceholderPhone: '+1 (555) 000-0000', formPlaceholderEmail: 'your@email.com', formPlaceholderMsg: 'Describe your issue or request...',
+    whatsapp: 'WhatsApp',
+  }
+} as const;
+
 function getHeroBadge(sector: string): { icon: string; text: string } {
   const s = (sector || '').toLowerCase();
   if (s.includes('plomb')) return { icon: 'droplets', text: 'Dépannage rapide garanti' };
@@ -693,18 +762,19 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
 }
 
 export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Promise<string> {
+  const lang = detectLanguage(lead);
   const template = getUltimateTemplate(lead.sector);
-  const companyName = lead.name || 'Entreprise Premium';
+  const companyName = lead.name || (lang === 'en' ? 'Premium Business' : 'Entreprise Premium');
   const city = capitalizeCity(lead.city || '');
-  const phone = lead.phone || '+33 6 12 34 56 78';
-  const email = lead.email || 'contact@entreprise.fr';
-  const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
+  const phone = lead.phone || (lang === 'en' ? '+1 (555) 000-0000' : '+33 6 12 34 56 78');
+  const email = lead.email || (lang === 'en' ? 'contact@business.com' : 'contact@entreprise.fr');
+  const address = lead.address || (city ? (lang === 'en' ? `Downtown, ${city}` : `Centre Ville, ${city}`) : (lang === 'en' ? 'USA' : 'France'));
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
   const description = generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead);
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
-  const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
-  let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
+  const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
+  let ctaText = aiContent?.cta || template.ctaText || (lang === 'en' ? 'Contact Us' : 'Demander un devis');
   if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
   const computeHash = (str: string): number => {
@@ -744,17 +814,18 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   let testimonials = (lead.googleReviewsData || [])
     .filter((review: any) => {
       if (!review.text || review.text.trim().length < 25) return false;
-      if (isEnglishText(review.text)) return false;
+      if (lang === 'fr' && isEnglishText(review.text)) return false;
+      if (lang === 'en' && !isEnglishText(review.text)) return false;
       const text = review.text.trim().toLowerCase();
       const spamIndicators = ['http', 'www.', '@', 'click here', 'buy now', 'free money'];
       if (spamIndicators.some(ind => text.includes(ind))) return false;
       return true;
     })
     .map((review: any) => ({
-      author: review.author || 'Client',
+      author: review.author || (lang === 'en' ? 'Client' : 'Client'),
       text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
       rating: Math.min(5, Math.max(1, review.rating || 5)),
-      date: review.date || 'Récemment'
+      date: review.date || (lang === 'en' ? 'Recently' : 'Récemment')
     }));
   const seenTextsAsync = new Set<string>();
   testimonials = testimonials.filter((t: any) => {
@@ -810,7 +881,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 
   const socialLinks = lead.socialLinks || {};
   const content: UltimateContent = {
-    companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
+    companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
     socialLinks
@@ -821,6 +892,8 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
   const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle } = content;
+  const lang = content.lang || 'fr';
+  const ui = UI[lang];
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
   const accentColor = template.accent;
@@ -879,7 +952,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const sectionShape = combinedHash % 3;
 
   return `<!DOCTYPE html>
-<html lang="fr">
+<html lang="${ui.lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -901,7 +974,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="alternate" hreflang="fr" href="${website || '#'}">
+    <link rel="alternate" hreflang="${ui.hreflang}" href="${website || '#'}">
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"${companyName}","description":"${heroSubtitle}","image":"${heroImage}","telephone":"${phone}","email":"${email}","address":{"@type":"PostalAddress","streetAddress":"${address}","addressLocality":"${city}","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"${rating || 5}","reviewCount":"${reviews || 42}"}}}</script>
     <style>
         :root{--primary:${primaryColor};--primary-rgb:${primaryRgb};--secondary:${secondaryColor};--accent:${accentColor};--bg:#fafaf9;--surface:#fff;--text:#1a1a2e;--text-s:#555770;--text-t:#8b8da3;--border:#e8e8ef;--border-l:#f2f2f7;--dark:#1a2744;--dark-rgb:26,39,68;--deco-rotation:${decoRotation}deg;--deco-scale:${decoScale};--accent-opacity:${accentOpacity};--section-shape:${sectionShape}}
@@ -1265,21 +1338,21 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <span class="navbar-name">${logoInfo.text}</span>
             </a>
             <div class="navbar-links">
-                <a href="#about">À propos</a>
-                <a href="#services">Services</a>
-                <a href="#why">Pourquoi nous</a>
-                <a href="#testimonials">Avis</a>
-                <a href="#contact">Contact</a>
+                <a href="#about">${ui.navAbout}</a>
+                <a href="#services">${ui.navServices}</a>
+                <a href="#why">${ui.navWhy}</a>
+                <a href="#testimonials">${ui.navAvis}</a>
+                <a href="#contact">${ui.navContact}</a>
                 ${phone ? `<a href="tel:${cleanPhoneLink}" class="navbar-cta"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
             </div>
             <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><i data-lucide="menu" width="24" height="24" style="color:var(--text)"></i></button>
         </div>
-        <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Menu mobile">
-            <a href="#about">À propos</a>
-            <a href="#services">Services</a>
-            <a href="#why">Pourquoi nous</a>
-            <a href="#testimonials">Avis</a>
-            <a href="#contact">Contact</a>
+        <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="${lang === 'en' ? 'Mobile menu' : 'Menu mobile'}">
+            <a href="#about">${ui.navAbout}</a>
+            <a href="#services">${ui.navServices}</a>
+            <a href="#why">${ui.navWhy}</a>
+            <a href="#testimonials">${ui.navAvis}</a>
+            <a href="#contact">${ui.navContact}</a>
             ${phone ? `<a href="tel:${cleanPhoneLink}" style="color:var(--primary);font-weight:700">${phone}</a>` : ''}
         </div>
     </nav>
@@ -1294,21 +1367,21 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <p class="hero-sub">${heroSubtitle}</p>
                 <div class="hero-actions">
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-                    ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> Appeler Maintenant</a>` : ''}
+                    ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> ${ui.heroCall}</a>` : ''}
                 </div>
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
                     <div class="hero-rating"><div class="hero-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} avis Google</span></div>
                 </div>
             </div>
             <div class="hero-card">
-                <div class="hero-card-title">Horaires & Urgences</div>
+                <div class="hero-card-title">${ui.heroHours}</div>
                 <div class="hero-hours">
-                    <div class="hero-hours-row"><span class="hero-hours-day">Lun – Ven</span><span class="hero-hours-time">08h00 – 18h00</span></div>
-                    <div class="hero-hours-row"><span class="hero-hours-day">Samedi</span><span class="hero-hours-time">09h00 – 14h00</span></div>
-                    <div class="hero-hours-row"><span class="hero-hours-day">Dimanche</span><span class="hero-hours-time" style="color:var(--accent)">Urgences uniquement</span></div>
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monLunVen}</span><span class="hero-hours-time">08h00 – 18h00</span></div>
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monSam}</span><span class="hero-hours-time">09h00 – 14h00</span></div>
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monDim}</span><span class="hero-hours-time" style="color:var(--accent)">${ui.monDimUrg}</span></div>
                 </div>
                 ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
-                <div class="hero-card-note">Réponse rapide · Sans engagement</div>
+                <div class="hero-card-note">${ui.heroNote}</div>
             </div>
         </div>
     </section>
@@ -1328,9 +1401,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:${leadVariant % 2 === 0 ? '-80px' : 'auto'};left:${leadVariant % 2 !== 0 ? '-80px' : 'auto'};animation-delay:${leadVariant}s"></div>
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:180px;top:40%;left:-40px;animation-delay:2s"></div>' : ''}
             <div class="section-hdr reveal">
-                <span class="section-label">${content.servicesTitle || 'Ce que nous proposons'}</span>
-                <h2>Nos Services</h2>
-                <p>Des prestations pensées pour répondre à vos besoins avec soin et expertise.</p>
+                <span class="section-label">${servicesTitle || ui.svcLabel}</span>
+                <h2>${ui.svcTitle}</h2>
+                <p>${ui.svcDesc}</p>
             </div>
             <div class="svc-grid">
                 ${services.map((s, i) => {
@@ -1349,7 +1422,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                         <div class="svc-icon">${serviceIcons[i%6]}</div>
                         <h3>${s.name}</h3>
                         <p>${s.description}</p>
-                        <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
+                        <a href="#contact" class="svc-link">${ui.svcLink} <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>`}).join('')}
             </div>
@@ -1366,14 +1439,14 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="about-badge"><div class="about-badge-num">15+</div><div class="about-badge-text">Ans d'expérience</div></div>
                 </div>
                 <div class="about-text reveal">
-                    <span class="section-label">${aboutTitle || 'À propos de nous'}</span>
+                    <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
                     <h2>${content.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[0]?.title || 'Qualité professionnelle'}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[1]?.title || 'À votre écoute'}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[2]?.title || 'Satisfaction garantie'}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[3]?.title || 'Service de confiance'}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[1]?.title || (lang === 'en' ? 'Here for You' : 'À votre écoute')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[2]?.title || (lang === 'en' ? 'Satisfaction Guaranteed' : 'Satisfaction garantie')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${template.guarantees[3]?.title || (lang === 'en' ? 'Trusted Service' : 'Service de confiance')}</li>
                     </ul>
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
@@ -1385,14 +1458,14 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         <div class="container">
             <div class="why-grid">
                 <div class="why-text reveal">
-                    <span class="section-label">Pourquoi nous choisir ?</span>
+                    <span class="section-label">${ui.whyLabel}</span>
                     <h2>${content.aboutTitle || 'Notre Approche'}</h2>
                     <p>${aboutText.substring(0, 200)}...</p>
                     <div class="why-stats">
-                        <div class="why-stat"><div class="why-stat-num">${rating || '4.5'}</div><div class="why-stat-label">Note Google</div></div>
-                        <div class="why-stat"><div class="why-stat-num">${reviews || '50+'}</div><div class="why-stat-label">Avis Clients</div></div>
-                        <div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">Satisfaction</div></div>
-                        <div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">Ans d'Expérience</div></div>
+                        <div class="why-stat"><div class="why-stat-num">${rating || '4.5'}</div><div class="why-stat-label">${ui.statsNote}</div></div>
+                        <div class="why-stat"><div class="why-stat-num">${reviews || '50+'}</div><div class="why-stat-label">${ui.statsAvis}</div></div>
+                        <div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">${ui.whySatisfaction}</div></div>
+                        <div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">${ui.whyExp}</div></div>
                     </div>
                 </div>
                 <div class="why-img reveal">
@@ -1404,19 +1477,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">${reviews || '50+'}</div><div class="stat-label">Avis Clients</div></div>
-        <div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Ans d'Expérience</div></div>
-        <div class="stat-item"><div class="stat-num">${rating || '4.5'}/5</div><div class="stat-label">Note Google</div></div>
-        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Satisfaction</div></div>
+        <div class="stat-item"><div class="stat-num">${reviews || '50+'}</div><div class="stat-label">${ui.statsAvis}</div></div>
+        <div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">${ui.statsExp}</div></div>
+        <div class="stat-item"><div class="stat-num">${rating || '4.5'}/5</div><div class="stat-label">${ui.statsNote}</div></div>
+        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">${ui.statsSat}</div></div>
     </div>
 
     <section class="section section-alt" id="process">
         <div class="container" style="position:relative">
             <div class="section-deco deco-circle" style="width:160px;height:160px;bottom:-40px;${leadVariant % 2 === 0 ? 'right:-60px' : 'left:-60px'};animation-delay:${leadVariant + 3}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Comment ça marche</span>
-                <h2>Un Accompagnement Sur Mesure</h2>
-                <p>Du premier contact à la réalisation, nous vous accompagnons à chaque étape.</p>
+                <span class="section-label">${ui.procLabel}</span>
+                <h2>${ui.procTitle}</h2>
+                <p>${ui.procDesc}</p>
             </div>
             <div class="proc-grid">
                 ${getProcessSteps(content.sector).map((step, i) => `
@@ -1432,7 +1505,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
             <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Découvrir</span>
+                <span class="section-label">${ui.galleryLabel}</span>
                 <h2>${content.galleryTitle || 'Nos Réalisations'}</h2>
                 <p>${getGalleryDesc(content.sector)}</p>
             </div>
@@ -1449,9 +1522,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Avis Clients</span>
-                <h2>Ce que disent nos clients</h2>
-                <p>La satisfaction de nos clients est notre meilleure carte de visite.</p>
+                <span class="section-label">${ui.testLabel}</span>
+                <h2>${ui.testTitle}</h2>
+                <p>${ui.testDesc}</p>
             </div>
             <div class="test-grid">
                 ${testimonials.slice(0,6).map((t,i) => `
@@ -1460,14 +1533,14 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="test-author"><div class="test-avatar">${t.author.charAt(0)}</div><div><div class="test-name">${t.author}</div>${t.date?`<div class="test-date">${t.date}</div>`:''}</div></div>
                 </div>`).join('')}
             </div>
-            <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 sur Google</strong><div style="font-size:.8rem;color:var(--text-s)">Basé sur ${reviews} avis vérifiés</div></div></div>
+            <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>
         </div>
     </section>
 
     <section class="cta-banner">
         <div class="container reveal">
-            <h2>Envie d'en savoir plus ?</h2>
-            <p>Contactez-nous pour découvrir comment nous pouvons vous accompagner.</p>
+            <h2>${ui.ctaTitle}</h2>
+            <p>${ui.ctaDesc}</p>
             <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
@@ -1475,34 +1548,34 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Nous contacter</span>
-                <h2>Prenez Contact avec Nous</h2>
-                <p>Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.</p>
+                <span class="section-label">${ui.contactLabel}</span>
+                <h2>${ui.contactTitle}</h2>
+                <p>${ui.contactDesc}</p>
             </div>
             <div class="contact-wrap reveal">
                 <div class="contact-form">
-                    <h3>Envoyez votre demande</h3>
-                    <p>Nous vous répondrons dans les plus brefs délais.</p>
-                    <form onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='Message envoyé ✓';this.querySelector('.form-submit').style.background='#16a34a'">
-                        <div class="form-row"><div class="form-group"><label class="form-label">Nom complet *</label><input type="text" class="form-control" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone *</label><input type="tel" class="form-control" placeholder="06 XX XX XX XX" required></div></div>
-                        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" placeholder="votre@email.com"></div>
-                        <div class="form-group"><label class="form-label">Décrivez votre besoin *</label><textarea class="form-control" rows="4" placeholder="Décrivez le problème ou les travaux souhaités..." required></textarea></div>
-                        <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> Envoyer ma Demande →</button>
-                        <p class="form-note">Nous vous répondrons dans les meilleurs délais.</p>
+                    <h3>${ui.formTitle}</h3>
+                    <p>${ui.formDesc}</p>
+                    <form onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='${lang === 'en' ? 'Message sent ✓' : 'Message envoyé ✓'}';this.querySelector('.form-submit').style.background='#16a34a'">
+                        <div class="form-row"><div class="form-group"><label class="form-label">${ui.formName}</label><input type="text" class="form-control" placeholder="${ui.formPlaceholderName}" required></div><div class="form-group"><label class="form-label">${ui.formPhone}</label><input type="tel" class="form-control" placeholder="${ui.formPlaceholderPhone}" required></div></div>
+                        <div class="form-group"><label class="form-label">${ui.formEmail}</label><input type="email" class="form-control" placeholder="${ui.formPlaceholderEmail}"></div>
+                        <div class="form-group"><label class="form-label">${ui.formMsg}</label><textarea class="form-control" rows="4" placeholder="${ui.formPlaceholderMsg}" required></textarea></div>
+                        <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> ${ui.formSubmit}</button>
+                        <p class="form-note">${ui.formNote}</p>
                     </form>
                 </div>
                 <div class="contact-sidebar">
                     <div class="contact-hours">
-                        <h4><i data-lucide="clock" width="16" style="color:var(--primary)"></i> Horaires d'Ouverture</h4>
-                        <div class="hours-row"><span class="hours-day">Lundi – Vendredi</span><span class="hours-time">08h00 – 18h00</span></div>
-                        <div class="hours-row"><span class="hours-day">Samedi</span><span class="hours-time">09h00 – 14h00</span></div>
-                        <div class="hours-row"><span class="hours-day">Dimanche</span><span class="hours-time" style="color:var(--accent)">Urgences uniquement</span></div>
+                        <h4><i data-lucide="clock" width="16" style="color:var(--primary)"></i> ${ui.hoursTitle}</h4>
+                        <div class="hours-row"><span class="hours-day">${ui.hoursLunVen}</span><span class="hours-time">08h00 – 18h00</span></div>
+                        <div class="hours-row"><span class="hours-day">${ui.hoursSam}</span><span class="hours-time">09h00 – 14h00</span></div>
+                        <div class="hours-row"><span class="hours-day">${ui.hoursDim}</span><span class="hours-time" style="color:var(--accent)">${ui.monDimUrg}</span></div>
                     </div>
                     <div class="contact-card">
                         <div class="contact-card-item"><i data-lucide="phone" width="16"></i> ${phone ? `<a href="tel:${cleanPhoneLink}">${phone}</a>` : 'Non renseigné'}</div>
                         <div class="contact-card-item"><i data-lucide="mail" width="16"></i> ${email ? `<a href="mailto:${email}">${email}</a>` : 'Non renseigné'}</div>
                         <div class="contact-card-item"><i data-lucide="map-pin" width="16"></i> ${address}</div>
-                        ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:16px;width:100%;justify-content:center"><i data-lucide="phone" width="16"></i> Appel Urgent 24h/24</a>` : ''}
+                        ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:16px;width:100%;justify-content:center"><i data-lucide="phone" width="16"></i> ${ui.contactCall}</a>` : ''}
                     </div>
                 </div>
             </div>
@@ -1530,24 +1603,24 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     </div>` : ''}
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul>${services.slice(0,5).map(s=>`<li><a href="#services">${s.name}</a></li>`).join('')}</ul></div>
-                <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#about">À propos</a></li><li><a href="#why">Pourquoi nous</a></li><li><a href="#testimonials">Avis clients</a></li><li><a href="#contact">Contact</a></li><li><a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">Politique de confidentialité</a></li></ul></div>
-                <div class="footer-col"><h4>Contact</h4>
+                <div class="footer-col"><h4>${ui.footerNav}</h4><ul><li><a href="#about">${ui.navAbout}</a></li><li><a href="#why">${ui.navWhy}</a></li><li><a href="#testimonials">${ui.navAvis}</a></li><li><a href="#contact">${ui.navContact}</a></li><li><a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${ui.footerPrivacy}</a></li></ul></div>
+                <div class="footer-col"><h4>${ui.footerContact}</h4>
                     ${phone?`<div class="footer-contact-item"><i data-lucide="phone" width="14"></i> ${phone}</div>`:''}
                     ${email?`<div class="footer-contact-item"><i data-lucide="mail" width="14"></i> ${email}</div>`:''}
                     ${address?`<div class="footer-contact-item"><i data-lucide="map-pin" width="14"></i> ${address}</div>`:''}
-                    ${phone?`<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:12px;padding:10px 20px;font-size:.85rem;width:fit-content">Nous Appeler</a>`:''}
+                    ${phone?`<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:12px;padding:10px 20px;font-size:.85rem;width:fit-content">${ui.contactCall}</a>`:''}
                 </div>
             </div>
             <div class="footer-bottom">&copy; ${new Date().getFullYear()} ${companyName}. Tous droits réservés. Créé par Services-Siteup.</div>
         </div>
     </footer>
 
-    ${phone ? `<a href="tel:${cleanPhoneLink}" class="float-urgent"><i data-lucide="phone" width="18"></i> Nous Appeler</a>` : ''}
+    ${phone ? `<a href="tel:${cleanPhoneLink}" class="float-urgent"><i data-lucide="phone" width="18"></i> ${ui.contactCall}</a>` : ''}
 
     <div class="privacy-overlay" id="privacy-modal">
         <div class="privacy-modal">
             <button class="privacy-close" onclick="document.getElementById('privacy-modal').classList.remove('open')">&times;</button>
-            <h2>Politique de Confidentialité</h2>
+            <h2>${ui.privacyTitle}</h2>
             <p><strong>${companyName}</strong> s'engage à protéger la vie privée de ses visiteurs et clients. La présente politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos données personnelles.</p>
             
             <h3>1. Données collectées</h3>
