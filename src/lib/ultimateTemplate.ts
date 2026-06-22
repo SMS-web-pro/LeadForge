@@ -646,7 +646,17 @@ function getPrivacyContent(lang: 'fr' | 'en', companyName: string, email: string
             <p>Pour toute question relative à la protection de vos données personnelles, vous pouvez nous contacter à l'adresse ${email || 'contact@example.com'} ou par courrier à ${address || 'notre adresse'}. Si vous estimez que le traitement de vos données n'est pas conforme à la réglementation en vigueur, vous avez le droit d'introduire une réclamation auprès de la Commission Nationale de l'Informatique et des Libertés (CNIL) — www.cnil.fr.</p>`;
 }
 
-function getGalleryDesc(sector: string): string {
+function getGalleryDesc(sector: string, lang: 'fr' | 'en' = 'fr'): string {
+  if (lang === 'en') {
+    const s = (sector || '').toLowerCase();
+    if (s.includes('restaurant') || s.includes('cuisin') || s.includes('boulanger')) return 'The ambiance, cuisine, and moments that define us.';
+    if (s.includes('coiff') || s.includes('barb') || s.includes('salon') || s.includes('beauté')) return 'A glimpse into our space, our creations, and our world.';
+    if (s.includes('garage') || s.includes('mécan') || s.includes('auto')) return 'Our workshop, our equipment, and the vehicles we service.';
+    if (s.includes('jardin') || s.includes('paysag')) return 'Our completed gardens, before/after transformations, and projects we\'re proud of.';
+    if (s.includes('fitness') || s.includes('sport') || s.includes('gym')) return 'Our facility, our equipment, and the energy that drives us.';
+    if (s.includes('nettoyag') || s.includes('propreté')) return 'Our services, our results, and the cleanliness we guarantee.';
+    return 'A glimpse into our world and what we stand for.';
+  }
   const s = (sector || '').toLowerCase();
   if (s.includes('restaurant') || s.includes('cuisin') || s.includes('boulanger')) return 'L\'ambiance, la cuisine et les moments qui font notre identité.';
   if (s.includes('coiff') || s.includes('barb') || s.includes('salon') || s.includes('beauté')) return 'Un aperçu de notre espace, nos créations et notre univers.';
@@ -718,7 +728,7 @@ const UI = {
     monLunVen: 'Lun – Ven', monSam: 'Samedi', monDim: 'Dimanche', monDimUrg: 'Urgences uniquement',
     trustDefault: 'Professionnel certifié',
     svcLabel: 'Ce que nous proposons', svcTitle: 'Nos Services', svcDesc: 'Des prestations pensées pour répondre à vos besoins avec soin et expertise.', svcLink: 'En savoir plus',
-    aboutLabel: 'À propos de nous', aboutBadge: 'Ans d\'expérience',
+    aboutLabel: 'À propos de nous', aboutTitle: 'Notre Établissement', aboutBadge: 'Ans d\'expérience',
     whyLabel: 'Pourquoi nous choisir ?', whySatisfaction: 'Satisfaction', whyExp: 'Ans d\'Expérience',
     statsAvis: 'Avis Clients', statsExp: 'Ans d\'Expérience', statsNote: 'Note Google', statsSat: 'Satisfaction',
     procLabel: 'Comment ça marche', procTitle: 'Un Accompagnement Sur Mesure', procDesc: 'Du premier contact à la réalisation, nous vous accompagnons à chaque étape.',
@@ -740,7 +750,7 @@ const UI = {
     monLunVen: 'Mon – Fri', monSam: 'Saturday', monDim: 'Sunday', monDimUrg: 'Emergencies only',
     trustDefault: 'Certified Professional',
     svcLabel: 'What We Offer', svcTitle: 'Our Services', svcDesc: 'Services designed to meet your needs with care and expertise.', svcLink: 'Learn more',
-    aboutLabel: 'About Us', aboutBadge: 'Years of Experience',
+    aboutLabel: 'About Us', aboutTitle: 'Our Business', aboutBadge: 'Years of Experience',
     whyLabel: 'Why Choose Us?', whySatisfaction: 'Satisfaction', whyExp: 'Years of Experience',
     statsAvis: 'Client Reviews', statsExp: 'Years Experience', statsNote: 'Google Rating', statsSat: 'Satisfaction',
     procLabel: 'How It Works', procTitle: 'A Tailored Approach', procDesc: 'From first contact to completion, we guide you every step of the way.',
@@ -1529,13 +1539,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${phone ? `<div class="info-bar-item"><i data-lucide="phone" width="14"></i> <a href="tel:${cleanPhoneLink}">${phone}</a></div>` : ''}
             ${email ? `<div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:${email}">${email}</a></div>` : ''}
             ${address ? `<div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> ${address}${city ? ', ' + city : ''}</div>` : ''}
-            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Ven 08h-18h · Sam 09h-14h</div>
-            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 sur Google (${reviews} avis)</div>` : ''}
+            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> ${lang === 'en' ? 'Mon-Fri 8am-6pm · Sat 9am-2pm' : 'Lun-Ven 08h-18h · Sam 09h-14h'}</div>
+            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
             ${phone ? `<div class="info-bar-item"><i data-lucide="phone" width="14"></i> <a href="tel:${cleanPhoneLink}">${phone}</a></div>` : ''}
             ${email ? `<div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:${email}">${email}</a></div>` : ''}
             ${address ? `<div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> ${address}${city ? ', ' + city : ''}</div>` : ''}
-            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Ven 08h-18h · Sam 09h-14h</div>
-            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 sur Google (${reviews} avis)</div>` : ''}
+            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> ${lang === 'en' ? 'Mon-Fri 8am-6pm · Sat 9am-2pm' : 'Lun-Ven 08h-18h · Sam 09h-14h'}</div>
+            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
         </div>
     </div>
     <a href="#hero" class="skip-link">${lang === 'en' ? 'Skip to main content' : 'Aller au contenu principal'}</a>
@@ -1578,7 +1588,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> ${ui.heroCall}</a>` : ''}
                 </div>
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
-                    <div class="hero-rating"><div class="hero-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} avis Google</span></div>
+                    <div class="hero-rating"><div class="hero-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} ${ui.testGoogle}</span></div>
                 </div>
             </div>
             <div class="hero-card">
@@ -1648,7 +1658,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
-                    <h2>${content.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
+                    <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
                         <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
@@ -1667,7 +1677,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="why-grid">
                 <div class="why-text reveal">
                     <span class="section-label">${ui.whyLabel}</span>
-                    <h2>${content.aboutTitle || 'Notre Approche'}</h2>
+                    <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
                     <p>${aboutText.substring(0, 200)}...</p>
                     <div class="why-stats">
                         <div class="why-stat"><div class="why-stat-num">${rating || '4.5'}</div><div class="why-stat-label">${ui.statsNote}</div></div>
@@ -1714,8 +1724,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
                 <span class="section-label">${ui.galleryLabel}</span>
-                <h2>${content.galleryTitle || 'Nos Réalisations'}</h2>
-                <p>${getGalleryDesc(content.sector)}</p>
+                <h2>${content.galleryTitle || (lang === 'en' ? 'Our Portfolio' : 'Nos Réalisations')}</h2>
+                <p>${getGalleryDesc(content.sector, lang)}</p>
             </div>
             <div class="gal-grid reveal">
                 <div class="gal-item gal-main"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
@@ -1819,7 +1829,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     ${phone?`<a href="tel:${cleanPhoneLink}" class="btn-pri" style="margin-top:12px;padding:10px 20px;font-size:.85rem;width:fit-content">${ui.contactCall}</a>`:''}
                 </div>
             </div>
-            <div class="footer-bottom">&copy; ${new Date().getFullYear()} ${companyName}. Tous droits réservés. Créé par Services-Siteup.</div>
+            <div class="footer-bottom">&copy; ${new Date().getFullYear()} ${companyName}. ${lang === 'en' ? 'All rights reserved. Built by Services-Siteup.' : 'Tous droits réservés. Créé par Services-Siteup.'}</div>
         </div>
     </footer>
 
