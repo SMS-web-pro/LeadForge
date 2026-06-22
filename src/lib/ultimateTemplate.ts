@@ -849,11 +849,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
 
   const companyHash = (() => { let h = 0; for (let i = 0; i < companyName.length; i++) { h = ((h << 5) - h) + companyName.charCodeAt(i); h |= 0; } return Math.abs(h); })();
-  const emergencyFallback = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80';
+  const emergencyFallback = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=85&fm=jpg';
   const allImgs = content.allImages || [];
   const usedImages = new Set<string>();
   
-  const heroSectorFallback = getSectorImages(content.sector);
+  const heroSectorFallback = getSectorImages(content.sector).map(s => s.replace(/\?.*$/, '?w=1920&q=85&fm=jpg'));
   const heroImgErr = `onerror="this.onerror=null;this.src='${heroSectorFallback[(companyHash + 1) % heroSectorFallback.length]}';this.style.opacity='0.7'"`;
   
   const getImg = (slot: number): string => {
@@ -871,6 +871,15 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
   const fontPair = combinedHash % 4;
   const headingFont = fontPair === 0 ? "'DM Sans'" : fontPair === 1 ? "'Plus Jakarta Sans'" : fontPair === 2 ? "'Playfair Display'" : "'Cormorant Garamond'";
+  
+  const animVariant = combinedHash % 5;
+  const borderStyle = combinedHash % 3;
+  const decorShape = combinedHash % 4;
+  const heroOverlayAngle = 135 + (combinedHash % 90);
+  const cardRadius = borderStyle === 0 ? '18px' : borderStyle === 1 ? '24px' : '12px';
+  const animSpeed1 = 6 + (combinedHash % 8);
+  const animSpeed2 = 10 + (combinedHash % 12);
+  const animSpeed3 = 14 + (combinedHash % 10);
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -1005,8 +1014,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @media(max-width:480px){.stats{padding:36px 20px;gap:20px}.stat-num{font-size:2rem}.stat-label{font-size:.72rem;letter-spacing:1.2px}}
 
         .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-        .svc-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:0;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-        .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);transform:scaleX(0);transition:transform .35s;transform-origin:left}
+        .svc-card{background:#fff;border:1px solid var(--border);border-radius:${cardRadius};padding:0;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+        .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent));transform:scaleX(0);transition:transform .35s;transform-origin:left}
         .svc-card:hover{border-color:var(--primary);box-shadow:0 12px 40px rgba(var(--primary-rgb),.1);transform:translateY(-6px)}
         .svc-card:hover::before{transform:scaleX(1)}
         .svc-card-img{width:100%;height:180px;object-fit:cover;display:block;transition:transform .5s}
@@ -1023,7 +1032,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .why-text h2{font-size:clamp(1.55rem,3vw,2.3rem);font-weight:800;color:#fff;margin-bottom:18px;letter-spacing:-.02em}
         .why-text>p{color:rgba(255,255,255,.65);margin-bottom:36px;font-size:1.02rem;line-height:1.8}
         .why-stats{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-        .why-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;text-align:center;transition:all .3s}
+        .why-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:${cardRadius};padding:24px;text-align:center;transition:all .3s}
         .why-stat:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}
         .why-stat-num{font-size:1.85rem;font-weight:800;color:var(--accent);line-height:1}
         .why-stat-label{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:8px;text-transform:uppercase;letter-spacing:1.2px}
@@ -1035,7 +1044,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-img{order:-1}.why-img-badge{bottom:16px;right:16px;padding:16px 22px}.why-img-badge-num{font-size:1.8rem}.why-stats{gap:12px}.why-stat{padding:18px}}
 
         .guar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
-        .guar-card{text-align:center;padding:32px 18px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:all .35s}
+        .guar-card{text-align:center;padding:32px 18px;border-radius:${cardRadius};border:1px solid var(--border);background:#fff;transition:all .35s}
         .guar-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.07)}
         .guar-icon{width:56px;height:56px;border-radius:50%;background:rgba(var(--primary-rgb),.08);display:flex;align-items:center;justify-content:center;color:var(--primary);margin:0 auto 16px}
         .guar-card h3{font-size:.92rem;font-weight:700}
@@ -1043,7 +1052,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @media(max-width:480px){.guar-grid{grid-template-columns:1fr 1fr;gap:12px}.guar-card{padding:20px 12px}.guar-card h3{font-size:.84rem}}
 
         .gal-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px;gap:12px}
-        .gal-item{border-radius:14px;overflow:hidden;position:relative;background:var(--border-l)}
+        .gal-item{border-radius:${cardRadius};overflow:hidden;position:relative;background:var(--border-l)}
         .gal-main{grid-row:1/-1}
         .gal-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,1,.5,1)}
         .gal-item:hover img{transform:scale(1.06)}
@@ -1052,7 +1061,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @media(max-width:480px){.gal-grid{grid-template-columns:1fr}.gal-item{aspect-ratio:16/9}}
 
         .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-        .test-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:32px;display:flex;flex-direction:column;justify-content:space-between;transition:all .35s}
+        .test-card{background:#fff;border:1px solid var(--border);border-radius:${cardRadius};padding:32px;display:flex;flex-direction:column;justify-content:space-between;transition:all .35s}
         .test-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.07);transform:translateY(-4px)}
         .test-stars{display:flex;gap:2px;color:#f59e0b;margin-bottom:16px}
         .test-text{font-size:.97rem;color:var(--text);font-style:italic;line-height:1.8;margin-bottom:24px;flex-grow:1}
@@ -1192,6 +1201,62 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .info-bar-item a:hover{color:#fff}
         @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @media(max-width:768px){.info-bar{font-size:.75rem}.info-bar-item{padding:0 18px;gap:5px}}
+
+        .hero-text-reveal{opacity:0;transform:translateY(40px);animation:heroTextReveal .9s cubic-bezier(.16,1,.3,1) forwards}
+        .hero-text-reveal:nth-child(2){animation-delay:.15s}
+        .hero-text-reveal:nth-child(3){animation-delay:.3s}
+        .hero-text-reveal:nth-child(4){animation-delay:.45s}
+        .hero-text-reveal:nth-child(5){animation-delay:.6s}
+        @keyframes heroTextReveal{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:translateY(0)}}
+
+        .hero-float-decor{position:absolute;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none}
+        .hero-float-decor.d1{width:300px;height:300px;top:10%;left:-5%;animation:floatDecor ${animSpeed1}s ease-in-out infinite}
+        .hero-float-decor.d2{width:200px;height:200px;bottom:15%;right:5%;animation:floatDecor ${animSpeed2}s ease-in-out infinite reverse}
+        .hero-float-decor.d3{width:150px;height:150px;top:40%;right:30%;animation:floatDecor ${animSpeed3}s ease-in-out infinite}
+        @keyframes floatDecor{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(15px,-20px) rotate(5deg)}66%{transform:translate(-10px,10px) rotate(-3deg)}}
+
+        .section-glow{position:relative}
+        .section-glow::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(var(--primary-rgb),.06) 0%,transparent 70%);pointer-events:none;animation:glowMove ${animSpeed1}s ease-in-out infinite alternate}
+        @keyframes glowMove{0%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(50%,50%) scale(1.2)}}
+
+        .card-shimmer{position:relative;overflow:hidden}
+        .card-shimmer::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:cardShimmer ${animSpeed2}s ease-in-out infinite}
+        @keyframes cardShimmer{0%{left:-100%}50%{left:100%}100%{left:100%}}
+
+        .border-glow{border:1px solid rgba(var(--primary-rgb),.15);position:relative}
+        .border-glow:hover{border-color:var(--primary);box-shadow:0 0 30px rgba(var(--primary-rgb),.12),0 12px 40px rgba(var(--primary-rgb),.08)}
+
+        .parallax-layer{will-change:transform;transition:transform .1s linear}
+
+        @keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(var(--primary-rgb),.15)}50%{box-shadow:0 0 40px rgba(var(--primary-rgb),.25),0 0 60px rgba(var(--primary-rgb),.1)}}
+        .btn-pri{animation:pulseGlow 4s ease-in-out infinite}
+
+        .deco-line{position:absolute;width:60px;height:3px;background:var(--accent);border-radius:2px;opacity:.4}
+        .deco-line.dl1{top:20px;left:5%;transform:rotate(${decorShape * 15}deg);animation:decoFloat ${animSpeed3}s ease-in-out infinite}
+        .deco-line.dl2{bottom:30px;right:8%;width:40px;transform:rotate(-${decorShape * 12}deg);animation:decoFloat ${animSpeed1}s ease-in-out infinite reverse}
+        @keyframes decoFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+
+        .gradient-border{position:relative}
+        .gradient-border::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(${heroOverlayAngle}deg,var(--primary),var(--accent),var(--secondary));z-index:-1;opacity:0;transition:opacity .4s}
+        .gradient-border:hover::before{opacity:1}
+
+        .text-gradient{background:linear-gradient(${heroOverlayAngle}deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+        .hover-lift{transition:all .4s cubic-bezier(.4,0,.2,1)}
+        .hover-lift:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.1)}
+
+        .dot-pattern{background-image:radial-gradient(circle,rgba(var(--primary-rgb),.06) 1px,transparent 1px);background-size:24px 24px}
+
+        @keyframes borderPulse{0%,100%{border-color:rgba(var(--primary-rgb),.15)}50%{border-color:rgba(var(--primary-rgb),.35)}}
+        .hero-card{animation:borderPulse 5s ease-in-out infinite}
+
+        .section-stripe{position:relative;overflow:hidden}
+        .section-stripe::before{content:'';position:absolute;top:0;left:-10%;width:120%;height:100%;background:repeating-linear-gradient(${heroOverlayAngle}deg,transparent,transparent 40px,rgba(var(--primary-rgb),.015) 40px,rgba(var(--primary-rgb),.015) 80px);pointer-events:none}
+
+        .scroll-indicator{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.5);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;animation:scrollBounce 2s ease-in-out infinite}
+        .scroll-indicator-line{width:1px;height:30px;background:linear-gradient(to bottom,rgba(255,255,255,.5),transparent);animation:scrollLine 2s ease-in-out infinite}
+        @keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+        @keyframes scrollLine{0%{opacity:1;height:30px}50%{opacity:.3;height:15px}100%{opacity:1;height:30px}}
     </style>
 </head>
 <body>
@@ -1207,62 +1272,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${address ? `<div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> ${address}${city ? ', ' + city : ''}</div>` : ''}
             <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Ven 08h-18h · Sam 09h-14h</div>
             ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 sur Google (${reviews} avis)</div>` : ''}
-        </div>
-    </div>
-    <a href="#hero" class="skip-link">Aller au contenu principal</a>
-    <nav class="navbar" id="navbar">
-        <div class="navbar-inner">
-            <a href="#" class="navbar-brand">
-                <div class="navbar-logo">${logoInfo.initials}</div>
-                <span class="navbar-name">${logoInfo.text}</span>
-            </a>
-            <div class="navbar-links">
-                <a href="#about">À propos</a>
-                <a href="#services">Services</a>
-                <a href="#why">Pourquoi nous</a>
-                <a href="#testimonials">Avis</a>
-                <a href="#contact">Contact</a>
-                ${phone ? `<a href="tel:${cleanPhoneLink}" class="navbar-cta"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
-            </div>
-            <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><i data-lucide="menu" width="24" height="24" style="color:var(--text)"></i></button>
-        </div>
-        <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Menu mobile">
-            <a href="#about">À propos</a>
-            <a href="#services">Services</a>
-            <a href="#why">Pourquoi nous</a>
-            <a href="#testimonials">Avis</a>
-            <a href="#contact">Contact</a>
-            ${phone ? `<a href="tel:${cleanPhoneLink}" style="color:var(--primary);font-weight:700">${phone}</a>` : ''}
-        </div>
-    </nav>
-
-    <section class="hero" id="hero">
-        <img src="${heroImage}" ${heroImgErr} alt="${companyName}" class="hero-bg">
-        <div class="hero-overlay"></div>
-        <div class="hero-inner">
-            <div>
-                <div class="hero-badge"><i data-lucide="${heroBadge.icon}" width="14"></i> ${heroBadge.text}</div>
-                <h1>${heroTitle.replace(/\b(\w+)/g, (m: string, w: string, i: number) => i === 0 || i === 2 ? `<em>${w}</em>` : w)}</h1>
-                <p class="hero-sub">${heroSubtitle}</p>
-                <div class="hero-actions">
-                    <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-                    ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> Appeler Maintenant</a>` : ''}
-                </div>
-                <div style="display:flex;gap:24px;flex-wrap:wrap">
-                    <div class="hero-rating"><div class="hero-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} avis Google</span></div>
-                </div>
-            </div>
-            <div class="hero-card">
-                <div class="hero-card-title">Horaires & Urgences</div>
-                <div class="hero-hours">
-                    <div class="hero-hours-row"><span class="hero-hours-day">Lun – Ven</span><span class="hero-hours-time">08h00 – 18h00</span></div>
-                    <div class="hero-hours-row"><span class="hero-hours-day">Samedi</span><span class="hero-hours-time">09h00 – 14h00</span></div>
-                    <div class="hero-hours-row"><span class="hero-hours-day">Dimanche</span><span class="hero-hours-time" style="color:var(--accent)">Urgences uniquement</span></div>
-                </div>
-                ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
-                <div class="hero-card-note">Réponse rapide · Sans engagement</div>
             </div>
         </div>
+        <div class="scroll-indicator"><span>Défiler</span><div class="scroll-indicator-line"></div></div>
     </section>
 
     <main id="main-content">
@@ -1275,7 +1287,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </div>
 
-    <section class="section" id="services">
+    <section class="section section-stripe" id="services">
         <div class="container">
             <div class="section-hdr reveal">
                 <span class="section-label">${content.servicesTitle || 'Ce que nous proposons'}</span>
@@ -1293,7 +1305,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
                   ];
                 return `
-                <div class="svc-card reveal reveal-d${(i % 3) + 1}">
+                <div class="svc-card reveal reveal-d${(i % 3) + 1} card-shimmer hover-lift">
                     <img src="${serviceImages[i] || heroImage}" class="svc-card-img" alt="${s.name}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon">${serviceIcons[i%6]}</div>
@@ -1306,7 +1318,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="section section-alt" id="about">
+    <section class="section section-alt section-glow" id="about">
         <div class="container">
             <div class="about-grid">
                 <div class="about-img reveal">
@@ -1329,7 +1341,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="section-dark" id="why">
+    <section class="section-dark section-glow" id="why">
+        <div class="deco-line dl1"></div>
+        <div class="deco-line dl2"></div>
         <div class="container">
             <div class="why-grid">
                 <div class="why-text reveal">
@@ -1382,11 +1396,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <p>${getGalleryDesc(content.sector)}</p>
             </div>
             <div class="gal-grid reveal">
-                <div class="gal-item gal-main"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[1] || serviceImages[1] || getImg(2)}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[2] || serviceImages[2] || getImg(3)}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[3] || serviceImages[3] || getImg(4)}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[4] || serviceImages[4] || getImg(5)}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gal-main gradient-border"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gradient-border"><img src="${galleryImages[1] || serviceImages[1] || getImg(2)}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gradient-border"><img src="${galleryImages[2] || serviceImages[2] || getImg(3)}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gradient-border"><img src="${galleryImages[3] || serviceImages[3] || getImg(4)}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gradient-border"><img src="${galleryImages[4] || serviceImages[4] || getImg(5)}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
             </div>
         </div>
     </section>
@@ -1542,11 +1556,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             if(n)n.classList.toggle('scrolled',s>50);
             if(ib){ib.style.transform=s>36?'translateY(-100%)':'translateY(0)';ib.style.transition='transform .3s ease'}
             if(n)n.style.top=s>36?'0':'36px';
+            const hb=document.querySelector('.hero-bg');
+            if(hb&&s<window.innerHeight){hb.style.transform='translateY('+s*.3+'px) scale(1.1)'}
+            document.querySelectorAll('.reveal').forEach(el=>{
+                const r=el.getBoundingClientRect();
+                if(r.top<window.innerHeight-60)el.classList.add('active');
+            });
         });
         const t=document.getElementById('mobile-toggle'),m=document.getElementById('mobile-menu');
         if(t&&m){t.addEventListener('click',()=>{const o=m.classList.toggle('open');t.setAttribute('aria-expanded',String(o))});m.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{m.classList.remove('open');t.setAttribute('aria-expanded','false')}));document.addEventListener('click',e=>{if(!m.contains(e.target)&&!t.contains(e.target)){m.classList.remove('open');t.setAttribute('aria-expanded','false')}})}
         if('IntersectionObserver' in window){const r=document.querySelectorAll('.reveal');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');o.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -60px 0px'});r.forEach(el=>o.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('active'))}
         document.addEventListener('keydown',e=>{if(e.key==='Escape'){const pm=document.getElementById('privacy-modal');if(pm&&pm.classList.contains('open'))pm.classList.remove('open');const mm=document.getElementById('mobile-menu');if(mm&&mm.classList.contains('open')){mm.classList.remove('open');t&&t.setAttribute('aria-expanded','false')}}});
+        const counterObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.stat-num').forEach(el=>{const text=el.textContent;const num=parseFloat(text);if(!isNaN(num)){const suffix=text.replace(/[\d.]/g,'');let current=0;const step=num/40;const timer=setInterval(()=>{current+=step;if(current>=num){current=num;clearInterval(timer)}el.textContent=(Number.isInteger(num)?Math.round(current):current.toFixed(1))+suffix},30)}});counterObserver.unobserve(e.target)}})},{threshold:.3});
+        const statsEl=document.querySelector('.stats');if(statsEl)counterObserver.observe(statsEl);
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
     </script>
 </body>
