@@ -620,8 +620,8 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     return true;
   });
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
-  testimonials = testimonials.slice(0, 3);
+  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 6);
 
   const computeHash = (str: string): number => {
     let h = 0;
@@ -764,8 +764,8 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     return true;
   });
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 3) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
-  testimonials = testimonials.slice(0, 3);
+  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 6);
 
   // Récupérer une image Pexels dédiée pour chaque service — requête exacte, pas sectorielle
   const serviceImages: string[] = [];
@@ -986,15 +986,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .about-checks i{color:var(--primary);flex-shrink:0}
         @media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:44px}.about-img img{height:300px}}
 
-        .stats{padding:64px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:36px;text-align:center;color:#fff}
-        .stat-num{font-size:3.2rem;font-weight:800;line-height:1;margin-bottom:10px;font-family:${headingFont}}
+        .stats{padding:64px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:36px;text-align:center;color:#fff;position:relative;overflow:hidden}
+        .stats::before{content:'';position:absolute;top:-50%;left:-25%;width:150%;height:200%;background:radial-gradient(ellipse at center,rgba(255,255,255,.08) 0%,transparent 70%);animation:statsGlow 6s ease-in-out infinite alternate}
+        @keyframes statsGlow{0%{transform:translateX(-20%)}100%{transform:translateX(20%)}}
+        .stat-num{font-size:3.2rem;font-weight:800;line-height:1;margin-bottom:10px;font-family:${headingFont};transition:transform .3s}
         .stat-label{font-size:.82rem;text-transform:uppercase;letter-spacing:1.8px;opacity:.7;font-weight:600}
-        .stat-item{animation:countUp .6s ease forwards;opacity:0}
-        .stat-item:nth-child(1){animation-delay:.1s}
-        .stat-item:nth-child(2){animation-delay:.2s}
-        .stat-item:nth-child(3){animation-delay:.3s}
-        .stat-item:nth-child(4){animation-delay:.4s}
-        @keyframes countUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .stat-item{animation:countUp .8s ease forwards;opacity:0;transition:transform .3s}
+        .stat-item:hover{transform:scale(1.08)}
+        .stat-item:nth-child(1){animation-delay:.15s}
+        .stat-item:nth-child(2){animation-delay:.3s}
+        .stat-item:nth-child(3){animation-delay:.45s}
+        .stat-item:nth-child(4){animation-delay:.6s}
+        @keyframes countUp{0%{opacity:0;transform:translateY(30px) scale(.9)}60%{opacity:1;transform:translateY(-5px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}
         @media(max-width:768px){.stats{grid-template-columns:1fr 1fr;padding:44px 24px;gap:28px}}
 
         .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
@@ -1115,7 +1118,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .footer-col h4{font-size:.82rem;font-weight:700;margin-bottom:18px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.4)}
         .footer-col ul{list-style:none}
         .footer-col li{margin-bottom:10px}
-        .footer-col a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.9rem;transition:color .25s}
+        .footer-col a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.9rem;transition:color .25s;display:inline-block}
         .footer-col a:hover{color:#fff}
         .footer-contact-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;color:rgba(255,255,255,.65);font-size:.9rem}
         .footer-contact-item i{color:var(--accent)}
@@ -1132,7 +1135,29 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         .hero-badge{animation:float 3s ease-in-out infinite}
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-        .cta-banner{background-size:200% 100%}
+        .cta-banner{background-size:200% 100%;position:relative;overflow:hidden}
+        .cta-banner::before{content:'';position:absolute;top:-50%;right:-20%;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.06);animation:ctaFloat 8s ease-in-out infinite}
+        .cta-banner::after{content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.04);animation:ctaFloat 10s ease-in-out infinite reverse}
+        @keyframes ctaFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-20px) scale(1.05)}}
+        .svc-card{transition:all .4s cubic-bezier(.4,0,.2,1)}
+        .svc-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 50px rgba(var(--primary-rgb),.15)}
+        .gal-item{transition:all .5s cubic-bezier(.25,1,.5,1)}
+        .gal-item:hover{transform:scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,.15);z-index:2}
+        .test-card{transition:all .4s cubic-bezier(.4,0,.2,1)}
+        .test-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 16px 48px rgba(0,0,0,.08)}
+        .proc-step{transition:all .3s}
+        .proc-step:hover .proc-num{transform:scale(1.1);box-shadow:0 0 20px rgba(var(--primary-rgb),.3)}
+        .about-img{transition:all .4s}
+        .about-img:hover{transform:scale(1.02);box-shadow:0 24px 64px rgba(0,0,0,.15)}
+        .btn-pri{position:relative;overflow:hidden}
+        .btn-pri::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.15);border-radius:50%;transform:translate(-50%,-50%);transition:width .4s,height .4s}
+        .btn-pri:hover::after{width:300px;height:300px}
+        .guar-card{transition:all .35s cubic-bezier(.4,0,.2,1)}
+        .guar-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(var(--primary-rgb),.1)}
+        .guar-icon{transition:all .3s}
+        .guar-card:hover .guar-icon{transform:scale(1.1);background:var(--primary);color:#fff}
+        .section-dark::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 50%,rgba(var(--primary-rgb),.08) 0%,transparent 50%);pointer-events:none}
+        .section-dark{position:relative;overflow:hidden}
         .privacy-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;justify-content:center;align-items:center;padding:24px}
         .privacy-overlay.open{display:flex}
         .privacy-modal{background:#fff;border-radius:20px;max-width:700px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;position:relative}
