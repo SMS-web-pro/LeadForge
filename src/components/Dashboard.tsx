@@ -371,93 +371,68 @@ export default function Dashboard({ leads, addLeads, updateLead, deleteLeads, lo
       
       console.log('Clé Serper trouvée, longueur:', serperKey.length);
       console.log('Début de la requête Serper.dev...');
-
-      const convertToLead = (result: any) => ({
-        id: crypto.randomUUID(),
-        name: result.title || result.name || '',
-        company: result.title || result.name || '',
-        email: result.email || '',
-        phone: result.phone || '',
-        website: result.website || '',
-        address: result.address || '',
-        sector: keyword,
-        city: location,
-        score: Math.floor((result.rating || 4.0) * 20) + 20,
-        temperature: (result.rating || 4.0) >= 4.5 ? 'hot' : (result.rating || 4.0) >= 4.0 ? 'warm' : 'cold',
-        tags: ['Serper.dev API', keyword, location, 'Note: ' + (result.rating || 4.0).toFixed(1)],
-        campaign: '',
-        campaignDate: new Date().toISOString(),
-        source: `Serper.dev Google Maps - ${keyword} ${location}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+      
+      // Utiliser l'API Serper.dev Places endpoint
+      const query = `${keyword} ${location}`;
+      console.log('Query:', query);
+      
+      const response = await fetch('https://google.serper.dev/places', {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': serperKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          q: query,
+          gl: 'fr',
+          hl: 'fr',
+          num: 10
+        })
       });
 
-      const allLeads: any[] = [];
-      const seenNames = new Set<string>();
-
-      const fetchPlaces = async (query: string, num: number) => {
-        const response = await fetch('https://google.serper.dev/places', {
-          method: 'POST',
-          headers: {
-            'X-API-KEY': serperKey,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            q: query,
-            gl: 'fr',
-            hl: 'fr',
-            num
-          })
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Erreur HTTP:', response.status, errorText);
-          throw new Error(`Erreur API Serper: ${response.status} - ${errorText}`);
-        }
-        const data = await response.json();
-        if (!data.places || !Array.isArray(data.places)) {
-          throw new Error('Format de réponse invalide');
-        }
-        return data.places;
-      };
-
-      // Requête principale avec le max de résultats
-      console.log('Requête principale...');
-      const mainResults = await fetchPlaces(`${keyword} ${location}`, 20);
-      console.log('Résultats principaux:', mainResults.length);
+      console.log('Status de la réponse:', response.status, response.statusText);
       
-      for (const result of mainResults) {
-        const name = (result.title || result.name || '').toLowerCase().trim();
-        const addr = (result.address || '').toLowerCase().trim();
-        const key = `${name}|${addr}`;
-        if (!seenNames.has(key) && name) {
-          seenNames.add(key);
-          allLeads.push(convertToLead(result));
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erreur HTTP:', response.status, errorText);
+        throw new Error(`Erreur API Serper: ${response.status} - ${response.statusText} - ${errorText}`);
       }
 
-      // Requête supplémentaire pour enrichir les résultats
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        console.log('Requête supplémentaire...');
-        const extraResults = await fetchPlaces(`${keyword} proche de ${location}`, 20);
-        console.log('Résultats supplémentaires:', extraResults.length);
-        
-        for (const result of extraResults) {
-          const name = (result.title || result.name || '').toLowerCase().trim();
-          const addr = (result.address || '').toLowerCase().trim();
-          const key = `${name}|${addr}`;
-          if (!seenNames.has(key) && name) {
-            seenNames.add(key);
-            allLeads.push(convertToLead(result));
-          }
-        }
-      } catch (extraError) {
-        console.warn('Requête supplémentaire échouée, on garde les résultats principaux:', extraError);
+      const data = await response.json();
+      console.log('Résultats Serper.dev bruts:', data);
+      
+      if (!data.places || !Array.isArray(data.places)) {
+        console.error('Format de réponse invalide:', data);
+        throw new Error('Format de réponse invalide de l\'API Serper.dev');
       }
+      
+      // Conversion des résultats en format Lead
+      const leads = data.places.map((result: any) => {
+        console.log('Traitement du résultat:', result);
+        return {
+          id: crypto.randomUUID(),
+          name: result.title || result.name || '',
+          company: result.title || result.name || '',
+          email: result.email || '',
+          phone: result.phone || '',
+          website: result.website || '',
+          address: result.address || '',
+          sector: keyword,
+          city: location,
+          score: Math.floor((result.rating || 4.0) * 20) + 20, // Convertir rating 1-5 en score 20-120
+          temperature: (result.rating || 4.0) >= 4.5 ? 'hot' : (result.rating || 4.0) >= 4.0 ? 'warm' : 'cold',
+          tags: ['Serper.dev API', keyword, location, 'Note: ' + (result.rating || 4.0).toFixed(1)],
+          campaign: '',
+          campaignDate: new Date().toISOString(),
+          source: `Serper.dev Google Maps - ${keyword} ${location}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      });
 
-      console.log(`${allLeads.length} entreprises uniques trouvées via Serper.dev`);
-      return allLeads;
+      console.log(`${leads.length} entreprises trouvées via Serper.dev`);
+      console.log('Leads générés:', leads);
+      return leads;
       
     } catch (error) {
       console.error('Erreur détaillée lors du scraping Serper.dev:', error);
