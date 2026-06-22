@@ -99,7 +99,7 @@ async function fetchPexelsSearch(query: string, count: number = 4): Promise<stri
 
   try {
     const response = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape&size=medium`,
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape&size=large`,
       { headers: { Authorization: PEXELS_API_KEY } }
     );
     if (!response.ok) return [];
@@ -133,7 +133,7 @@ export async function fetchServiceImages(query: string, count: number = 4): Prom
 
   try {
     const response = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape&size=medium`,
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape&size=large`,
       { headers: { Authorization: PEXELS_API_KEY } }
     );
     if (!response.ok) return [];
