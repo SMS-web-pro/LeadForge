@@ -211,9 +211,7 @@ CREATE INDEX IF NOT EXISTS idx_campaigns_status ON campaigns(status);
 -- 5. REALTIME (pour les mises à jour en temps réel)
 -- ============================================================
 
--- Activer le realtime sur les tables importantes
-ALTER PUBLICATION supabase_realtime ADD TABLE leads;
-ALTER PUBLICATION supabase_realtime ADD TABLE scheduled_emails;
+-- Realtime déjà configuré sur les tables importantes
 
 -- ============================================================
 -- 6. FONCTIONS UTILES
