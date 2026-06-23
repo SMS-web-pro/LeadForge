@@ -251,22 +251,6 @@ function mapSupabaseLeadToLead(supabaseLead: Database['public']['Tables']['leads
 }
 
 function mapLeadToSupabaseLead(lead: Lead): Database['public']['Tables']['leads']['Update'] | any {
-  // Colonnes connues dans la base de données
-  const knownColumns = new Set([
-    'name', 'email', 'phone', 'website', 'address', 'city', 'sector',
-    'rating', 'reviews_count', 'has_website', 'enriched', 'score', 'status',
-    'site_generated', 'site_url', 'landing_url', 'site_html',
-    'site_clicked', 'devis_clicked', 'email_sent', 'email_sent_date',
-    'email_opened', 'email_clicked', 'payment_deposit_clicked', 'payment_final_clicked',
-    'invoice_deposit_clicked', 'invoice_final_clicked', 'revenue',
-    'last_contact', 'campaign', 'campaign_date', 'source', 'notes',
-    'google_rating', 'google_reviews', 'google_maps_url',
-    'serper_cid', 'serper_type', 'serper_hours', 'serper_snippets',
-    'description', 'logo', 'images', 'website_images',
-    'google_reviews_data', 'temperature', 'tags', 'generated_prompt',
-    'sent_steps', 'devis_url', 'invoice_url'
-  ]);
-
   const data: any = {
     name: lead.name,
     rating: lead.googleRating || undefined,
@@ -326,13 +310,12 @@ function mapLeadToSupabaseLead(lead: Lead): Database['public']['Tables']['leads'
   // Nettoyer les objets vides et undefined pour éviter les erreurs Supabase
   const cleanData = Object.fromEntries(
     Object.entries(data).filter(([key, value]) => {
-      // Garder uniquement les colonnes connues
-      if (!knownColumns.has(key)) return false;
       // Garder les valeurs définies, les tableaux non vides, et les chaînes non vides
       if (value === undefined || value === null) return false;
       if (typeof value === 'string' && value.trim() === '') return false;
       if (Array.isArray(value) && value.length === 0) return false;
       
+      // Réactiver les champs enrichis - l'erreur 400 est résolue
       return true;
     })
   );

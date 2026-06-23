@@ -57,12 +57,6 @@ CREATE TABLE IF NOT EXISTS leads (
   payment_clicked BOOLEAN DEFAULT FALSE,
   devis_clicked BOOLEAN DEFAULT FALSE,
   invoice_clicked BOOLEAN DEFAULT FALSE,
-  payment_deposit_clicked BOOLEAN DEFAULT FALSE,
-  payment_final_clicked BOOLEAN DEFAULT FALSE,
-  invoice_deposit_clicked BOOLEAN DEFAULT FALSE,
-  invoice_final_clicked BOOLEAN DEFAULT FALSE,
-  revenue NUMERIC DEFAULT 0,
-  sent_steps TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
