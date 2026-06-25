@@ -1039,10 +1039,11 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
 
   const sectorImages = await getSectorImagesAsync(lead.sector, combinedHash);
 
-  // Hero/About/Gallery: only Pexels/Unsplash images (legal, reliable)
+  // Hero/About/Gallery: images uniques par lead grâce au hash combiné
   const heroImage = sectorImages[((combinedHash * 2654435761) >>> 0) % sectorImages.length];
 
-  const allImages = sectorImages.filter(s => s !== heroImage).slice(0, 4);
+  // Gallery: images différentes du hero, avec un pool élargi
+  const allImages = sectorImages.filter(s => s !== heroImage).slice(0, 6);
 
   let finalServices = (lang === 'en' ? template.servicesEn : undefined) || template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -1083,10 +1084,12 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   // Récupérer une image Pexels dédiée pour chaque service — requête exacte avec nom du lead pour varier
   const serviceImages: string[] = [];
   const usedServiceImages = new Set<string>([heroImage]);
-  for (const service of finalServices) {
+  for (let i = 0; i < finalServices.length; i++) {
+    const service = finalServices[i];
     try {
       const query = getServiceImageQuery(service.name);
-      const imgs = await fetchServiceImages(`${lead.sector} ${query} ${lead.name.split(' ')[0] || ''}`, 4);
+      // Ajouter l'index du service + nom du lead pour garantir l'unicité
+      const imgs = await fetchServiceImages(`${lead.sector} ${query} ${lead.name.split(' ')[0] || ''} ${i}`, 4);
       let picked = imgs.find(img => !usedServiceImages.has(img));
       if (!picked) picked = sectorImages.find(img => !usedServiceImages.has(img)) || heroImage;
       serviceImages.push(picked);
@@ -1102,9 +1105,8 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   const galleryImages: string[] = [];
   for (const img of sectorImages) {
     if (galleryImages.length >= 5) break;
-    if (!usedServiceImages.has(img)) {
+    if (!usedServiceImages.has(img) && img !== heroImage) {
       galleryImages.push(img);
-      usedServiceImages.add(img);
     }
   }
   // Compléter avec des requêtes Pexels dédiées galerie si besoin

@@ -170,7 +170,7 @@ export async function fetchServiceImages(query: string, count: number = 4): Prom
  */
 export async function fetchSectorImagesFromAPI(sector: string, leadHash: number = 0): Promise<string[]> {
   const normalizedSector = (sector || '').toLowerCase().trim();
-  const cacheKey = `sector_${normalizedSector}_${leadHash % 5}`;
+  const cacheKey = `sector_${normalizedSector}_${leadHash % 10}`;
 
   if (imagesCache[cacheKey]) {
     return imagesCache[cacheKey];
@@ -185,17 +185,19 @@ export async function fetchSectorImagesFromAPI(sector: string, leadHash: number 
     }
   }
 
-  // Requêtes spécifiques par mot-clé
+  // Requêtes spécifiques par mot-clé — élargies pour couvrir plus de secteurs
   if (normalizedSector.includes('plomb')) queries = SECTOR_PEXEL_QUERIES.plomberie;
   else if (normalizedSector.includes('électri') || normalizedSector.includes('electri')) queries = SECTOR_PEXEL_QUERIES.electricien;
   else if (normalizedSector.includes('coiff') || normalizedSector.includes('hair') || normalizedSector.includes('barber') || normalizedSector.includes('salon')) queries = SECTOR_PEXEL_QUERIES.coiffeur;
-  else if (normalizedSector.includes('restaurant') || normalizedSector.includes('chef') || normalizedSector.includes('cuisine') || normalizedSector.includes('boulanger') || normalizedSector.includes('traiteur')) queries = SECTOR_PEXEL_QUERIES.restaurant;
-  else if (normalizedSector.includes('garage') || normalizedSector.includes('mécan') || normalizedSector.includes('mecan') || normalizedSector.includes('auto')) queries = SECTOR_PEXEL_QUERIES.garage;
-  else if (normalizedSector.includes('nettoy') || normalizedSector.includes('clean') || normalizedSector.includes('ménage') || normalizedSector.includes('menage')) queries = SECTOR_PEXEL_QUERIES.nettoyage;
-  else if (normalizedSector.includes('jardin') || normalizedSector.includes('paysag') || normalizedSector.includes('espace vert')) queries = SECTOR_PEXEL_QUERIES.jardin;
-  else if (normalizedSector.includes('fitness') || normalizedSector.includes('gym') || normalizedSector.includes('sport') || normalizedSector.includes('coach')) queries = SECTOR_PEXEL_QUERIES.fitness;
-  else if (normalizedSector.includes('médec') || normalizedSector.includes('medical') || normalizedSector.includes('sant') || normalizedSector.includes('dentiste') || normalizedSector.includes('kiné')) queries = SECTOR_PEXEL_QUERIES.medical;
-  else if (normalizedSector.includes('avocat') || normalizedSector.includes('jurid') || normalizedSector.includes('droit') || normalizedSector.includes('notaire')) queries = SECTOR_PEXEL_QUERIES.avocat;
+  else if (normalizedSector.includes('restaurant') || normalizedSector.includes('chef') || normalizedSector.includes('cuisine') || normalizedSector.includes('boulanger') || normalizedSector.includes('traiteur') || normalizedSector.includes('pizzeria') || normalizedSector.includes('café') || normalizedSector.includes('brasserie')) queries = SECTOR_PEXEL_QUERIES.restaurant;
+  else if (normalizedSector.includes('garage') || normalizedSector.includes('mécan') || normalizedSector.includes('mecan') || normalizedSector.includes('auto') || normalizedSector.includes('pneu') || normalizedSector.includes('carrosserie')) queries = SECTOR_PEXEL_QUERIES.garage;
+  else if (normalizedSector.includes('nettoy') || normalizedSector.includes('clean') || normalizedSector.includes('ménage') || normalizedSector.includes('menage') || normalizedSector.includes('menager') || normalizedSector.includes('hygiène')) queries = SECTOR_PEXEL_QUERIES.nettoyage;
+  else if (normalizedSector.includes('jardin') || normalizedSector.includes('paysag') || normalizedSector.includes('espace vert') || normalizedSector.includes('pépinière') || normalizedSector.includes('arbori')) queries = SECTOR_PEXEL_QUERIES.jardin;
+  else if (normalizedSector.includes('fitness') || normalizedSector.includes('gym') || normalizedSector.includes('sport') || normalizedSector.includes('coach') || normalizedSector.includes('musculation') || normalizedSector.includes('yoga')) queries = SECTOR_PEXEL_QUERIES.fitness;
+  else if (normalizedSector.includes('médec') || normalizedSector.includes('medical') || normalizedSector.includes('sant') || normalizedSector.includes('dentiste') || normalizedSector.includes('kiné') || normalizedSector.includes('pharmac') || normalizedSector.includes('infirm') || normalizedSector.includes('opticien')) queries = SECTOR_PEXEL_QUERIES.medical;
+  else if (normalizedSector.includes('avocat') || normalizedSector.includes('jurid') || normalizedSector.includes('droit') || normalizedSector.includes('notaire') || normalizedSector.includes('cabinet')) queries = SECTOR_PEXEL_QUERIES.avocat;
+  else if (normalizedSector.includes('immobili') || normalizedSector.includes('agent') || normalizedSector.includes('propriété')) queries = SECTOR_PEXEL_QUERIES.default;
+  else if (normalizedSector.includes('peintre') || normalizedSector.includes('maçon') || normalizedSector.includes('platrier') || normalizedSector.includes('couvreur') || normalizedSector.includes('rénov')) queries = SECTOR_PEXEL_QUERIES.default;
 
   // Offset les requêtes basé sur le hash du lead pour varier les résultats
   const offset = leadHash % queries.length;
@@ -323,12 +325,16 @@ export async function getSectorImagesAsync(sector: string, leadHash: number = 0)
   const apiImages = await fetchSectorImagesFromAPI(sector, leadHash);
   if (apiImages.length >= 5) return apiImages;
 
-  // Fallback statique
+  // Fallback statique — varier par hash pour éviter la répétition
   const normalizedSector = (sector || '').toLowerCase();
   for (const [key, imgs] of Object.entries(STATIC_FALLBACK)) {
-    if (normalizedSector.includes(key)) return imgs;
+    if (normalizedSector.includes(key)) {
+      const offset = leadHash % imgs.length;
+      return [...imgs.slice(offset), ...imgs.slice(0, offset)];
+    }
   }
-  return STATIC_FALLBACK.default;
+  const defaultOffset = leadHash % STATIC_FALLBACK.default.length;
+  return [...STATIC_FALLBACK.default.slice(defaultOffset), ...STATIC_FALLBACK.default.slice(0, defaultOffset)];
 }
 
 /**
