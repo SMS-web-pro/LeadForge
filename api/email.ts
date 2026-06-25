@@ -10,6 +10,50 @@ function getSupabase() {
   return createClient(url, key);
 }
 
+const EMAIL_REGEX = /^(?!.*\.\.)[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
+  'yopmail.com', 'yopmail.fr', 'fakeinbox.com', 'sharklasers.com',
+  'dispostable.com', 'maildrop.cc', 'trashmail.com', 'trashmail.net',
+  '10minutemail.com', 'discard.email', 'mailexpire.com', 'mailnesia.com',
+  'mohmal.com', 'burnermail.io', 'harakirimail.com',
+]);
+
+const DIRECTORY_DOMAINS = new Set([
+  'pagesjaunes.fr', 'societe.com', 'mairie.fr', 'infogreffe.fr',
+  'pappers.fr', 'verif.com', 'google.com', 'facebook.com',
+  'instagram.com', 'twitter.com', 'x.com', 'linkedin.com', 'youtube.com',
+  'gmail.com', 'yahoo.com', 'yahoo.fr', 'hotmail.com', 'outlook.com',
+]);
+
+function isValidEmailForSending(email: string): { valid: boolean; reason?: string } {
+  if (!email || typeof email !== 'string') return { valid: false, reason: 'empty' };
+  const trimmed = email.trim().toLowerCase();
+  if (trimmed.length > 254) return { valid: false, reason: 'too_long' };
+  if (!EMAIL_REGEX.test(trimmed)) return { valid: false, reason: 'invalid_format' };
+  const domain = trimmed.split('@')[1];
+  if (!domain) return { valid: false, reason: 'no_domain' };
+  if (DISPOSABLE_DOMAINS.has(domain)) return { valid: false, reason: 'disposable' };
+  if (DIRECTORY_DOMAINS.has(domain)) return { valid: false, reason: 'directory' };
+  return { valid: true };
+}
+
+function isBounceError(errMessage: string): boolean {
+  const lower = errMessage.toLowerCase();
+  return lower.includes('mailbox') ||
+    lower.includes('does not exist') ||
+    lower.includes('no such user') ||
+    lower.includes('user unknown') ||
+    lower.includes('invalid recipient') ||
+    lower.includes('recipient rejected') ||
+    lower.includes('undeliverable') ||
+    lower.includes('bounced') ||
+    lower.includes('not found') ||
+    lower.includes('address rejected') ||
+    lower.includes('over quota');
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -72,11 +116,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       for (let i = 0; i < emails.length; i++) {
         const emailData = emails[i] as Record<string, unknown>;
+        const toEmail = (emailData.to as string || '').trim().toLowerCase();
+        const leadId = emailData.leadId as string | undefined;
+
+        const emailCheck = isValidEmailForSending(toEmail);
+        if (!emailCheck.valid) {
+          errors.push({ to: toEmail, error: `Email invalide: ${emailCheck.reason}`, reason: emailCheck.reason });
+          continue;
+        }
+
         try {
-          const { to, toName, subject, html, leadId } = emailData;
+          const { to, toName, subject, html } = emailData;
           const info = await transporter.sendMail({
             from: `"${fromName}" <${fromEmail}>`,
-            to: `"${(toName as string) || (to as string)}" <${to as string}>`,
+            to: `"${(toName as string) || toEmail}" <${toEmail}>`,
             subject: subject as string,
             html: html as string,
             text: (html as string).replace(/<[^>]*>/g, '')
@@ -98,7 +151,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             await new Promise(r => setTimeout(r, delayMs));
           }
         } catch (err: unknown) {
-          errors.push({ to: emailData.to, error: (err as Error).message });
+          const errMsg = (err as Error).message || '';
+          errors.push({ to: emailData.to, error: errMsg, isBounce: isBounceError(errMsg) });
+
+          if (isBounceError(errMsg)) {
+            await supabase.from('email_logs').insert([{
+              lead_id: leadId || null, to_email: emailData.to, subject: emailData.subject as string,
+              status: 'bounced', error_message: errMsg, sent_at: new Date().toISOString()
+            }]);
+          }
         }
       }
 
@@ -116,6 +177,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
     if (!to || !subject || !html) {
       return res.status(400).json({ error: 'to, subject, html are required' });
+    }
+
+    const emailCheck = isValidEmailForSending(to.trim().toLowerCase());
+    if (!emailCheck.valid) {
+      return res.status(400).json({
+        error: 'Invalid email',
+        message: `Email invalide: ${emailCheck.reason}`,
+        email_invalid: true,
+        reason: emailCheck.reason,
+      });
     }
 
     const { data: config, error: configErr } = await supabase.from('api_config').select('*').eq('id', 1).single();
@@ -185,7 +256,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
   } catch (err: unknown) {
-    console.error('[api/email] Unhandled error:', err);
-    return res.status(500).json({ error: 'Internal server error', message: (err as Error).message });
+    const errMsg = (err as Error).message || '';
+    console.error('[api/email] Unhandled error:', errMsg);
+
+    const body = req.body as Record<string, unknown>;
+    const leadId = body?.leadId as string | undefined;
+
+    if (isBounceError(errMsg)) {
+      await supabase?.from('email_logs').insert([{
+        lead_id: body?.leadId || null, to_email: body?.to, subject: body?.subject,
+        status: 'bounced', error_message: errMsg, sent_at: new Date().toISOString()
+      }]);
+    }
+
+    return res.status(500).json({ error: 'Internal server error', message: errMsg });
   }
 }

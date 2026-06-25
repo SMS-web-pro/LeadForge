@@ -2,6 +2,49 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
 
+const EMAIL_REGEX = /^(?!.*\.\.)[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
+  'yopmail.com', 'yopmail.fr', 'fakeinbox.com', 'sharklasers.com',
+  'dispostable.com', 'maildrop.cc', 'trashmail.com', 'trashmail.net',
+  '10minutemail.com', 'discard.email', 'mailexpire.com', 'mailnesia.com',
+]);
+
+const DIRECTORY_DOMAINS = new Set([
+  'pagesjaunes.fr', 'societe.com', 'mairie.fr', 'infogreffe.fr',
+  'pappers.fr', 'verif.com', 'google.com', 'facebook.com',
+  'instagram.com', 'twitter.com', 'x.com', 'linkedin.com',
+  'gmail.com', 'yahoo.com', 'yahoo.fr', 'hotmail.com', 'outlook.com',
+]);
+
+function isValidEmailForSending(email: string): { valid: boolean; reason?: string } {
+  if (!email || typeof email !== 'string') return { valid: false, reason: 'empty' };
+  const trimmed = email.trim().toLowerCase();
+  if (trimmed.length > 254) return { valid: false, reason: 'too_long' };
+  if (!EMAIL_REGEX.test(trimmed)) return { valid: false, reason: 'invalid_format' };
+  const domain = trimmed.split('@')[1];
+  if (!domain) return { valid: false, reason: 'no_domain' };
+  if (DISPOSABLE_DOMAINS.has(domain)) return { valid: false, reason: 'disposable' };
+  if (DIRECTORY_DOMAINS.has(domain)) return { valid: false, reason: 'directory' };
+  return { valid: true };
+}
+
+function isBounceError(errMessage: string): boolean {
+  const lower = errMessage.toLowerCase();
+  return lower.includes('mailbox') ||
+    lower.includes('does not exist') ||
+    lower.includes('no such user') ||
+    lower.includes('user unknown') ||
+    lower.includes('invalid recipient') ||
+    lower.includes('recipient rejected') ||
+    lower.includes('undeliverable') ||
+    lower.includes('bounced') ||
+    lower.includes('not found') ||
+    lower.includes('address rejected') ||
+    lower.includes('over quota');
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
@@ -56,6 +99,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try {
         const lead = job.leads;
         if (!lead || !lead.email) throw new Error('Lead invalide');
+
+        const emailCheck = isValidEmailForSending(lead.email);
+        if (!emailCheck.valid) {
+          console.log(`[Cron] Skip ${lead.name} — email invalide (${emailCheck.reason})`);
+          await supabase.from('scheduled_emails').update({
+            status: 'skipped',
+            error_message: `Email invalide: ${emailCheck.reason}`,
+            updated_at: new Date().toISOString()
+          }).eq('id', job.id);
+          results.push({ job_id: job.id, status: 'skipped', reason: emailCheck.reason });
+          continue;
+        }
 
         // CHERCHER LE TEMPLATE DANS LA BASE DE DONNÉES
         const template = dbTemplates?.find(t => t.id === job.template_id);
@@ -134,10 +189,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       } catch (err: any) {
         console.error(`[Cron] Erreur job ${job.id}:`, err.message);
-        await supabase.from('scheduled_emails').update({ 
-          status: 'failed', 
+
+        if (isBounceError(err.message)) {
+          await supabase.from('email_logs').insert([{
+            lead_id: job.leads?.id || null, to_email: job.leads?.email,
+            subject: `Cron: ${job.template_id}`, status: 'bounced',
+            error_message: err.message, sent_at: new Date().toISOString()
+          }]);
+        }
+
+        await supabase.from('scheduled_emails').update({
+          status: 'failed',
           error_message: err.message,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString()
         }).eq('id', job.id);
         results.push({ job_id: job.id, status: 'failed', error: err.message });
       }

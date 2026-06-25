@@ -3,6 +3,8 @@ import { Lead, ApiConfig, EmailTemplate, callLLM, useScheduledEmails, ScheduledE
 import { supabase } from '../lib/supabase';
 import { salesTemplates, reminderTemplates, salesTemplatesEn, reminderTemplatesEn, getTemplateById, getLocalizedSalesTemplates, getLocalizedReminderTemplates, getLocalizedTemplateById, getLocalizedAllTemplates } from '../templates/outreach-templates-final';
 import { detectLanguage } from '../lib/ultimateTemplate';
+import { validateEmailAdvanced } from '../lib/validation';
+import { emailValidationStore } from '../lib/email-validation-store';
 
 const C = {
   bg: '#F7F6F2', surface: '#FFFFFF', surface2: '#F2F1EC',
@@ -22,7 +24,7 @@ interface Props {
 
 async function sendEmailViaApi(payload: {
   to: string; toName?: string; subject: string; html: string; leadId?: string;
-}): Promise<{ success: boolean; message: string }> {
+}): Promise<{ success: boolean; message: string; emailInvalid?: boolean; reason?: string }> {
   try {
     const res = await fetch(`${API_BASE}/email`, {
       method: 'POST',
@@ -30,7 +32,12 @@ async function sendEmailViaApi(payload: {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (!res.ok) return { success: false, message: data.message || data.error || 'Erreur serveur' };
+    if (!res.ok) {
+      if (data.email_invalid && payload.leadId) {
+        emailValidationStore.markInvalid(payload.leadId, data.reason || 'invalid_format');
+      }
+      return { success: false, message: data.message || data.error || 'Erreur serveur', emailInvalid: data.email_invalid, reason: data.reason };
+    }
     return { success: true, message: data.message || 'Email envoyé' };
   } catch (err: unknown) {
     return { success: false, message: (err as Error).message };
@@ -108,7 +115,7 @@ export default function Outreach({ leads, updateLead, apiConfig, templates }: Pr
     hasSmtp: hasGmailSmtp
   });
 
-  const ready = leads.filter(l => l.siteGenerated && !l.emailSent && l.email);
+  const ready = leads.filter(l => l.siteGenerated && !l.emailSent && l.email && !l.emailInvalid);
   const sent = leads.filter(l => l.emailSent);
 
   // Logique de filtrage
@@ -263,6 +270,18 @@ JSON: {"subject": "sujet personnalisé", "body": "corps personnalisé avec les l
     if (!hasGmailSmtp) { alert('Configurez Gmail SMTP dans les Paramètres'); return; }
     if (!lead.email) { alert("Ce lead n'a pas d'email"); return; }
 
+    const emailCheck = validateEmailAdvanced(lead.email);
+    if (!emailCheck.valid) {
+      alert(`Email invalide pour ${lead.name}: ${emailCheck.reason}`);
+      emailValidationStore.markInvalid(lead.id, emailCheck.reason || 'invalid');
+      updateLead(lead.id, { emailInvalid: true, emailInvalidReason: emailCheck.reason });
+      return;
+    }
+    if (lead.emailInvalid) {
+      alert(`Email de ${lead.name} marqué invalide (${lead.emailInvalidReason}). Corrigez l'email avant de renvoyer.`);
+      return;
+    }
+
     // UNIFICATION : On cherche d'abord dans les templates de la DB (prop templates)
     const allTemplates = [...templates, ...currentSalesTemplates, ...currentReminderTemplates];
     const template = allTemplates.find(t => t.id === templateId);
@@ -370,6 +389,18 @@ JSON: {"subject": "sujet personnalisé", "body": "corps personnalisé avec les l
     if (!hasGmailSmtp) { alert('Configurez Gmail SMTP dans les Paramètres'); return; }
     if (!lead.email) { alert("Ce lead n'a pas d'email"); return; }
 
+    const emailCheck = validateEmailAdvanced(lead.email);
+    if (!emailCheck.valid) {
+      alert(`Email invalide pour ${lead.name}: ${emailCheck.reason}`);
+      emailValidationStore.markInvalid(lead.id, emailCheck.reason || 'invalid');
+      updateLead(lead.id, { emailInvalid: true, emailInvalidReason: emailCheck.reason });
+      return;
+    }
+    if (lead.emailInvalid) {
+      alert(`Email de ${lead.name} marqué invalide (${lead.emailInvalidReason}). Corrigez l'email avant de renvoyer.`);
+      return;
+    }
+
     const { subject, body } = await generateEmailContent(lead);
     const result = await sendEmailViaApi({
       to: lead.email,
@@ -397,13 +428,32 @@ JSON: {"subject": "sujet personnalisé", "body": "corps personnalisé avec les l
     if (!hasGmailSmtp) { alert('Configurez Gmail SMTP dans les Paramètres'); return; }
     if (ready.length === 0) return;
 
-    setSending(true);
-    setProgress({ current: 0, total: ready.length, name: '' });
-    setLogs(prev => [...prev, `🚀 Début de l'envoi de ${ready.length} emails...`]);
+    const invalidLeads = ready.filter(l => {
+      const check = validateEmailAdvanced(l.email);
+      return !check.valid || l.emailInvalid;
+    });
 
-    for (let i = 0; i < ready.length; i++) {
-      const lead = ready[i];
-      setProgress({ current: i + 1, total: ready.length, name: lead.name });
+    if (invalidLeads.length > 0) {
+      const proceed = confirm(
+        `${invalidLeads.length} lead(s) ont des emails invalides et seront ignorés :\n` +
+        invalidLeads.map(l => `- ${l.name}: ${l.emailInvalidReason || 'format invalide'}`).join('\n') +
+        `\n\nContinuer avec ${ready.length - invalidLeads.length} emails valides ?`
+      );
+      if (!proceed) return;
+    }
+
+    const validLeads = ready.filter(l => {
+      const check = validateEmailAdvanced(l.email);
+      return check.valid && !l.emailInvalid;
+    });
+
+    setSending(true);
+    setProgress({ current: 0, total: validLeads.length, name: '' });
+    setLogs(prev => [...prev, `🚀 Début de l'envoi de ${validLeads.length} emails valides (${invalidLeads.length} ignorés)...`]);
+
+    for (let i = 0; i < validLeads.length; i++) {
+      const lead = validLeads[i];
+      setProgress({ current: i + 1, total: validLeads.length, name: lead.name });
 
       const { subject, body } = await generateEmailContent(lead);
       const result = await sendEmailViaApi({
@@ -424,6 +474,10 @@ JSON: {"subject": "sujet personnalisé", "body": "corps personnalisé avec les l
         });
         setLogs(prev => [...prev, `✅ ${lead.name} — envoyé`]);
       } else {
+        if (result.emailInvalid) {
+          emailValidationStore.markInvalid(lead.id, result.reason || 'invalid');
+          updateLead(lead.id, { emailInvalid: true, emailInvalidReason: result.reason });
+        }
         setLogs(prev => [...prev, `❌ ${lead.name} — ${result.message}`]);
       }
 
@@ -435,12 +489,17 @@ JSON: {"subject": "sujet personnalisé", "body": "corps personnalisé avec les l
   };
 
   const sendTestEmail = async () => {
-    if (!hasGmailSmtp) { 
+    if (!hasGmailSmtp) {
       setTestEmailError('Configurez Gmail SMTP dans les Paramètres');
-      return; 
+      return;
     }
     if (!testEmail || !testEmail.includes('@')) {
       setTestEmailError('Veuillez entrer une adresse email valide');
+      return;
+    }
+    const emailCheck = validateEmailAdvanced(testEmail);
+    if (!emailCheck.valid) {
+      setTestEmailError(`Email invalide: ${emailCheck.reason}`);
       return;
     }
 

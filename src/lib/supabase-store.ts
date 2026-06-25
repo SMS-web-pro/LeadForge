@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { leadsService, configService, templatesService, campaignsService, Database, supabase } from './supabase';
 import { isImageBlocked } from './imageFilters';
 import { apiErrorState, detectApiError } from './api-error-state';
+import { emailValidationStore } from './email-validation-store';
 
 // --- SAFE HELPERS (defined once, used everywhere) ---
 export function safeStr(v: unknown): string {
@@ -86,6 +87,8 @@ export interface Lead {
   documentation_url?: string;
   contactName?: string; // Ajouté pour personnalisation Outreach
   sentSteps: string[];
+  emailInvalid?: boolean;
+  emailInvalidReason?: string;
 }
 
 export type LlmProvider = 'groq' | 'gemini' | 'nvidia' | 'openrouter';
@@ -243,6 +246,8 @@ function mapSupabaseLeadToLead(supabaseLead: Database['public']['Tables']['leads
     campaignDate: supabaseLead.campaign_date || '',
     source: supabaseLead.source || '',
     sentSteps: supabaseLead.sent_steps || [],
+    emailInvalid: emailValidationStore.isInvalid(supabaseLead.id),
+    emailInvalidReason: emailValidationStore.getReason(supabaseLead.id),
   };
 }
 
@@ -1542,9 +1547,50 @@ JSON: [{"author":"","rating":5,"text":""}]`;
 }
 
 // --- HELPERS REGEX ---
+import { validateEmailAdvanced } from './validation';
+
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
+  'yopmail.com', 'yopmail.fr', 'fakeinbox.com', 'sharklasers.com',
+  'dispostable.com', 'maildrop.cc', 'trashmail.com', 'trashmail.net',
+  '10minutemail.com', 'discard.email', 'mailexpire.com', 'mailnesia.com',
+  'mohmal.com', 'burnermail.io', 'harakirimail.com', 'tempail.com',
+  'temp-mail.org', 'temp-mail.io', 'tempinbox.com', 'tempomail.fr',
+  'jetable.org', 'mytemp.email', 'emailondeck.com', 'tempr.email',
+]);
+
+const DIRECTORY_DOMAINS = new Set([
+  'pagesjaunes.fr', 'societe.com', 'mairie.fr', 'infogreffe.fr',
+  'pappers.fr', 'verif.com', 'manageo.fr', 'google.com', 'facebook.com',
+  'instagram.com', 'twitter.com', 'x.com', 'linkedin.com', 'youtube.com',
+  'wikipedia.org', 'example.com', 'test.com', 'localhost',
+  'gmail.com', 'yahoo.com', 'yahoo.fr', 'hotmail.com', 'outlook.com',
+  'aol.com', 'live.com', 'msn.com', 'sentry.io', 'wixpress.com',
+]);
+
+function isEmailDomainValid(email: string): boolean {
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return false;
+  if (DISPOSABLE_DOMAINS.has(domain)) return false;
+  if (DIRECTORY_DOMAINS.has(domain)) return false;
+  const tld = domain.split('.').pop() || '';
+  if (['tk', 'ml', 'ga', 'cf', 'gq', 'xyz', 'top'].includes(tld)) return false;
+  return true;
+}
+
 const extractEmail = (text: string): string => {
-  const match = text.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
-  return match ? match[0].toLowerCase() : '';
+  const regex = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+  const matches = text.match(regex);
+  if (!matches) return '';
+
+  for (const match of matches) {
+    const candidate = match.toLowerCase();
+    const validation = validateEmailAdvanced(candidate);
+    if (validation.valid && isEmailDomainValid(candidate)) {
+      return candidate;
+    }
+  }
+  return '';
 };
 
 const extractPhone = (text: string): string => {
@@ -1602,9 +1648,14 @@ export async function scrapeWebsiteForContact(
   } catch { /* continue */ }
 
   const fullText = allText.join(' \n ');
-  
-  // Extraire l'email et le téléphone via Regex simple (fallback)
-  if (!result.email) result.email = extractEmail(fullText);
+
+  // Extraire l'email et le téléphone via Regex (avec validation domaine)
+  if (!result.email) {
+    const extracted = extractEmail(fullText);
+    if (extracted) {
+      result.email = extracted;
+    }
+  }
   if (!result.phone) result.phone = extractPhone(fullText);
 
   // Garder le texte pour le donner au LLM plus tard
@@ -1665,11 +1716,22 @@ Réponds UNIQUEMENT en JSON valide sans markdown, sans explication :
     const response = await callLLM(apiConfig, prompt, 'Tu es un expert en extraction de données business. Réponds UNIQUEMENT en JSON valide, jamais en texte libre.');
     if (!response) return {};
     const cleaned = response.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+
+    console.log(`[LLM Extract] Response for "${lead.name}":`, cleaned.substring(0, 500));
+
     const data = JSON.parse(cleaned) as Record<string, unknown>;
     const updates: Partial<Lead> = {};
 
-    if (data.email && typeof data.email === 'string' && !data.email.toUpperCase().includes('NONE') && data.email.includes('@'))
-      updates.email = data.email.toLowerCase();
+    if (data.email && typeof data.email === 'string' && !data.email.toUpperCase().includes('NONE') && data.email.includes('@')) {
+      const emailCandidate = data.email.toLowerCase();
+      const emailValid = validateEmailAdvanced(emailCandidate);
+      if (emailValid.valid && isEmailDomainValid(emailCandidate)) {
+        updates.email = emailCandidate;
+        console.log(`[LLM Extract] Email accepted for "${lead.name}": ${emailCandidate}`);
+      } else {
+        console.log(`[LLM Extract] Email REJECTED for "${lead.name}": ${emailCandidate} — reason: ${emailValid.reason || 'domaine invalide'}`);
+      }
+    }
     if (data.phone && typeof data.phone === 'string' && !data.phone.toUpperCase().includes('NONE') && data.phone.length > 6)
       updates.phone = data.phone;
     if (data.description && typeof data.description === 'string' && data.description.length > 20)
@@ -1731,7 +1793,15 @@ export async function deepSearchContact(
       // Knowledge Graph
       if (r2.knowledgeGraph && typeof r2.knowledgeGraph === 'object') {
         const kg = r2.knowledgeGraph as Record<string, unknown>;
-        if (!result.email) { const e = safeStr(kg.email); if (e.includes('@')) result.email = e.toLowerCase(); }
+        if (!result.email) {
+          const e = safeStr(kg.email);
+          if (e.includes('@')) {
+            const emailCandidate = e.toLowerCase();
+            if (validateEmailAdvanced(emailCandidate).valid && isEmailDomainValid(emailCandidate)) {
+              result.email = emailCandidate;
+            }
+          }
+        }
         if (!result.phone) { const p = safeStr(kg.phone); if (p.length > 6) result.phone = p; }
       }
       if (r2.organic && Array.isArray(r2.organic)) {
@@ -1781,10 +1851,16 @@ export async function deepSearchContact(
       const response = await callLLM(apiConfig, prompt, 'Réponds UNIQUEMENT en JSON valide.');
       if (response) {
         const cleaned = response.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+        console.log(`[DeepSearch LLM] Response for "${lead.name}":`, cleaned.substring(0, 300));
         const data = JSON.parse(cleaned);
         if (data.email && data.email.includes('@') && !data.email.toUpperCase().includes('NONE')) {
-          result.email = data.email.toLowerCase();
-          console.log('✅ Email validé par IA:', result.email);
+          const emailCandidate = data.email.toLowerCase();
+          if (validateEmailAdvanced(emailCandidate).valid && isEmailDomainValid(emailCandidate)) {
+            result.email = emailCandidate;
+            console.log(`[DeepSearch LLM] Email accepted for "${lead.name}": ${result.email}`);
+          } else {
+            console.log(`[DeepSearch LLM] Email REJECTED for "${lead.name}": ${emailCandidate}`);
+          }
         }
         if (data.phone && data.phone.length > 6 && !data.phone.toUpperCase().includes('NONE')) {
           result.phone = data.phone;

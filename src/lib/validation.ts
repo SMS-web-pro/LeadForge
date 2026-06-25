@@ -16,13 +16,159 @@ export function sanitizeInput(input: unknown): string {
 }
 
 /**
- * Valide un email
+ * Valide un email (format basique)
  */
 export function validateEmail(email: unknown): boolean {
   if (typeof email !== 'string') return false;
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email) && email.length <= 254;
+}
+
+/**
+ * Regex RFC 5322 simplifiée — plus stricte que la version basique
+ */
+const RFC5322_EMAIL_REGEX = /^(?!.*\.\.)[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+/**
+ * Domaines jetables / temporaires à bloquer (liste élargie)
+ */
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'guerrillamail.com', 'guerrillamail.net', 'tempmail.com',
+  'throwaway.email', 'tempail.com', 'temp-mail.org', 'temp-mail.io',
+  'yopmail.com', 'yopmail.fr', 'fakeinbox.com', 'sharklasers.com',
+  'guerrillamailblock.com', 'grr.la', 'dispostable.com', 'maildrop.cc',
+  'mailnesia.com', 'trashmail.com', 'trashmail.me', 'trashmail.net',
+  'trashmail.org', 'trashmail.ws', 'mailcatch.com', 'tempinbox.com',
+  'tempomail.fr', 'jetable.org', 'nospam.ze.tc', 'nobulk.com',
+  'cubiclink.com', 'nomail.xl.cx', 'mytemp.email', 'emailondeck.com',
+  '10minutemail.com', 'tempr.email', 'discard.email', 'discardmail.com',
+  'mailnull.com', 'spamgourmet.com', 'mailexpire.com',
+  'mohmal.com', 'burnermail.io', 'harakirimail.com',
+]);
+
+/**
+ * Domaines d'annuaires / pagesJaunes / tiers à bloquer
+ */
+const DIRECTORY_DOMAINS = new Set([
+  'pagesjaunes.fr', 'societe.com', 'mairie.fr', 'infogreffe.fr',
+  'pappers.fr', 'verif.com', 'manageo.fr', 'annuaire-entreprises.data.gouv.fr',
+  'google.com', 'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
+  'linkedin.com', 'youtube.com', 'wikipedia.org', 'amazon.com',
+  'apple.com', 'microsoft.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+  'aol.com', 'live.com', 'msn.com', 'gmail.com', 'yahoo.fr',
+  'example.com', 'test.com', 'localhost', 'sentry.io', 'wixpress.com',
+  'w3.org', 'schema.org', 'creativecommons.org',
+]);
+
+/**
+ * Extensions de domaine suspectes (non-exhaustif)
+ */
+const SUSPICIOUS_TLDS = new Set([
+  'tk', 'ml', 'ga', 'cf', 'gq', 'xyz', 'top', 'work', 'buzz',
+  'click', 'link', 'download', 'racing', 'win', 'loan', 'cricket',
+]);
+
+/**
+ * Valide un email avec filtrage avancé (RFC 5322 + domaines jetables/annuaires)
+ * Retourne un objet détaillé au lieu d'un simple boolean
+ */
+export function validateEmailAdvanced(email: unknown): {
+  valid: boolean;
+  reason?: string;
+  domain?: string;
+} {
+  if (typeof email !== 'string' || !email) {
+    return { valid: false, reason: 'empty' };
+  }
+
+  const trimmed = email.trim().toLowerCase();
+
+  if (trimmed.length > 254) {
+    return { valid: false, reason: 'too_long' };
+  }
+
+  if (!RFC5322_EMAIL_REGEX.test(trimmed)) {
+    return { valid: false, reason: 'invalid_format' };
+  }
+
+  const parts = trimmed.split('@');
+  if (parts.length !== 2) {
+    return { valid: false, reason: 'invalid_format' };
+  }
+
+  const [localPart, domain] = parts;
+
+  if (localPart.length === 0 || localPart.length > 64) {
+    return { valid: false, reason: 'local_part_invalid' };
+  }
+
+  if (domain.length === 0 || domain.length > 253) {
+    return { valid: false, reason: 'domain_invalid' };
+  }
+
+  if (DISPOSABLE_DOMAINS.has(domain)) {
+    return { valid: false, reason: 'disposable_domain', domain };
+  }
+
+  if (DIRECTORY_DOMAINS.has(domain)) {
+    return { valid: false, reason: 'directory_domain', domain };
+  }
+
+  const tld = domain.split('.').pop() || '';
+  if (SUSPICIOUS_TLDS.has(tld)) {
+    return { valid: false, reason: 'suspicious_tld', domain };
+  }
+
+  if (localPart.startsWith('.') || localPart.endsWith('.')) {
+    return { valid: false, reason: 'local_part_dots', domain };
+  }
+
+  return { valid: true, domain };
+}
+
+/**
+ * Valide un email et vérifie les enregistrements MX du domaine (async)
+ * Utilise une API DNS publique pour la vérification côté client
+ */
+export async function validateEmailWithMX(email: unknown): Promise<{
+  valid: boolean;
+  reason?: string;
+  domain?: string;
+  hasMX?: boolean;
+}> {
+  const basic = validateEmailAdvanced(email);
+  if (!basic.valid) {
+    return basic;
+  }
+
+  const domain = basic.domain!;
+
+  try {
+    const res = await fetch(
+      `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    const data = await res.json();
+    const hasMX = data.Answer && Array.isArray(data.Answer) && data.Answer.length > 0;
+
+    if (!hasMX) {
+      const resA = await fetch(
+        `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`,
+        { signal: AbortSignal.timeout(5000) }
+      );
+      const dataA = await resA.json();
+      const hasA = dataA.Answer && Array.isArray(dataA.Answer) && dataA.Answer.length > 0;
+
+      if (!hasA) {
+        return { valid: false, reason: 'no_mx_or_a_record', domain, hasMX: false };
+      }
+    }
+
+    return { valid: true, domain, hasMX: hasMX ?? true };
+  } catch {
+    return { valid: true, domain, hasMX: undefined };
+  }
 }
 
 /**

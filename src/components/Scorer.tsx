@@ -243,8 +243,17 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
         const llmUpdates = await extractWithLLM(apiConfig, merged, llmContext);
         const enriched: string[] = [];
 
-        // N'appliquer que les champs encore vides
-        if (llmUpdates.email && !updates.email && !lead.email) { updates.email = llmUpdates.email; enriched.push('email'); }
+        // Validation croisée pour l'email : préférer les sources fiables (site web > deep search > LLM)
+        if (llmUpdates.email && !updates.email && !lead.email) {
+          const existingEmailSource = updates.email || lead.email;
+          if (existingEmailSource) {
+            addLog(`ℹ️ LLM email ignoré (${llmUpdates.email}) — email existant (${existingEmailSource}) prioritaire`);
+          } else {
+            updates.email = llmUpdates.email;
+            enriched.push('email');
+            addLog(`🧠 LLM email accepté : ${llmUpdates.email}`);
+          }
+        }
         if (llmUpdates.phone && !updates.phone && !lead.phone) { updates.phone = llmUpdates.phone; enriched.push('téléphone'); }
         if (llmUpdates.description) { updates.description = llmUpdates.description; enriched.push('description'); }
         if (llmUpdates.sector && !updates.sector && !lead.sector) { updates.sector = llmUpdates.sector; enriched.push('secteur'); }
