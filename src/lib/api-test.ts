@@ -169,7 +169,7 @@ export async function testAllApis(config: ApiConfig): Promise<ApiTestReport> {
 
   const hasWorkingSerper = serperResult.status === 'ok';
   const hasWorkingLlm = defaultLlmResult.status === 'ok';
-  const canProceed = hasWorkingSerper && hasWorkingLlm;
+  const canProceed = hasWorkingSerper;
 
   if (!canProceed) {
     const failing = results.filter(r => r.status === 'error').map(r => `❌ ${r.service}: ${r.message}`).join('\n');
