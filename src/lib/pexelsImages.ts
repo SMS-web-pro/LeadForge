@@ -10,144 +10,144 @@ export function setPexelsApiKey(key: string): void {
 // Requêtes Pexels spécifiques par secteur (5 requêtes × 4 images = 20 images uniques)
 const SECTOR_PEXEL_QUERIES: Record<string, string[]> = {
   plomberie: [
-    'plumber working pipes wrench',
-    'bathroom renovation modern interior',
-    'kitchen sink faucet installation',
-    'water heater boiler repair',
-    'plumbing tools professional'
+    'copper pipes plumbing installation',
+    'bathroom faucet water pipe',
+    'plumber hands fixing pipe',
+    'water heater boiler plumbing',
+    'sink drain pipe wrench repair'
   ],
   electricien: [
     'electrician wiring electrical panel',
-    'modern lighting installation',
-    'electrical circuit breaker box',
-    'smart home automation wiring',
-    'electrician tools professional'
+    'electrician working wires installation',
+    'electrical circuit breaker box panel',
+    'led lighting fixture installation',
+    'electrician using multimeter tools'
   ],
   coiffeur: [
-    'hair salon interior modern',
-    'hairdresser cutting hair professional',
-    'barber shop tools scissors',
-    'hair styling color treatment',
-    'salon mirror chair interior'
+    'hairdresser cutting hair scissors',
+    'hair salon interior mirror chair',
+    'barber shaving beard razor',
+    'hair coloring treatment salon',
+    'hairdresser blow drying hair'
   ],
   restaurant: [
-    'restaurant kitchen professional chef',
-    'fine dining table setting',
-    'gourmet food plating presentation',
-    'cafe restaurant interior design',
-    'chef cooking kitchen action'
+    'chef cooking kitchen restaurant',
+    'gourmet plated dish food',
+    'restaurant dining table interior',
+    'chef preparing meal kitchen',
+    'fine dining plate presentation'
   ],
   garage: [
-    'auto mechanic car repair garage',
-    'car engine maintenance professional',
-    'auto workshop tools equipment',
-    'car tires wheel alignment',
-    'vehicle diagnostic modern garage'
+    'mechanic working car engine',
+    'auto repair garage tools',
+    'car tire wheel change',
+    'car diagnostic computer scan',
+    'mechanic fixing vehicle undercar'
   ],
   nettoyage: [
-    'professional cleaning service team',
-    'office cleaning supplies equipment',
-    'commercial window cleaning',
-    'housekeeping professional service',
-    'industrial floor cleaning'
+    'professional cleaning mop floor',
+    'cleaning spray bottle window',
+    'office cleaning vacuum cleaner',
+    'cleaning team uniform service',
+    'industrial floor cleaning machine'
   ],
   jardin: [
-    'landscaping garden professional work',
-    'lawn mowing garden maintenance',
-    'garden design plants flowers',
-    'outdoor patio landscaping design',
-    'gardener pruning trees bushes'
+    'gardener mowing lawn garden',
+    'garden flowers plants landscaping',
+    'tree pruning gardener tool',
+    'garden design green lawn',
+    'landscaping patio outdoor design'
   ],
   fitness: [
-    'gym interior modern equipment',
-    'personal trainer workout session',
-    'fitness center weights area',
-    'yoga studio class training',
-    'sports gym professional equipment'
+    'gym weights dumbbell fitness',
+    'personal trainer coaching gym',
+    'group fitness class workout',
+    'gym cardio treadmill running',
+    'crossfit training exercise gym'
   ],
   medical: [
-    'doctor consultation office modern',
-    'medical stethoscope healthcare',
-    'dental clinic interior equipment',
-    'pharmacy medicine professional',
-    'healthcare hospital corridor clean'
+    'doctor stethoscope patient consultation',
+    'medical office hospital hallway',
+    'dentist dental clinic treatment',
+    'nurse healthcare medical checkup',
+    'pharmacy medicine professional shelves'
   ],
   avocat: [
-    'law office books legal desk',
-    'courtroom justice scales law',
-    'lawyer professional office modern',
-    'legal documents contract signing',
-    'justice library law books'
+    'lawyer office desk books',
+    'courtroom scales justice law',
+    'lawyer signing legal documents',
+    'law office gavel courtroom',
+    'attorney meeting client office'
   ],
   boulangerie: [
-    'bakery bread pastry display',
-    'artisan baking oven fresh bread',
-    'pastry chef cake decorating',
-    'bakery interior counter display',
-    'fresh croissants pastries'
+    'baker kneading bread dough',
+    'bakery display pastries bread',
+    'pastry chef decorating cake',
+    'fresh croissants bakery oven',
+    'artisan bread loaf bakery'
   ],
   peintre: [
-    'painter wall interior renovation',
-    'house painting professional tools',
-    'paint roller wall color modern',
-    'interior design painting renovation',
-    'construction worker painting'
+    'painter painting wall roller',
+    'house interior painting renovation',
+    'paint bucket brush wall color',
+    'professional painter working ceiling',
+    'interior wall paint color'
   ],
   menuisier: [
-    'carpenter workshop wood furniture',
-    'woodworking tools craftsmanship',
-    'custom wood furniture workshop',
-    'cabinet maker joinery professional',
-    'wood workshop tools craft'
+    'carpenter woodworking saw bench',
+    'wood furniture workshop craft',
+    'carpenter measuring wood plank',
+    'wooden cabinet joinery workshop',
+    'carpenter using chisel wood'
   ],
   serrurier: [
-    'locksmith professional lock repair',
-    'security door lock modern',
-    'key cutting locksmith tools',
-    'home security system lock',
-    'locksmith opening door repair'
+    'locksmith changing door lock',
+    'security lock door key',
+    'locksmith tools lock repair',
+    'key cutting machine locksmith',
+    'smart lock digital door'
   ],
   transport: [
-    'delivery truck logistics warehouse',
-    'cargo transport shipping professional',
+    'delivery truck cargo logistics',
     'moving company boxes furniture',
-    'freight truck delivery service',
-    'logistics warehouse organization'
+    'delivery driver van package',
+    'warehouse logistics forklift',
+    'freight truck shipping transport'
   ],
   immobilier: [
-    'real estate modern house exterior',
-    'property agent showing house',
-    'modern apartment building architecture',
-    'real estate keys house sale',
+    'real estate house exterior modern',
+    'property keys handover sale',
+    'modern apartment building facade',
+    'real estate agent showing house',
     'luxury home interior design'
   ],
   photo: [
-    'photographer studio professional camera',
-    'wedding photography event celebration',
+    'photographer camera studio professional',
+    'wedding photographer event photo',
     'portrait photography studio lighting',
-    'professional camera equipment photography',
+    'photographer taking photo camera',
     'event photography candid moment'
   ],
   fleuriste: [
-    'flower shop arrangement bouquet',
-    'florist working flowers arrangement',
+    'florist arranging flowers bouquet',
+    'flower shop colorful arrangement',
+    'florist hands tying flowers',
     'wedding flowers floral decoration',
-    'fresh flowers bouquet colorful',
-    'flower shop interior display'
+    'fresh flowers bouquet display'
   ],
   spa: [
-    'spa interior luxury relaxing',
-    'massage professional wellness',
-    'spa treatment aromatherapy',
-    'wellness center serene interior',
-    'facial treatment beauty salon'
+    'spa candles stones massage table',
+    'spa facial treatment beauty',
+    'aromatherapy oil massage hands',
+    'wellness spa relaxing interior',
+    'hot stone massage therapy'
   ],
   default: [
     'modern office workspace professional',
-    'business meeting team collaboration',
-    'corporate office interior design',
-    'professional service workspace',
-    'business handshake partnership'
+    'business meeting team office',
+    'professional working desk computer',
+    'corporate office modern interior',
+    'team collaboration workplace modern'
   ]
 };
 
@@ -157,6 +157,34 @@ const imagesCache: Record<string, string[]> = {};
 /**
  * Récupère des images depuis l'API Pexels pour une requête donnée
  */
+// Mots-clés REJETÉS par secteur — si l'alt-text ou l'URL les contient, l'image est exclue
+const SECTOR_REJECT_KEYWORDS: Record<string, string[]> = {
+  plomberie: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'paint'],
+  electricien: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'paint'],
+  coiffeur: ['car ', 'auto ', 'mechanic', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'paint', 'pipe', 'wire'],
+  restaurant: ['car ', 'auto ', 'mechanic', 'hair', 'gym', 'lawyer', 'doctor', 'flower', 'pipe', 'wire', 'paint'],
+  garage: ['hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'pipe', 'wire', 'paint', 'salon'],
+  nettoyage: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'pipe'],
+  jardin: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'pipe', 'wire', 'salon'],
+  fitness: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'lawyer', 'doctor', 'flower', 'pipe', 'wire', 'paint'],
+  medical: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'flower', 'pipe', 'wire', 'paint', 'salon'],
+  avocat: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'doctor', 'flower', 'pipe', 'wire', 'paint', 'salon'],
+  spa: ['car ', 'auto ', 'mechanic', 'hair', 'food', 'restaurant', 'gym', 'lawyer', 'doctor', 'flower', 'pipe', 'wire', 'paint'],
+  boulangerie: ['car ', 'auto ', 'mechanic', 'hair', 'gym', 'lawyer', 'doctor', 'flower', 'pipe', 'wire', 'paint', 'salon'],
+  default: [],
+};
+
+function isRelevantToSector(altText: string, url: string, sector: string): boolean {
+  const lowSector = (sector || '').toLowerCase();
+  for (const [key, rejects] of Object.entries(SECTOR_REJECT_KEYWORDS)) {
+    if (lowSector.includes(key)) {
+      const combined = (altText + ' ' + url).toLowerCase();
+      return !rejects.some(r => combined.includes(r));
+    }
+  }
+  return true;
+}
+
 async function fetchPexelsSearch(query: string, count: number = 4, sector?: string): Promise<string[]> {
   if (!PEXELS_API_KEY) return [];
 
@@ -173,7 +201,10 @@ async function fetchPexelsSearch(query: string, count: number = 4, sector?: stri
       .filter((p: any) => {
         const url = p?.src?.large2x || p?.src?.large || p?.src?.medium || '';
         const alt = p?.alt || '';
-        return url && !isImageBlocked(url, alt, sector);
+        if (!url || !url.startsWith('https://')) return false;
+        if (isImageBlocked(url, alt, sector)) return false;
+        if (sector && !isRelevantToSector(alt, url, sector)) return false;
+        return true;
       })
       .map((p: any) => p?.src?.large2x || p?.src?.large || p?.src?.medium || '')
       .filter(Boolean);
@@ -193,7 +224,6 @@ const serviceImagesCache: Record<string, string[]> = {};
  * Cache par requête exacte pour éviter les appels répétés.
  */
 export async function fetchServiceImages(query: string, count: number = 4, sector?: string): Promise<string[]> {
-  // Cache key includes full query to avoid cross-lead duplication
   const cacheKey = `svc_${query}`;
   if (serviceImagesCache[cacheKey]) {
     return serviceImagesCache[cacheKey];
@@ -214,7 +244,10 @@ export async function fetchServiceImages(query: string, count: number = 4, secto
       .filter((p: any) => {
         const url = p?.src?.large2x || p?.src?.large || p?.src?.medium || '';
         const alt = p?.alt || '';
-        return url && !isImageBlocked(url, alt, sector);
+        if (!url || !url.startsWith('https://')) return false;
+        if (isImageBlocked(url, alt, sector)) return false;
+        if (sector && !isRelevantToSector(alt, url, sector)) return false;
+        return true;
       })
       .map((p: any) => p?.src?.large2x || p?.src?.large || p?.src?.medium || '')
       .filter(Boolean);
@@ -417,132 +450,132 @@ export function getSectorImages(sector: string): string[] {
 // ── SERVICE → IMAGE MAPPING ──
 // Couvre TOUTES les variantes orthographiques réelles de template.services
 const SERVICE_IMAGE_QUERIES: Record<string, string> = {
-  // === PLomberie ===
-  'dépannage 24h/24': 'emergency plumber repair',
-  'depannage 24h/24': 'emergency plumber repair',
-  'installation sanitaire': 'bathroom sink installation',
-  'chauffage': 'heating boiler repair',
-  'chauffage & chaudière': 'heating boiler repair',
-  'chauffage & chaudiere': 'heating boiler repair',
-  'détection de fuites': 'water leak detection',
-  'detection de fuites': 'water leak detection',
-  'rénovation salle de bain': 'bathroom renovation modern',
-  'renovation salle de bain': 'bathroom renovation modern',
-  'entretien annuel': 'boiler maintenance service',
+  // === Plomberie ===
+  'dépannage 24h/24': 'plumber emergency pipe repair',
+  'depannage 24h/24': 'plumber emergency pipe repair',
+  'installation sanitaire': 'bathroom sink faucet install',
+  'chauffage': 'boiler heating radiator',
+  'chauffage & chaudière': 'boiler heating radiator',
+  'chauffage & chaudiere': 'boiler heating radiator',
+  'détection de fuites': 'water leak pipe detection',
+  'detection de fuites': 'water leak pipe detection',
+  'rénovation salle de bain': 'bathroom renovation tiles',
+  'renovation salle de bain': 'bathroom renovation tiles',
+  'entretien annuel': 'boiler maintenance cleaning',
 
   // === Électricien ===
-  'mise aux normes': 'electrical panel wiring',
-  'mise aux normes electrique': 'electrical panel wiring',
-  'dépannage électrique': 'electrician fixing circuit',
-  'depannage electrique': 'electrician fixing circuit',
-  'installation complète': 'electrical installation home',
-  'installation complete': 'electrical installation home',
-  'domotique & smart home': 'smart home automation',
-  'domotique': 'smart home automation',
-  'éclairage led': 'led lighting installation',
-  'eclairage led': 'led lighting installation',
-  'bornes de recharge': 'electric car charging station',
+  'mise aux normes': 'electrician panel wiring cables',
+  'mise aux normes electrique': 'electrician panel wiring cables',
+  'dépannage électrique': 'electrician fixing wire circuit',
+  'depannage electrique': 'electrician fixing wire circuit',
+  'installation complète': 'electrician installing light wire',
+  'installation complete': 'electrician installing light wire',
+  'domotique & smart home': 'smart home panel control',
+  'domotique': 'smart home panel control',
+  'éclairage led': 'led light bulb fixture',
+  'eclairage led': 'led light bulb fixture',
+  'bornes de recharge': 'electric car charger station',
 
   // === Coiffeur ===
-  'coupes & styles': 'hairdresser cutting hair',
-  'coupes': 'hairdresser cutting hair',
-  'barbier traditionnel': 'barber shop shaving',
-  'barbier': 'barber shop shaving',
-  'coloration expert': 'hair color salon treatment',
-  'coloration': 'hair color salon treatment',
-  'soins capillaires': 'hair treatment salon',
-  'extensions volume': 'hair extensions salon',
-  'chignons & événements': 'bridal hair styling',
-  'chignons & evenements': 'bridal hair styling',
-  'chignons': 'bridal hair styling',
+  'coupes & styles': 'hairdresser cutting hair woman',
+  'coupes': 'hairdresser cutting hair woman',
+  'barbier traditionnel': 'barber shaving beard razor',
+  'barbier': 'barber shaving beard razor',
+  'coloration expert': 'hair dye color salon brush',
+  'coloration': 'hair dye color salon brush',
+  'soins capillaires': 'hair treatment salon wash',
+  'extensions volume': 'hair extensions styling salon',
+  'chignons & événements': 'bridal hair updo styling',
+  'chignons & evenements': 'bridal hair updo styling',
+  'chignons': 'bridal hair updo styling',
 
   // === Restaurant ===
-  'cuisine maison': 'restaurant kitchen chef cooking',
-  'menu du jour': 'restaurant lunch menu',
-  'spécialités': 'gourmet food plating',
-  'specialites': 'gourmet food plating',
-  'événements & groupes': 'restaurant event private dining',
-  'evenements & groupes': 'restaurant event private dining',
-  'service traiteur': 'catering service professional',
-  'boissons & vins': 'wine cellar restaurant',
+  'cuisine maison': 'chef cooking kitchen stove',
+  'menu du jour': 'restaurant plated lunch dish',
+  'spécialités': 'gourmet dish plated chef',
+  'specialites': 'gourmet dish plated chef',
+  'événements & groupes': 'restaurant private dining room',
+  'evenements & groupes': 'restaurant private dining room',
+  'service traiteur': 'catering buffet service food',
+  'boissons & vins': 'wine bottle glass restaurant',
 
   // === Garage ===
-  'mécanique générale': 'car mechanic repair engine',
-  'mecanique generale': 'car mechanic repair engine',
-  'diagnostic auto': 'car diagnostic computer',
-  'pneumatiques': 'car tire change garage',
-  'climatisation': 'car air conditioning repair',
-  'carrosserie': 'car body repair paint',
-  'contrôle technique': 'car inspection garage',
-  'controle technique': 'car inspection garage',
+  'mécanique générale': 'mechanic hands car engine',
+  'mecanique generale': 'mechanic hands car engine',
+  'diagnostic auto': 'car diagnostic scanner tool',
+  'pneumatiques': 'car tire wheel mounting',
+  'climatisation': 'car air conditioning vent',
+  'carrosserie': 'car body paint repair shop',
+  'contrôle technique': 'car inspection lift garage',
+  'controle technique': 'car inspection lift garage',
 
   // === Nettoyage ===
-  'nettoyage de bureaux': 'office cleaning professional',
-  'nettoyage vitres': 'window cleaning professional',
-  'grand nettoyage': 'deep cleaning service',
-  'désinfection': 'disinfection professional service',
-  'desinfection': 'disinfection professional service',
-  'nettoyage industriel': 'industrial cleaning factory',
-  'remise en état': 'post construction cleaning',
-  'remise en etat': 'post construction cleaning',
+  'nettoyage de bureaux': 'cleaning office desk vacuum',
+  'nettoyage vitres': 'window cleaning squeegee glass',
+  'grand nettoyage': 'deep cleaning bucket mop',
+  'désinfection': 'disinfection spray surface clean',
+  'desinfection': 'disinfection spray surface clean',
+  'nettoyage industriel': 'industrial floor cleaning machine',
+  'remise en état': 'post renovation cleaning debris',
+  'remise en etat': 'post renovation cleaning debris',
 
   // === Jardin ===
-  'création de jardins': 'garden landscape design',
-  'creation de jardins': 'garden landscape design',
-  'tonte & entretien': 'lawn mowing garden',
-  'élagage & abattage': 'tree pruning cutting',
-  'elagage & abattage': 'tree pruning cutting',
-  'terrasses & clôtures': 'wooden deck patio fence',
-  'terrasses & cloutures': 'wooden deck patio fence',
-  'terrasses': 'wooden deck patio',
-  'clôtures': 'garden fence installation',
-  'cloutures': 'garden fence installation',
-  'arrosage automatique': 'automatic sprinkler garden',
-  'potager & verger': 'vegetable garden raised beds',
+  'création de jardins': 'garden landscape design plants',
+  'creation de jardins': 'garden landscape design plants',
+  'tonte & entretien': 'lawn mower cutting grass',
+  'élagage & abattage': 'tree pruning saw branches',
+  'elagage & abattage': 'tree pruning saw branches',
+  'terrasses & clôtures': 'wooden deck patio planks',
+  'terrasses & cloutures': 'wooden deck patio planks',
+  'terrasses': 'wooden deck patio planks',
+  'clôtures': 'garden fence wooden panels',
+  'cloutures': 'garden fence wooden panels',
+  'arrosage automatique': 'sprinkler watering garden lawn',
+  'potager & verger': 'vegetable garden raised bed',
 
   // === Fitness ===
-  'coaching personnel': 'personal trainer gym session',
-  'cours collectifs': 'group fitness class gym',
-  'musculation libre': 'gym free weights area',
-  'cardio zone': 'gym cardio equipment treadmills',
-  'préparation physique': 'sports training professional',
-  'preparation physique': 'sports training professional',
-  'espace bien-être': 'gym sauna wellness area',
-  'espace bien etre': 'gym sauna wellness area',
+  'coaching personnel': 'personal trainer gym coaching',
+  'cours collectifs': 'group exercise class fitness',
+  'musculation libre': 'gym dumbbell weight rack',
+  'cardio zone': 'treadmill running gym cardio',
+  'préparation physique': 'athlete training gym professional',
+  'preparation physique': 'athlete training gym professional',
+  'espace bien-être': 'gym sauna relaxation area',
+  'espace bien etre': 'gym sauna relaxation area',
 
   // === Médical ===
-  'médecine générale': 'doctor consultation office',
-  'medecine generale': 'doctor consultation office',
-  'kinésithérapie': 'physiotherapy rehabilitation',
-  'kinesitherapie': 'physiotherapy rehabilitation',
-  'ostéopathie': 'osteopathy treatment clinic',
-  'osteopathie': 'osteopathy treatment clinic',
-  'infirmier à domicile': 'nurse home care visit',
-  'infirmier a domicile': 'nurse home care visit',
-  'analyses biologiques': 'laboratory blood test',
-  'télémédecine': 'telemedicine video consultation',
-  'telemdecine': 'telemedicine video consultation',
+  'médecine générale': 'doctor stethoscope consultation',
+  'medecine generale': 'doctor stethoscope consultation',
+  'kinésithérapie': 'physiotherapist patient rehabilitation',
+  'kinesitherapie': 'physiotherapist patient rehabilitation',
+  'ostéopathie': 'osteopathy treatment hands back',
+  'osteopathie': 'osteopathy treatment hands back',
+  'infirmier à domicile': 'nurse healthcare visit home',
+  'infirmier a domicile': 'nurse healthcare visit home',
+  'analyses biologiques': 'laboratory blood test tube',
+  'télémédecine': 'telemedicine video doctor screen',
+  'telemdecine': 'telemedicine video doctor screen',
 
   // === Avocat ===
-  'droit civil & famille': 'lawyer family law office',
-  'droit civil et famille': 'lawyer family law office',
-  'droit pénal': 'courtroom criminal defense',
-  'droit penal': 'courtroom criminal defense',
-  'droit du travail': 'employment lawyer office',
-  'droit des affaires': 'business lawyer meeting',
-  'immobilier': 'real estate lawyer contract',
-  'droit routier': 'traffic lawyer office',
+  'droit civil & famille': 'lawyer meeting client desk',
+  'droit civil et famille': 'lawyer meeting client desk',
+  'droit pénal': 'courtroom judge gavel justice',
+  'droit penal': 'courtroom judge gavel justice',
+  'droit du travail': 'employment contract signing desk',
+  'droit des affaires': 'business meeting lawyer office',
+  'immobilier': 'real estate contract keys house',
+  'droit routier': 'driving license document paper',
 
   // === Spa ===
-  'massage relaxant': 'relaxing massage spa',
-  'soin du visage': 'facial treatment beauty',
-  'gommage corps': 'body scrub treatment',
-  'manucure & pédicure': 'manicure pedicure salon',
-  'manucure et pedicure': 'manicure pedicure salon',
-  'épilation': 'waxing treatment salon',
-  'epilation': 'waxing treatment salon',
-  'routine bien-être': 'wellness routine spa',
-  'routine bien etre': 'wellness routine spa',
+  'massage relaxant': 'spa hot stone massage back',
+  'soin du visage': 'facial treatment beauty cream',
+  'gommage corps': 'body scrub treatment spa',
+  'manucure & pédicure': 'manicure nails polish salon',
+  'manucure et pedicure': 'manicure nails polish salon',
+  'épilation': 'waxing treatment beauty salon',
+  'epilation': 'waxing treatment beauty salon',
+  'routine bien-être': 'spa aromatherapy candle oil',
+  'routine bien etre': 'spa aromatherapy candle oil',
 };
 
 /**
