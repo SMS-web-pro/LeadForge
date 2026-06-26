@@ -1951,7 +1951,7 @@ export async function searchLeadImages(serperKey: string, lead: Lead): Promise<{
             const title = safeStr(imgObj.title || '');
             
             if (!url || !url.startsWith('http') || result.websiteImages.includes(url)) continue;
-            if (isImageBlocked(url, title)) continue;
+            if (isImageBlocked(url, title, lead.sector)) continue;
 
             const imgUrl = url.toLowerCase();
             const matchesDomain = domain.split('.')[0].length > 3 && imgUrl.includes(domain.split('.')[0]);

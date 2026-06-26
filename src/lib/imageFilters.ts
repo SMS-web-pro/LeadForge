@@ -1,11 +1,7 @@
 // ── IMAGE FILTERS — Module unique de filtrage d'images ──
 
-// Mots-clés bloqués dans les URLs et alt-text des images
-export const BLOCKED_KEYWORDS: string[] = [
-  'food', 'fruit', 'vegetable', 'legume', 'carrot', 'salmon', 'pizza', 'burger',
-  'dessert', 'cake', 'meal', 'cooking', 'recipe', 'kitchen', 'dining',
-  'gourmet', 'cuisine', 'plate', 'dish', 'snack', 'breakfast', 'lunch',
-  'dinner', 'brunch', 'appetizer', 'restaurant-menu',
+// Mots-clés de base TOUJOURS bloqués (indépendamment du secteur)
+const BASE_BLOCKED_KEYWORDS: string[] = [
   'portrait', 'face', 'selfie', 'person', 'man ', 'woman ', 'people',
   'crowd', 'group', 'headshot', 'photo-de-profil', 'avatar', 'profile',
   'staff', 'client', 'owner', 'team',
@@ -15,16 +11,34 @@ export const BLOCKED_KEYWORDS: string[] = [
   'phone number', 'tel:', 'numero',
   'favicon', 'sprite', 'pixel',
   'map', 'marker',
-  // NSFW / nude filtering
   'nude', 'naked', 'bare', 'topless', 'underwear', 'lingerie', 'bikini',
   'swimsuit', 'swimwear', 'sensual', 'erotic', 'intimate', 'bedroom',
   'cleavage', 'skin ', 'body ', 'torso', 'chest', 'breast',
   'striptease', 'burlesque', 'exotic',
   'sexy', 'hot girl', 'hot guy', 'attractive',
   'yoga pants', 'tight', 'revealing',
-  'massage', 'spa treatment', 'wellness ritual',
   'sunset silhouette', 'beach body',
 ];
+
+// Mots-clés food : bloqués SAUF pour les secteurs restaurant/cuisine
+const FOOD_KEYWORDS = [
+  'food', 'fruit', 'vegetable', 'legume', 'carrot', 'salmon', 'pizza', 'burger',
+  'dessert', 'cake', 'meal', 'cooking', 'recipe', 'kitchen', 'dining',
+  'gourmet', 'cuisine', 'plate', 'dish', 'snack', 'breakfast', 'lunch',
+  'dinner', 'brunch', 'appetizer', 'restaurant-menu',
+];
+
+// Mots-clés spa/bien-être : bloqués SAUF pour le secteur spa
+const SPA_KEYWORDS = ['massage', 'spa treatment', 'wellness ritual'];
+
+// Secteurs autorisés pour les images food
+const FOOD_SECTORS = ['restaurant', 'cuisin', 'traiteur', 'boulanger', 'pâtissier', 'patisserie', 'pizzeria', 'café', 'cafe', 'brasserie', 'bar ', 'glacier', 'poissonnerie', 'boucherie', 'charcuterie'];
+
+// Secteurs autorisés pour les images spa
+const SPA_SECTORS = ['spa', 'massage', 'wellness', 'bien-être', 'bienetre', 'détente', 'detente'];
+
+// Alias exporté pour compatibilité avec les imports existants
+export const BLOCKED_KEYWORDS: string[] = [...BASE_BLOCKED_KEYWORDS, ...FOOD_KEYWORDS, ...SPA_KEYWORDS];
 
 export const BLOCKED_DOMAINS: string[] = [
   'facebook.com', 'instagram.com', 'twitter.com', 'linkedin.com',
@@ -37,27 +51,40 @@ export const BLOCKED_DOMAINS: string[] = [
 
 const STOCK_IMAGE_DOMAINS = ['images.pexels.com', 'images.unsplash.com', 'pexels.com', 'unsplash.com'];
 
-// IDs Pexels spécifiquement bloqués (contenu inapproprié ou non pertinent)
 const BLOCKED_PEXELS_IDS = ['16552851'];
 
-export function isImageBlocked(url: string, altText?: string): boolean {
+export function isImageBlocked(url: string, altText?: string, sector?: string): boolean {
   if (!url || typeof url !== 'string') return true;
   const lowUrl = url.toLowerCase();
   const lowAlt = (altText || '').toLowerCase();
+  const lowSector = (sector || '').toLowerCase();
   if (BLOCKED_DOMAINS.some(d => lowUrl.includes(d))) return true;
-  if (BLOCKED_KEYWORDS.some(kw => lowUrl.includes(kw))) return true;
-  if (lowAlt && BLOCKED_KEYWORDS.some(kw => lowAlt.includes(kw))) return true;
-  // Bloquer les IDs Pexels spécifiques
+
+  if (BASE_BLOCKED_KEYWORDS.some(kw => lowUrl.includes(kw))) return true;
+  if (lowAlt && BASE_BLOCKED_KEYWORDS.some(kw => lowAlt.includes(kw))) return true;
+
+  const isFoodSector = FOOD_SECTORS.some(s => lowSector.includes(s));
+  if (!isFoodSector) {
+    if (FOOD_KEYWORDS.some(kw => lowUrl.includes(kw))) return true;
+    if (lowAlt && FOOD_KEYWORDS.some(kw => lowAlt.includes(kw))) return true;
+  }
+
+  const isSpaSector = SPA_SECTORS.some(s => lowSector.includes(s));
+  if (!isSpaSector) {
+    if (SPA_KEYWORDS.some(kw => lowUrl.includes(kw))) return true;
+    if (lowAlt && SPA_KEYWORDS.some(kw => lowAlt.includes(kw))) return true;
+  }
+
   if (BLOCKED_PEXELS_IDS.some(id => lowUrl.includes(`/photos/${id}/`) || lowUrl.includes(`photo-${id}`))) return true;
   return false;
 }
 
-export function filterImages(urls: string[], altTexts?: string[]): string[] {
+export function filterImages(urls: string[], altTexts?: string[], sector?: string): string[] {
   return urls.filter((url, i) => {
     if (!url || typeof url !== 'string') return false;
     if (!url.startsWith('https://')) return false;
     const alt = altTexts?.[i];
-    return !isImageBlocked(url, alt);
+    return !isImageBlocked(url, alt, sector);
   });
 }
 

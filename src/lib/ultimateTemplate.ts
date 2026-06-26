@@ -4,6 +4,7 @@
 import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
+import { getSectorConfig } from './sectorConfig';
 
 // ── AVIS FALLBACK SECTORIELS ──
 const SECTOR_FALLBACK_REVIEWS: Record<string, Array<{ author: string; text: string; rating: number; date: string }>> = {
@@ -195,6 +196,8 @@ export interface UltimateContent {
     tiktok?: string;
   };
   accentOnDark?: string;
+  hours?: string;
+  establishedYear?: number;
 }
 
 const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
@@ -999,6 +1002,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
+    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
 
   const layoutVariant = combinedHash % 4;
@@ -1133,7 +1137,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     try {
       const query = getServiceImageQuery(service.name);
       // Ajouter l'index du service + nom du lead pour garantir l'unicité
-      const imgs = await fetchServiceImages(`${lead.sector} ${query} ${lead.name.split(' ')[0] || ''} ${i}`, 4);
+      const imgs = await fetchServiceImages(`${lead.sector} ${query} ${lead.name.split(' ')[0] || ''} ${i}`, 4, lead.sector);
       let picked = imgs.find(img => !usedServiceImages.has(img));
       if (!picked) picked = sectorImages.find(img => !usedServiceImages.has(img)) || heroImage;
       serviceImages.push(picked);
@@ -1156,7 +1160,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   // Compléter avec des requêtes Pexels dédiées galerie si besoin
   if (galleryImages.length < 5) {
     try {
-      const extra = await fetchServiceImages(`${lead.sector} professional results portfolio ${lead.name.split(' ')[0] || ''}`, 5);
+      const extra = await fetchServiceImages(`${lead.sector} professional results portfolio ${lead.name.split(' ')[0] || ''}`, 5, lead.sector);
       for (const img of extra) {
         if (galleryImages.length >= 5) break;
         if (!usedServiceImages.has(img)) {
@@ -1172,16 +1176,18 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    socialLinks, accentOnDark
+    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
 
   return buildUltimateHTML(content, template, allImages, combinedHash % 4);
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear } = content;
   const lang = content.lang || 'fr';
   const ui = UI[lang];
+  const sector = content.sector || '';
+  const sectorCfg = getSectorConfig(sector);
   const primaryColor = template.primary;
   const secondaryColor = template.secondary;
   const accentColor = template.accent;
@@ -1263,7 +1269,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="alternate" hreflang="${ui.hreflang}" href="${website || '#'}">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"${companyName}","description":"${heroSubtitle}","image":"${heroImage}","telephone":"${phone}","email":"${email}","address":{"@type":"PostalAddress","streetAddress":"${address}","addressLocality":"${city}","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"${rating || 5}","reviewCount":"${reviews || 42}"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"${sectorCfg.schemaOrg}","name":"${companyName}","description":"${heroSubtitle}","image":"${heroImage}","telephone":"${phone}","email":"${email}","address":{"@type":"PostalAddress","streetAddress":"${address}","addressLocality":"${city}","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"${rating || 5}","reviewCount":"${reviews || 42}"}}}</script>
     <style>
         :root{--primary:${primaryColor};--primary-rgb:${primaryRgb};--secondary:${secondaryColor};--accent:${accentColor};--accent-dark:${accentOnDark};--bg:#fafaf9;--surface:#fff;--text:#1a1a2e;--text-s:#555770;--text-t:#8b8da3;--border:#e8e8ef;--border-l:#f2f2f7;--dark:#1a2744;--dark-rgb:26,39,68;--deco-rotation:${decoRotation}deg;--deco-scale:${decoScale};--accent-opacity:${accentOpacity};--section-shape:${sectionShape}}
         *{margin:0;padding:0;box-sizing:border-box}
@@ -1626,21 +1632,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <span class="navbar-name">${logoInfo.text}</span>
             </a>
             <div class="navbar-links">
-                <a href="#about">${ui.navAbout}</a>
-                <a href="#services">${ui.navServices}</a>
-                <a href="#why">${ui.navWhy}</a>
-                <a href="#testimonials">${ui.navAvis}</a>
-                <a href="#contact">${ui.navContact}</a>
+                ${sectorCfg.navItems.map(item => `<a href="${item.href}">${item.label[lang]}</a>`).join('')}
                 ${phone ? `<a href="tel:${cleanPhoneLink}" class="navbar-cta"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
             </div>
             <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><i data-lucide="menu" width="24" height="24" style="color:var(--text)"></i></button>
         </div>
         <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="${lang === 'en' ? 'Mobile menu' : 'Menu mobile'}">
-            <a href="#about">${ui.navAbout}</a>
-            <a href="#services">${ui.navServices}</a>
-            <a href="#why">${ui.navWhy}</a>
-            <a href="#testimonials">${ui.navAvis}</a>
-            <a href="#contact">${ui.navContact}</a>
+            ${sectorCfg.navItems.map(item => `<a href="${item.href}">${item.label[lang]}</a>`).join('')}
             ${phone ? `<a href="tel:${cleanPhoneLink}" style="color:var(--primary);font-weight:700">${phone}</a>` : ''}
         </div>
     </nav>
@@ -1664,9 +1662,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="hero-card">
                 <div class="hero-card-title">${ui.heroHours}</div>
                 <div class="hero-hours">
-                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monLunVen}</span><span class="hero-hours-time">08h00 – 18h00</span></div>
-                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monSam}</span><span class="hero-hours-time">09h00 – 14h00</span></div>
-                        <div class="hero-hours-row"><span class="hero-hours-day">${ui.monDim}</span><span class="hero-hours-time" style="color:var(--accent-dark)">${ui.monDimUrg}</span></div>
+                    ${leadHours ? `
+                    <div class="hero-hours-row"><span class="hero-hours-day">${leadHours}</span></div>
+                    ` : `
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monLunVen}</span><span class="hero-hours-time">${sectorCfg.defaultHours.weekdays}</span></div>
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monSam}</span><span class="hero-hours-time">${sectorCfg.defaultHours.saturday}</span></div>
+                    <div class="hero-hours-row"><span class="hero-hours-day">${ui.monDim}</span><span class="hero-hours-time" style="color:var(--accent-dark)">${sectorCfg.defaultHours.sunday}</span></div>
+                    `}
                 </div>
                 ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-pri"><i data-lucide="phone" width="16"></i> ${phone}</a>` : ''}
                 <div class="hero-card-note">${ui.heroNote}</div>
@@ -1689,25 +1691,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:${leadVariant % 2 === 0 ? '-80px' : 'auto'};left:${leadVariant % 2 !== 0 ? '-80px' : 'auto'};animation-delay:${leadVariant}s"></div>
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:180px;top:40%;left:-40px;animation-delay:2s"></div>' : ''}
             <div class="section-hdr reveal">
-                <span class="section-label">${servicesTitle || ui.svcLabel}</span>
-                <h2>${ui.svcTitle}</h2>
-                <p>${ui.svcDesc}</p>
+                <span class="section-label">${servicesTitle || sectorCfg.ui.svcTitle[lang]}</span>
+                <h2>${sectorCfg.ui.svcTitle[lang]}</h2>
+                <p>${sectorCfg.ui.svcDesc[lang]}</p>
             </div>
             <div class="svc-grid">
                 ${services.map((s, i) => {
-                  const serviceIcons = [
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
-                    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
-                  ];
+                  const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
                     <img src="${serviceImages[i] || heroImage}" class="svc-card-img" alt="${s.name}" loading="lazy">
                     <div class="svc-card-body">
-                        <div class="svc-icon">${serviceIcons[i%6]}</div>
+                        <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
                         <h3>${s.name}</h3>
                         <p>${s.description}</p>
                         <a href="#contact" class="svc-link">${ui.svcLink} <i data-lucide="arrow-right" width="14"></i></a>
@@ -1724,7 +1719,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="about-grid">
                 <div class="about-img reveal">
                     <img src="${getImg(1)}" ${imgErr(1)} alt="${companyName}">
-                    <div class="about-badge"><div class="about-badge-num">15+</div><div class="about-badge-text">${ui.aboutBadge}</div></div>
+                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
@@ -1750,10 +1745,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
                     <p>${aboutText.substring(0, 200)}...</p>
                     <div class="why-stats">
-                        <div class="why-stat"><div class="why-stat-num">${rating || '4.5'}</div><div class="why-stat-label">${ui.statsNote}</div></div>
-                        <div class="why-stat"><div class="why-stat-num">${reviews || '50+'}</div><div class="why-stat-label">${ui.statsAvis}</div></div>
-                        <div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">${ui.whySatisfaction}</div></div>
-                        <div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">${ui.whyExp}</div></div>
+                        ${sectorCfg.stats.slice(0, 4).map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
                     </div>
                 </div>
                 <div class="why-img reveal">
@@ -1765,10 +1757,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">${reviews || '50+'}</div><div class="stat-label">${ui.statsAvis}</div></div>
-        <div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">${ui.statsExp}</div></div>
-        <div class="stat-item"><div class="stat-num">${rating || '4.5'}/5</div><div class="stat-label">${ui.statsNote}</div></div>
-        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">${ui.statsSat}</div></div>
+        ${sectorCfg.stats.map(s => `<div class="stat-item"><div class="stat-num">${s.value}</div><div class="stat-label">${s.label[lang]}</div></div>`).join('')}
     </div>
 
     <section class="section section-alt" id="process">
@@ -1842,12 +1831,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
             <div class="contact-wrap reveal">
                 <div class="contact-form">
-                    <h3>${ui.formTitle}</h3>
+                    <h3>${sectorCfg.ui.contactTitle[lang]}</h3>
                     <p>${ui.formDesc}</p>
                     <form onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='${lang === 'en' ? 'Message sent ✓' : 'Message envoyé ✓'}';this.querySelector('.form-submit').style.background='#16a34a'">
-                        <div class="form-row"><div class="form-group"><label class="form-label">${ui.formName}</label><input type="text" class="form-control" placeholder="${ui.formPlaceholderName}" required></div><div class="form-group"><label class="form-label">${ui.formPhone}</label><input type="tel" class="form-control" placeholder="${ui.formPlaceholderPhone}" required></div></div>
-                        <div class="form-group"><label class="form-label">${ui.formEmail}</label><input type="email" class="form-control" placeholder="${ui.formPlaceholderEmail}"></div>
-                        <div class="form-group"><label class="form-label">${ui.formMsg}</label><textarea class="form-control" rows="4" placeholder="${ui.formPlaceholderMsg}" required></textarea></div>
+                        ${sectorCfg.formFields.map(field => {
+                          if (field.type === 'textarea') {
+                            return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><textarea class="form-control" name="${field.name}" rows="4" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></textarea></div>`;
+                          }
+                          if (field.type === 'select' && field.options) {
+                            return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><select class="form-control" name="${field.name}" ${field.required ? 'required' : ''}><option value="">${field.placeholder[lang]}</option>${field.options.map(opt => `<option value="${opt.fr}">${opt[lang]}</option>`).join('')}</select></div>`;
+                          }
+                          return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><input type="${field.type}" class="form-control" name="${field.name}" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></div>`;
+                        }).join('')}
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> ${ui.formSubmit}</button>
                         <p class="form-note">${ui.formNote}</p>
                     </form>
@@ -1855,9 +1850,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="contact-sidebar">
                     <div class="contact-hours">
                         <h4><i data-lucide="clock" width="16" style="color:var(--primary)"></i> ${ui.hoursTitle}</h4>
-                        <div class="hours-row"><span class="hours-day">${ui.hoursLunVen}</span><span class="hours-time">08h00 – 18h00</span></div>
-                        <div class="hours-row"><span class="hours-day">${ui.hoursSam}</span><span class="hours-time">09h00 – 14h00</span></div>
-                        <div class="hours-row"><span class="hours-day">${ui.hoursDim}</span><span class="hours-time" style="color:var(--accent)">${ui.monDimUrg}</span></div>
+                        ${leadHours ? `
+                        <div class="hours-row"><span class="hours-day">${leadHours}</span></div>
+                        ` : `
+                        <div class="hours-row"><span class="hours-day">${ui.hoursLunVen}</span><span class="hours-time">${sectorCfg.defaultHours.weekdays}</span></div>
+                        <div class="hours-row"><span class="hours-day">${ui.hoursSam}</span><span class="hours-time">${sectorCfg.defaultHours.saturday}</span></div>
+                        <div class="hours-row"><span class="hours-day">${ui.hoursDim}</span><span class="hours-time" style="color:var(--accent)">${sectorCfg.defaultHours.sunday}</span></div>
+                        `}
                     </div>
                     <div class="contact-card">
                         <div class="contact-card-item"><i data-lucide="phone" width="16"></i> ${phone ? `<a href="tel:${cleanPhoneLink}">${phone}</a>` : 'Non renseigné'}</div>

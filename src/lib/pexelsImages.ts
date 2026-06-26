@@ -150,7 +150,7 @@ const imagesCache: Record<string, string[]> = {};
 /**
  * Récupère des images depuis l'API Pexels pour une requête donnée
  */
-async function fetchPexelsSearch(query: string, count: number = 4): Promise<string[]> {
+async function fetchPexelsSearch(query: string, count: number = 4, sector?: string): Promise<string[]> {
   if (!PEXELS_API_KEY) return [];
 
   try {
@@ -166,7 +166,7 @@ async function fetchPexelsSearch(query: string, count: number = 4): Promise<stri
       .filter((p: any) => {
         const url = p?.src?.large2x || p?.src?.large || p?.src?.medium || '';
         const alt = p?.alt || '';
-        return url && !isImageBlocked(url, alt);
+        return url && !isImageBlocked(url, alt, sector);
       })
       .map((p: any) => p?.src?.large2x || p?.src?.large || p?.src?.medium || '')
       .filter(Boolean);
@@ -185,7 +185,7 @@ const serviceImagesCache: Record<string, string[]> = {};
  * Appelle Pexels directement avec la requête exacte — aucun mapping sectoriel.
  * Cache par requête exacte pour éviter les appels répétés.
  */
-export async function fetchServiceImages(query: string, count: number = 4): Promise<string[]> {
+export async function fetchServiceImages(query: string, count: number = 4, sector?: string): Promise<string[]> {
   // Cache key includes full query to avoid cross-lead duplication
   const cacheKey = `svc_${query}`;
   if (serviceImagesCache[cacheKey]) {
@@ -207,7 +207,7 @@ export async function fetchServiceImages(query: string, count: number = 4): Prom
       .filter((p: any) => {
         const url = p?.src?.large2x || p?.src?.large || p?.src?.medium || '';
         const alt = p?.alt || '';
-        return url && !isImageBlocked(url, alt);
+        return url && !isImageBlocked(url, alt, sector);
       })
       .map((p: any) => p?.src?.large2x || p?.src?.large || p?.src?.medium || '')
       .filter(Boolean);
@@ -270,7 +270,7 @@ export async function fetchSectorImagesFromAPI(sector: string, leadHash: number 
 
   const allImages: string[] = [];
   for (const query of offsetQueries) {
-    const imgs = await fetchPexelsSearch(query, 4);
+    const imgs = await fetchPexelsSearch(query, 4, normalizedSector);
     allImages.push(...imgs);
   }
 
