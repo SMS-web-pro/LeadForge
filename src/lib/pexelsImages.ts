@@ -135,6 +135,13 @@ const SECTOR_PEXEL_QUERIES: Record<string, string[]> = {
     'fresh flowers bouquet colorful',
     'flower shop interior display'
   ],
+  spa: [
+    'spa interior luxury relaxing',
+    'massage professional wellness',
+    'spa treatment aromatherapy',
+    'wellness center serene interior',
+    'facial treatment beauty salon'
+  ],
   default: [
     'modern office workspace professional',
     'business meeting team collaboration',
@@ -242,25 +249,26 @@ export async function fetchSectorImagesFromAPI(sector: string, leadHash: number 
   }
 
   // Requêtes spécifiques par mot-clé — élargies pour couvrir plus de secteurs
+  // IMPORTANT: l'ordre compte — les secteurs les plus spécifiques en premier
   if (normalizedSector.includes('plomb')) queries = SECTOR_PEXEL_QUERIES.plomberie;
   else if (normalizedSector.includes('électri') || normalizedSector.includes('electri') || normalizedSector.includes('domotique')) queries = SECTOR_PEXEL_QUERIES.electricien;
-  else if (normalizedSector.includes('coiff') || normalizedSector.includes('hair') || normalizedSector.includes('barber') || normalizedSector.includes('salon') || normalizedSector.includes('beauté') || normalizedSector.includes('esthétique') || normalizedSector.includes('spa') || normalizedSector.includes('ongle') || normalizedSector.includes('tatou')) queries = SECTOR_PEXEL_QUERIES.coiffeur;
-  else if (normalizedSector.includes('restaurant') || normalizedSector.includes('chef') || normalizedSector.includes('cuisine') || normalizedSector.includes('boulanger') || normalizedSector.includes('traiteur') || normalizedSector.includes('pizzeria') || normalizedSector.includes('café') || normalizedSector.includes('brasserie')) queries = SECTOR_PEXEL_QUERIES.restaurant;
+  else if (normalizedSector.includes('boulanger') || normalizedSector.includes('pâtiss') || normalizedSector.includes('patis') || normalizedSector.includes('viennoiserie')) queries = SECTOR_PEXEL_QUERIES.boulangerie;
+  else if (normalizedSector.includes('coiff') || normalizedSector.includes('hair') || normalizedSector.includes('barber') || normalizedSector.includes('salon') || normalizedSector.includes('beauté') || normalizedSector.includes('esthétique') || normalizedSector.includes('ongle') || normalizedSector.includes('tatou')) queries = SECTOR_PEXEL_QUERIES.coiffeur;
+  else if (normalizedSector.includes('spa') || normalizedSector.includes('massage') || normalizedSector.includes('wellness') || normalizedSector.includes('bien-être') || normalizedSector.includes('bienetre') || normalizedSector.includes('détente') || normalizedSector.includes('detente')) queries = SECTOR_PEXEL_QUERIES.spa;
+  else if (normalizedSector.includes('restaurant') || normalizedSector.includes('chef') || normalizedSector.includes('cuisine') || normalizedSector.includes('traiteur') || normalizedSector.includes('pizzeria') || normalizedSector.includes('café') || normalizedSector.includes('brasserie') || normalizedSector.includes('bar ')) queries = SECTOR_PEXEL_QUERIES.restaurant;
   else if (normalizedSector.includes('garage') || normalizedSector.includes('mécan') || normalizedSector.includes('mecan') || normalizedSector.includes('auto') || normalizedSector.includes('pneu') || normalizedSector.includes('carrosserie') || normalizedSector.includes('moto') || normalizedSector.includes('camion')) queries = SECTOR_PEXEL_QUERIES.garage;
   else if (normalizedSector.includes('nettoy') || normalizedSector.includes('clean') || normalizedSector.includes('ménage') || normalizedSector.includes('menage') || normalizedSector.includes('menager') || normalizedSector.includes('hygiène')) queries = SECTOR_PEXEL_QUERIES.nettoyage;
   else if (normalizedSector.includes('jardin') || normalizedSector.includes('paysag') || normalizedSector.includes('espace vert') || normalizedSector.includes('pépinière') || normalizedSector.includes('arbori')) queries = SECTOR_PEXEL_QUERIES.jardin;
-  else if (normalizedSector.includes('fitness') || normalizedSector.includes('gym') || normalizedSector.includes('sport') || normalizedSector.includes('coach') || normalizedSector.includes('musculation') || normalizedSector.includes('yoga') || normalizedSector.includes('crossfit') || normalizedSector.includes('boxe')) queries = SECTOR_PEXEL_QUERIES.fitness;
-  else if (normalizedSector.includes('médec') || normalizedSector.includes('medical') || normalizedSector.includes('sant') || normalizedSector.includes('dentiste') || normalizedSector.includes('kiné') || normalizedSector.includes('pharmac') || normalizedSector.includes('infirm') || normalizedSector.includes('opticien') || normalizedSector.includes('ostéo')) queries = SECTOR_PEXEL_QUERIES.medical;
-  else if (normalizedSector.includes('avocat') || normalizedSector.includes('jurid') || normalizedSector.includes('droit') || normalizedSector.includes('notaire') || normalizedSector.includes('cabinet')) queries = SECTOR_PEXEL_QUERIES.avocat;
-  else if (normalizedSector.includes('boulanger') || normalizedSector.includes('pâtiss') || normalizedSector.includes('patis') || normalizedSector.includes('viennoiserie') || normalizedSector.includes('pâtisserie')) queries = SECTOR_PEXEL_QUERIES.boulangerie;
+  else if (normalizedSector.includes('fitness') || normalizedSector.includes('gym') || normalizedSector.includes('musculation') || normalizedSector.includes('yoga') || normalizedSector.includes('crossfit') || normalizedSector.includes('boxe')) queries = SECTOR_PEXEL_QUERIES.fitness;
+  else if (normalizedSector.includes('médec') || normalizedSector.includes('medical') || normalizedSector.includes('dentiste') || normalizedSector.includes('kiné') || normalizedSector.includes('pharmac') || normalizedSector.includes('infirm') || normalizedSector.includes('opticien') || normalizedSector.includes('ostéo')) queries = SECTOR_PEXEL_QUERIES.medical;
+  else if (normalizedSector.includes('avocat') || normalizedSector.includes('jurid') || normalizedSector.includes('droit') || normalizedSector.includes('notaire')) queries = SECTOR_PEXEL_QUERIES.avocat;
   else if (normalizedSector.includes('peintre') || normalizedSector.includes('décor') || normalizedSector.includes('decor') || normalizedSector.includes('revêtement') || normalizedSector.includes('revetement') || normalizedSector.includes('tapisserie')) queries = SECTOR_PEXEL_QUERIES.peintre;
   else if (normalizedSector.includes('menuis') || normalizedSector.includes('ébénist') || normalizedSector.includes('ebenist') || normalizedSector.includes('charpent') || normalizedSector.includes('parquet') || normalizedSector.includes('bois')) queries = SECTOR_PEXEL_QUERIES.menuisier;
   else if (normalizedSector.includes('serrur') || normalizedSector.includes('sécurit') || normalizedSector.includes('securit') || normalizedSector.includes('alarme')) queries = SECTOR_PEXEL_QUERIES.serrurier;
   else if (normalizedSector.includes('transport') || normalizedSector.includes('livraison') || normalizedSector.includes('logistiq') || normalizedSector.includes('déménag') || normalizedSector.includes('demenag') || normalizedSector.includes('taxi') || normalizedSector.includes('vtc')) queries = SECTOR_PEXEL_QUERIES.transport;
   else if (normalizedSector.includes('immobili') || normalizedSector.includes('immo') || normalizedSector.includes('syndic')) queries = SECTOR_PEXEL_QUERIES.immobilier;
   else if (normalizedSector.includes('photo') || normalizedSector.includes('vidéo') || normalizedSector.includes('video') || normalizedSector.includes('mariage')) queries = SECTOR_PEXEL_QUERIES.photo;
-  else if (normalizedSector.includes('fleur') || normalizedSector.includes('flore') || normalizedSector.includes('jardin')) queries = SECTOR_PEXEL_QUERIES.fleuriste;
-  else if (normalizedSector.includes('platri') || normalizedSector.includes('couvr') || normalizedSector.includes('maçon') || normalizedSector.includes('macon') || normalizedSector.includes('isolation') || normalizedSector.includes('rénov') || normalizedSector.includes('renov') || normalizedSector.includes('terrassement') || normalizedSector.includes('charpent') || normalizedSector.includes('vitrerie')) queries = SECTOR_PEXEL_QUERIES.peintre;
+  else if (normalizedSector.includes('fleur') || normalizedSector.includes('flore')) queries = SECTOR_PEXEL_QUERIES.fleuriste;
 
   // Offset les requêtes basé sur le hash du lead pour varier les résultats
   const offset = leadHash % queries.length;
@@ -295,26 +303,14 @@ const STATIC_FALLBACK: Record<string, string[]> = {
     'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1920&q=80',
     'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80',
     'https://images.unsplash.com/photo-1558618047-3c8c76ca7a13?w=1920&q=80',
-    'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1920&q=80',
-    'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=80',
     'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80',
-    'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1920&q=80',
-    'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1920&q=80',
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1920&q=80',
-    'https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=1920&q=80',
   ],
   electricien: [
     'https://images.unsplash.com/photo-1621905252507-b354bc25edac?w=1920&q=80',
     'https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=1920&q=80',
-    'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1920&q=80',
     'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80',
     'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1920&q=80',
+    'https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=1920&q=80',
   ],
   coiffeur: [
     'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1920&q=80',
@@ -345,11 +341,11 @@ const STATIC_FALLBACK: Record<string, string[]> = {
     'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1920&q=80',
   ],
   jardin: [
-    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80',
     'https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=1920&q=80',
     'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&q=80',
     'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=1920&q=80',
     'https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1920&q=80',
+    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80',
   ],
   fitness: [
     'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80',
@@ -368,9 +364,16 @@ const STATIC_FALLBACK: Record<string, string[]> = {
   avocat: [
     'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80',
     'https://images.unsplash.com/photo-1505664194779-8bebcb3f9e5c?w=1920&q=80',
-    'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=1920&q=80',
     'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=1920&q=80',
     'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=1920&q=80',
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&q=80',
+  ],
+  spa: [
+    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1920&q=80',
+    'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=1920&q=80',
+    'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=1920&q=80',
+    'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=1920&q=80',
+    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1920&q=80',
   ],
   default: [
     'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80',
@@ -529,6 +532,17 @@ const SERVICE_IMAGE_QUERIES: Record<string, string> = {
   'droit des affaires': 'business lawyer meeting',
   'immobilier': 'real estate lawyer contract',
   'droit routier': 'traffic lawyer office',
+
+  // === Spa ===
+  'massage relaxant': 'relaxing massage spa',
+  'soin du visage': 'facial treatment beauty',
+  'gommage corps': 'body scrub treatment',
+  'manucure & pédicure': 'manicure pedicure salon',
+  'manucure et pedicure': 'manicure pedicure salon',
+  'épilation': 'waxing treatment salon',
+  'epilation': 'waxing treatment salon',
+  'routine bien-être': 'wellness routine spa',
+  'routine bien etre': 'wellness routine spa',
 };
 
 /**
