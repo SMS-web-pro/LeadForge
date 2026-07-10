@@ -78,23 +78,31 @@ export interface LlmModel {
 
 export const LLM_MODELS: Record<LlmProvider, LlmModel[]> = {
   groq: [
-    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 1024, description: 'Rapide, 6K TPM gratuit' },
-    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', tier: 'paid', maxTokens: 4096, description: 'Plus puissant, payant' },
-    { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', tier: 'free', maxTokens: 32768, description: 'Long context, gratuit' },
+    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 131072, description: 'Rapide, 250K TPM gratuit' },
+    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', tier: 'free', maxTokens: 32768, description: 'Puissant, 300K TPM gratuit' },
+    { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', tier: 'free', maxTokens: 32768, description: 'MoE, long context gratuit' },
+    { id: 'qwen-qwq-32b', name: 'Qwen QwQ 32B', tier: 'free', maxTokens: 131072, description: 'Raisonnement, gratuit' },
+    { id: 'gemma2-9b-it', name: 'Gemma 2 9B', tier: 'free', maxTokens: 8192, description: 'Google, petit et rapide' },
   ],
   nvidia: [
-    { id: 'meta/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 1024, description: '40 RPM gratuit' },
-    { id: 'meta/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', tier: 'paid', maxTokens: 4096, description: 'Plus puissant, payant' },
+    { id: 'meta-llama/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 131072, description: '40 RPM gratuit' },
+    { id: 'deepseek-ai/deepseek-v4-flash', name: 'DeepSeek V4 Flash', tier: 'free', maxTokens: 1000000, description: '284B MoE, 1M context, gratuit' },
+    { id: 'qwen/qwen3.5-122b-a10b', name: 'Qwen 3.5 122B', tier: 'free', maxTokens: 262144, description: 'Alibaba, 262K context, gratuit' },
+    { id: 'minimaxai/minimax-m3', name: 'MiniMax M3', tier: 'free', maxTokens: 1000000, description: '1M context, gratuit' },
+    { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', tier: 'paid', maxTokens: 131072, description: 'Plus puissant, payant' },
   ],
   gemini: [
-    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', tier: 'free', maxTokens: 1024, description: '1M TPM gratuit' },
-    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', tier: 'paid', maxTokens: 8192, description: 'Plus rapide, payant' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', tier: 'paid', maxTokens: 8192, description: 'Le plus puissant, payant' },
+    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', tier: 'free', maxTokens: 1048576, description: '1M context, gratuit' },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', tier: 'free', maxTokens: 1048576, description: 'Rapide, 1M context, gratuit' },
+    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', tier: 'free', maxTokens: 1048576, description: 'Stable, 1M context, gratuit' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tier: 'paid', maxTokens: 1048576, description: 'Le plus puissant, payant' },
   ],
   openrouter: [
-    { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B (Free)', tier: 'free', maxTokens: 8192, description: '100% gratuit' },
-    { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', tier: 'paid', maxTokens: 8192, description: 'Payant, plus puissant' },
-    { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', tier: 'paid', maxTokens: 8192, description: 'Payant, rapide' },
+    { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B (Free)', tier: 'free', maxTokens: 131072, description: '100% gratuit' },
+    { id: 'qwen/qwen-2.5-72b-instruct:free', name: 'Qwen 2.5 72B (Free)', tier: 'free', maxTokens: 32768, description: '100% gratuit' },
+    { id: 'google/gemma-2-9b-it:free', name: 'Gemma 2 9B (Free)', tier: 'free', maxTokens: 8192, description: '100% gratuit' },
+    { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B', tier: 'paid', maxTokens: 131072, description: 'Payant, performant' },
+    { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', tier: 'paid', maxTokens: 128000, description: 'Payant, rapide' },
   ],
 };
 

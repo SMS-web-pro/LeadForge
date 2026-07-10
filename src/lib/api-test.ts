@@ -69,7 +69,7 @@ async function testSerperApi(config: ApiConfig): Promise<ApiTestResult> {
 // Config des endpoints LLM
 const LLM_ENDPOINTS: Record<string, { url: string; model: string; needsProxy: boolean }> = {
   groq:      { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.1-8b-instant', needsProxy: false },
-  nvidia:    { url: '/api/llm', model: 'meta/llama-3.1-8b-instruct', needsProxy: true },
+  nvidia:    { url: '/api/llm', model: 'meta-llama/llama-3.1-8b-instruct', needsProxy: true },
   gemini:    { url: '/api/llm', model: 'gemini-2.0-flash-lite', needsProxy: true },
   openrouter: { url: '/api/llm', model: 'meta-llama/llama-3.1-8b-instruct:free', needsProxy: true },
 };

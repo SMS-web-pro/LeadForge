@@ -1089,7 +1089,7 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
     // Modèles par défaut pour chaque provider
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
-      nvidia: 'meta/llama-3.1-8b-instruct',
+      nvidia: 'meta-llama/llama-3.1-8b-instruct',
       gemini: 'gemini-2.0-flash-lite',
       openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
     };
@@ -1190,7 +1190,7 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
     if (providerId === defaultLlm && defaultModel) return defaultModel;
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
-      nvidia: 'meta/llama-3.1-8b-instruct',
+      nvidia: 'meta-llama/llama-3.1-8b-instruct',
       gemini: 'gemini-2.0-flash-lite',
       openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
     };
