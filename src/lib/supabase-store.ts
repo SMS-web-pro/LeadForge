@@ -893,9 +893,10 @@ export function useScheduledEmails() {
 // --- RETRY UTILS ---
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000; // 1 seconde
-const RATE_LIMIT_DELAY_MS = 1000; // Délai minimum entre requêtes (1s)
+const RATE_LIMIT_DELAY_MS = 2000; // Délai minimum entre requêtes (2s) pour éviter 429
 const GROQ_TPM_LIMIT = 200000; // compound-beta-mini = No limit (200K buffer)
 const GROQ_TPM_BUFFER = 500; // Marge de sécurité
+const RATE_LIMIT_PROVIDER_SKIP_DELAY = 5000; // Attente avant de passer au provider suivant en cas de 429
 
 // Timestamp du dernier appel API pour le rate limiting
 let lastApiCallTimestamp = 0;
@@ -1021,26 +1022,35 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
     await enforceRateLimit(truncatedPrompt.length);
-    return await retryWithBackoff(async () => {
-      const res = await fetch('/api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, apiKey, body: { model, messages, temperature: 0.7, max_tokens: maxTokens } }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const content = data.choices?.[0]?.message?.content?.trim();
-        if (content) return content;
-        throw { status: 500, message: `Empty response from ${provider}` };
+    try {
+      return await retryWithBackoff(async () => {
+        const res = await fetch('/api/llm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider, apiKey, body: { model, messages, temperature: 0.7, max_tokens: maxTokens } }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content?.trim();
+          if (content) return content;
+          throw { status: 500, message: `Empty response from ${provider}` };
+        }
+        const errorText = await res.text();
+        let errorObj: any;
+        try { errorObj = JSON.parse(errorText); } catch { errorObj = { message: errorText }; }
+        const error = { status: res.status, message: errorObj.error?.message || errorText, code: errorObj.error?.code };
+        const apiError = detectApiError(error, provider);
+        if (apiError) apiErrorState.recordError(apiError);
+        throw error;
+      }, isRateLimitError, 1); // Max 1 retry sur 429, passer au provider suivant rapidement
+    } catch (err: any) {
+      // En cas de 429, attendre avant de passer au provider suivant
+      if (isRateLimitError(err)) {
+        logger.warn(`⏳ Rate limit sur ${provider}, attente ${RATE_LIMIT_PROVIDER_SKIP_DELAY/1000}s avant provider suivant...`);
+        await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_PROVIDER_SKIP_DELAY));
       }
-      const errorText = await res.text();
-      let errorObj: any;
-      try { errorObj = JSON.parse(errorText); } catch { errorObj = { message: errorText }; }
-      const error = { status: res.status, message: errorObj.error?.message || errorText, code: errorObj.error?.code };
-      const apiError = detectApiError(error, provider);
-      if (apiError) apiErrorState.recordError(apiError);
-      throw error;
-    }, isRateLimitError, MAX_RETRIES);
+      throw err;
+    }
   };
 
   const defaultLlm = config.defaultLlm || 'groq';
@@ -1097,26 +1107,35 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
     await enforceRateLimit(truncatedPrompt.length);
-    return await retryWithBackoff(async () => {
-      const res = await fetch('/api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, apiKey, body: { model, messages, temperature: 0.7, max_tokens: maxTokens } }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const content = data.choices?.[0]?.message?.content?.trim();
-        if (content) return content;
-        throw { status: 500, message: `Empty response from ${provider}` };
+    try {
+      return await retryWithBackoff(async () => {
+        const res = await fetch('/api/llm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider, apiKey, body: { model, messages, temperature: 0.7, max_tokens: maxTokens } }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content?.trim();
+          if (content) return content;
+          throw { status: 500, message: `Empty response from ${provider}` };
+        }
+        const errorText = await res.text();
+        let errorObj: any;
+        try { errorObj = JSON.parse(errorText); } catch { errorObj = { message: errorText }; }
+        const error = { status: res.status, message: errorObj.error?.message || errorText, code: errorObj.error?.code };
+        const apiError = detectApiError(error, provider);
+        if (apiError) apiErrorState.recordError(apiError);
+        throw error;
+      }, isRateLimitError, 1); // Max 1 retry sur 429, passer au provider suivant rapidement
+    } catch (err: any) {
+      // En cas de 429, attendre avant de passer au provider suivant
+      if (isRateLimitError(err)) {
+        logger.warn(`⏳ Rate limit sur ${provider}, attente ${RATE_LIMIT_PROVIDER_SKIP_DELAY/1000}s avant provider suivant...`);
+        await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_PROVIDER_SKIP_DELAY));
       }
-      const errorText = await res.text();
-      let errorObj: any;
-      try { errorObj = JSON.parse(errorText); } catch { errorObj = { message: errorText }; }
-      const error = { status: res.status, message: errorObj.error?.message || errorText, code: errorObj.error?.code };
-      const apiError = detectApiError(error, provider);
-      if (apiError) apiErrorState.recordError(apiError);
-      throw error;
-    }, isRateLimitError, MAX_RETRIES);
+      throw err;
+    }
   };
 
   const defaultLlm = config.defaultLlm || 'groq';

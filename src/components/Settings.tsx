@@ -822,6 +822,7 @@ function ApiSectionCard({
 
         <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
           <button
+            type="button"
             onClick={() => onSaveSection(section.id, section.fields.map((f: any) => f.key))}
             disabled={savingSections[section.id]}
             style={{
