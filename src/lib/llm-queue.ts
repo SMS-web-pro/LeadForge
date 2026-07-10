@@ -121,3 +121,54 @@ export function getQueueSize(): number {
 export function isQueueProcessing(): boolean {
   return isProcessing;
 }
+
+// ============================================================
+// callLLMDirect — Fetch /api/llm via la queue
+// Utilisé par Settings.tsx (test button) et api-test.ts
+// ============================================================
+export interface LLMRequestParams {
+  provider: string;
+  apiKey: string;
+  model: string;
+  messages: Array<{ role: string; content: string }>;
+  max_tokens?: number;
+  temperature?: number;
+}
+
+export interface LLMResponse {
+  content: string | null;
+  error?: string;
+  status?: number;
+}
+
+export async function callLLMDirect(params: LLMRequestParams): Promise<LLMResponse> {
+  return enqueueLLMRequest(async () => {
+    const res = await fetch('/api/llm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: params.provider,
+        apiKey: params.apiKey,
+        body: {
+          model: params.model,
+          messages: params.messages,
+          max_tokens: params.max_tokens ?? 1024,
+          temperature: params.temperature ?? 0.7,
+        },
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content?.trim() ?? null;
+      return { content };
+    }
+
+    const errorText = await res.text();
+    return {
+      content: null,
+      error: errorText.slice(0, 200),
+      status: res.status,
+    };
+  });
+}

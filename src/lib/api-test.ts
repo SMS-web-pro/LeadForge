@@ -5,6 +5,7 @@
 
 import { logger } from './logger';
 import { ApiConfig } from './supabase-store';
+import { callLLMDirect } from './llm-queue';
 
 export interface ApiTestResult {
   service: string;
@@ -85,27 +86,38 @@ async function testLlmProvider(provider: string, apiKey: string): Promise<ApiTes
   }
 
   try {
-    const fetchOptions: RequestInit = endpoint.needsProxy
-      ? {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            provider,
-            apiKey,
-            body: { model: endpoint.model, messages: [{ role: 'user', content: 'Hi' }], max_tokens: 10 },
-          }),
-        }
-      : {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: endpoint.model,
-            messages: [{ role: 'user', content: 'Hi' }],
-            max_tokens: 10,
-          }),
-        };
+    // Utiliser callLLMDirect pour les providers qui passent par le proxy
+    if (endpoint.needsProxy) {
+      const result = await callLLMDirect({
+        provider,
+        apiKey,
+        model: endpoint.model,
+        messages: [{ role: 'user', content: 'Hi' }],
+        max_tokens: 10,
+      });
 
-    const response = await fetch(endpoint.url, fetchOptions);
+      if (result.content) {
+        return { service: provider, status: 'ok', message: `API ${provider} fonctionnelle` };
+      }
+      if (result.status === 404) {
+        return { service: provider, status: 'error', message: `Proxy /api/llm non disponible (404)`, statusCode: 404 };
+      }
+      if (result.status === 429) {
+        return { service: provider, status: 'error', message: `Rate limit ${provider} atteint`, statusCode: 429 };
+      }
+      return { service: provider, status: 'error', message: `Erreur API ${provider}: ${result.status} ${result.error || ''}`, statusCode: result.status };
+    }
+
+    // Appel direct pour Groq (pas de proxy)
+    const response = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: endpoint.model,
+        messages: [{ role: 'user', content: 'Hi' }],
+        max_tokens: 10,
+      }),
+    });
 
     if (response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -113,7 +125,6 @@ async function testLlmProvider(provider: string, apiKey: string): Promise<ApiTes
       return { service: provider, status: 'ok', message: `API ${provider} fonctionnelle${hasContent ? '' : ' (réponse vide)'}` };
     }
 
-    // 404 = proxy non déployé, pas une erreur du provider lui-même
     if (response.status === 404) {
       return { service: provider, status: 'error', message: `Proxy /api/llm non disponible (404)`, statusCode: 404 };
     }

@@ -2,6 +2,7 @@ import { logger } from '../lib/logger';
 import { useState, useEffect } from 'react';
 import { ApiConfig, ApiStatus, useApiConfig, LlmProvider } from '../lib/supabase-store';
 import { LLM_MODELS } from '../lib/types';
+import { callLLMDirect } from '../lib/llm-queue';
 import SimpleSerperGenerator from './SimpleSerperGenerator';
 import { supabase } from '../lib/supabase';
 
@@ -145,28 +146,19 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
     setLlmTestStatus('testing');
     setLlmTestMessage(`⏳ Test de ${defaultLlm} en cours...`);
     try {
-      const res = await fetch('/api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          provider: defaultLlm,
-          apiKey,
-          body: {
-            model: modelMap[defaultLlm],
-            messages: [{ role: 'user', content: 'Say OK' }],
-            max_tokens: 10,
-          },
-        }),
+      const result = await callLLMDirect({
+        provider: defaultLlm,
+        apiKey,
+        model: modelMap[defaultLlm],
+        messages: [{ role: 'user', content: 'Say OK' }],
+        max_tokens: 10,
       });
-      if (res.ok) {
-        const data = await res.json();
-        const content = data.choices?.[0]?.message?.content?.trim();
+      if (result.content) {
         setLlmTestStatus('success');
-        setLlmTestMessage(`✅ ${defaultLlm} fonctionne ! Réponse: "${content}"`);
+        setLlmTestMessage(`✅ ${defaultLlm} fonctionne ! Réponse: "${result.content}"`);
       } else {
-        const err = await res.text();
         setLlmTestStatus('error');
-        setLlmTestMessage(`❌ Erreur ${res.status}: ${err.slice(0, 100)}`);
+        setLlmTestMessage(`❌ Erreur ${result.status}: ${result.error}`);
       }
     } catch (e: any) {
       setLlmTestStatus('error');
