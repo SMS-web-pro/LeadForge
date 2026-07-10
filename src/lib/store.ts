@@ -12,7 +12,6 @@ export { defaultApiConfig, defaultEmailTemplates } from './types';
 export { safeStr, safeNum, safeStrArr, proxyImage, proxyImg, getTemplateType, mapColumns, exportLeadsCSV, isEnglishText, extractEmail, extractPhone, snippetsText, isEmailDomainValid } from './utils';
 
 // LLM
-export { callLLM, callLLMForWebsite } from './llm/callLLM';
 export { generateWebsitePrompt } from './llm/prompts';
 
 // Scoring

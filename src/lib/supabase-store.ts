@@ -1079,13 +1079,27 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
   };
 
   const defaultLlm = config.defaultLlm || 'groq';
-  logger.log('🎯 LLM: Default provider is:', defaultLlm);
+  const defaultModel = config.defaultModel || '';
+  logger.log('🎯 LLM: Default provider is:', defaultLlm, 'Model:', defaultModel);
+
+  // Utiliser le modèle sélectionné par l'utilisateur pour le provider par défaut
+  const getDefaultModel = (providerId: string): string => {
+    if (providerId === defaultLlm && defaultModel) return defaultModel;
+    // Modèles par défaut pour chaque provider
+    const defaults: Record<string, string> = {
+      groq: 'llama-3.1-8b-instant',
+      nvidia: 'meta/llama-3.1-8b-instruct',
+      gemini: 'gemini-2.0-flash-lite',
+      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+    };
+    return defaults[providerId] || 'llama-3.1-8b-instant';
+  };
 
   const providers = [
-    { id: 'groq', key: config.groqKey, model: 'llama-3.1-8b-instant', maxTokens: 1024 },
-    { id: 'nvidia', key: config.nvidiaKey, model: 'meta/llama-3.1-8b-instruct', maxTokens: 1024 },
-    { id: 'gemini', key: config.geminiKey, model: 'gemini-2.0-flash-lite', maxTokens: 1024 },
-    { id: 'openrouter', key: config.openrouterKey, model: 'meta-llama/llama-3.1-8b-instruct:free', maxTokens: 1024 },
+    { id: 'groq', key: config.groqKey, model: getDefaultModel('groq'), maxTokens: 1024 },
+    { id: 'nvidia', key: config.nvidiaKey, model: getDefaultModel('nvidia'), maxTokens: 1024 },
+    { id: 'gemini', key: config.geminiKey, model: getDefaultModel('gemini'), maxTokens: 1024 },
+    { id: 'openrouter', key: config.openrouterKey, model: getDefaultModel('openrouter'), maxTokens: 1024 },
   ];
 
   const defaultIdx = providers.findIndex(p => p.id === defaultLlm);
@@ -1109,9 +1123,9 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
       }
     } catch (err: any) {
       const msg = String(err?.message || err).toLowerCase();
-      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err);
+      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
       if (!isTransient) throw err;
-      logger.warn(`⚠️ LLM provider ${i + 1} indisponible, essai du suivant...`);
+      logger.warn(`⚠️ LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
     }
   }
 
@@ -1164,13 +1178,26 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
   };
 
   const defaultLlm = config.defaultLlm || 'groq';
+  const defaultModel = config.defaultModel || '';
   const providerOrder: Array<() => Promise<string>> = [];
 
+  // Utiliser le modèle sélectionné par l'utilisateur pour le provider par défaut
+  const getDefaultModelWebsite = (providerId: string): string => {
+    if (providerId === defaultLlm && defaultModel) return defaultModel;
+    const defaults: Record<string, string> = {
+      groq: 'llama-3.1-8b-instant',
+      nvidia: 'meta/llama-3.1-8b-instruct',
+      gemini: 'gemini-2.0-flash-lite',
+      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+    };
+    return defaults[providerId] || 'llama-3.1-8b-instant';
+  };
+
   const providers = [
-    { id: 'groq', key: config.groqKey, model: 'llama-3.1-8b-instant', maxTokens: 4096 },
-    { id: 'nvidia', key: config.nvidiaKey, model: 'meta/llama-3.1-8b-instruct', maxTokens: 4096 },
-    { id: 'gemini', key: config.geminiKey, model: 'gemini-2.0-flash-lite', maxTokens: 8192 },
-    { id: 'openrouter', key: config.openrouterKey, model: 'meta-llama/llama-3.1-8b-instruct:free', maxTokens: 8192 },
+    { id: 'groq', key: config.groqKey, model: getDefaultModelWebsite('groq'), maxTokens: 4096 },
+    { id: 'nvidia', key: config.nvidiaKey, model: getDefaultModelWebsite('nvidia'), maxTokens: 4096 },
+    { id: 'gemini', key: config.geminiKey, model: getDefaultModelWebsite('gemini'), maxTokens: 8192 },
+    { id: 'openrouter', key: config.openrouterKey, model: getDefaultModelWebsite('openrouter'), maxTokens: 8192 },
   ];
 
   const defaultIdx = providers.findIndex(p => p.id === defaultLlm);
@@ -1195,9 +1222,9 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
       }
     } catch (err: any) {
       const msg = String(err?.message || err).toLowerCase();
-      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err);
+      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
       if (!isTransient) throw err;
-      logger.warn(`⚠️ Website LLM provider ${i + 1} indisponible, essai du suivant...`);
+      logger.warn(`⚠️ Website LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
     }
   }
 

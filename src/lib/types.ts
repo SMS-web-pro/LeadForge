@@ -66,12 +66,45 @@ export interface Lead {
 
 export type LlmProvider = 'groq' | 'gemini' | 'nvidia' | 'openrouter';
 
+export type LlmModelTier = 'free' | 'paid';
+
+export interface LlmModel {
+  id: string;
+  name: string;
+  tier: LlmModelTier;
+  maxTokens: number;
+  description: string;
+}
+
+export const LLM_MODELS: Record<LlmProvider, LlmModel[]> = {
+  groq: [
+    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 1024, description: 'Rapide, 6K TPM gratuit' },
+    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', tier: 'paid', maxTokens: 4096, description: 'Plus puissant, payant' },
+    { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', tier: 'free', maxTokens: 32768, description: 'Long context, gratuit' },
+  ],
+  nvidia: [
+    { id: 'meta/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', tier: 'free', maxTokens: 1024, description: '40 RPM gratuit' },
+    { id: 'meta/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', tier: 'paid', maxTokens: 4096, description: 'Plus puissant, payant' },
+  ],
+  gemini: [
+    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', tier: 'free', maxTokens: 1024, description: '1M TPM gratuit' },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', tier: 'paid', maxTokens: 8192, description: 'Plus rapide, payant' },
+    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', tier: 'paid', maxTokens: 8192, description: 'Le plus puissant, payant' },
+  ],
+  openrouter: [
+    { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B (Free)', tier: 'free', maxTokens: 8192, description: '100% gratuit' },
+    { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', tier: 'paid', maxTokens: 8192, description: 'Payant, plus puissant' },
+    { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', tier: 'paid', maxTokens: 8192, description: 'Payant, rapide' },
+  ],
+};
+
 export interface ApiConfig {
   groqKey: string;
   openrouterKey: string;
   geminiKey: string;
   nvidiaKey: string;
   defaultLlm: LlmProvider;
+  defaultModel: string; // Model ID for the default provider
   serperKey: string;
   unsplashKey: string;
   pexelsKey: string;
@@ -115,6 +148,7 @@ export const defaultApiConfig: ApiConfig = {
   geminiKey: '',
   nvidiaKey: '',
   defaultLlm: 'groq' as LlmProvider,
+  defaultModel: 'llama-3.1-8b-instant',
   serperKey: '',
   unsplashKey: '',
   pexelsKey: '',

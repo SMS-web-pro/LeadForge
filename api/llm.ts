@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
+    const timeout = setTimeout(() => controller.abort(), 50000); // 50s timeout (Vercel limit = 60s, on laisse 10s de marge)
 
     const response = await fetch(apiUrl, {
       method: 'POST',

@@ -1,6 +1,7 @@
 import { logger } from '../lib/logger';
 import { useState, useEffect } from 'react';
 import { ApiConfig, ApiStatus, useApiConfig, LlmProvider } from '../lib/supabase-store';
+import { LLM_MODELS } from '../lib/types';
 import SimpleSerperGenerator from './SimpleSerperGenerator';
 import { supabase } from '../lib/supabase';
 
@@ -47,6 +48,8 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
   const [testResults, setTestResults] = useState<Record<string, string>>({});
   const [showSerperManager, setShowSerperManager] = useState(false);
   const [savingSections, setSavingSections] = useState<Record<string, boolean>>({});
+  const [llmTestStatus, setLlmTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+  const [llmTestMessage, setLlmTestMessage] = useState('');
 
   // Synchroniser le state local avec les props
   useEffect(() => {
@@ -115,6 +118,59 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
   const handleLogout = async () => {
     if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
       await supabase.auth.signOut();
+    }
+  };
+
+  // Test du LLM par défaut
+  const testDefaultLlm = async () => {
+    const defaultLlm = localConfig.defaultLlm || 'groq';
+    const apiKeyMap: Record<string, string> = {
+      groq: localConfig.groqKey,
+      nvidia: localConfig.nvidiaKey,
+      gemini: localConfig.geminiKey,
+      openrouter: localConfig.openrouterKey,
+    };
+    const modelMap: Record<string, string> = {
+      groq: 'llama-3.1-8b-instant',
+      nvidia: 'meta/llama-3.1-8b-instruct',
+      gemini: 'gemini-2.0-flash-lite',
+      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+    };
+    const apiKey = apiKeyMap[defaultLlm];
+    if (!apiKey) {
+      setLlmTestStatus('error');
+      setLlmTestMessage(`❌ Aucune clé API configurée pour ${defaultLlm}`);
+      return;
+    }
+    setLlmTestStatus('testing');
+    setLlmTestMessage(`⏳ Test de ${defaultLlm} en cours...`);
+    try {
+      const res = await fetch('/api/llm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: defaultLlm,
+          apiKey,
+          body: {
+            model: modelMap[defaultLlm],
+            messages: [{ role: 'user', content: 'Say OK' }],
+            max_tokens: 10,
+          },
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content?.trim();
+        setLlmTestStatus('success');
+        setLlmTestMessage(`✅ ${defaultLlm} fonctionne ! Réponse: "${content}"`);
+      } else {
+        const err = await res.text();
+        setLlmTestStatus('error');
+        setLlmTestMessage(`❌ Erreur ${res.status}: ${err.slice(0, 100)}`);
+      }
+    } catch (e: any) {
+      setLlmTestStatus('error');
+      setLlmTestMessage(`❌ Erreur réseau: ${e.message}`);
     }
   };
 
@@ -514,6 +570,70 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                   </button>
                 );
               })}
+            </div>
+            {/* Bouton de test LLM */}
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button
+                onClick={testDefaultLlm}
+                disabled={llmTestStatus === 'testing'}
+                style={{
+                  padding: '8px 16px', borderRadius: 8, border: 'none',
+                  background: llmTestStatus === 'testing' ? C.tx3 : llmTestStatus === 'success' ? C.green : llmTestStatus === 'error' ? C.red : C.accent,
+                  color: 'white', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {llmTestStatus === 'testing' ? '⏳ Test en cours...' : '🧪 Tester le LLM par défaut'}
+              </button>
+              {llmTestMessage && (
+                <span style={{ fontSize: 11, color: llmTestStatus === 'success' ? C.green : llmTestStatus === 'error' ? C.red : C.tx2 }}>
+                  {llmTestMessage}
+                </span>
+              )}
+            </div>
+
+            {/* Sélection du modèle */}
+            <div style={{ marginTop: 16, padding: 12, background: C.bg, borderRadius: 8, border: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.tx, marginBottom: 8 }}>🎯 Modèle à utiliser</div>
+              <div style={{ fontSize: 11, color: C.tx3, marginBottom: 8 }}>
+                Sélectionnez un modèle gratuit ou payant pour le provider choisi.
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {(LLM_MODELS[config.defaultLlm || 'groq'] || []).map(model => {
+                  const isActive = (config.defaultModel || 'llama-3.1-8b-instant') === model.id;
+                  const isFree = model.tier === 'free';
+                  return (
+                    <button
+                      key={model.id}
+                      onClick={() => {
+                        handleLocalChange('defaultModel', model.id);
+                        updateConfig({ defaultModel: model.id });
+                      }}
+                      style={{
+                        padding: '8px 12px', borderRadius: 6,
+                        border: `2px solid ${isActive ? (isFree ? C.green : C.accent) : C.border}`,
+                        background: isActive ? (isFree ? C.green + '15' : C.accent + '15') : C.surface,
+                        cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 500, color: C.tx }}>
+                          {model.name}
+                        </span>
+                        <span style={{
+                          fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
+                          background: isFree ? C.green + '20' : '#F59E0B20',
+                          color: isFree ? C.green : '#B45309',
+                        }}>
+                          {isFree ? 'GRATUIT' : 'PAYANT'}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 10, color: C.tx3 }}>{model.description}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
