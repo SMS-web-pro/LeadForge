@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import * as XLSX from '@e965/xlsx';
 import { v4 as uuidv4 } from 'uuid';
 import { configService } from '../lib/supabase';
-import { Lead, mapColumns, exportLeadsCSV, useCampaigns } from '../lib/supabase-store';
+import { Lead, mapColumns, exportLeadsCSV, useCampaigns, proxyImg } from '../lib/supabase-store';
 import { eventBus, LeadForgeEvents } from '../lib/events';
 
 // CSS pour l'animation shimmer
@@ -1722,7 +1722,7 @@ export default function Dashboard({ leads, addLeads, updateLead, deleteLeads, lo
                     <div style={{ marginBottom: 24 }}>
                       <h3 style={{ fontSize: 13, fontWeight: 600, color: C.tx, marginBottom: 12 }}>🎨 Logo</h3>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: C.bg, borderRadius: 8, padding: '14px', border: `1px solid ${C.border}` }}>
-                        <img src={panelLead.logo} alt="Logo" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', border: `2px solid ${C.border}` }}
+                        <img src={proxyImg(panelLead.logo)} alt="Logo" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', border: `2px solid ${C.border}` }}
                           onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         <div style={{ fontSize: 12, color: C.tx2 }}>Logo identifié via recherche web</div>
                       </div>
@@ -1769,7 +1769,7 @@ export default function Dashboard({ leads, addLeads, updateLead, deleteLeads, lo
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                         {panelLead.images.filter(img => typeof img === 'string' && img.startsWith('http')).map((img, i) => (
                           <div key={i} style={{ borderRadius: 8, overflow: 'hidden', border: `1px solid ${C.border}`, aspectRatio: '4/3', background: C.surface2, position: 'relative' as const }}>
-                            <img src={img} alt={`Image ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            <img src={proxyImg(img)} alt={`Image ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               referrerPolicy="no-referrer"
                               onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             <a href={img} target="_blank" rel="noopener noreferrer" style={{

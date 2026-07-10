@@ -1098,7 +1098,7 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
                 padding: '12px', borderBottom: `1px solid ${C.border}`,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {l.logo && <img src={l.logo} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                  {l.logo && <img src={proxyImg(l.logo)} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
                   <div>
                     <div style={{ fontWeight: 500, fontSize: 13 }}>{l.name}</div>
                     <div style={{ fontSize: 11, color: C.tx3, marginTop: 2 }}>{l.sector || 'Professionnel'} · {l.city || '—'}</div>

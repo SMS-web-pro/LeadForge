@@ -11,21 +11,29 @@ const RATE_LIMIT_DELAY_MS = 2000; // Augmenté à 2s pour éviter 429
 const GROQ_TPM_LIMIT = 200000;
 const GROQ_TPM_BUFFER = 500;
 const RATE_LIMIT_PROVIDER_SKIP_DELAY = 10000; // Attente avant de passer au provider suivant en cas de 429 (10s)
+const NVIDIA_RPM_LIMIT = 38; // NVIDIA: 40 RPM, on reste en dessous avec marge
+const REQUEST_WINDOW_MS = 60000; // Fenêtre d'une minute pour compter les requêtes
 
 let lastApiCallTimestamp = 0;
 let tokensUsedInMinute = 0;
 let tokensResetTimestamp = 0;
+let requestsInMinute = 0;
+let requestsResetTimestamp = 0;
 
 function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4);
 }
 
-async function enforceRateLimit(promptLength: number = 0): Promise<void> {
+async function enforceRateLimit(promptLength: number = 0, provider?: string): Promise<void> {
   const now = Date.now();
   const timeSinceLastCall = now - lastApiCallTimestamp;
   if (now - tokensResetTimestamp > 60000) {
     tokensUsedInMinute = 0;
     tokensResetTimestamp = now;
+  }
+  if (now - requestsResetTimestamp > REQUEST_WINDOW_MS) {
+    requestsInMinute = 0;
+    requestsResetTimestamp = now;
   }
   const estimatedTokens = estimateTokens(promptLength.toString()) + 500;
   if (tokensUsedInMinute + estimatedTokens > GROQ_TPM_LIMIT - GROQ_TPM_BUFFER) {
@@ -33,12 +41,23 @@ async function enforceRateLimit(promptLength: number = 0): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, waitTime));
     tokensUsedInMinute = 0;
     tokensResetTimestamp = Date.now();
+    requestsInMinute = 0;
+    requestsResetTimestamp = Date.now();
+  }
+  if (provider === 'nvidia' || requestsInMinute >= NVIDIA_RPM_LIMIT) {
+    if (requestsInMinute >= NVIDIA_RPM_LIMIT) {
+      const waitTime = REQUEST_WINDOW_MS - (now - requestsResetTimestamp) + 1000;
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      requestsInMinute = 0;
+      requestsResetTimestamp = Date.now();
+    }
   }
   if (timeSinceLastCall < RATE_LIMIT_DELAY_MS) {
     const waitTime = RATE_LIMIT_DELAY_MS - timeSinceLastCall;
     await new Promise(resolve => setTimeout(resolve, waitTime));
   }
   tokensUsedInMinute += estimatedTokens;
+  requestsInMinute++;
   lastApiCallTimestamp = Date.now();
 }
 
@@ -93,7 +112,7 @@ function buildCallProvider(config: ApiConfig) {
   return async function callProvider(provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> {
     if (!apiKey) return '';
     const truncatedPrompt = '4000';
-    await enforceRateLimit(parseInt(truncatedPrompt));
+    await enforceRateLimit(parseInt(truncatedPrompt), provider);
     try {
       return await retryWithBackoff(async () => {
         const res = await fetch('/api/llm', {
@@ -133,7 +152,7 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
 
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
-    await enforceRateLimit(truncatedPrompt.length);
+    await enforceRateLimit(truncatedPrompt.length, provider);
     try {
       return await retryWithBackoff(async () => {
         const res = await fetch('/api/llm', {
@@ -198,7 +217,7 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
 
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
-    await enforceRateLimit(truncatedPrompt.length);
+    await enforceRateLimit(truncatedPrompt.length, provider);
     try {
       return await retryWithBackoff(async () => {
         const res = await fetch('/api/llm', {

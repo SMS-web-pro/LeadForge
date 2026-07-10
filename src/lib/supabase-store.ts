@@ -897,20 +897,25 @@ const RATE_LIMIT_DELAY_MS = 2000; // Délai minimum entre requêtes (2s) pour é
 const GROQ_TPM_LIMIT = 200000; // compound-beta-mini = No limit (200K buffer)
 const GROQ_TPM_BUFFER = 500; // Marge de sécurité
 const RATE_LIMIT_PROVIDER_SKIP_DELAY = 10000; // Attente avant de passer au provider suivant en cas de 429 (10s)
+const NVIDIA_RPM_LIMIT = 38; // NVIDIA: 40 RPM, on reste en dessous avec marge
+const REQUEST_WINDOW_MS = 60000; // Fenêtre d'une minute pour compter les requêtes
 
 // Timestamp du dernier appel API pour le rate limiting
 let lastApiCallTimestamp = 0;
 // Tokens utilisés dans la dernière minute
 let tokensUsedInMinute = 0;
 let tokensResetTimestamp = 0;
+// Compteur de requêtes dans la dernière minute (pour RPM)
+let requestsInMinute = 0;
+let requestsResetTimestamp = 0;
 
 // Fonction pour estimer le nombre de tokens (approximatif: 1 token ≈ 4 chars)
 function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4);
 }
 
-// Fonction pour attendre le délai minimum entre requêtes avec gestion TPM
-async function enforceRateLimit(promptLength: number = 0): Promise<void> {
+// Fonction pour attendre le délai minimum entre requêtes avec gestion TPM + RPM
+async function enforceRateLimit(promptLength: number = 0, provider?: string): Promise<void> {
   const now = Date.now();
   const timeSinceLastCall = now - lastApiCallTimestamp;
   
@@ -920,16 +925,35 @@ async function enforceRateLimit(promptLength: number = 0): Promise<void> {
     tokensResetTimestamp = now;
   }
   
+  // Réinitialiser le compteur de requêtes si une minute s'est écoulée
+  if (now - requestsResetTimestamp > REQUEST_WINDOW_MS) {
+    requestsInMinute = 0;
+    requestsResetTimestamp = now;
+  }
+  
   // Estimer les tokens pour cette requête
   const estimatedTokens = estimateTokens(promptLength.toString()) + 500; // +500 pour la réponse
   
-  // Si on dépasse la limite, attendre la fin de la minute
+  // Si on dépasse la limite TPM, attendre la fin de la minute
   if (tokensUsedInMinute + estimatedTokens > GROQ_TPM_LIMIT - GROQ_TPM_BUFFER) {
     const waitTime = 60000 - (now - tokensResetTimestamp) + 1000; // +1s de marge
     logger.log(`⏳ TPM Limit proche (${tokensUsedInMinute}/${GROQ_TPM_LIMIT}), attente de ${waitTime}ms...`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
     tokensUsedInMinute = 0;
     tokensResetTimestamp = Date.now();
+    requestsInMinute = 0;
+    requestsResetTimestamp = Date.now();
+  }
+  
+  // Si NVIDIA ou provider avec RPM limit, vérifier le compteur de requêtes
+  if (provider === 'nvidia' || (!provider && requestsInMinute >= NVIDIA_RPM_LIMIT)) {
+    if (requestsInMinute >= NVIDIA_RPM_LIMIT) {
+      const waitTime = REQUEST_WINDOW_MS - (now - requestsResetTimestamp) + 1000;
+      logger.log(`⏳ RPM Limit atteint (${requestsInMinute}/${NVIDIA_RPM_LIMIT}), attente de ${waitTime}ms...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      requestsInMinute = 0;
+      requestsResetTimestamp = Date.now();
+    }
   }
   
   // Délai minimum entre requêtes
@@ -940,6 +964,7 @@ async function enforceRateLimit(promptLength: number = 0): Promise<void> {
   }
   
   tokensUsedInMinute += estimatedTokens;
+  requestsInMinute++;
   lastApiCallTimestamp = Date.now();
 }
 
@@ -1021,7 +1046,7 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
 
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
-    await enforceRateLimit(truncatedPrompt.length);
+    await enforceRateLimit(truncatedPrompt.length, provider);
     try {
       return await retryWithBackoff(async () => {
         const res = await fetch('/api/llm', {
@@ -1106,7 +1131,7 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
   // Tous les providers passent par le proxy /api/llm pour éviter CORS
   const callProvider = async (provider: string, apiKey: string, model: string, maxTokens: number): Promise<string> => {
     if (!apiKey) return '';
-    await enforceRateLimit(truncatedPrompt.length);
+    await enforceRateLimit(truncatedPrompt.length, provider);
     try {
       return await retryWithBackoff(async () => {
         const res = await fetch('/api/llm', {

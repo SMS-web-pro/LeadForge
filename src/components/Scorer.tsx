@@ -5,7 +5,7 @@ import {
   enrichWithSerper, fetchSerperReviews, extractReviewsFromSearch,
   deepSearchContact, scrapeWebsiteForContact, extractWithLLM,
   searchLeadImages, generateWebsitePrompt,
-  searchUnsplash, searchPexels,
+  searchUnsplash, searchPexels, proxyImg,
 } from '../lib/supabase-store';
 import { testAllApis, formatTestResults } from '../lib/api-test';
 import { eventBus, LeadForgeEvents } from '../lib/events';
@@ -1079,7 +1079,7 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
               >
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                    {lead.logo && <img src={lead.logo} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                    {lead.logo && <img src={proxyImg(lead.logo)} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
                     <span style={{ fontWeight: 600, fontSize: 14, color: C.tx, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {lead.name || lead.email || '—'}
                     </span>
@@ -1201,7 +1201,7 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                   {selectedLead.logo && (
-                    <img src={selectedLead.logo} alt="Logo" style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'cover', border: `2px solid ${C.border}`, flexShrink: 0 }}
+                    <img src={proxyImg(selectedLead.logo)} alt="Logo" style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'cover', border: `2px solid ${C.border}`, flexShrink: 0 }}
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   )}
                   <div>
@@ -1411,7 +1411,7 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
                 <h3 style={{ fontSize: 14, fontWeight: 600, color: C.tx, marginBottom: 14 }}>🎨 Logo</h3>
                 {selectedLead.logo ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: C.bg, borderRadius: 8, padding: '16px', border: `1px solid ${C.border}` }}>
-                    <img src={selectedLead.logo} alt="Logo" style={{ width: 80, height: 80, borderRadius: 10, objectFit: 'cover', border: `2px solid ${C.border}` }}
+                    <img src={proxyImg(selectedLead.logo)} alt="Logo" style={{ width: 80, height: 80, borderRadius: 10, objectFit: 'cover', border: `2px solid ${C.border}` }}
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     <div style={{ fontSize: 13, color: C.tx2 }}>Logo trouvé via recherche web</div>
                   </div>
@@ -1429,7 +1429,7 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                     {selectedLead.images.filter(img => typeof img === 'string' && img.startsWith('http')).map((img, i) => (
                       <div key={i} style={{ borderRadius: 8, overflow: 'hidden', border: `1px solid ${C.border}`, aspectRatio: '4/3', background: C.surface2, position: 'relative' as const }}>
-                        <img src={img} alt={`Image ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        <img src={proxyImg(img)} alt={`Image ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           referrerPolicy="no-referrer"
                           onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         <a href={img} target="_blank" rel="noopener noreferrer" style={{
@@ -1453,7 +1453,7 @@ export default function Scorer({ leads, updateLead, apiConfig }: Props) {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
                     {selectedLead.websiteImages.filter(img => typeof img === 'string' && img.startsWith('http')).map((img, i) => (
                       <div key={i} style={{ borderRadius: 6, overflow: 'hidden', border: `1px solid ${C.border}`, aspectRatio: '1', background: C.surface2 }}>
-                        <img src={img} alt={`Site ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        <img src={proxyImg(img)} alt={`Site ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           referrerPolicy="no-referrer"
                           onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                       </div>
