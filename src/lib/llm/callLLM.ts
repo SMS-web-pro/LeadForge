@@ -10,7 +10,7 @@ const BASE_DELAY_MS = 1000;
 const RATE_LIMIT_DELAY_MS = 2000; // Augmenté à 2s pour éviter 429
 const GROQ_TPM_LIMIT = 200000;
 const GROQ_TPM_BUFFER = 500;
-const RATE_LIMIT_PROVIDER_SKIP_DELAY = 5000; // Attente avant de passer au provider suivant en cas de 429
+const RATE_LIMIT_PROVIDER_SKIP_DELAY = 10000; // Attente avant de passer au provider suivant en cas de 429 (10s)
 
 let lastApiCallTimestamp = 0;
 let tokensUsedInMinute = 0;

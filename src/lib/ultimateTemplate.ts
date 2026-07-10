@@ -747,6 +747,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23) % 10000;
 
   const logoInfo = getLogoInfo(companyName, content.sector);
+
+  // Proxy images through wsrv.nl to fix Mixed Content (HTTP→HTTPS) and CORS
+  const proxiedImg = (url: string): string => {
+    if (!url || !url.startsWith('http')) return url;
+    return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=1200&q=80&output=webp&default=1`;
+  };
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
   const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
@@ -760,7 +766,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const usedImages = new Set<string>();
   
   const heroSectorFallback = allImgs.length > 0 ? allImgs : [emergencyFallback];
-  const heroImgErr = `onerror="this.onerror=null;this.src='${heroSectorFallback[(companyHash + 1) % heroSectorFallback.length]}';this.style.opacity='0.7'"`;
+  const heroImgErr = `onerror="this.onerror=null;this.src='${proxiedImg(heroSectorFallback[(companyHash + 1) % heroSectorFallback.length])}';this.style.opacity='0.7'"`;
   
   const getImg = (slot: number): string => {
     const candidates = [...combinedImages, ...allImgs].filter(img => img && img.startsWith('https://') && !usedImages.has(img));
@@ -774,7 +780,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     if (fallbackPool.length > 0) return fallbackPool[slot % fallbackPool.length];
     return emergencyFallback;
   };
-  const imgErr = (fallbackSlot: number) => `onerror="this.onerror=null;this.src='${getImg(fallbackSlot)}';this.style.opacity='0.8'"`;
+  const imgErr = (fallbackSlot: number) => `onerror="this.onerror=null;this.src='${proxiedImg(getImg(fallbackSlot))}';this.style.opacity='0.8'"`;
 
   const fontPair = combinedHash % 4;
   const headingFont = fontPair === 0 ? "'DM Sans'" : fontPair === 1 ? "'Plus Jakarta Sans'" : fontPair === 2 ? "'Playfair Display'" : "'Cormorant Garamond'";
@@ -1184,7 +1190,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </nav>
 
     <section class="hero" id="hero">
-        <img src="${heroImage}" ${heroImgErr} alt="${companyName}" class="hero-bg">
+        <img src="${proxiedImg(heroImage)}" ${heroImgErr} alt="${companyName}" class="hero-bg">
         <div class="hero-overlay"></div>
         <div class="hero-inner">
             <div>
@@ -1240,7 +1246,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                   const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
-                    <img src="${serviceImages[i] || heroImage}" class="svc-card-img" alt="${s.name}" loading="lazy">
+                    <img src="${proxiedImg(serviceImages[i] || heroImage)}" class="svc-card-img" alt="${s.name}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
                         <h3>${s.name}</h3>
@@ -1258,7 +1264,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant > 1 ? '<div class="section-deco deco-dot" style="top:20%;right:10%;animation-delay:1.5s"></div>' : ''}
             <div class="about-grid">
                 <div class="about-img reveal">
-                    <img src="${getImg(1)}" ${imgErr(1)} alt="${companyName}">
+                    <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName}">
                     <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
@@ -1289,7 +1295,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     </div>
                 </div>
                 <div class="why-img reveal">
-                    <img src="${getImg(2)}" ${imgErr(2)} alt="${companyName}">
+                    <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}">
                     <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">${ui.whySatisfaction}</div></div>
                 </div>
             </div>
@@ -1327,11 +1333,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <p>${getGalleryDesc(content.sector, lang)}</p>
             </div>
             <div class="gal-grid reveal">
-                <div class="gal-item gal-main"><img src="${galleryImages[0] || serviceImages[0] || heroImage}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[1] || serviceImages[1] || getImg(2)}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[2] || serviceImages[2] || getImg(3)}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[3] || serviceImages[3] || getImg(4)}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${galleryImages[4] || serviceImages[4] || getImg(5)}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item gal-main"><img src="${proxiedImg(galleryImages[0] || serviceImages[0] || heroImage)}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(galleryImages[1] || serviceImages[1] || getImg(2))}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(galleryImages[2] || serviceImages[2] || getImg(3))}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(galleryImages[3] || serviceImages[3] || getImg(4))}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(galleryImages[4] || serviceImages[4] || getImg(5))}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
             </div>
         </div>
     </section>
@@ -1373,7 +1379,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="contact-form">
                     <h3>${sectorCfg.ui.contactTitle[lang]}</h3>
                     <p>${ui.formDesc}</p>
-                    <form onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='${lang === 'en' ? 'Message sent ✓' : 'Message envoyé ✓'}';this.querySelector('.form-submit').style.background='#16a34a'">
+                    <form action="javascript:void(0)" onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='${lang === 'en' ? 'Message sent ✓' : 'Message envoyé ✓'}';this.querySelector('.form-submit').style.background='#16a34a'">
                         ${sectorCfg.formFields.map(field => {
                           if (field.type === 'textarea') {
                             return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><textarea class="form-control" name="${field.name}" rows="4" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></textarea></div>`;

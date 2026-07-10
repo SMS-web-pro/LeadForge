@@ -896,7 +896,7 @@ const BASE_DELAY_MS = 1000; // 1 seconde
 const RATE_LIMIT_DELAY_MS = 2000; // Délai minimum entre requêtes (2s) pour éviter 429
 const GROQ_TPM_LIMIT = 200000; // compound-beta-mini = No limit (200K buffer)
 const GROQ_TPM_BUFFER = 500; // Marge de sécurité
-const RATE_LIMIT_PROVIDER_SKIP_DELAY = 5000; // Attente avant de passer au provider suivant en cas de 429
+const RATE_LIMIT_PROVIDER_SKIP_DELAY = 10000; // Attente avant de passer au provider suivant en cas de 429 (10s)
 
 // Timestamp du dernier appel API pour le rate limiting
 let lastApiCallTimestamp = 0;

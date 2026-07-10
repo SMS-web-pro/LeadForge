@@ -15,7 +15,6 @@
   },
   "rewrites": [
     { "source": "/docs/(.*)", "destination": "/api/docs?file=$1" },
-    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api).*)", "destination": "/index.html" }
   ],
   "headers": [
