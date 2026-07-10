@@ -7,6 +7,7 @@ import { leadsService, configService, templatesService, campaignsService, Databa
 import { isImageBlocked } from './imageFilters';
 import { apiErrorState, detectApiError } from './api-error-state';
 import { emailValidationStore } from './email-validation-store';
+import { enqueueLLMRequest } from './llm-queue';
 
 // --- SAFE HELPERS (defined once, used everywhere) ---
 export function safeStr(v: unknown): string {
@@ -1113,24 +1114,27 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
 
   logger.log(`🔄 LLM: Provider order: ${ordered.filter(p => p.key).map(p => p.id).join(' → ')}`);
 
-  for (let i = 0; i < providerOrder.length; i++) {
-    try {
-      logger.log(`🧪 LLM: Trying provider ${i + 1}/${providerOrder.length}`);
-      const result = await providerOrder[i]();
-      if (result) {
-        logger.log(`✅ LLM: Provider ${i + 1} succeeded`);
-        return result;
+  // Exécuter via la file d'attente pour garantir un seul appel à la fois
+  return enqueueLLMRequest(async () => {
+    for (let i = 0; i < providerOrder.length; i++) {
+      try {
+        logger.log(`🧪 LLM: Trying provider ${i + 1}/${providerOrder.length}`);
+        const result = await providerOrder[i]();
+        if (result) {
+          logger.log(`✅ LLM: Provider ${i + 1} succeeded`);
+          return result;
+        }
+      } catch (err: any) {
+        const msg = String(err?.message || err).toLowerCase();
+        const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
+        if (!isTransient) throw err;
+        logger.warn(`⚠️ LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
       }
-    } catch (err: any) {
-      const msg = String(err?.message || err).toLowerCase();
-      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
-      if (!isTransient) throw err;
-      logger.warn(`⚠️ LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
     }
-  }
 
-  logger.error('❌ callLLM: No LLM available (configure Gemini, NVIDIA NIM, OpenRouter or Groq)');
-  return '';
+    logger.error('❌ callLLM: No LLM available (configure Gemini, NVIDIA NIM, OpenRouter or Groq)');
+    return '';
+  });
 }
 
 // --- LLM FOR FULL WEBSITE GENERATION (higher token limit) ---
@@ -1212,24 +1216,27 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
 
   logger.log(`🎯 callLLMForWebsite: Default=${defaultLlm}, ${providerOrder.length} providers configured`);
 
-  for (let i = 0; i < providerOrder.length; i++) {
-    try {
-      logger.log(`🧪 Website LLM: Trying provider ${i + 1}/${providerOrder.length}`);
-      const result = await providerOrder[i]();
-      if (result) {
-        logger.log(`✅ Website LLM: Provider ${i + 1} succeeded`);
-        return result;
+  // Exécuter via la file d'attente pour garantir un seul appel à la fois
+  return enqueueLLMRequest(async () => {
+    for (let i = 0; i < providerOrder.length; i++) {
+      try {
+        logger.log(`🧪 Website LLM: Trying provider ${i + 1}/${providerOrder.length}`);
+        const result = await providerOrder[i]();
+        if (result) {
+          logger.log(`✅ Website LLM: Provider ${i + 1} succeeded`);
+          return result;
+        }
+      } catch (err: any) {
+        const msg = String(err?.message || err).toLowerCase();
+        const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
+        if (!isTransient) throw err;
+        logger.warn(`⚠️ Website LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
       }
-    } catch (err: any) {
-      const msg = String(err?.message || err).toLowerCase();
-      const isTransient = msg.includes('failed to fetch') || msg.includes('cors') || msg.includes('network') || isRateLimitError(err) || err?.status === 404 || err?.status === 504;
-      if (!isTransient) throw err;
-      logger.warn(`⚠️ Website LLM provider ${i + 1} indisponible (status ${err?.status || 'network'}), essai du suivant...`);
     }
-  }
 
-  logger.error('❌ callLLMForWebsite: No LLM available (configurez une clé API)');
-  return '';
+    logger.error('❌ callLLMForWebsite: No LLM available (configurez une clé API)');
+    return '';
+  });
 }
 
 // --- SERPER API ---
