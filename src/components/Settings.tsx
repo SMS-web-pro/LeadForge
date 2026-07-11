@@ -131,12 +131,14 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
       gemini: localConfig.geminiKey,
       openrouter: localConfig.openrouterKey,
     };
-    const modelMap: Record<string, string> = {
+    // Utiliser le modèle sélectionné par l'utilisateur
+    const defaultModels: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
       nvidia: 'nvidia/nemotron-3-super-120b-a12b',
       gemini: 'gemini-2.5-flash',
       openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
+    const selectedModel = localConfig.defaultModel || defaultModels[defaultLlm] || 'llama-3.1-8b-instant';
     const apiKey = apiKeyMap[defaultLlm];
     if (!apiKey) {
       setLlmTestStatus('error');
@@ -144,12 +146,12 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
       return;
     }
     setLlmTestStatus('testing');
-    setLlmTestMessage(`⏳ Test de ${defaultLlm} en cours...`);
+    setLlmTestMessage(`⏳ Test de ${defaultLlm} (${selectedModel}) en cours...`);
     try {
       const result = await callLLMDirect({
         provider: defaultLlm,
         apiKey,
-        model: modelMap[defaultLlm],
+        model: selectedModel,
         messages: [{ role: 'user', content: 'Say OK' }],
         max_tokens: 10,
       });
@@ -660,6 +662,8 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                     LLM Principal : {(config.defaultLlm || 'groq') === 'groq' ? 'Groq' : (config.defaultLlm || 'groq') === 'gemini' ? 'Gemini' : (config.defaultLlm || 'groq') === 'nvidia' ? 'NVIDIA' : 'OpenRouter'}
                   </div>
                   <div style={{ fontSize: 11, color: C.tx3 }}>
+                    Modèle : {(LLM_MODELS[config.defaultLlm || 'groq'] || []).find(m => m.id === (config.defaultModel || ''))?.name || (config.defaultModel || 'llama-3.1-8b-instant')}
+                    {' — '}
                     {(config.defaultLlm || 'groq') === 'groq' ? '6K TPM' : (config.defaultLlm || 'groq') === 'gemini' ? '1M TPM' : (config.defaultLlm || 'groq') === 'nvidia' ? '40 RPM' : 'Free'}
                   </div>
                 </div>
@@ -775,7 +779,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                 <h4 style={{ fontSize: 14, fontWeight: 600, color: C.tx, marginBottom: 8 }}>🎯 Priorités Recommandées</h4>
                 <div style={{ paddingLeft: 12, fontSize: 13, color: C.tx2, lineHeight: 1.6 }}>
                   <div style={{ marginBottom: 4 }}>1️⃣ <strong>Serper</strong> — Indispensable pour l'enrichissement</div>
-                  <div style={{ marginBottom: 4 }}>2️⃣ <strong>LLM Principal choisi</strong> — {(config.defaultLlm || 'groq') === 'groq' ? 'Groq (6K TPM)' : (config.defaultLlm || 'groq') === 'gemini' ? 'Gemini (1M TPM)' : (config.defaultLlm || 'groq') === 'nvidia' ? 'NVIDIA (40 RPM)' : 'OpenRouter (Free)'}</div>
+                  <div style={{ marginBottom: 4 }}>2️⃣ <strong>LLM Principal</strong> — {(config.defaultLlm || 'groq') === 'groq' ? 'Groq' : (config.defaultLlm || 'groq') === 'gemini' ? 'Gemini' : (config.defaultLlm || 'groq') === 'nvidia' ? 'NVIDIA' : 'OpenRouter'} / {(LLM_MODELS[config.defaultLlm || 'groq'] || []).find(m => m.id === (config.defaultModel || ''))?.name || (config.defaultModel || 'llama-3.1-8b-instant')}</div>
                   <div style={{ marginBottom: 4 }}>3️⃣ <strong>Gmail SMTP</strong> — Envoi d'emails</div>
                   <div>4️⃣ <strong>Unsplash/Pexels</strong> — Images de qualité</div>
                 </div>
