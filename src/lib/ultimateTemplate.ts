@@ -1438,28 +1438,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="devis-banner" id="devis-banner">
-        <div class="container reveal">
-            <span class="section-label">${lang === 'en' ? 'Free Quote' : 'Devis gratuit'}</span>
-            <h2>${lang === 'en' ? 'Get your free quote' : 'Demandez votre devis gratuit'}</h2>
-            <p>${lang === 'en' ? `${companyName} sends you a detailed, no-obligation quote before any work begins.` : `${companyName} vous communique un devis détaillé et sans engagement avant tout travail.`}</p>
-            <div class="devis-grid">
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="file-text" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Free quote' : 'Devis gratuit'}</div><div class="devis-label">${lang === 'en' ? 'Detailed, no obligation' : 'Détaillé, sans engagement'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="clock" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Fast response' : 'Réponse rapide'}</div><div class="devis-label">${lang === 'en' ? 'Within 2 business hours' : 'Sous 2h ouvrées'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="badge-check" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Certified pros' : 'Artisans certifiés'}</div><div class="devis-label">${lang === 'en' ? 'Qualified & insured' : 'Qualifiés et assurés'}</div></div>
-            </div>
-            <a href="#contact" class="btn-cta">${lang === 'en' ? 'Request my free quote' : 'Demander mon devis gratuit'} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>${ui.ctaTitle}</h2>
-            <p>${ui.ctaDesc}</p>
-            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
@@ -1520,7 +1498,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${aboutText}</p>
+                    <p class="footer-desc">${content.slogan}</p>
                     <div class="footer-social">
                         ${content.socialLinks?.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
                         ${content.socialLinks?.instagram ? `<a href="${content.socialLinks.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" width="18"></i></a>` : ''}

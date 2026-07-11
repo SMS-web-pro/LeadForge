@@ -75,7 +75,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'warm',
     ui: {
       svcTitle: { fr: 'Notre Carte', en: 'Our Menu' },
-      svcDesc: { fr: 'Des plats préparés avec passion et des produits frais du marché', en: 'Dishes prepared with passion and fresh market produce' },
+      svcDesc: { fr: 'Entrées, plats et desserts faits maison, à savourer sur place ou à emporter.', en: 'Starters, mains and desserts made in-house, to enjoy in or take away.' },
       contactTitle: { fr: 'Réservation', en: 'Reservation' },
       ctaText: { fr: 'Réserver une table', en: 'Reserve a Table' },
     },
@@ -116,7 +116,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'elegant',
     ui: {
       svcTitle: { fr: 'Nos Prestations', en: 'Our Services' },
-      svcDesc: { fr: 'L\'art de sublimer vos cheveux avec passion et expertise', en: 'The art of enhancing your hair with passion and expertise' },
+      svcDesc: { fr: 'Coupe, coloration et soins : une prestation sur-mesure pour sublimer votre style.', en: 'Cut, colour and care: a tailor-made service to enhance your style.' },
       contactTitle: { fr: 'Prendre Rendez-vous', en: 'Book Appointment' },
       ctaText: { fr: 'Prendre rendez-vous', en: 'Book Appointment' },
     },
@@ -156,7 +156,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'default',
     ui: {
       svcTitle: { fr: 'Nos Interventions', en: 'Our Services' },
-      svcDesc: { fr: 'Du dépannage urgent à la rénovation complète, un savoir-faire au service de vos installations', en: 'From emergency repairs to complete renovation, expertise for your plumbing' },
+      svcDesc: { fr: 'Découvrez nos prestations : dépannage, installation et rénovation réalisées par un artisan certifié.', en: 'Explore our services: repairs, installation and renovation carried out by a certified tradesperson.' },
       contactTitle: { fr: 'Demande de Devis', en: 'Request a Quote' },
       ctaText: { fr: 'Demander un devis gratuit', en: 'Get a Free Quote' },
     },
@@ -196,7 +196,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'default',
     ui: {
       svcTitle: { fr: 'Nos Services', en: 'Our Services' },
-      svcDesc: { fr: 'Des installations sûres, conformes et durables pour votre habitat et entreprise', en: 'Safe, compliant, and durable installations for your home and business' },
+      svcDesc: { fr: 'De la mise aux normes au dépannage, nos électriciens couvrent tous vos besoins de courant.', en: 'From compliance upgrades to repairs, our electricians cover all your power needs.' },
       contactTitle: { fr: 'Contactez-nous', en: 'Contact Us' },
       ctaText: { fr: 'Contactez-nous', en: 'Contact Us' },
     },
@@ -238,7 +238,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'default',
     ui: {
       svcTitle: { fr: 'Nos Prestations', en: 'Our Services' },
-      svcDesc: { fr: 'Mécanicien passionné, votre véhicule entre de bonnes mains', en: 'Passionate mechanic, your vehicle in good hands' },
+      svcDesc: { fr: 'Entretien, diagnostic et réparation toutes marques, avec un devis clair à chaque fois.', en: 'Maintenance, diagnostics and repairs for all makes, with a clear quote every time.' },
       contactTitle: { fr: 'Prendre Rendez-vous', en: 'Book Appointment' },
       ctaText: { fr: 'Demander un RDV', en: 'Book an Appointment' },
     },
@@ -279,7 +279,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'minimal',
     ui: {
       svcTitle: { fr: 'Nos Spécialités', en: 'Our Specialties' },
-      svcDesc: { fr: 'Votre santé entre les mains de professionnels qualifiés', en: 'Your health in the hands of qualified professionals' },
+      svcDesc: { fr: 'Consultations, suivi et prévention, dans un cadre médical rassurant.', en: 'Consultations, follow-up and prevention in a reassuring medical setting.' },
       contactTitle: { fr: 'Prendre Rendez-vous', en: 'Book Appointment' },
       ctaText: { fr: 'Prendre rendez-vous', en: 'Book Appointment' },
     },
@@ -319,7 +319,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'elegant',
     ui: {
       svcTitle: { fr: 'Domaines de Compétence', en: 'Practice Areas' },
-      svcDesc: { fr: 'Conseil juridique personnalisé et défense de vos droits', en: 'Personalized legal advice and defense of your rights' },
+      svcDesc: { fr: 'Droit des familles, des affaires et du travail : un accompagnement sur-mesure.', en: 'Family, business and labour law: tailored legal support.' },
       contactTitle: { fr: 'Consultation', en: 'Consultation' },
       ctaText: { fr: 'Prendre rendez-vous', en: 'Book Appointment' },
     },
@@ -360,7 +360,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'elegant',
     ui: {
       svcTitle: { fr: 'Nos Soins', en: 'Our Treatments' },
-      svcDesc: { fr: 'Un moment de pur détente pour corps et esprit', en: 'A moment of pure relaxation for body and mind' },
+      svcDesc: { fr: 'Modelage, soin du visage et détente : un rituel pour vous reconnecter à vous.', en: 'Massage, facial care and relaxation: a ritual to reconnect with yourself.' },
       contactTitle: { fr: 'Réserver un Soin', en: 'Book a Treatment' },
       ctaText: { fr: 'Réserver', en: 'Book Now' },
     },
@@ -401,7 +401,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'energetic',
     ui: {
       svcTitle: { fr: 'Nos Programmes', en: 'Our Programs' },
-      svcDesc: { fr: 'Votre coach personnel pour atteindre vos objectifs fitness', en: 'Your personal coach to reach your fitness goals' },
+      svcDesc: { fr: 'Coaching, musculation et cardio : des programmes adaptés à votre niveau.', en: 'Coaching, strength and cardio: programs tailored to your level.' },
       contactTitle: { fr: 'Essai Gratuit', en: 'Free Trial' },
       ctaText: { fr: 'Essai offert', en: 'Free Trial' },
     },
@@ -441,7 +441,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'minimal',
     ui: {
       svcTitle: { fr: 'Nos Services', en: 'Our Services' },
-      svcDesc: { fr: 'Propreté professionnelle et écologique pour vos espaces', en: 'Professional and eco-friendly cleanliness for your spaces' },
+      svcDesc: { fr: 'Entretien régulier ou ponctuel de vos bureaux et habitations, avec des produits écocertifiés.', en: 'Regular or one-off cleaning for offices and homes, using eco-certified products.' },
       contactTitle: { fr: 'Demander un Devis', en: 'Request a Quote' },
       ctaText: { fr: 'Demander un devis', en: 'Request a Quote' },
     },
@@ -481,7 +481,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'warm',
     ui: {
       svcTitle: { fr: 'Nos Services', en: 'Our Services' },
-      svcDesc: { fr: 'Création et entretien de jardins uniques et harmonieux', en: 'Creation and maintenance of unique, harmonious gardens' },
+      svcDesc: { fr: 'Taille, plantation et aménagement paysager, pour un extérieur qui vous ressemble.', en: 'Pruning, planting and landscaping for an outdoor space that is truly yours.' },
       contactTitle: { fr: 'Demander un Devis', en: 'Request a Quote' },
       ctaText: { fr: 'Demander un devis', en: 'Request a Quote' },
     },
@@ -517,7 +517,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     animationStyle: 'default',
     ui: {
       svcTitle: { fr: 'Nos Services', en: 'Our Services' },
-      svcDesc: { fr: 'Un service de qualité, à l\'écoute de vos besoins', en: 'Quality service, attentive to your needs' },
+      svcDesc: { fr: 'Une gamme complète de prestations, pensée pour répondre à vos besoins.', en: 'A complete range of services designed to meet your needs.' },
       contactTitle: { fr: 'Contactez-nous', en: 'Contact Us' },
       ctaText: { fr: 'Contactez-nous', en: 'Contact Us' },
     },
