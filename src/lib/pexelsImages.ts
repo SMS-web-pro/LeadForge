@@ -429,10 +429,14 @@ export async function getSectorImagesAsync(sector: string, leadHash: number = 0)
   const apiImages = await fetchSectorImagesFromAPI(sector, leadHash);
   if (apiImages.length >= 5) return apiImages;
 
-  // Fallback statique — varier par hash pour éviter la répétition
-  const normalizedSector = (sector || '').toLowerCase();
+  // Fallback statique — varier par hash pour éviter la répétition.
+  // Matching tolerant : singulier/pluriel et accents (ex. plombier/plomberie, électricien/electricien).
+  const norm = (s: string) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const stem = (s: string) => norm(s).slice(0, 5);
+  const ns = norm(sector);
   for (const [key, imgs] of Object.entries(STATIC_FALLBACK)) {
-    if (normalizedSector.includes(key)) {
+    const k = norm(key);
+    if (ns.includes(k) || k.includes(ns) || stem(ns) === stem(k)) {
       const offset = leadHash % imgs.length;
       return [...imgs.slice(offset), ...imgs.slice(0, offset)];
     }
