@@ -134,7 +134,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
     const modelMap: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
       nvidia: 'nvidia/nemotron-3-super-120b-a12b',
-      gemini: 'gemini-2.5-flash-lite',
+      gemini: 'gemini-2.5-flash',
       openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     const apiKey = apiKeyMap[defaultLlm];
@@ -290,7 +290,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
         if (!c.geminiKey) return { ok: false, msg: '❌ Aucune clé' };
         const res = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
           method: 'POST', headers: { 'Authorization': `Bearer ${c.geminiKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: 'gemini-2.5-flash-lite', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 10 }),
+          body: JSON.stringify({ model: 'gemini-2.5-flash', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 10 }),
         });
         if (res.ok) return { ok: true, msg: '✅ Gemini opérationnel ! 1M TPM gratuit actif.' };
         if (res.status === 429) return { ok: true, msg: '✅ Clé valide ! (limite de débit momentanée, normal)' };

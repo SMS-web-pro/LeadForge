@@ -91,9 +91,8 @@ export const LLM_MODELS: Record<LlmProvider, LlmModel[]> = {
     { id: 'meta-llama/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', tier: 'paid', maxTokens: 131072, description: 'Meta, payant' },
   ],
   gemini: [
-    { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, le plus rapide' },
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, plus intelligent' },
-    { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tier: 'paid', maxTokens: 1048576, description: 'Dernier modèle, payant' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, stable' },
+    { id: 'gemini-3-flash', name: 'Gemini 3 Flash', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, dernier' },
     { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro', tier: 'paid', maxTokens: 1048576, description: 'Le plus puissant, payant' },
   ],
   openrouter: [
