@@ -6,7 +6,7 @@ import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
-import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getWhyContent, getWhyPoints, getAboutPoints, getTrustBar, iconForService, normalizeReviewDate } from './template/helpers';
+import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getWhyContent, getWhyPoints, getAboutPoints, getTrustBar, iconForService, normalizeReviewDate, cleanText, getStats } from './template/helpers';
 export { detectLanguage };
 
 // ── AVIS FALLBACK SECTORIELS ──
@@ -179,6 +179,9 @@ export interface UltimateContent {
   hours?: string;
   establishedYear?: number;
   formKey?: string;
+  footerDesc?: string;
+  hasRealRating?: boolean;
+  hasRealReviews?: boolean;
 }
 
 const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
@@ -463,11 +466,11 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
-  const description = generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead);
+  const description = cleanText(generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead));
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
   let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
-  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
+  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47).trim();
 
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -500,8 +503,6 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     seenTexts.add(normalized);
     return true;
   });
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
 
   const computeHash = (str: string): number => {
@@ -542,11 +543,13 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const galleryImages = leadImages.slice(0, 5);
 
   const socialLinks = lead.socialLinks || {};
+  const footerDesc = cleanText(aiContent?.footerDesc) || `${companyName} — votre ${lead.sector || 'partenaire'} de confiance.`;
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
-    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
+    heroTitle, heroSubtitle: cleanText(heroSubtitle), aboutText: description, ctaText: cleanText(ctaText), slogan: cleanText(finalSlogan), heroImage, allImages,
+    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
+    footerDesc, hasRealRating: !!lead.googleRating, hasRealReviews: !!lead.googleReviews
   };
 
   const layoutVariant = combinedHash % 4;
@@ -568,7 +571,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const reviews = lead.googleReviews || 42;
   const description = generateAboutText(aiContent?.aboutText || lead.description || (lang === 'en' ? template.aboutTextEn : template.aboutText), lead);
   const heroTitle = aiContent?.heroTitle || (lang === 'en' ? template.heroTitleEn : template.heroTitle);
-  const heroSubtitle = aiContent?.heroSubtitle || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
+  const heroSubtitle = cleanText(aiContent?.heroSubtitle || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`);
   let ctaText = aiContent?.cta || (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous');
   if (ctaText.split(/\s+/).filter(Boolean).length > 4 || ctaText.length > 30) {
     ctaText = (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous');
@@ -591,7 +594,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 
   const sloganVariationsFr = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const sloganVariationsEn = ["Excellence at your service", "The art of everyday perfection", "Premium tailored solutions", "Excellence & Passion", "Your trusted partner"];
-  const finalSlogan = aiContent?.slogan || (lang === 'en' ? sloganVariationsEn[combinedHash % sloganVariationsEn.length] : sloganVariationsFr[combinedHash % sloganVariationsFr.length]);
+  const finalSlogan = cleanText(aiContent?.slogan || (lang === 'en' ? sloganVariationsEn[combinedHash % sloganVariationsEn.length] : sloganVariationsFr[combinedHash % sloganVariationsFr.length]));
 
   const sectorImages = await getSectorImagesAsync(lead.sector, combinedHash);
 
@@ -700,8 +703,6 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     seenTextsAsync.add(normalized);
     return true;
   });
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
 
   // Service images : TOUJOURS Pexels (images pro, sans texte/logo)
@@ -731,21 +732,23 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     return links;
   };
   const socialLinks = { ...deriveSocialLinks(lead.website), ...(lead.socialLinks || {}) };
+  const footerDesc = cleanText(aiContent?.footerDesc) || (lang === 'en' ? `${companyName} — your trusted ${lead.sector || 'partner'}.` : `${companyName} — votre ${lead.sector || 'partenaire'} de confiance.`);
   const content: UltimateContent = {
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
-    heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear, formKey: web3formsKey
+    heroTitle, heroSubtitle, aboutText: description, ctaText: cleanText(ctaText), slogan: finalSlogan, heroImage, allImages,
+    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear, formKey: web3formsKey,
+    footerDesc, hasRealRating: !!lead.googleRating, hasRealReviews: !!lead.googleReviews
   };
 
   return buildUltimateHTML(content, template, allImages, combinedHash % 4);
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear, formKey } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear, formKey, footerDesc, hasRealRating, hasRealReviews } = content;
   const lang = content.lang || 'fr';
   const ui = UI[lang];
-  const cleanWebsite = (website || '').split('?')[0].split('#')[0] || '#';
+  const cleanWebsite = ((website || '').replace(/^http:\/\//i, 'https://')).split('?')[0].split('#')[0] || '#';
   const sector = content.sector || '';
   const sectorCfg = getSectorConfig(sector);
   const hoursSummary = leadHours || `${ui.hoursLunVen} ${sectorCfg.defaultHours.weekdays} · ${ui.hoursSam} ${sectorCfg.defaultHours.saturday}`;
@@ -777,7 +780,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
-  const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
+  const mapQuery = encodeURIComponent(address || (city ? `Centre Ville, ${city}` : 'France'));
 
   const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="${primaryColor}"/><text x="50%" y="50%" font-family="sans-serif" font-size="45" font-weight="bold" fill="white" dominant-baseline="central" text-anchor="middle">${logoInfo.initials}</text></svg>`;
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
@@ -880,6 +883,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .btn-pri:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}
         .btn-sec{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:.95rem;transition:all .3s;backdrop-filter:blur(8px)}
         .btn-sec:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35)}
+        .hero .btn-pri{box-shadow:0 12px 34px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25)}
+        .hero .btn-sec{box-shadow:0 12px 34px rgba(0,0,0,.35)}
+        .hero h1{text-shadow:0 2px 24px rgba(0,0,0,.45)}
+        .hero-sub{text-shadow:0 1px 16px rgba(0,0,0,.4)}
         .hero-rating{display:flex;align-items:center;gap:10px}
         .hero-stars{display:flex;gap:2px;color:#fbbf24}
         .hero-rating-text{font-size:.88rem;color:rgba(255,255,255,.65)}
@@ -1021,6 +1028,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .test-date{font-size:.75rem;color:var(--text-t)}
         .test-google{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:32px;padding:16px 24px;border:1px solid var(--border);border-radius:12px;background:#fff;width:fit-content;margin-left:auto;margin-right:auto}
         .test-google-star{color:#f59e0b}
+        .test-empty{text-align:center;padding:48px 24px;border:1px dashed var(--border);border-radius:18px;background:#fff;max-width:620px;margin:0 auto}
+        .test-empty i{margin-bottom:14px}
+        .test-empty p{color:var(--text-s);font-size:1.02rem;line-height:1.7}
         @media(max-width:768px){.test-grid{grid-template-columns:1fr}.test-card{padding:24px}}
 
         .proc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:28px;position:relative}
@@ -1067,6 +1077,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .form-submit{width:100%;padding:15px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:.98rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .form-submit:hover{opacity:.92;transform:translateY(-1px)}
         .form-note{text-align:center;margin-top:12px;font-size:.78rem;color:var(--text-t)}
+        .form-check{display:flex;align-items:flex-start;gap:10px;margin:6px 0 2px;font-size:.84rem;color:var(--text-s);line-height:1.5}
+        .form-check input{margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:var(--primary)}
+        .form-check a{color:var(--primary);text-decoration:underline;font-weight:600}
 
         .contact-sidebar{display:flex;flex-direction:column;gap:22px}
         .contact-hours{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:32px}
@@ -1294,7 +1307,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                   const iconName = iconForService(s.name, content.sector) || sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
-                    <img src="${proxiedImg(svcImgs[i] || heroImage)}" ${imgErr(0)} class="svc-card-img" alt="${s.name}" loading="lazy">
+                    <img src="${proxiedImg(svcImgs[i] || heroImage)}" ${imgErr(0)} class="svc-card-img" alt="${s.name}${city ? ' à ' + city : ''}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
                         <h3>${s.name}</h3>
@@ -1313,16 +1326,15 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="about-grid">
                 <div class="about-img reveal">
                     <img src="${proxiedImg(aboutImg)}" ${imgErr(2)} alt="${companyName}" loading="lazy">
-                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
+                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : (rating ? `${rating}/5` : sectorCfg.aboutBadge.value)}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : (rating ? (lang === 'en' ? 'Google rating' : 'Avis Google') : sectorCfg.aboutBadge.label[lang])}</div></div>
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
-                    <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
+                    <h2>${content.aboutTitle || (lang === 'fr' ? `À propos de ${companyName}` : `About ${companyName}`)}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
                         ${getAboutPoints(content.sector, lang).map(p => `<li><i data-lucide="check-circle-2" width="18"></i> ${p}</li>`).join('')}
                     </ul>
-                    <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
             </div>
         </div>
@@ -1334,7 +1346,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="why-text reveal">
                 <span class="section-label">${ui.whyLabel}</span>
                 ${(() => { const wc = getWhyContent(content.sector, lang, city, companyName); return `<h2>${wc.title}</h2><p>${wc.text}</p>`; })()}
-                <a href="#contact" class="btn-pri" style="margin-top:24px">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
                 <div class="why-card reveal">
                     <div class="why-card-rating">${rating}<span>/5</span></div>
@@ -1350,56 +1361,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        ${sectorCfg.stats.map((s, i) => {
-          const raw = i === 0 ? (rating + '/5') : s.value;
+        ${getStats(content.sector, lang, rating, reviews, establishedYear, hasRealRating, hasRealReviews).map((s) => {
+          const raw = s.value;
           const m = String(raw).match(/^([\d.]+)(.*)$/);
           if (!m) {
             const safeRaw = String(raw).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return `<div class="stat-item"><div class="stat-num">${safeRaw}</div><div class="stat-label">${s.label[lang]}</div></div>`;
+            return `<div class="stat-item"><div class="stat-num">${safeRaw}</div><div class="stat-label">${s.label}</div></div>`;
           }
           const num = parseFloat(m[1]);
           const suffix = m[2];
           const dec = (m[1].includes('.')) ? m[1].split('.')[1].length : 0;
-          return `<div class="stat-item"><div class="stat-num" data-count="${num}" data-dec="${dec}" data-suffix="${suffix}">0${suffix}</div><div class="stat-label">${s.label[lang]}</div></div>`;
+          return `<div class="stat-item"><div class="stat-num" data-count="${num}" data-dec="${dec}" data-suffix="${suffix}">0${suffix}</div><div class="stat-label">${s.label}</div></div>`;
         }).join('')}
     </div>
-
-    <section class="section section-alt" id="process">
-        <div class="container" style="position:relative">
-            <div class="section-deco deco-circle" style="width:160px;height:160px;bottom:-40px;${leadVariant % 2 === 0 ? 'right:-60px' : 'left:-60px'};animation-delay:${leadVariant + 3}s"></div>
-            <div class="section-hdr reveal">
-                <span class="section-label">${ui.procLabel}</span>
-                <h2>${ui.procTitle}</h2>
-                <p>${ui.procDesc}</p>
-            </div>
-            <div class="proc-grid">
-                ${getProcessSteps(content.sector, lang).map((step, i) => `
-                <div class="proc-step reveal reveal-d${Math.min(i, 3)}"><div class="proc-num">0${i + 1}</div><h3>${step.title}</h3><p>${step.desc}</p></div>
-                `).join('')}
-            </div>
-            <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a></div>
-        </div>
-    </section>
-
-    <section class="section" id="pourquoi">
-        <div class="container" style="position:relative">
-            ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
-            <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
-            <div class="section-hdr reveal">
-                <span class="section-label">${lang === 'en' ? 'Our Promise' : 'La promesse'}</span>
-                <h2>${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</h2>
-                <p>${lang === 'en' ? 'The concrete guarantees we stand behind on every job, in your sector like the others.' : 'Les garanties concrètes que nous honorons sur chaque intervention, dans votre secteur comme les autres.'}</p>
-            </div>
-            <div class="guar-grid reveal">
-                ${getGuarantees(content.sector, lang, rating).map((g: any, i: number) => `
-                <div class="guar-card reveal-d${Math.min(i, 3)}">
-                    <div class="guar-icon"><i data-lucide="${g.icon}" width="24" height="24"></i></div>
-                    <h3>${g.title}</h3>
-                    <p class="guar-desc">${ADV_DESC[g.icon]?.[lang] || (lang === 'en' ? 'A commitment we stand behind' : 'Un engagement que nous honorons')}</p>
-                </div>`).join('')}
-            </div>
-        </div>
-    </section>
 
     <section class="section section-alt" id="testimonials">
         <div class="container">
@@ -1408,14 +1382,19 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <h2>${ui.testTitle}</h2>
                 <p>${ui.testDesc}</p>
             </div>
+            ${testimonials.length === 0 ? `
+            <div class="test-empty reveal">
+                <i data-lucide="star" width="30" style="color:#f59e0b"></i>
+                <p>${lang === 'en' ? 'Google reviews will appear here once collected from our customers.' : 'Les avis Google s\'afficheront ici dès qu\'ils seront collectés auprès de nos clients.'}</p>
+            </div>` : `
             <div class="test-grid">
                 ${testimonials.slice(0,6).map((t,i) => `
                 <div class="test-card reveal reveal-d${(i % 3) + 1}">
                     <div><div class="test-stars">${Array(t.rating).fill('<i data-lucide="star" fill="currentColor" width="15"></i>').join('')}</div><p class="test-text">"${t.text}"</p></div>
                     <div class="test-author"><div class="test-avatar">${t.author.charAt(0)}</div><div><div class="test-name">${t.author}</div>${t.date?`<div class="test-date">${t.date}</div>`:''}</div></div>
                 </div>`).join('')}
-            </div>
-            <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>
+            </div>`}
+            ${hasRealRating ? `<div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>` : ''}
         </div>
     </section>
 
@@ -1450,14 +1429,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>${ui.ctaTitle}</h2>
-            <p>${ui.ctaDesc}</p>
-            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
@@ -1486,6 +1457,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                           }
                           return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><input class="${field.type}" class="form-control" name="${field.name}" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></div>`;
                         }).join('')}
+                        <div class="form-check">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <label for="consent">${lang === 'en' ? 'I accept the ' : 'J\'accepte la '}<a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${lang === 'en' ? 'privacy policy' : 'politique de confidentialité'}</a>${lang === 'en' ? '' : ' *'}</label>
+                        </div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> ${ui.formSubmit}</button>
                         <p class="form-note">${formKey ? ui.formNote : (lang === 'en' ? 'Form not configured — please call us.' : 'Formulaire non configuré — appelez-nous.')}</p>
                     </form>
@@ -1518,7 +1493,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${aboutText}</p>
+                    <p class="footer-desc">${footerDesc}</p>
                     <div class="footer-social">
                         ${content.socialLinks?.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
                         ${content.socialLinks?.instagram ? `<a href="${content.socialLinks.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" width="18"></i></a>` : ''}
