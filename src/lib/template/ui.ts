@@ -17,7 +17,7 @@ export const UI = {
     galleryLabel: 'Découvrir', galleryDesc: 'Quelques moments qui reflètent notre univers et notre engagement.',
     testLabel: 'Avis Clients', testTitle: 'Ce que disent nos clients', testDesc: 'La satisfaction de nos clients est notre meilleure carte de visite.', testGoogle: 'sur Google', testBasé: 'Basé sur', testAvis: 'avis vérifiés',
     ctaTitle: 'Envie d\'en savoir plus ?', ctaDesc: 'Contactez-nous pour découvrir comment nous pouvons vous accompagner.',
-    contactLabel: 'Contact & Intervention', contactTitle: 'Parlons de votre projet', contactDesc: 'Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.',
+    contactLabel: 'Devis & intervention', contactTitle: 'Obtenez votre devis gratuit', contactDesc: 'Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.',
     formTitle: 'Envoyez votre demande', formDesc: 'Nous vous répondrons dans les plus brefs délais.', formName: 'Nom complet *', formPhone: 'Téléphone *', formEmail: 'Email', formMsg: 'Décrivez votre besoin *', formSubmit: 'Envoyer ma Demande →', formNote: 'Nous vous répondrons dans les meilleurs délais.',
     hoursTitle: 'Horaires d\'Ouverture', hoursLunVen: 'Lundi – Vendredi', hoursSam: 'Samedi', hoursDim: 'Dimanche',
     contactCall: 'Nous Appeler', footerNav: 'Navigation', footerContact: 'Contact', footerPrivacy: 'Politique de confidentialité',

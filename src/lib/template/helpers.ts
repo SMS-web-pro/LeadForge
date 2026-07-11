@@ -83,7 +83,7 @@ export function getProcessSteps(sector: string, lang: 'fr' | 'en' = 'fr'): Array
 export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr', rating: number = 5): Array<{ title: string; icon: string }> {
   const s = (sector || '').toLowerCase();
   const g: Record<string, Array<{ title: string; icon: string; titleEn: string }>> = {
-    plomb: [{ title: 'Garantie Décennale', icon: 'shield-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Artisan Qualifié', icon: 'badge-check', titleEn: 'Certified Pro' }],
+    plomberie: [{ title: 'Garantie Décennale', icon: 'shield-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Artisan Qualifié', icon: 'badge-check', titleEn: 'Certified Pro' }],
     electricien: [{ title: 'Consuel Certifié', icon: 'shield-check', titleEn: 'Consuel Certified' }, { title: 'Garantie Décennale', icon: 'badge-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }],
     coiffeur: [{ title: 'Produits Bio', icon: 'leaf', titleEn: 'Organic Products' }, { title: 'Stérilisation Outils', icon: 'sparkles', titleEn: 'Sterilized Tools' }, { title: 'Formation Continue', icon: 'scissors', titleEn: 'Ongoing Training' }, { title: 'Satisfait ou Refait', icon: 'heart', titleEn: 'Satisfaction Guaranteed' }],
     restaurant: [{ title: 'Produits Frais', icon: 'leaf', titleEn: 'Fresh Ingredients' }, { title: 'Service Rapide', icon: 'clock', titleEn: 'Fast Service' }, { title: `Avis ${rating}/5`, icon: 'star', titleEn: `${rating}/5 Rating` }, { title: 'Parking Gratuit', icon: 'car', titleEn: 'Free Parking' }],
@@ -106,7 +106,7 @@ export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr', rating: 
 export function getAboutPoints(sector: string, lang: 'fr' | 'en' = 'fr'): string[] {
   const s = (sector || '').toLowerCase();
   const p: Record<string, { fr: string[]; en: string[] }> = {
-    plomb: { fr: ['Diagnostic complet avant chaque intervention', 'Matériel professionnel et pièces garanties', 'Intervention propre, dans le respect des délais'], en: ['Full diagnosis before any work', 'Professional equipment and guaranteed parts', 'Clean work, respecting agreed schedules'] },
+    plomberie: { fr: ['Diagnostic complet avant chaque intervention', 'Matériel professionnel et pièces garanties', 'Intervention propre, dans le respect des délais'], en: ['Full diagnosis before any work', 'Professional equipment and guaranteed parts', 'Clean work, respecting agreed schedules'] },
     electricien: { fr: ['Diagnostic complet de votre installation', 'Travaux conformes NFC 15-100', 'Conseils pour réduire votre consommation'], en: ['Full diagnosis of your installation', 'Work compliant with NFC 15-100', 'Tips to lower your energy use'] },
     coiffeur: { fr: ['Analyse personnalisée de votre morphologie', 'Produits de qualité, respectueux de vos cheveux', 'Conseils entretien adaptés à votre vie'], en: ['Personalized analysis of your features', 'Quality products, kind to your hair', 'Care tips suited to your lifestyle'] },
     restaurant: { fr: ['Sélection de produits frais chaque jour', 'Carte évolutive au fil des saisons', 'Accueil chaleureux et service attentionné'], en: ['Fresh produce selected daily', 'Seasonal menu that evolves', 'Warm welcome and attentive service'] },
@@ -129,7 +129,7 @@ export function getAboutPoints(sector: string, lang: 'fr' | 'en' = 'fr'): string
 export function getWhyPoints(sector: string, lang: 'fr' | 'en' = 'fr'): string[] {
   const s = (sector || '').toLowerCase();
   const p: Record<string, { fr: string[]; en: string[] }> = {
-    plomb: { fr: ['Intervention soignée et durable', 'Astreinte 7j/7 en urgence', 'Artisan certifié et assuré'], en: ['Careful, lasting repairs', '24/7 emergency call-out', 'Certified, insured tradesperson'] },
+    plomberie: { fr: ['Devis systématiquement gratuit', 'Intervention 7j/7 en urgence', 'Artisan certifié et assuré'], en: ['Quote always free', '24/7 emergency service', 'Certified, insured tradesperson'] },
     electricien: { fr: ['Devis systématiquement gratuit', 'Astreinte 24h/24 en urgence', 'Travail garanti décennale'], en: ['Quote always free', '24/7 emergency call-out', 'Work backed by 10-year warranty'] },
     coiffeur: { fr: ['Devis offert sur place', 'Accueil sans rendez-vous possible', 'Hygiène et stérilisation certifiées'], en: ['Free on-site quote', 'Walk-ins welcome', 'Certified hygiene & sterilization'] },
     restaurant: { fr: ['Menu enfant disponible', 'Espace groupe privatisable', 'Réservation en ligne possible'], en: ['Kids menu available', 'Private group space', 'Online booking available'] },
@@ -234,7 +234,7 @@ export function getLogoInfo(name: string, sector: string = 'default') {
   const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
   let text = name;
   if (words.length === 1) {
-    const suffixes: Record<string, string> = { electricien: ' Électricité', plomb: ' Plomberie', garage: ' Automobile' };
+    const suffixes: Record<string, string> = { electricien: ' Électricité', plomberie: ' Plomberie', garage: ' Automobile' };
     for (const [key, suffix] of Object.entries(suffixes)) {
       if (sector.toLowerCase().includes(key)) { text = name + suffix; break; }
     }
@@ -314,9 +314,9 @@ export function getWhyContent(sector: string, lang: 'fr' | 'en', city: string, c
   const name = companyName || '';
 
   const fr: Record<string, { title: string; text: string }> = {
-    plomb: {
-      title: 'L\'expertise au service de votre sérénité',
-      text: `Faire appel à ${name}, c'est choisir un partenaire de confiance pour votre habitat. Nos artisans certifiés interviennent avec un matériel adapté, respectent les normes en vigueur et garantissent chaque intervention. À ${c}, votre tranquillité d'esprit est notre priorité.`,
+    plomberie: {
+      title: 'Notre méthode en 4 étapes',
+      text: `Chaque intervention suit un protocole rigoureux : diagnostic précis sur place, devis transparent avant tout travail, intervention soignée aux normes en vigueur, et suivi qualité après réalisation. À ${c}, nous privilégions la réactivité et la durabilité de nos réparations.`,
     },
     electricien: {
       title: 'Une électricité sûre et conforme',
@@ -361,9 +361,9 @@ export function getWhyContent(sector: string, lang: 'fr' | 'en', city: string, c
   };
 
   const en: Record<string, { title: string; text: string }> = {
-    plomb: {
-      title: 'Expertise for your peace of mind',
-      text: `Choosing ${name} means choosing a trusted partner for your home. Our certified tradespeople work with the right tools, respect current standards and guarantee every job. In ${c}, your peace of mind is our priority.`,
+    plomberie: {
+      title: 'Our 4-step method',
+      text: `Every job follows a rigorous protocol: precise on-site diagnosis, transparent quote before any work, careful intervention to current standards, and quality follow-up after completion. In ${c}, we prioritize responsiveness and durable repairs.`,
     },
     electricien: {
       title: 'Safe and compliant electrical work',
@@ -408,7 +408,7 @@ export function getWhyContent(sector: string, lang: 'fr' | 'en', city: string, c
   };
 
   const pick = lang === 'en' ? en : fr;
-  if (s.includes('plomb') || s.includes('chauffage') || s.includes('clim')) return pick.plomb;
+  if (s.includes('plomb') || s.includes('chauffage') || s.includes('clim')) return pick.plomberie;
   if (s.includes('électr') || s.includes('electric')) return pick.electricien;
   if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return pick.coiffeur;
   if (s.includes('restaurant') || s.includes('cuisin') || s.includes('traiteur')) return pick.restaurant;
