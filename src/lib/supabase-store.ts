@@ -1090,7 +1090,7 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
       nvidia: 'nvidia/nemotron-3-super-120b-a12b',
-      gemini: 'gemini-2.0-flash-lite',
+      gemini: 'gemini-2.5-flash-lite',
       openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     return defaults[providerId] || 'llama-3.1-8b-instant';
@@ -1191,7 +1191,7 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
       nvidia: 'nvidia/nemotron-3-super-120b-a12b',
-      gemini: 'gemini-2.0-flash-lite',
+      gemini: 'gemini-2.5-flash-lite',
       openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     return defaults[providerId] || 'llama-3.1-8b-instant';

@@ -91,10 +91,10 @@ export const LLM_MODELS: Record<LlmProvider, LlmModel[]> = {
     { id: 'meta-llama/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', tier: 'paid', maxTokens: 131072, description: 'Meta, payant' },
   ],
   gemini: [
-    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit' },
-    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', tier: 'free', maxTokens: 1048576, description: 'Rapide, 1M ctx, gratuit' },
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', tier: 'free', maxTokens: 1048576, description: 'Stable, 1M ctx, gratuit' },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tier: 'paid', maxTokens: 1048576, description: 'Le plus puissant, payant' },
+    { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, le plus rapide' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tier: 'free', maxTokens: 1048576, description: '1M ctx, gratuit, plus intelligent' },
+    { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tier: 'paid', maxTokens: 1048576, description: 'Dernier modèle, payant' },
+    { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro', tier: 'paid', maxTokens: 1048576, description: 'Le plus puissant, payant' },
   ],
   openrouter: [
     { id: 'nvidia/nemotron-3-ultra-550b-a55b:free', name: 'Nemotron 3 Ultra 550B (Free)', tier: 'free', maxTokens: 1000000, description: 'MoE 55B actifs, 1M ctx' },
