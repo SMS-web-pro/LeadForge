@@ -1572,12 +1572,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
         // Stats count-up animation
         const statNums = document.querySelectorAll('.stat-num[data-count]');
-        const runCount = (el: any) => {
+        const runCount = (el) => {
           const target = parseFloat(el.getAttribute('data-count')) || 0;
           const dec = parseInt(el.getAttribute('data-dec') || '0', 10);
           const suffix = el.getAttribute('data-suffix') || '';
           const dur = 1400; const start = performance.now();
-          const tick = (now: number) => {
+          const tick = (now) => {
             const p = Math.min(1, (now - start) / dur);
             const val = target * (1 - Math.pow(1 - p, 3));
             el.textContent = (dec > 0 ? val.toFixed(dec) : Math.round(val).toString()) + suffix;
@@ -1587,12 +1587,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         };
         if ('IntersectionObserver' in window && statNums.length) {
           const so = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { runCount(e.target); so.unobserve(e.target); } }); }, { threshold: 0.4 });
-          statNums.forEach((el: any) => so.observe(el));
+          statNums.forEach((el) => so.observe(el));
         } else {
-          statNums.forEach((el: any) => runCount(el));
+          statNums.forEach((el) => runCount(el));
         }
         // FAQ accordion
-        document.querySelectorAll('.faq-q').forEach((btn: any) => {
+        document.querySelectorAll('.faq-q').forEach((btn) => {
           btn.addEventListener('click', () => {
             const item = btn.closest('.faq-item');
             const open = item.classList.toggle('open');
