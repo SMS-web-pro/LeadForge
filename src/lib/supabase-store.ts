@@ -2271,12 +2271,13 @@ export function exportLeadsCSV(leads: Lead[], filename: string = 'leads_export.c
 
 // --- UNSPLASH API ---
 export async function searchUnsplash(key: string, query: string): Promise<string[]> {
-  if (!key) return [];
+  const k = (key || '').trim();
+  if (!k) return [];
   try {
     const page = Math.floor(Math.random() * 3) + 1;
-    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${page}`, {
-      headers: { 'Authorization': `Client-ID ${key}` },
-    });
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${page}`;
+    let res = await fetch(url, { headers: { 'Authorization': `Client-ID ${k}` } });
+    if (res.status === 401) res = await fetch(url, { headers: { 'Authorization': `Bearer ${k}` } });
     if (res.ok) {
       const data = await res.json();
       return (data.results || []).map((r: { urls: { regular: string } }) => safeStr(r?.urls?.regular)).filter(Boolean);

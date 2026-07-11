@@ -482,23 +482,29 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
           helpText: 'unsplash.com/developers → Create App → Access Key' },
       ],
       testFn: async (c) => {
-        if (!c.unsplashKey) return { ok: false, msg: '❌ Aucune clé' };
+        const key = (c.unsplashKey || '').trim();
+        if (!key) return { ok: false, msg: '❌ Aucune clé' };
         // Validation du format : la clé Unsplash fait entre 40 et 60 caractères alphanumériques
-        if (c.unsplashKey.length < 20) return { ok: false, msg: '❌ Format invalide — entrez l\'Access Key (pas l\'App ID ni la Secret Key)' };
-        try {
-          const res = await fetch(`https://api.unsplash.com/photos/random?count=1`, {
-            headers: { 'Authorization': `Client-ID ${c.unsplashKey}` },
+        if (key.length < 20) return { ok: false, msg: '❌ Format invalide — entrez l\'Access Key (pas l\'App ID ni la Secret Key)' };
+        const tryAuth = async (scheme: 'Client-ID' | 'Bearer') => {
+          return fetch(`https://api.unsplash.com/photos/random?count=1`, {
+            headers: { 'Authorization': `${scheme} ${key}` },
           });
+        };
+        try {
+          let res = await tryAuth('Client-ID');
+          // Nouveau format Unsplash : la clé fournie est parfois un token Bearer
+          if (res.status === 401) res = await tryAuth('Bearer');
           if (res.ok) return { ok: true, msg: '✅ Unsplash opérationnel ! Images pro activées.' };
-          if (res.status === 401) return { ok: false, msg: '❌ Clé invalide — vérifiez que vous avez copié l\'Access Key (et non la Secret Key)' };
-          if (res.status === 403) return { ok: false, msg: '❌ App non activée — vérifiez sur unsplash.com/developers' };
+          if (res.status === 401) return { ok: false, msg: '❌ Clé rejetée — vous avez probablement collé la SECRET KEY (ou un token expiré). Dans unsplash.com/developers, copiez la 1re clé affichée « Access Key » (~43 caractères), pas la Secret Key. Aucun espace avant/après.' };
+          if (res.status === 403) return { ok: false, msg: '❌ App non activée — vérifiez sur unsplash.com/developers (onglet Apps → votre app)' };
           if (res.status === 429) return { ok: true, msg: '✅ Clé valide ! (limite 50 req/h atteinte, normal)' };
           return { ok: false, msg: `❌ Erreur ${res.status}` };
         } catch (err: unknown) {
           // CORS bloqué depuis le navigateur → valider le format uniquement
           if ((err as Error).message?.includes('fetch') || (err as Error).message?.includes('Failed') || (err as Error).message?.includes('network')) {
             // Format OK si longueur correcte (Access Key Unsplash = ~43 chars)
-            if (c.unsplashKey.length >= 30) {
+            if (key.length >= 30) {
               return { ok: true, msg: '✅ Format clé valide — CORS bloqué en test local, fonctionnel en production. Clé sauvegardée !' };
             }
           }
