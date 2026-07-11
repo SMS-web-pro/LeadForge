@@ -225,6 +225,17 @@
         .btn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(0,0,0,.2)}
         @media(max-width:768px){.cta-banner{padding:60px 0}.cta-banner h2{font-size:1.5rem}.btn-cta{padding:14px 28px;font-size:.95rem}}
 
+        .devis-banner{background:linear-gradient(135deg,var(--primary),var(--secondary));padding:90px 0;text-align:center;color:#fff;position:relative;overflow:hidden}
+        .devis-banner::before{content:'';position:absolute;top:-50%;left:-20%;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.06)}
+        .devis-banner .section-label{color:rgba(255,255,255,.7)}
+        .devis-banner h2{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;margin-bottom:18px;letter-spacing:-.02em;position:relative;z-index:1}
+        .devis-banner p{color:rgba(255,255,255,.85);margin-bottom:36px;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.7;position:relative;z-index:1}
+        .devis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:880px;margin:0 auto 40px;position:relative;z-index:1}
+        .devis-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:28px 18px;backdrop-filter:blur(10px)}
+        .devis-price{font-size:2.4rem;font-weight:800;line-height:1;font-family:'Playfair Display'}
+        .devis-label{font-size:.85rem;margin-top:8px;opacity:.85}
+        @media(max-width:768px){.devis-banner{padding:60px 0}.devis-grid{grid-template-columns:1fr}}
+
         .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px}
         .contact-form{background:#fff;border:1px solid var(--border);border-radius:20px;padding:44px;box-shadow:0 4px 20px rgba(0,0,0,.04)}
         .contact-form h3{font-size:1.45rem;font-weight:800;margin-bottom:8px}
@@ -379,12 +390,12 @@
             <div class="info-bar-item"><i data-lucide="phone" width="14"></i> <a href="tel:+33472000000">+33 4 72 00 00 00</a></div>
             <div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:contact@proxieau.fr">contact@proxieau.fr</a></div>
             <div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> 5 Cours Lafayette, Lyon</div>
-            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Ven 08h-18h · Sam 09h-14h</div>
+            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Sam 07h30-20h</div>
             <div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> 4.6/5 sur Google (89 avis vérifiés)</div>
             <div class="info-bar-item"><i data-lucide="phone" width="14"></i> <a href="tel:+33472000000">+33 4 72 00 00 00</a></div>
             <div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:contact@proxieau.fr">contact@proxieau.fr</a></div>
             <div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> 5 Cours Lafayette, Lyon</div>
-            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Ven 08h-18h · Sam 09h-14h</div>
+            <div class="info-bar-item"><i data-lucide="clock" width="14"></i> Lun-Sam 07h30-20h</div>
             <div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> 4.6/5 sur Google (89 avis vérifiés)</div>
         </div>
     </div>
@@ -408,7 +419,7 @@
     </nav>
 
     <section class="hero" id="hero">
-        <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.7'" alt="Proxi Eau Plomberie" class="hero-bg">
+        <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.7'" alt="Proxi Eau Plomberie" class="hero-bg">
         <div class="hero-overlay"></div>
         <div class="hero-inner">
             <div>
@@ -440,16 +451,16 @@
     <div class="trust-bar">
         <div class="trust-inner">
             
-            <div class="trust-item"><i data-lucide="badge-check" width="16"></i> Équipe Qualifiée</div>
+            <div class="trust-item"><i data-lucide="star" width="16"></i> Avis Google 4.8/5</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="file-text" width="16"></i> Devis Clair</div>
+            <div class="trust-item"><i data-lucide="clock" width="16"></i> Intervention < 2h</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="clock" width="16"></i> Réactivité</div>
+            <div class="trust-item"><i data-lucide="shield-check" width="16"></i> Garantie décennale</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="heart" width="16"></i> Satisfaction Client</div>
+            <div class="trust-item"><i data-lucide="file-text" width="16"></i> Devis gratuit</div>
             
             
         </div>
@@ -460,32 +471,32 @@
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:-80px;left:auto;animation-delay:0s"></div>
             <div class="section-deco deco-line" style="width:180px;top:40%;left:-40px;animation-delay:2s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Nos Interventions</span>
+                <span class="section-label">Nos prestations</span>
                 <h2>Nos Interventions</h2>
                 <p>Du dépannage urgent à la rénovation complète, un savoir-faire au service de vos installations</p>
             </div>
             <div class="svc-grid">
                 
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Dépannage 24h/24" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Dépannage 24h/24" loading="lazy">
                     <div class="svc-card-body">
-                        <div class="svc-icon"><i data-lucide="droplets" width="22" height="22"></i></div>
+                        <div class="svc-icon"><i data-lucide="wrench" width="22" height="22"></i></div>
                         <h3>Dépannage 24h/24</h3>
                         <p>Intervention d'urgence sur toutes fuites et pannes</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Installation Sanitaire" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504307651254-35680f356dfd%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Installation Sanitaire" loading="lazy">
                     <div class="svc-card-body">
-                        <div class="svc-icon"><i data-lucide="wrench" width="22" height="22"></i></div>
+                        <div class="svc-icon"><i data-lucide="bath" width="22" height="22"></i></div>
                         <h3>Installation Sanitaire</h3>
                         <p>Pose et remplacement de vos appareils</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Chauffage & Chaudière" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Chauffage & Chaudière" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="thermometer" width="22" height="22"></i></div>
                         <h3>Chauffage & Chaudière</h3>
@@ -494,16 +505,16 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Détection de Fuites" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Détection de Fuites" loading="lazy">
                     <div class="svc-card-body">
-                        <div class="svc-icon"><i data-lucide="scan-line" width="22" height="22"></i></div>
+                        <div class="svc-icon"><i data-lucide="droplets" width="22" height="22"></i></div>
                         <h3>Détection de Fuites</h3>
                         <p>Localisation précise sans casse</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504307651254-35680f356dfd%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Rénovation Salle de Bain" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Rénovation Salle de Bain" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="bath" width="22" height="22"></i></div>
                         <h3>Rénovation Salle de Bain</h3>
@@ -512,7 +523,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Entretien Annuel" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" class="svc-card-img" alt="Entretien Annuel" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="settings" width="22" height="22"></i></div>
                         <h3>Entretien Annuel</h3>
@@ -530,7 +541,7 @@
             
             <div class="about-grid">
                 <div class="about-img reveal">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
                     <div class="about-badge"><div class="about-badge-num">11+</div><div class="about-badge-text">Ans d'expérience</div></div>
                 </div>
                 <div class="about-text reveal">
@@ -553,15 +564,11 @@
         <div class="container">
             <div class="why-grid">
                 <div class="why-text reveal">
-                    <span class="section-label">Pourquoi nous choisir ?</span>
-                    <h2>Notre Approche</h2>
-                    <p>Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain....</p>
-                    <div class="why-stats">
-                        <div class="why-stat"><div class="why-stat-num">4.8/5</div><div class="why-stat-label">Note Google</div></div><div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">Années</div></div><div class="why-stat"><div class="why-stat-num"><2h</div><div class="why-stat-label">Délai d'intervention</div></div><div class="why-stat"><div class="why-stat-num">24h/24</div><div class="why-stat-label">Disponible</div></div>
-                    </div>
+                <span class="section-label">Pourquoi nous choisir ?</span>
+                <h2>Notre méthode en 4 étapes</h2><p>Chaque intervention suit un protocole rigoureux : diagnostic précis sur place, devis transparent avant tout travail, intervention soignée aux normes en vigueur, et suivi qualité après réalisation. À Lyon, nous privilégions la réactivité et la durabilité de nos réparations.</p>
                 </div>
                 <div class="why-img reveal">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
                     <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">Satisfaction</div></div>
                 </div>
             </div>
@@ -569,7 +576,7 @@
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">4.8/5</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Années</div></div><div class="stat-item"><div class="stat-num"><2h</div><div class="stat-label">Délai d'intervention</div></div><div class="stat-item"><div class="stat-num">24h/24</div><div class="stat-label">Disponible</div></div>
+        <div class="stat-item"><div class="stat-num">4.6/5</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Années</div></div><div class="stat-item"><div class="stat-num"><2h</div><div class="stat-label">Délai d'intervention</div></div><div class="stat-item"><div class="stat-num">24h/24</div><div class="stat-label">Disponible</div></div>
     </div>
 
     <section class="section section-alt" id="process">
@@ -582,15 +589,15 @@
             </div>
             <div class="proc-grid">
                 
-                <div class="proc-step reveal reveal-d0"><div class="proc-num">01</div><h3>Contact</h3><p>Échangez avec nous pour nous exposer votre besoin.</p></div>
+                <div class="proc-step reveal reveal-d0"><div class="proc-num">01</div><h3>Appel</h3><p>Contactez-nous pour décrire votre problème.</p></div>
                 
-                <div class="proc-step reveal reveal-d1"><div class="proc-num">02</div><h3>Analyse</h3><p>Nous étudions votre demande et identifions la meilleure solution.</p></div>
+                <div class="proc-step reveal reveal-d1"><div class="proc-num">02</div><h3>Diagnostic sur place</h3><p>Un diagnostic précis réalisé à votre domicile.</p></div>
                 
-                <div class="proc-step reveal reveal-d2"><div class="proc-num">03</div><h3>Proposition</h3><p>Recevez une offre claire, adaptée à votre budget et vos attentes.</p></div>
+                <div class="proc-step reveal reveal-d2"><div class="proc-num">03</div><h3>Devis gratuit</h3><p>Un devis transparent avant tout travail.</p></div>
                 
-                <div class="proc-step reveal reveal-d3"><div class="proc-num">04</div><h3>Réalisation</h3><p>Notre équipe intervient avec soin et professionnalisme.</p></div>
+                <div class="proc-step reveal reveal-d3"><div class="proc-num">04</div><h3>Intervention</h3><p>Une intervention soignée aux normes en vigueur.</p></div>
                 
-                <div class="proc-step reveal reveal-d3"><div class="proc-num">05</div><h3>Suivi</h3><p>Nous assurons un suivi qualité pour votre entière satisfaction.</p></div>
+                <div class="proc-step reveal reveal-d3"><div class="proc-num">05</div><h3>Garanti</h3><p>Un suivi qualité après la réalisation.</p></div>
                 
             </div>
             <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">Demander un devis gratuit <i data-lucide="arrow-right" width="16"></i></a></div>
@@ -643,27 +650,27 @@
             <div class="test-grid">
                 
                 <div class="test-card reveal reveal-d1">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Une expérience tout simplement majestueuse..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Une expérience tout simplement majestueuse, du premier contact jusqu'à la réalisation. Je recommande les yeux fermés."</p></div>
                     <div class="test-author"><div class="test-avatar">E</div><div><div class="test-name">Emma L.</div><div class="test-date">Il y a 1 semaine</div></div></div>
                 </div>
                 <div class="test-card reveal reveal-d2">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Service d'excellence du début à la fin..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Service d'excellence du début à la fin. Une équipe professionnelle, à l'écoute et ponctuelle."</p></div>
                     <div class="test-author"><div class="test-avatar">A</div><div><div class="test-name">Arthur D.</div><div class="test-date">Il y a 2 semaines</div></div></div>
                 </div>
                 <div class="test-card reveal reveal-d3">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Je recommande vivement cette entreprise..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Je recommande vivement cette entreprise : travail soigné, devis clair et suivi impeccable."</p></div>
                     <div class="test-author"><div class="test-avatar">S</div><div><div class="test-name">Sophie M.</div><div class="test-date">Il y a 3 semaines</div></div></div>
                 </div>
                 <div class="test-card reveal reveal-d1">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Professionnalisme et expertise remarquables..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Professionnalisme et expertise remarquables. On sent le savoir-faire à chaque étape."</p></div>
                     <div class="test-author"><div class="test-avatar">L</div><div><div class="test-name">Lucas P.</div><div class="test-date">Il y a 1 mois</div></div></div>
                 </div>
                 <div class="test-card reveal reveal-d2">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Un service client irréprochable..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Un service client irréprochable, réactif et bienveillant. Merci pour votre sérieux."</p></div>
                     <div class="test-author"><div class="test-avatar">M</div><div><div class="test-name">Marie B.</div><div class="test-date">Il y a 1 mois</div></div></div>
                 </div>
                 <div class="test-card reveal reveal-d3">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Excellence et qualité au rendez-vous..."</p></div>
+                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Excellence et qualité au rendez-vous. Le résultat dépasse mes attentes, bravo !"</p></div>
                     <div class="test-author"><div class="test-avatar">T</div><div><div class="test-name">Thomas R.</div><div class="test-date">Il y a 2 mois</div></div></div>
                 </div>
             </div>
@@ -681,22 +688,56 @@
             <div class="faq-wrap reveal">
                 
                 <details class="faq-item">
-                    <summary class="faq-q">Intervenez-vous à Lyon ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, Proxi Eau Plomberie intervient à Lyon et ses alentours. Contactez-nous pour confirmer la disponibilité.</div>
+                    <summary class="faq-q">Intervenez-vous dans Lyon et les arrondissements alentour ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, nous intervenons à Lyon et dans les communes voisines. Envoyez-nous votre adresse et nous confirmons la disponibilité.</div>
                 </details>
                 <details class="faq-item">
-                    <summary class="faq-q">Proposez-vous un devis gratuit ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nous établissons systématiquement un devis détaillé et transparent, sans engagement.</div>
+                    <summary class="faq-q">Quel est votre délai d'intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Nous visons un diagnostic sur place sous 2h pour les urgences, dans la journée pour les demandes standards.</div>
                 </details>
                 <details class="faq-item">
-                    <summary class="faq-q">Êtes-vous assuré et garant ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Absolument. Notre travail est couvert par une assurance responsabilité civile professionnelle et nos interventions sont garanties.</div>
+                    <summary class="faq-q">Vos travaux respectent-ils les normes DTU ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, toutes nos interventions suivent les normes DTU en vigueur et la réglementation du bâtiment.</div>
                 </details>
                 <details class="faq-item">
-                    <summary class="faq-q">Quels sont vos délais d'intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Nos horaires : Lun-Sam 07h30-20h.</div>
+                    <summary class="faq-q">Combien coûte une intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Dépannage dès 89€, devis gratuit sous 2h. Le tarif est confirmé avant tout travail.</div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-q">Installez-vous chauffage et climatisation ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, nous posons chaudières, pompes à chaleur et climatiseurs, le tout conforme et garanti.</div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-q">Les travaux sont-ils garantis ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, nos travaux sont couverts par une garantie décennale. Nos 89 avis Google notés 4.6/5 reflètent notre fiabilité.</div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-q">Le devis est-il gratuit ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, chaque devis est gratuit et sans engagement.</div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-q">Proposez-vous une urgence 24h/24 ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, nous traitons fuites et pannes 24h/24 et 7j/7.</div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-q">Quelles sont vos modalités de paiement ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Nous acceptons carte, virement et paiement après acceptation du devis. Les factures sont détaillées et transparentes.</div>
                 </details>
             </div>
+        </div>
+    </section>
+
+    <section class="devis-banner" id="devis-banner">
+        <div class="container reveal">
+            <span class="section-label">Tarifs transparents</span>
+            <h2>Devis gratuit & tarifs transparents</h2>
+            <p>Proxi Eau Plomberie vous communique un devis détaillé avant tout travail, sans mauvaise surprise.</p>
+            <div class="devis-grid">
+                <div class="devis-card"><div class="devis-price">89€</div><div class="devis-label">Dépannage dès</div></div>
+                <div class="devis-card"><div class="devis-price">2h</div><div class="devis-label">Devis gratuit sous</div></div>
+                <div class="devis-card"><div class="devis-price">24/7</div><div class="devis-label">Urgence 24h/24</div></div>
+            </div>
+            <a href="#contact" class="btn-cta">Demander un devis gratuit <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
 
@@ -711,18 +752,25 @@
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Nous contacter</span>
-                <h2>Prenez Contact avec Nous</h2>
+                <span class="section-label">Devis & intervention</span>
+                <h2>Obtenez votre devis gratuit</h2>
                 <p>Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.</p>
+            </div>
+            <div class="contact-map reveal" style="margin-bottom:36px">
+                <iframe src="https://maps.google.com/maps?q=5%20Cours%20Lafayette%2C%20Lyon&t=&z=14&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             <div class="contact-wrap reveal">
                 <div class="contact-form">
                     <h3>Demande de Devis</h3>
                     <p>Nous vous répondrons dans les plus brefs délais.</p>
-                    <form action="javascript:void(0)" onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='Message envoyé ✓';this.querySelector('.form-submit').style.background='#16a34a'">
-                        <div class="form-group"><label class="form-label">Votre nom</label><input type="text" class="form-control" name="name" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-control" name="phone" placeholder="Téléphone" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" placeholder="Email" ></div><div class="form-group"><label class="form-label">Type d'intervention</label><select class="form-control" name="urgency" required><option value="">Type d'intervention</option><option value="Urgence (fuite, panne)">Urgence (fuite, panne)</option><option value="Installation">Installation</option><option value="Entretien">Entretien</option><option value="Rénovation">Rénovation</option></select></div><div class="form-group"><label class="form-label">Décrivez votre problème...</label><textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre problème..." required></textarea></div>
+                    <form action="https://api.web3forms.com/submit" method="POST" id="contact-form" onsubmit="return (function(f){var k=f.querySelector('[name=access_key]').value;if(!k){return true}event.preventDefault();var b=f.querySelector('.form-submit');b.disabled=true;b.innerHTML='Envoi…';fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(f),headers:{'Accept':'application/json'}}).then(function(r){return r.json()}).then(function(d){if(d.success){b.innerHTML='Message envoyé ✓';b.style.background='#16a34a';b.style.color='#fff'}else{throw new Error('e')}}).catch(function(){b.innerHTML='Erreur — appelez-nous';b.disabled=false});return false})(this)">
+                        <input type="hidden" name="access_key" value="">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="subject" value="Nouvelle demande via le site — Proxi Eau Plomberie">
+                        <input type="hidden" name="from_name" value="Proxi Eau Plomberie">
+                        <div class="form-group"><label class="form-label">Votre nom</label><input class="text" class="form-control" name="name" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone</label><input class="tel" class="form-control" name="phone" placeholder="Téléphone" required></div><div class="form-group"><label class="form-label">Email</label><input class="email" class="form-control" name="email" placeholder="Email" ></div><div class="form-group"><label class="form-label">Type d'intervention</label><select class="form-control" name="urgency" required><option value="">Type d'intervention</option><option value="Urgence (fuite, panne)">Urgence (fuite, panne)</option><option value="Installation">Installation</option><option value="Entretien">Entretien</option><option value="Rénovation">Rénovation</option></select></div><div class="form-group"><label class="form-label">Décrivez votre problème...</label><textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre problème..." required></textarea></div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> Envoyer ma Demande →</button>
-                        <p class="form-note">Nous vous répondrons dans les meilleurs délais.</p>
+                        <p class="form-note">Formulaire non configuré — appelez-nous.</p>
                     </form>
                 </div>
                 <div class="contact-sidebar">
@@ -740,9 +788,6 @@
                     </div>
                 </div>
             </div>
-            <div class="contact-map reveal" style="margin-top:32px">
-                <iframe src="https://maps.google.com/maps?q=5%20Cours%20Lafayette%2C%20Lyon&t=&z=14&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
         </div>
     </section>
     </main>
@@ -753,7 +798,16 @@
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="droplets" width="18" height="18"></i></div><span class="footer-brand-text">Proxi Eau Plomberie</span></div>
                     <p class="footer-desc">Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain....</p>
-                    
+                    <div class="footer-social">
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="https://maps.google.com/?q=5%20Cours%20Lafayette%2C%20Lyon" target="_blank" rel="noopener" aria-label="Google Maps"><i data-lucide="map-pin" width="18"></i></a>
+                        <a href="https://proxieau.fr" target="_blank" rel="noopener" aria-label="Site web"><i data-lucide="globe" width="18"></i></a>
+                    </div>
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul><li><a href="#services">Dépannage 24h/24</a></li><li><a href="#services">Installation Sanitaire</a></li><li><a href="#services">Chauffage & Chaudière</a></li><li><a href="#services">Détection de Fuites</a></li><li><a href="#services">Rénovation Salle de Bain</a></li></ul></div>
                 <div class="footer-col"><h4>Navigation</h4><ul><li><a href="#about">À propos</a></li><li><a href="#why">Pourquoi nous</a></li><li><a href="#testimonials">Avis</a></li><li><a href="#contact">Contact</a></li><li><a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">Politique de confidentialité</a></li></ul></div>
@@ -768,7 +822,7 @@
         </div>
     </footer>
 
-    <a href="tel:+33472000000" class="float-urgent"><i data-lucide="phone" width="18"></i> Nous Appeler</a>
+    <a href="tel:+33472000000" class="float-urgent"><i data-lucide="alarm-clock" width="18"></i> ⚡ Urgence 24h/24</a>
 
     <div class="privacy-overlay" id="privacy-modal">
         <div class="privacy-modal">

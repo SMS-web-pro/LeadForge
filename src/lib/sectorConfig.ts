@@ -173,7 +173,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Contact', en: 'Contact' }, href: '#contact' },
     ],
-    serviceIcons: ['zap', 'lightbulb', 'plug', 'circuit-board', 'shield-check', 'car'],
+    serviceIcons: ['zap', 'lightbulb', 'plug', 'circuit-board', 'shield-check', 'settings'],
     stats: [
       { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
@@ -296,7 +296,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Consultation', en: 'Consultation' }, href: '#contact' },
     ],
-    serviceIcons: ['scale', 'book-open', 'briefcase', 'file-text', 'shield-check', 'car'],
+    serviceIcons: ['scale', 'book-open', 'briefcase', 'file-text', 'shield-check', 'file-text'],
     stats: [
       { value: '4.9/5', label: { fr: 'Note Google', en: 'Google Rating' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },

@@ -124,6 +124,7 @@ export interface ApiConfig {
   gmailSmtpSecure: boolean;
   whopDepositLink: string;
   whopFinalPaymentLink: string;
+  web3formsKey?: string;
 }
 
 export interface ApiStatus {
