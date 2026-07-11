@@ -132,6 +132,7 @@
         @keyframes countUp{0%{opacity:0;transform:translateY(30px) scale(.9)}60%{opacity:1;transform:translateY(-5px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}
         @media(max-width:768px){.stats{grid-template-columns:1fr 1fr;padding:44px 24px;gap:28px}.stat-num{font-size:2.4rem}}
         @media(max-width:480px){.stats{padding:36px 20px;gap:20px}.stat-num{font-size:2rem}.stat-label{font-size:.72rem;letter-spacing:1.2px}}
+        @media(min-width:769px){.stat-item:not(:last-child){border-right:1px solid rgba(255,255,255,.16)}}
 
         .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
         .svc-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:0;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
@@ -157,12 +158,16 @@
         .why-stat:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}
         .why-stat-num{font-size:1.85rem;font-weight:800;color:var(--accent);line-height:1}
         .why-stat-label{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:8px;text-transform:uppercase;letter-spacing:1.2px}
-        .why-img{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-        .why-img img{width:100%;height:480px;object-fit:cover;display:block}
-        .why-img-badge{position:absolute;bottom:24px;right:24px;background:var(--primary);color:#fff;padding:20px 28px;border-radius:16px;text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.3)}
-        .why-img-badge-num{font-size:2.2rem;font-weight:800;line-height:1}
-        .why-img-badge-text{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;margin-top:4px}
-        @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-img{order:-1}.why-img-badge{bottom:16px;right:16px;padding:16px 22px}.why-img-badge-num{font-size:1.8rem}.why-stats{gap:12px}.why-stat{padding:18px}}
+        .why-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:40px 38px;backdrop-filter:blur(6px)}
+        .why-card-rating{font-size:3.4rem;font-weight:800;line-height:1;color:#fff;font-family:'Playfair Display'}
+        .why-card-rating span{font-size:1.4rem;opacity:.7;font-weight:600}
+        .why-card-stars{display:flex;gap:3px;color:var(--accent);margin:10px 0 6px}
+        .why-card-text{color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.6}
+        .why-card-div{height:1px;background:rgba(255,255,255,.12);margin:24px 0}
+        .why-card-points{display:grid;gap:14px}
+        .why-card-point{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.88);font-weight:500;font-size:.98rem}
+        .why-card-point i{color:var(--accent);flex-shrink:0}
+        @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-card{padding:32px 26px}}
 
         .guar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
         .guar-card{text-align:center;padding:32px 18px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:all .35s}
@@ -173,11 +178,13 @@
 
         .faq-wrap{max-width:820px;margin:0 auto}
         .faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:14px;background:#fff;overflow:hidden;transition:border-color .25s,box-shadow .25s}
-        .faq-item[open]{border-color:var(--primary);box-shadow:0 8px 30px rgba(var(--primary-rgb),.08)}
-        .faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;cursor:pointer;font-weight:600;font-size:1.02rem;list-style:none}
-        .faq-q::-webkit-details-marker{display:none}
-        .faq-q i{color:var(--primary);flex-shrink:0;transition:transform .3s}
-        .faq-item[open] .faq-q i{transform:rotate(180deg)}
+        .faq-item.open{border-color:var(--primary);box-shadow:0 8px 30px rgba(var(--primary-rgb),.08)}
+        .faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;cursor:pointer;font-weight:600;font-size:1.02rem;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:inherit}
+        .faq-q .faq-ico{color:var(--primary);flex-shrink:0;transition:transform .35s ease}
+        .faq-item.open .faq-q .faq-ico{transform:rotate(45deg)}
+        .faq-a-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+        .faq-a-wrap>div{overflow:hidden}
+        .faq-item.open .faq-a-wrap{grid-template-rows:1fr}
         .faq-a{padding:0 26px 24px;color:var(--text-s);font-size:.96rem;line-height:1.75}
         @media(max-width:768px){.faq-q{padding:18px 20px;font-size:.95rem}.faq-a{padding:0 20px 20px}}
         @media(max-width:768px){.guar-grid{grid-template-columns:1fr 1fr;gap:16px}.guar-card{padding:24px 14px}.guar-icon{width:48px;height:48px}}
@@ -231,9 +238,11 @@
         .devis-banner h2{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;margin-bottom:18px;letter-spacing:-.02em;position:relative;z-index:1}
         .devis-banner p{color:rgba(255,255,255,.85);margin-bottom:36px;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.7;position:relative;z-index:1}
         .devis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:880px;margin:0 auto 40px;position:relative;z-index:1}
-        .devis-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:28px 18px;backdrop-filter:blur(10px)}
-        .devis-price{font-size:2.4rem;font-weight:800;line-height:1;font-family:'Playfair Display'}
-        .devis-label{font-size:.85rem;margin-top:8px;opacity:.85}
+        .devis-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:30px 20px;backdrop-filter:blur(10px);transition:transform .3s,background .3s}
+        .devis-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.16)}
+        .devis-ico{width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:#fff;margin:0 auto 16px}
+        .devis-title{font-size:1.1rem;font-weight:700;color:#fff}
+        .devis-label{font-size:.85rem;margin-top:8px;opacity:.85;line-height:1.5}
         @media(max-width:768px){.devis-banner{padding:60px 0}.devis-grid{grid-template-columns:1fr}}
 
         .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px}
@@ -451,7 +460,7 @@
     <div class="trust-bar">
         <div class="trust-inner">
             
-            <div class="trust-item"><i data-lucide="star" width="16"></i> Avis Google 4.8/5</div>
+            <div class="trust-item"><i data-lucide="star" width="16"></i> Avis Google 4.6/5</div>
             <div class="trust-div"></div>
             
             <div class="trust-item"><i data-lucide="clock" width="16"></i> Intervention < 2h</div>
@@ -549,10 +558,7 @@
                     <h2>Notre Établissement — Lyon</h2>
                     <p>Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain.</p>
                     <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> Équipe Qualifiée</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Devis Clair</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Réactivité</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Satisfaction Client</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> Compréhension fine de vos besoins</li><li><i data-lucide="check-circle-2" width="18"></i> Solutions claires et adaptées</li><li><i data-lucide="check-circle-2" width="18"></i> Disponibilité avant, pendant et après</li>
                     </ul>
                     <a href="#contact" class="btn-pri">Demander un devis gratuit <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
@@ -566,17 +572,23 @@
                 <div class="why-text reveal">
                 <span class="section-label">Pourquoi nous choisir ?</span>
                 <h2>Notre méthode en 4 étapes</h2><p>Chaque intervention suit un protocole rigoureux : diagnostic précis sur place, devis transparent avant tout travail, intervention soignée aux normes en vigueur, et suivi qualité après réalisation. À Lyon, nous privilégions la réactivité et la durabilité de nos réparations.</p>
+                <a href="#contact" class="btn-pri" style="margin-top:24px">Demander un devis gratuit <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
-                <div class="why-img reveal">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
-                    <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">Satisfaction</div></div>
+                <div class="why-card reveal">
+                    <div class="why-card-rating">4.6<span>/5</span></div>
+                    <div class="why-card-stars"><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i></div>
+                    <div class="why-card-text">Issu de 89 avis Google vérifiés</div>
+                    <div class="why-card-div"></div>
+                    <div class="why-card-points">
+                        <div class="why-card-point"><i data-lucide="check" width="16"></i> Devis gratuit systématique</div><div class="why-card-point"><i data-lucide="check" width="16"></i> Réponse sous 24h</div><div class="why-card-point"><i data-lucide="check" width="16"></i> Suivi personnalisé</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">4.6/5</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Années</div></div><div class="stat-item"><div class="stat-num"><2h</div><div class="stat-label">Délai d'intervention</div></div><div class="stat-item"><div class="stat-num">24h/24</div><div class="stat-label">Disponible</div></div>
+        <div class="stat-item"><div class="stat-num" data-count="4.6" data-dec="1" data-suffix="/5">0/5</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num" data-count="15" data-dec="0" data-suffix="+">0+</div><div class="stat-label">Années</div></div><div class="stat-item"><div class="stat-num">&lt;2h</div><div class="stat-label">Délai d'intervention</div></div><div class="stat-item"><div class="stat-num" data-count="24" data-dec="0" data-suffix="h/24">0h/24</div><div class="stat-label">Disponible</div></div>
     </div>
 
     <section class="section section-alt" id="process">
@@ -609,9 +621,9 @@
             <div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>
             <div class="section-deco deco-dot" style="top:10%;left:5%;animation-delay:0s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Nos Engagements</span>
-                <h2>Pourquoi nous choisir</h2>
-                <p>Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.</p>
+                <span class="section-label">La promesse</span>
+                <h2>Nos Engagements</h2>
+                <p>Les garanties concrètes que nous honorons sur chaque intervention, dans votre secteur comme les autres.</p>
             </div>
             <div class="guar-grid reveal">
                 
@@ -636,7 +648,6 @@
                     <p class="guar-desc">Votre satisfaction est notre priorité absolue</p>
                 </div>
             </div>
-            
         </div>
     </section>
 
@@ -687,57 +698,57 @@
             </div>
             <div class="faq-wrap reveal">
                 
-                <details class="faq-item">
-                    <summary class="faq-q">Intervenez-vous dans Lyon et les arrondissements alentour ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nous intervenons à Lyon et dans les communes voisines. Envoyez-nous votre adresse et nous confirmons la disponibilité.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Quel est votre délai d'intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Nous visons un diagnostic sur place sous 2h pour les urgences, dans la journée pour les demandes standards.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Vos travaux respectent-ils les normes DTU ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, toutes nos interventions suivent les normes DTU en vigueur et la réglementation du bâtiment.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Combien coûte une intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Dépannage dès 89€, devis gratuit sous 2h. Le tarif est confirmé avant tout travail.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Installez-vous chauffage et climatisation ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nous posons chaudières, pompes à chaleur et climatiseurs, le tout conforme et garanti.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Les travaux sont-ils garantis ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nos travaux sont couverts par une garantie décennale. Nos 89 avis Google notés 4.6/5 reflètent notre fiabilité.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Le devis est-il gratuit ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, chaque devis est gratuit et sans engagement.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Proposez-vous une urgence 24h/24 ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nous traitons fuites et pannes 24h/24 et 7j/7.</div>
-                </details>
-                <details class="faq-item">
-                    <summary class="faq-q">Quelles sont vos modalités de paiement ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Nous acceptons carte, virement et paiement après acceptation du devis. Les factures sont détaillées et transparentes.</div>
-                </details>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Intervenez-vous dans Lyon et les arrondissements alentour ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, nous intervenons à Lyon et dans les communes voisines. Envoyez-nous votre adresse et nous confirmons la disponibilité.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Quel est votre délai d'intervention ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Nous visons un diagnostic sur place sous 2h pour les urgences, dans la journée pour les demandes standards.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Vos travaux respectent-ils les normes DTU ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, toutes nos interventions suivent les normes DTU en vigueur et la réglementation du bâtiment.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Combien coûte une intervention ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Un devis gratuit vous est communiqué sous 2h, et le tarif est toujours confirmé avant tout travail.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Installez-vous chauffage et climatisation ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, nous posons chaudières, pompes à chaleur et climatiseurs, le tout conforme et garanti.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Les travaux sont-ils garantis ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, nos travaux sont couverts par une garantie décennale. Nos 89 avis Google notés 4.6/5 reflètent notre fiabilité.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Le devis est-il gratuit ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, chaque devis est gratuit et sans engagement.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Proposez-vous une urgence 24h/24 ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Oui, nous traitons fuites et pannes 24h/24 et 7j/7.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" aria-expanded="false">Quelles sont vos modalités de paiement ? <i data-lucide="plus" width="18" class="faq-ico"></i></button>
+                    <div class="faq-a-wrap"><div class="faq-a">Nous acceptons carte, virement et paiement après acceptation du devis. Les factures sont détaillées et transparentes.</div></div>
+                </div>
             </div>
         </div>
     </section>
 
     <section class="devis-banner" id="devis-banner">
         <div class="container reveal">
-            <span class="section-label">Tarifs transparents</span>
-            <h2>Devis gratuit & tarifs transparents</h2>
-            <p>Proxi Eau Plomberie vous communique un devis détaillé avant tout travail, sans mauvaise surprise.</p>
+            <span class="section-label">Devis gratuit</span>
+            <h2>Demandez votre devis gratuit</h2>
+            <p>Proxi Eau Plomberie vous communique un devis détaillé et sans engagement avant tout travail.</p>
             <div class="devis-grid">
-                <div class="devis-card"><div class="devis-price">89€</div><div class="devis-label">Dépannage dès</div></div>
-                <div class="devis-card"><div class="devis-price">2h</div><div class="devis-label">Devis gratuit sous</div></div>
-                <div class="devis-card"><div class="devis-price">24/7</div><div class="devis-label">Urgence 24h/24</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="file-text" width="26"></i></div><div class="devis-title">Devis gratuit</div><div class="devis-label">Détaillé, sans engagement</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="clock" width="26"></i></div><div class="devis-title">Réponse rapide</div><div class="devis-label">Sous 2h ouvrées</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="badge-check" width="26"></i></div><div class="devis-title">Artisans certifiés</div><div class="devis-label">Qualifiés et assurés</div></div>
             </div>
-            <a href="#contact" class="btn-cta">Demander un devis gratuit <i data-lucide="arrow-right" width="18"></i></a>
+            <a href="#contact" class="btn-cta">Demander mon devis gratuit <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
 
@@ -768,7 +779,7 @@
                         <input type="hidden" name="_captcha" value="false">
                         <input type="hidden" name="subject" value="Nouvelle demande via le site — Proxi Eau Plomberie">
                         <input type="hidden" name="from_name" value="Proxi Eau Plomberie">
-                        <div class="form-group"><label class="form-label">Votre nom</label><input class="text" class="form-control" name="name" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone</label><input class="tel" class="form-control" name="phone" placeholder="Téléphone" required></div><div class="form-group"><label class="form-label">Email</label><input class="email" class="form-control" name="email" placeholder="Email" ></div><div class="form-group"><label class="form-label">Type d'intervention</label><select class="form-control" name="urgency" required><option value="">Type d'intervention</option><option value="Urgence (fuite, panne)">Urgence (fuite, panne)</option><option value="Installation">Installation</option><option value="Entretien">Entretien</option><option value="Rénovation">Rénovation</option></select></div><div class="form-group"><label class="form-label">Décrivez votre problème...</label><textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre problème..." required></textarea></div>
+                        <div class="form-group"><label class="form-label">Votre nom</label><input class="text" class="form-control" name="name" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone</label><input class="tel" class="form-control" name="phone" placeholder="Téléphone" required></div><div class="form-group"><label class="form-label">Email</label><input class="email" class="form-control" name="email" placeholder="Email" ></div><div class="form-group"><label class="form-label">Type d'intervention</label><select class="form-control" name="urgency" required><option value="">Type d'intervention</option><option value="Urgence (fuite, panne)">Urgence (fuite, panne)</option><option value="Installation">Installation</option><option value="Entretien">Entretien</option><option value="Rénovation">Rénovation</option></select></div><div class="form-group"><label class="form-label">Décrivez votre problème</label><textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre problème" required></textarea></div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> Envoyer ma Demande →</button>
                         <p class="form-note">Formulaire non configuré — appelez-nous.</p>
                     </form>
@@ -797,7 +808,7 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="droplets" width="18" height="18"></i></div><span class="footer-brand-text">Proxi Eau Plomberie</span></div>
-                    <p class="footer-desc">Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain....</p>
+                    <p class="footer-desc">Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain.</p>
                     <div class="footer-social">
                         
                         
@@ -849,6 +860,35 @@
         if('IntersectionObserver' in window){const r=document.querySelectorAll('.reveal');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');o.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -60px 0px'});r.forEach(el=>o.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('active'))}
         document.addEventListener('keydown',e=>{if(e.key==='Escape'){const pm=document.getElementById('privacy-modal');if(pm&&pm.classList.contains('open'))pm.classList.remove('open');const mm=document.getElementById('mobile-menu');if(mm&&mm.classList.contains('open')){mm.classList.remove('open');t&&t.setAttribute('aria-expanded','false')}}});
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
+        // Stats count-up animation
+        const statNums = document.querySelectorAll('.stat-num[data-count]');
+        const runCount = (el: any) => {
+          const target = parseFloat(el.getAttribute('data-count')) || 0;
+          const dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+          const suffix = el.getAttribute('data-suffix') || '';
+          const dur = 1400; const start = performance.now();
+          const tick = (now: number) => {
+            const p = Math.min(1, (now - start) / dur);
+            const val = target * (1 - Math.pow(1 - p, 3));
+            el.textContent = (dec > 0 ? val.toFixed(dec) : Math.round(val).toString()) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        };
+        if ('IntersectionObserver' in window && statNums.length) {
+          const so = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { runCount(e.target); so.unobserve(e.target); } }); }, { threshold: 0.4 });
+          statNums.forEach((el: any) => so.observe(el));
+        } else {
+          statNums.forEach((el: any) => runCount(el));
+        }
+        // FAQ accordion
+        document.querySelectorAll('.faq-q').forEach((btn: any) => {
+          btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-item');
+            const open = item.classList.toggle('open');
+            btn.setAttribute('aria-expanded', String(open));
+          });
+        });
     </script>
 </body>
 </html>

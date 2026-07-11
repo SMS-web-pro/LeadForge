@@ -22,7 +22,7 @@ export const UI = {
     hoursTitle: 'Horaires d\'Ouverture', hoursLunVen: 'Lundi – Vendredi', hoursSam: 'Samedi', hoursDim: 'Dimanche',
     contactCall: 'Nous Appeler', footerNav: 'Navigation', footerContact: 'Contact', footerPrivacy: 'Politique de confidentialité',
     privacyTitle: 'Politique de Confidentialité',
-    formPlaceholderName: 'Votre nom', formPlaceholderPhone: '06 XX XX XX XX', formPlaceholderEmail: 'votre@email.com', formPlaceholderMsg: 'Décrivez le problème ou les travaux souhaités...',
+    formPlaceholderName: 'Votre nom', formPlaceholderPhone: '06 XX XX XX XX', formPlaceholderEmail: 'votre@email.com', formPlaceholderMsg: 'Décrivez le problème ou les travaux souhaités',
     whatsapp: 'WhatsApp',
   },
   en: {
@@ -44,7 +44,7 @@ export const UI = {
     hoursTitle: 'Opening Hours', hoursLunVen: 'Monday – Friday', hoursSam: 'Saturday', hoursDim: 'Sunday',
     contactCall: 'Call Us', footerNav: 'Navigation', footerContact: 'Contact', footerPrivacy: 'Privacy Policy',
     privacyTitle: 'Privacy Policy',
-    formPlaceholderName: 'Your name', formPlaceholderPhone: '+1 (555) 000-0000', formPlaceholderEmail: 'your@email.com', formPlaceholderMsg: 'Describe your issue or request...',
+    formPlaceholderName: 'Your name', formPlaceholderPhone: '+1 (555) 000-0000', formPlaceholderEmail: 'your@email.com', formPlaceholderMsg: 'Describe your issue or request',
     whatsapp: 'WhatsApp',
   }
 } as const;
