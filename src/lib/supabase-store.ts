@@ -2274,7 +2274,9 @@ export async function searchUnsplash(key: string, query: string): Promise<string
   if (!key) return [];
   try {
     const page = Math.floor(Math.random() * 3) + 1;
-    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${page}&client_id=${key}`);
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${page}`, {
+      headers: { 'Authorization': `Client-ID ${key}` },
+    });
     if (res.ok) {
       const data = await res.json();
       return (data.results || []).map((r: { urls: { regular: string } }) => safeStr(r?.urls?.regular)).filter(Boolean);

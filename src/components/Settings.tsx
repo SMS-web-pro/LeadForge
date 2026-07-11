@@ -486,7 +486,9 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
         // Validation du format : la clé Unsplash fait entre 40 et 60 caractères alphanumériques
         if (c.unsplashKey.length < 20) return { ok: false, msg: '❌ Format invalide — entrez l\'Access Key (pas l\'App ID ni la Secret Key)' };
         try {
-          const res = await fetch(`https://api.unsplash.com/photos/random?count=1&client_id=${c.unsplashKey}`);
+          const res = await fetch(`https://api.unsplash.com/photos/random?count=1`, {
+            headers: { 'Authorization': `Client-ID ${c.unsplashKey}` },
+          });
           if (res.ok) return { ok: true, msg: '✅ Unsplash opérationnel ! Images pro activées.' };
           if (res.status === 401) return { ok: false, msg: '❌ Clé invalide — vérifiez que vous avez copié l\'Access Key (et non la Secret Key)' };
           if (res.status === 403) return { ok: false, msg: '❌ App non activée — vérifiez sur unsplash.com/developers' };
