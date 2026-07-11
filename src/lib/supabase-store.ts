@@ -101,6 +101,7 @@ export interface ApiConfig {
   geminiKey: string;
   nvidiaKey: string;
   defaultLlm: LlmProvider;
+  defaultModel: string;
   serperKey: string;
   unsplashKey: string;
   pexelsKey: string;
@@ -147,6 +148,7 @@ export const defaultApiConfig: ApiConfig = {
   geminiKey: '',
   nvidiaKey: '',
   defaultLlm: 'groq' as LlmProvider,
+  defaultModel: 'llama-3.1-8b-instant',
   serperKey: '',
   unsplashKey: '',
   pexelsKey: '',

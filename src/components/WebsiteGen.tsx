@@ -541,7 +541,7 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
       // PRIORITÉ 2: API Pexels dynamique → Supabase Storage
       
       updateProgress({ step: '🎨 Génération du site ULTIMATE...' });
-      const html = await generateUltimateSiteAsync(lead, content);
+      const html = await generateUltimateSiteAsync(lead, content, apiConfig.pexelsKey);
       logger.log(`✅ HTML generated for ${lead.name}`);
       
       updateProgress({ step: '☁️ Hébergement Cloud (Storage)...' });
@@ -566,7 +566,9 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
       const siteUrl = publicUrlData.publicUrl;
       logger.log(`✅ Site hébergé avec succès: ${siteUrl}`);
       
-      const baseUrl = 'https://www.services-siteup.online';
+      const baseUrl = (typeof window !== 'undefined' && window.location?.origin)
+        ? window.location.origin
+        : (siteUrl ? new URL(siteUrl).origin : 'https://www.services-siteup.online');
       const cleanUrl = `${baseUrl}/api/sites/${lead.id}`;
       
       logger.log(`🔧 Updating lead ${lead.id} in Supabase...`);
@@ -594,22 +596,24 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
         
         const fileName = `${lead.id}.html`;
         await supabase.storage.from('websites').upload(fileName, emergencyHtml, { contentType: 'text/html', cacheControl: '3600', upsert: true });
-        const { data: publicUrlData } = supabase.storage.from('websites').getPublicUrl(fileName);
-        const siteUrl = publicUrlData.publicUrl;
-        
-        return emergencyHtml; // Retourner le code HTML de fallback
-        const baseUrl = 'https://www.services-siteup.online';
-        const cleanUrl = `${baseUrl}/api/sites/${lead.id}`;
-        
-        await updateLead(lead.id, {
-          siteGenerated: true, 
-          siteHtml: '',
-          siteUrl: cleanUrl,
-          landingUrl: cleanUrl,
-          stage: lead.stage === 'new' || lead.stage === 'enriched' ? 'site_generated' : lead.stage,
-        });
-        
-        logger.log(`🔄 Site fallback généré pour: ${lead.name}`);
+          const { data: publicUrlData } = supabase.storage.from('websites').getPublicUrl(fileName);
+          const siteUrl = publicUrlData.publicUrl;
+
+          const baseUrl = (typeof window !== 'undefined' && window.location?.origin)
+            ? window.location.origin
+            : (siteUrl ? new URL(siteUrl).origin : 'https://www.services-siteup.online');
+          const cleanUrl = `${baseUrl}/api/sites/${lead.id}`;
+
+          await updateLead(lead.id, {
+            siteGenerated: true,
+            siteHtml: '',
+            siteUrl: cleanUrl,
+            landingUrl: cleanUrl,
+            stage: lead.stage === 'new' || lead.stage === 'enriched' ? 'site_generated' : lead.stage,
+          });
+
+          logger.log(`🔄 Site fallback généré pour: ${lead.name}`);
+          return emergencyHtml;
       } catch (fallbackError) {
         logger.error(`❌ Erreur critique - même le fallback a échoué pour ${lead.name}:`, fallbackError);
         // Marquer quand même comme traité pour éviter les boucles infinies
@@ -856,7 +860,7 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
       }
 
       // Re-générer instantanément le HTML localement. Le Design n'est jamais cassé !
-      const newHtml = await generateUltimateSiteAsync(previewLead, newContent);
+      const newHtml = await generateUltimateSiteAsync(previewLead, newContent, apiConfig.pexelsKey);
       await updateLead(previewLead.id, { siteHtml: newHtml });
       
       setChatMessages(prev => [...prev, { role: 'assistant', text: "✅ J'ai méticuleusement appliqué tes modifications: \"" + msg + "\". Mon design Premium est préservé ! ❤️" }]);
@@ -905,13 +909,15 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
     
     try {
       const content = await generateContent(previewLead);
-      const html = await generateUltimateSiteAsync(previewLead, content);
+      const html = await generateUltimateSiteAsync(previewLead, content, apiConfig.pexelsKey);
       
       const fileName = `${previewLead.id}.html`;
       await supabase.storage.from('websites').upload(fileName, html, { contentType: 'text/html', cacheControl: '3600', upsert: true });
       const { data: publicUrlData } = supabase.storage.from('websites').getPublicUrl(fileName);
       const siteUrl = publicUrlData.publicUrl;
-      const baseUrl = 'https://www.services-siteup.online';
+      const baseUrl = (typeof window !== 'undefined' && window.location?.origin)
+        ? window.location.origin
+        : (siteUrl ? new URL(siteUrl).origin : 'https://www.services-siteup.online');
       const cleanUrl = `${baseUrl}/api/sites/${previewLead.id}`;
       
       updateLead(previewLead.id, { 

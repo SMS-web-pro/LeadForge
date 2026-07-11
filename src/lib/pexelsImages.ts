@@ -8,6 +8,10 @@ export function setPexelsApiKey(key: string): void {
   if (key && key.length > 5) PEXELS_API_KEY = key;
 }
 
+export function getPexelsApiKey(): string {
+  return PEXELS_API_KEY;
+}
+
 // Requêtes Pexels spécifiques par secteur (5 requêtes × 4 images = 20 images uniques)
 const SECTOR_PEXEL_QUERIES: Record<string, string[]> = {
   plomberie: [

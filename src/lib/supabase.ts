@@ -289,6 +289,7 @@ export const configService = {
         geminiKey: '',
         nvidiaKey: '',
         defaultLlm: 'groq' as import('./supabase-store').LlmProvider,
+        defaultModel: 'llama-3.1-8b-instant',
         serperKey: '',
         unsplashKey: '',
         pexelsKey: '',

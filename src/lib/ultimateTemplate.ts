@@ -1,7 +1,7 @@
 // ── PREMIUM LOCAL BUSINESS TEMPLATE ──
 // Design épuré, luxe, professionnel. Zero gimmicks, zero popups agressifs.
 
-import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages } from './pexelsImages';
+import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages, getPexelsApiKey } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
@@ -526,7 +526,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   return buildUltimateHTML(content, template, combinedImages, layoutVariant);
 }
 
-export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Promise<string> {
+export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexelsKey?: string): Promise<string> {
   const lang = detectLanguage(lead);
   const template = getUltimateTemplate(lead.sector);
   const companyName = lead.name || (lang === 'en' ? 'Premium Business' : 'Entreprise Premium');
@@ -628,8 +628,8 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
   // Images Pexels propres (sans texte, sans logo) — UNIQUEMENT Pexels, pas de logos scrapés
   let pexelsImages: string[] = [];
   try {
-    const storedConfig = JSON.parse(localStorage.getItem('leadforge_api_config') || '{}');
-    const apiKey = storedConfig.pexelsKey || '';
+    // Clé Pexels fiable : priorité au paramètre, sinon le cache module (alimenté par useApiConfig)
+    const apiKey = pexelsKey || getPexelsApiKey();
     if (apiKey) {
       // PAS de scrapedImages ici — elles contiennent des logos
       pexelsImages = await fetchSectorImagesDynamic(apiKey, lead.sector, serviceNames, [], 12, combinedHash);
@@ -709,8 +709,21 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any): Pro
       ? pexelsImages.slice(0, 5)
       : allScraped.slice(0, 5);
 
-
-  const socialLinks = lead.socialLinks || {};
+  // Dériver les liens sociaux de façon fiable.
+  // lead.socialLinks n'est pas toujours peuplé (absent du type Lead), donc on
+  // reconstruit depuis lead.website quand il pointe vers une plateforme connue.
+  const deriveSocialLinks = (website?: string): Record<string, string> => {
+    const links: Record<string, string> = {};
+    const w = (website || '').toLowerCase();
+    if (w.includes('facebook.com') || w.includes('fb.me')) links.facebook = website!;
+    else if (w.includes('instagram.com')) links.instagram = website!;
+    else if (w.includes('linkedin.com')) links.linkedin = website!;
+    else if (w.includes('x.com') || w.includes('twitter.com')) links.twitter = website!;
+    else if (w.includes('youtube.com') || w.includes('youtu.be')) links.youtube = website!;
+    else if (w.includes('tiktok.com')) links.tiktok = website!;
+    return links;
+  };
+  const socialLinks = { ...deriveSocialLinks(lead.website), ...(lead.socialLinks || {}) };
   const content: UltimateContent = {
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,

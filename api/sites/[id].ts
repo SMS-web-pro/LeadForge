@@ -38,8 +38,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: leadData } = await supabase
         .from('leads')
         .select('id')
-        // On vérifie les leads dont siteUrl finit par ce firstName
-        .like('site_url', `%${id}`)
+        // On ancre sur le dernier segment de chemin (/firstName) pour éviter les faux positifs
+        .like('site_url', `%/${id}`)
+        .order('created_at', { ascending: false })
         .limit(1)
         .single();
         

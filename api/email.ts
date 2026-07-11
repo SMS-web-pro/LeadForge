@@ -101,6 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         host: config.gmail_smtp_host || 'smtp.gmail.com',
         port,
         secure: port === 465,
+        requireTLS: port === 587,
         auth: { user: config.gmail_smtp_user, pass: config.gmail_smtp_password.replace(/\s/g, '') },
         tls: { rejectUnauthorized: false }
       });
