@@ -51,6 +51,11 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
   const [savingSections, setSavingSections] = useState<Record<string, boolean>>({});
   const [llmTestStatus, setLlmTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [llmTestMessage, setLlmTestMessage] = useState('');
+  const [modelCheckStatus, setModelCheckStatus] = useState<'idle' | 'checking' | 'done'>('idle');
+  const [modelCheckResults, setModelCheckResults] = useState<Record<string, { ok: boolean; model: string; msg: string }>>({});
+  const [lastModelCheck, setLastModelCheck] = useState(() => {
+    return localStorage.getItem('leadforge_last_model_check') || '';
+  });
 
   // Synchroniser le state local avec les props
   useEffect(() => {
@@ -166,6 +171,51 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
       setLlmTestStatus('error');
       setLlmTestMessage(`❌ Erreur réseau: ${e.message}`);
     }
+  };
+
+  // Vérifier tous les modèles et montrer lesquels fonctionnent
+  const checkAllModels = async () => {
+    setModelCheckStatus('checking');
+    setModelCheckResults({});
+    
+    const providers = [
+      { id: 'groq', key: localConfig.groqKey, model: 'llama-3.1-8b-instant', name: 'Groq' },
+      { id: 'nvidia', key: localConfig.nvidiaKey, model: 'nvidia/nemotron-3-super-120b-a12b', name: 'NVIDIA' },
+      { id: 'gemini', key: localConfig.geminiKey, model: 'gemini-2.5-flash', name: 'Gemini' },
+      { id: 'openrouter', key: localConfig.openrouterKey, model: 'nvidia/nemotron-3-super-120b-a12b:free', name: 'OpenRouter' },
+    ];
+    
+    const results: Record<string, { ok: boolean; model: string; msg: string }> = {};
+    
+    for (const p of providers) {
+      if (!p.key) {
+        results[p.id] = { ok: false, model: p.model, msg: '❌ Aucune clé API' };
+        continue;
+      }
+      try {
+        const result = await callLLMDirect({
+          provider: p.id,
+          apiKey: p.key,
+          model: p.model,
+          messages: [{ role: 'user', content: 'Say OK' }],
+          max_tokens: 10,
+        });
+        if (result.content) {
+          results[p.id] = { ok: true, model: p.model, msg: '✅ Fonctionne' };
+        } else {
+          results[p.id] = { ok: false, model: p.model, msg: `❌ Erreur ${result.status}: ${result.error?.slice(0, 50) || 'Inconnu'}` };
+        }
+      } catch (e: any) {
+        results[p.id] = { ok: false, model: p.model, msg: `❌ ${e.message}` };
+      }
+    }
+    
+    setModelCheckResults(results);
+    setModelCheckStatus('done');
+    
+    const now = new Date().toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+    setLastModelCheck(now);
+    localStorage.setItem('leadforge_last_model_check', now);
   };
 
   const testApi = async (section: Section) => {
@@ -593,6 +643,59 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                 <span style={{ fontSize: 11, color: llmTestStatus === 'success' ? C.green : llmTestStatus === 'error' ? C.red : C.tx2 }}>
                   {llmTestMessage}
                 </span>
+              )}
+            </div>
+
+            {/* Vérification des modèles */}
+            <div style={{ marginTop: 12, padding: 12, background: C.bg, borderRadius: 8, border: `1px solid ${C.border}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.tx }}>🔄 Vérification des modèles</div>
+                  <div style={{ fontSize: 11, color: C.tx3 }}>
+                    {lastModelCheck ? `Dernière vérification : ${lastModelCheck}` : 'Aucune vérification effectuée'}
+                  </div>
+                </div>
+                <button
+                  onClick={checkAllModels}
+                  disabled={modelCheckStatus === 'checking'}
+                  style={{
+                    padding: '6px 12px', borderRadius: 6, border: 'none',
+                    background: modelCheckStatus === 'checking' ? C.tx3 : C.blue,
+                    color: 'white', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {modelCheckStatus === 'checking' ? '⏳ Vérification...' : '🔍 Vérifier tous les modèles'}
+                </button>
+              </div>
+              
+              {/* Résultats de la vérification */}
+              {modelCheckStatus === 'done' && Object.keys(modelCheckResults).length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                  {Object.entries(modelCheckResults).map(([providerId, result]) => (
+                    <div key={providerId} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '6px 10px', borderRadius: 6,
+                      background: result.ok ? C.green + '10' : C.red + '10',
+                      border: `1px solid ${result.ok ? C.green + '30' : C.red + '30'}`,
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 12 }}>
+                          {providerId === 'groq' ? '🚀' : providerId === 'gemini' ? '✨' : providerId === 'nvidia' ? '⚡' : '🔀'}
+                        </span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: C.tx }}>
+                          {providerId === 'groq' ? 'Groq' : providerId === 'gemini' ? 'Gemini' : providerId === 'nvidia' ? 'NVIDIA' : 'OpenRouter'}
+                        </span>
+                        <span style={{ fontSize: 10, color: C.tx3 }}>
+                          ({result.model})
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 11, color: result.ok ? C.green : C.red, fontWeight: 500 }}>
+                        {result.msg}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
