@@ -72,6 +72,10 @@ export interface Database {
           id: number;
           groq_key?: string;
           openrouter_key?: string;
+          nvidia_key?: string;
+          gemini_key?: string;
+          default_llm?: string;
+          default_model?: string;
           serper_key?: string;
           unsplash_key?: string;
           pexels_key?: string;
@@ -82,6 +86,8 @@ export interface Database {
           gmail_smtp_from_name?: string;
           gmail_smtp_from_email?: string;
           gmail_smtp_secure?: boolean;
+          whop_deposit_link?: string;
+          whop_final_payment_link?: string;
           created_at: string;
           updated_at: string;
         };

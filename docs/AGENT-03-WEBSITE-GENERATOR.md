@@ -86,7 +86,7 @@ Quand l’utilisateur ouvre la prévisualisation et utilise l’**Éditeur IA** 
 - **Un** appel **`callLLMForWebsite(apiConfig, fullPrompt, system)`** est fait pour demander un **HTML complet** modifié.
 - **APIs :** même chaîne que pour le contenu, mais avec une limite de tokens plus haute (Groq 32k, Gemini 65k, OpenRouter 16k) :
   - **Groq** : `llama-3.3-70b-versatile`
-  - **Gemini** : `gemini-2.0-flash`
+  - **Gemini** : `gemini-2.5-flash`
   - **OpenRouter** : `meta-llama/llama-4-scout:free`
 - Si la réponse est du HTML valide (vérifié par `extractHtml` / `validateHtml`), elle remplace `lead.siteHtml`. Sinon, fallback : régénération avec `generateContent` + `generatePremiumSiteHtml`.
 

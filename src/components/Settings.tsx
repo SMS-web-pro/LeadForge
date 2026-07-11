@@ -278,7 +278,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
       required: false,
       agents: ['Agent 1', 'Agent 2', 'Agent 3', 'Agent 4'],
       shortDesc: 'LLM gratuit — 1 Million TPM sans limite !',
-      longDesc: 'Google Gemini 2.0 Flash Lite est gratuit avec 1 million de tokens par minute. C\'est le meilleur choix pour éviter les rate limits. Utilisé automatiquement en fallback si Groq est limité.',
+      longDesc: 'Google Gemini 2.5 Flash est gratuit avec 1 million de tokens par minute. C\'est le meilleur choix pour éviter les rate limits. Utilisé automatiquement en fallback si Groq est limité.',
       whyNeeded: 'RECOMMANDÉ. Résout définitivement les problèmes de rate limit. Clé gratuite en 30 secondes.',
       freeInfo: '✅ 100% GRATUIT — 1 000 000 TPM — Aucune carte bancaire requise.',
       fields: [
@@ -288,14 +288,24 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
       ],
       testFn: async (c) => {
         if (!c.geminiKey) return { ok: false, msg: '❌ Aucune clé' };
-        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
-          method: 'POST', headers: { 'Authorization': `Bearer ${c.geminiKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: 'gemini-2.5-flash', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 10 }),
-        });
-        if (res.ok) return { ok: true, msg: '✅ Gemini opérationnel ! 1M TPM gratuit actif.' };
-        if (res.status === 429) return { ok: true, msg: '✅ Clé valide ! (limite de débit momentanée, normal)' };
-        if (res.status === 401 || res.status === 403) return { ok: false, msg: `❌ Clé invalide ou non autorisée` };
-        return { ok: false, msg: `❌ Erreur ${res.status}` };
+        try {
+          const res = await fetch('/api/llm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: 'gemini',
+              apiKey: c.geminiKey,
+              body: { model: 'gemini-2.5-flash', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 10 },
+            }),
+          });
+          if (res.ok) return { ok: true, msg: '✅ Gemini opérationnel ! 1M TPM gratuit actif.' };
+          if (res.status === 429) return { ok: true, msg: '✅ Clé valide ! (limite de débit momentanée, normal)' };
+          if (res.status === 401 || res.status === 403) return { ok: false, msg: `❌ Clé invalide ou non autorisée` };
+          const err = await res.json().catch(() => ({}));
+          return { ok: false, msg: `❌ Erreur ${res.status}: ${err.error?.message || res.statusText}` };
+        } catch (err) {
+          return { ok: false, msg: `❌ ${(err as Error).message}` };
+        }
       },
     },
 
