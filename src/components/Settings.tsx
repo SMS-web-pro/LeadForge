@@ -133,9 +133,9 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
     };
     const modelMap: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
-      nvidia: 'meta-llama/llama-3.1-8b-instruct',
+      nvidia: 'nvidia/nemotron-3-super-120b-a12b',
       gemini: 'gemini-2.0-flash-lite',
-      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+      openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     const apiKey = apiKeyMap[defaultLlm];
     if (!apiKey) {
@@ -257,7 +257,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
           const res = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${c.nvidiaKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model: 'meta-llama/llama-3.1-8b-instruct', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 5 }),
+            body: JSON.stringify({ model: 'nvidia/nemotron-3-super-120b-a12b', messages: [{ role: 'user', content: 'Say OK' }], max_tokens: 5 }),
           });
           if (res.ok) return { ok: true, msg: '✅ NVIDIA NIM opérationnel !' };
           if (res.status === 429) return { ok: true, msg: '✅ Clé valide ! (limite RPM momentanée, normal)' };

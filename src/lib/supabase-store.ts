@@ -1086,12 +1086,12 @@ export async function callLLM(config: ApiConfig, prompt: string, systemPrompt?: 
   // Utiliser le modèle sélectionné par l'utilisateur pour le provider par défaut
   const getDefaultModel = (providerId: string): string => {
     if (providerId === defaultLlm && defaultModel) return defaultModel;
-    // Modèles par défaut pour chaque provider
+    // Modèles par défaut pour chaque provider (gratuits vérifiés juillet 2026)
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
-      nvidia: 'meta-llama/llama-3.1-8b-instruct',
+      nvidia: 'nvidia/nemotron-3-super-120b-a12b',
       gemini: 'gemini-2.0-flash-lite',
-      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+      openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     return defaults[providerId] || 'llama-3.1-8b-instant';
   };
@@ -1190,9 +1190,9 @@ export async function callLLMForWebsite(config: ApiConfig, prompt: string, syste
     if (providerId === defaultLlm && defaultModel) return defaultModel;
     const defaults: Record<string, string> = {
       groq: 'llama-3.1-8b-instant',
-      nvidia: 'meta-llama/llama-3.1-8b-instruct',
+      nvidia: 'nvidia/nemotron-3-super-120b-a12b',
       gemini: 'gemini-2.0-flash-lite',
-      openrouter: 'meta-llama/llama-3.1-8b-instruct:free',
+      openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
     };
     return defaults[providerId] || 'llama-3.1-8b-instant';
   };
