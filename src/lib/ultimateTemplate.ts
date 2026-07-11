@@ -1,11 +1,10 @@
 // ── PREMIUM LOCAL BUSINESS TEMPLATE ──
 // Design épuré, luxe, professionnel. Zero gimmicks, zero popups agressifs.
 
-import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages, getPexelsApiKey } from './pexelsImages';
+import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages, getPexelsApiKey, setPexelsApiKey } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
-import { fetchSectorImagesDynamic } from './sectorImageFetch';
 import { UI } from './template/ui';
 import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText } from './template/helpers';
 export { detectLanguage };
@@ -110,6 +109,32 @@ function getSectorFallbackReviews(sector: string): Array<{ author: string; text:
   return SECTOR_FALLBACK_REVIEWS.default;
 }
 
+// Descriptions courtes des engagements (clé = icône lucide) — secteur-adaptables
+const ADV_DESC: Record<string, { fr: string; en: string }> = {
+  'shield-check': { fr: 'Protection et conformité garanties sur chaque intervention', en: 'Guaranteed protection & compliance on every job' },
+  'badge-check': { fr: 'Un professionnel certifié et qualifié', en: 'A certified, qualified professional' },
+  'clock': { fr: 'Une réactivité au rendez-vous, en urgence comme en routine', en: 'Responsiveness you can count on, urgent or routine' },
+  'file-text': { fr: 'Devis transparent et détaillé, sans mauvaise surprise', en: 'Transparent, detailed quote — no surprises' },
+  'leaf': { fr: 'Des produits respectueux de votre santé et de l\'environnement', en: 'Products that respect your health and the environment' },
+  'sparkles': { fr: 'Un soin minutieux et une finition soignée', en: 'Meticulous care and a polished finish' },
+  'scissors': { fr: 'Savoir-faire et formation continue', en: 'Expertise backed by ongoing training' },
+  'heart': { fr: 'Votre satisfaction est notre priorité absolue', en: 'Your satisfaction is our absolute priority' },
+  'star': { fr: 'Régulièrement apprécié de nos clients', en: 'Consistently loved by our clients' },
+  'car': { fr: 'Un service pratique, pensé pour vous', en: 'A convenient service designed around you' },
+  'users': { fr: 'Une équipe formée et professionnelle', en: 'A trained, professional team' },
+  'award': { fr: 'Des experts diplômés d\'État', en: 'State-certified experts' },
+  'dumbbell': { fr: 'Un matériel de qualité, toujours entretenu', en: 'Quality equipment, always maintained' },
+  'sun': { fr: 'Des conseils adaptés à chaque saison', en: 'Advice tailored to every season' },
+  'sprout': { fr: 'Des végétaux vigoureux, garantis', en: 'Healthy, guaranteed plants' },
+  'tree-deciduous': { fr: 'Un paysagiste qualifié à votre écoute', en: 'A qualified landscaper who listens' },
+  'stethoscope': { fr: 'Un professionnel de santé conventionné', en: 'A contracted health professional' },
+  'credit-card': { fr: 'Pas d\'avance de frais, des facilités de paiement', en: 'No upfront fees, flexible payment' },
+  'calendar': { fr: 'Un rendez-vous sous 48h, sans attente', en: 'An appointment within 48h, no waiting' },
+  'scale': { fr: 'Un avocat inscrit au barreau', en: 'An attorney licensed at the bar' },
+  'shield': { fr: 'Confidentialité et discrétion préservées', en: 'Privacy and discretion preserved' },
+  'sword': { fr: 'Une défense déterminée de vos droits', en: 'A determined defense of your rights' },
+};
+
 // ── Inline functions moved to template/helpers.ts ──
 // generateAboutText, generateFeaturesFromService, getProcessSteps,
 // getPrivacyContent, getGalleryDesc, getLogoInfo, capitalizeCity,
@@ -130,6 +155,7 @@ export interface UltimateContent {
   services: Array<{ name: string; description: string; features: string[] }>;
   serviceImages: string[];
   galleryImages: string[];
+  realPhotos?: string[];
   testimonials: Array<{ author: string; text: string; rating: number; date?: string }>;
   heroTitle: string;
   heroSubtitle: string;
@@ -529,6 +555,9 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
 export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexelsKey?: string): Promise<string> {
   const lang = detectLanguage(lead);
   const template = getUltimateTemplate(lead.sector);
+  // Alimente la clé Pexels globale du module pour que fetchSectorImagesFromAPI
+  // (requêtes anglaises pertinentes) fonctionne avec la clé fournie.
+  setPexelsApiKey(pexelsKey || getPexelsApiKey());
   const companyName = lead.name || (lang === 'en' ? 'Premium Business' : 'Entreprise Premium');
   const city = capitalizeCity(lead.city || '');
   const phone = lead.phone || (lang === 'en' ? '+1 (555) 000-0000' : '+33 6 12 34 56 78');
@@ -605,7 +634,10 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   }
 
   // IMAGES — séparation stricte : Pexels (stock) vs scrapées (Google Maps)
-  const serviceNames = (template.services || []).map((s: any) => s.name || '');
+  // pexelsImages = pool anglais pertinent (API Pexels EN via fetchSectorImagesFromAPI,
+  // sinon fallback Unsplash sectoriel inclus par getSectorImagesAsync). Aucune requête
+  // en français : les images correspondent donc au secteur ET aux services du prospect.
+  const pexelsImages: string[] = sectorImages;
 
   // Images scrapées du lead (Google Maps) — contiennent souvent des logos
   const scrapedImages = [
@@ -625,41 +657,13 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const realPhotos = scrapedImages.filter(img => !isLikelyLogo(img));
   const allScraped = scrapedImages;
 
-  // Images Pexels propres (sans texte, sans logo) — UNIQUEMENT Pexels, pas de logos scrapés
-  let pexelsImages: string[] = [];
-  try {
-    // Clé Pexels fiable : priorité au paramètre, sinon le cache module (alimenté par useApiConfig)
-    const apiKey = pexelsKey || getPexelsApiKey();
-    if (apiKey) {
-      // PAS de scrapedImages ici — elles contiennent des logos
-      pexelsImages = await fetchSectorImagesDynamic(apiKey, lead.sector, serviceNames, [], 12, combinedHash);
-    }
-  } catch { /* fallback below */ }
-
   // Hero : TOUJOURS Pexels (jamais logo scrapé)
-  // Fallbacks sectoriels Unsplash quand pas de clé Pexels
-  const UNSPLASH_FALLBACKS: Record<string, string[]> = {
-    vtc: ['https://images.unsplash.com/photo-1563720223185-11003d516935?w=1200&q=80', 'https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=1200&q=80'],
-    plomberie: ['https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1200&q=80', 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&q=80'],
-    electricien: ['https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=1200&q=80', 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&q=80'],
-    coiffeur: ['https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=80', 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1200&q=80'],
-    restaurant: ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80', 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80'],
-    garage: ['https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&q=80', 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1200&q=80'],
-    nettoyage: ['https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80', 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=1200&q=80'],
-    jardin: ['https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1200&q=80', 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80'],
-    fitness: ['https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80', 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&q=80'],
-    medical: ['https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&q=80', 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80'],
-    avocat: ['https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80', 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80'],
-    boulangerie: ['https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=80', 'https://images.unsplash.com/photo-1555507036-ab1f4038024a?w=1200&q=80'],
-  };
-  const fallbackPool = UNSPLASH_FALLBACKS[lead.sector?.toLowerCase() || ''] || UNSPLASH_FALLBACKS['vtc'];
-
   const heroImage = pexelsImages.length > 0
     ? pexelsImages[((combinedHash * 2654435761) >>> 0) % pexelsImages.length]
-    : fallbackPool[combinedHash % fallbackPool.length];
+    : (sectorImages[0] || '');
 
-  // allImages : Pexels pour hero/about/approach, fallback si pas de Pexels
-  const allImages = pexelsImages.length > 0 ? pexelsImages.slice(0, 6) : fallbackPool;
+  // allImages : Pexels pour hero/about/approach
+  const allImages = pexelsImages.length > 0 ? pexelsImages.slice(0, 6) : sectorImages.slice(0, 6);
 
   let finalServices = (lang === 'en' ? template.servicesEn : undefined) || template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -699,7 +703,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 
   // Service images : TOUJOURS Pexels (images pro, sans texte/logo)
   const serviceImages: string[] = finalServices.map((s, i) =>
-    pexelsImages[i % pexelsImages.length] || heroImage || fallbackPool[i % fallbackPool.length]
+    pexelsImages[i % pexelsImages.length] || heroImage || (sectorImages[i % (sectorImages.length || 1)])
   );
 
   // Gallery : images scrapées du lead (photos du vrai business, pas les logos)
@@ -726,7 +730,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const socialLinks = { ...deriveSocialLinks(lead.website), ...(lead.socialLinks || {}) };
   const content: UltimateContent = {
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
-    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
+    website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
     socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
@@ -735,7 +739,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear } = content;
   const lang = content.lang || 'fr';
   const ui = UI[lang];
   const sector = content.sector || '';
@@ -845,7 +849,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .navbar-brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:color .3s}
         .navbar:not(.scrolled) .navbar-brand{color:#fff}
         .navbar-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.3);flex-shrink:0}
-        .navbar-name{font-weight:700;font-size:1.15rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;transition:color .3s}
+        .navbar-name{font-weight:700;font-size:1.05rem;color:var(--text);line-height:1.15;max-width:300px;transition:color .3s}
         .navbar:not(.scrolled) .navbar-name{color:#fff}
         .navbar-links{display:flex;align-items:center;gap:32px}
         .navbar-links a{text-decoration:none;color:var(--text-s);font-size:.9rem;font-weight:500;transition:color .25s;position:relative}
@@ -974,7 +978,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .guar-card{text-align:center;padding:32px 18px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:all .35s}
         .guar-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.07)}
         .guar-icon{width:56px;height:56px;border-radius:50%;background:rgba(var(--primary-rgb),.08);display:flex;align-items:center;justify-content:center;color:var(--primary);margin:0 auto 16px}
-        .guar-card h3{font-size:.92rem;font-weight:700}
+        .guar-card h3{font-size:.92rem;font-weight:700;margin-bottom:8px}
+        .guar-desc{font-size:.85rem;color:var(--text-s);line-height:1.6}
+
+        .faq-wrap{max-width:820px;margin:0 auto}
+        .faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:14px;background:#fff;overflow:hidden;transition:border-color .25s,box-shadow .25s}
+        .faq-item[open]{border-color:var(--primary);box-shadow:0 8px 30px rgba(var(--primary-rgb),.08)}
+        .faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;cursor:pointer;font-weight:600;font-size:1.02rem;list-style:none}
+        .faq-q::-webkit-details-marker{display:none}
+        .faq-q i{color:var(--primary);flex-shrink:0;transition:transform .3s}
+        .faq-item[open] .faq-q i{transform:rotate(180deg)}
+        .faq-a{padding:0 26px 24px;color:var(--text-s);font-size:.96rem;line-height:1.75}
+        @media(max-width:768px){.faq-q{padding:18px 20px;font-size:.95rem}.faq-a{padding:0 20px 20px}}
         @media(max-width:768px){.guar-grid{grid-template-columns:1fr 1fr;gap:16px}.guar-card{padding:24px 14px}.guar-icon{width:48px;height:48px}}
         @media(max-width:480px){.guar-grid{grid-template-columns:1fr 1fr;gap:12px}.guar-card{padding:20px 12px}.guar-card h3{font-size:.84rem}}
 
@@ -1054,7 +1069,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:44px;margin-bottom:44px}
         .footer-brand{font-size:1.25rem;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:12px}
         .footer-brand-logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--primary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex-shrink:0}
-        .footer-brand-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+        .footer-brand-text{white-space:normal;max-width:260px;line-height:1.2}
         .footer-desc{font-size:.9rem;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:20px}
         .footer-social{display:flex;gap:12px}
         .footer-social a{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:all .25s}
@@ -1187,7 +1202,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <nav class="navbar" id="navbar">
         <div class="navbar-inner">
             <a href="#" class="navbar-brand">
-                <div class="navbar-logo">${logoInfo.initials}</div>
+                <div class="navbar-logo"><i data-lucide="${heroBadge.icon}" width="22" height="22"></i></div>
                 <span class="navbar-name">${logoInfo.text}</span>
             </a>
             <div class="navbar-links">
@@ -1277,7 +1292,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant > 1 ? '<div class="section-deco deco-dot" style="top:20%;right:10%;animation-delay:1.5s"></div>' : ''}
             <div class="about-grid">
                 <div class="about-img reveal">
-                    <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName}">
+                    <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName}" loading="lazy">
                     <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
@@ -1308,7 +1323,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     </div>
                 </div>
                 <div class="why-img reveal">
-                    <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}">
+                    <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}" loading="lazy">
                     <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">${ui.whySatisfaction}</div></div>
                 </div>
             </div>
@@ -1336,22 +1351,31 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="pourquoi">
         <div class="container" style="position:relative">
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
             <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">${ui.galleryLabel}</span>
-                <h2>${content.galleryTitle || (lang === 'en' ? 'Our Portfolio' : 'Nos Réalisations')}</h2>
-                <p>${getGalleryDesc(content.sector, lang)}</p>
+                <span class="section-label">${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</span>
+                <h2>${lang === 'en' ? 'Why Choose Us' : 'Pourquoi nous choisir'}</h2>
+                <p>${lang === 'en' ? 'The concrete reasons our clients trust us, sector after sector.' : 'Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.'}</p>
             </div>
-            <div class="gal-grid reveal">
-                <div class="gal-item gal-main"><img src="${proxiedImg(galleryImages[0] || serviceImages[0] || heroImage)}" ${imgErr(1)} alt="${services[0]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(galleryImages[1] || serviceImages[1] || getImg(2))}" ${imgErr(2)} alt="${services[1]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(galleryImages[2] || serviceImages[2] || getImg(3))}" ${imgErr(3)} alt="${services[2]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(galleryImages[3] || serviceImages[3] || getImg(4))}" ${imgErr(4)} alt="${services[3]?.name || companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(galleryImages[4] || serviceImages[4] || getImg(5))}" ${imgErr(5)} alt="${services[4]?.name || companyName}" loading="lazy"></div>
+            <div class="guar-grid reveal">
+                ${getGuarantees(content.sector, lang).map((g: any, i: number) => `
+                <div class="guar-card reveal-d${Math.min(i, 3)}">
+                    <div class="guar-icon"><i data-lucide="${g.icon}" width="24" height="24"></i></div>
+                    <h3>${g.title}</h3>
+                    <p class="guar-desc">${ADV_DESC[g.icon]?.[lang] || (lang === 'en' ? 'A commitment we stand behind' : 'Un engagement que nous honorons')}</p>
+                </div>`).join('')}
             </div>
+            ${(realPhotos && realPhotos.length > 0) ? `
+            <div class="gal-grid reveal" style="margin-top:44px">
+                <div class="gal-item gal-main"><img src="${proxiedImg(realPhotos[0])}" ${imgErr(1)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[1] || realPhotos[0])}" ${imgErr(2)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[2] || realPhotos[0])}" ${imgErr(3)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[3] || realPhotos[0])}" ${imgErr(4)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[4] || realPhotos[0])}" ${imgErr(5)} alt="${companyName}" loading="lazy"></div>
+            </div>` : ''}
         </div>
     </section>
 
@@ -1370,6 +1394,28 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 </div>`).join('')}
             </div>
             <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>
+        </div>
+    </section>
+
+    <section class="section section-alt" id="faq">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">FAQ</span>
+                <h2>${lang === 'en' ? 'Frequently Asked Questions' : 'Questions fréquentes'}</h2>
+                <p>${lang === 'en' ? `Everything you need to know before calling ${companyName}.` : `Tout ce qu'il faut savoir avant de faire appel à ${companyName}.`}</p>
+            </div>
+            <div class="faq-wrap reveal">
+                ${[
+                  { q: lang === 'en' ? `Do you operate in ${city || 'the area'}?` : `Intervenez-vous à ${city || 'domicile'} ?`, a: lang === 'en' ? `Yes, ${companyName} operates ${city ? `in ${city} and surrounding areas` : 'in your area'}. Reach out to confirm availability.` : `Oui, ${companyName} intervient ${city ? `à ${city} et ses alentours` : 'dans votre zone'}. Contactez-nous pour confirmer la disponibilité.` },
+                  { q: lang === 'en' ? 'Do you provide a free quote?' : 'Proposez-vous un devis gratuit ?', a: lang === 'en' ? 'Yes — we always provide a detailed, transparent, no-obligation quote.' : 'Oui, nous établissons systématiquement un devis détaillé et transparent, sans engagement.' },
+                  { q: lang === 'en' ? 'Are you insured and guaranteed?' : 'Êtes-vous assuré et garant ?', a: lang === 'en' ? 'Absolutely. Our work is covered by professional liability insurance and every intervention is guaranteed.' : 'Absolument. Notre travail est couvert par une assurance responsabilité civile professionnelle et nos interventions sont garanties.' },
+                  { q: lang === 'en' ? 'What are your response times?' : 'Quels sont vos délais d\'intervention ?', a: leadHours ? (lang === 'en' ? `Our hours: ${leadHours}.` : `Nos horaires : ${leadHours}.`) : (lang === 'en' ? 'We strive to respond quickly, including for emergencies.' : 'Nous nous efforçons de répondre rapidement, y compris en urgence.') },
+                ].map(f => `
+                <details class="faq-item">
+                    <summary class="faq-q">${f.q} <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">${f.a}</div>
+                </details>`).join('')}
+            </div>
         </div>
     </section>
 
@@ -1436,7 +1482,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         <div class="container">
             <div class="footer-grid">
                 <div>
-                    <div class="footer-brand"><div class="footer-brand-logo">${logoInfo.initials}</div><span class="footer-brand-text">${logoInfo.text}</span></div>
+                    <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
                     <p class="footer-desc">${aboutText.substring(0,120)}...</p>
                     ${content.socialLinks && Object.values(content.socialLinks).some(v => v) ? `
                     <div class="footer-social">
