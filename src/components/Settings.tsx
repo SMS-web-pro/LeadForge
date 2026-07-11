@@ -178,11 +178,19 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
     setModelCheckStatus('checking');
     setModelCheckResults({});
     
+    // Modèles par défaut pour chaque provider
+    const defaultModels: Record<string, string> = {
+      groq: 'llama-3.1-8b-instant',
+      nvidia: 'nvidia/nemotron-3-super-120b-a12b',
+      gemini: 'gemini-2.5-flash',
+      openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
+    };
+    
     const providers = [
-      { id: 'groq', key: localConfig.groqKey, model: 'llama-3.1-8b-instant', name: 'Groq' },
-      { id: 'nvidia', key: localConfig.nvidiaKey, model: 'nvidia/nemotron-3-super-120b-a12b', name: 'NVIDIA' },
-      { id: 'gemini', key: localConfig.geminiKey, model: 'gemini-2.5-flash', name: 'Gemini' },
-      { id: 'openrouter', key: localConfig.openrouterKey, model: 'nvidia/nemotron-3-super-120b-a12b:free', name: 'OpenRouter' },
+      { id: 'groq', key: localConfig.groqKey, model: localConfig.defaultLlm === 'groq' ? (localConfig.defaultModel || defaultModels.groq) : defaultModels.groq, name: 'Groq' },
+      { id: 'nvidia', key: localConfig.nvidiaKey, model: localConfig.defaultLlm === 'nvidia' ? (localConfig.defaultModel || defaultModels.nvidia) : defaultModels.nvidia, name: 'NVIDIA' },
+      { id: 'gemini', key: localConfig.geminiKey, model: localConfig.defaultLlm === 'gemini' ? (localConfig.defaultModel || defaultModels.gemini) : defaultModels.gemini, name: 'Gemini' },
+      { id: 'openrouter', key: localConfig.openrouterKey, model: localConfig.defaultLlm === 'openrouter' ? (localConfig.defaultModel || defaultModels.openrouter) : defaultModels.openrouter, name: 'OpenRouter' },
     ];
     
     const results: Record<string, { ok: boolean; model: string; msg: string }> = {};
@@ -213,6 +221,68 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
     setModelCheckResults(results);
     setModelCheckStatus('done');
     
+    const now = new Date().toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+    setLastModelCheck(now);
+    localStorage.setItem('leadforge_last_model_check', now);
+  };
+
+  // Auto-sélectionner le premier provider qui fonctionne
+  const autoSelectWorkingProvider = async () => {
+    setModelCheckStatus('checking');
+    setModelCheckResults({});
+    
+    const defaultModels: Record<string, string> = {
+      groq: 'llama-3.1-8b-instant',
+      nvidia: 'nvidia/nemotron-3-super-120b-a12b',
+      gemini: 'gemini-2.5-flash',
+      openrouter: 'nvidia/nemotron-3-super-120b-a12b:free',
+    };
+    
+    const providers = [
+      { id: 'groq' as LlmProvider, key: localConfig.groqKey, model: defaultModels.groq },
+      { id: 'nvidia' as LlmProvider, key: localConfig.nvidiaKey, model: defaultModels.nvidia },
+      { id: 'gemini' as LlmProvider, key: localConfig.geminiKey, model: defaultModels.gemini },
+      { id: 'openrouter' as LlmProvider, key: localConfig.openrouterKey, model: defaultModels.openrouter },
+    ];
+    
+    const results: Record<string, { ok: boolean; model: string; msg: string }> = {};
+    
+    for (const p of providers) {
+      if (!p.key) {
+        results[p.id] = { ok: false, model: p.model, msg: '❌ Aucune clé' };
+        continue;
+      }
+      try {
+        const result = await callLLMDirect({
+          provider: p.id,
+          apiKey: p.key,
+          model: p.model,
+          messages: [{ role: 'user', content: 'Say OK' }],
+          max_tokens: 10,
+        });
+        if (result.content) {
+          results[p.id] = { ok: true, model: p.model, msg: '✅ Fonctionne' };
+          // Premier provider qui fonctionne → le définir comme défaut
+          handleLocalChange('defaultLlm', p.id);
+          handleLocalChange('defaultModel', p.model);
+          updateConfig({ defaultLlm: p.id, defaultModel: p.model });
+          setModelCheckResults(results);
+          setModelCheckStatus('done');
+          const now = new Date().toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+          setLastModelCheck(now);
+          localStorage.setItem('leadforge_last_model_check', now);
+          return;
+        } else {
+          results[p.id] = { ok: false, model: p.model, msg: `❌ Erreur ${result.status}` };
+        }
+      } catch (e: any) {
+        results[p.id] = { ok: false, model: p.model, msg: `❌ ${e.message}` };
+      }
+    }
+    
+    // Aucun provider n'a fonctionné
+    setModelCheckResults(results);
+    setModelCheckStatus('done');
     const now = new Date().toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
     setLastModelCheck(now);
     localStorage.setItem('leadforge_last_model_check', now);
@@ -611,13 +681,23 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                 { id: 'openrouter', label: 'OpenRouter', icon: '🔀', color: '#7B3FE4', desc: 'Free' },
               ] as Array<{id: LlmProvider; label: string; icon: string; color: string; desc: string}>).map(p => {
                 const isActive = (config.defaultLlm || 'groq') === p.id;
+                const healthStatus = modelCheckResults[p.id]?.ok;
                 return (
                   <button key={p.id} onClick={() => { handleLocalChange('defaultLlm', p.id); updateConfig({ defaultLlm: p.id }); }} style={{
                     padding: '12px', borderRadius: 8, border: `2px solid ${isActive ? p.color : C.border}`,
                     background: isActive ? p.color + '15' : C.bg,
                     cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.2s ease', position: 'relative',
                   }}>
+                    {/* Indicateur de santé */}
+                    {healthStatus !== undefined && (
+                      <div style={{
+                        position: 'absolute', top: 6, right: 6,
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: healthStatus ? C.green : C.red,
+                        boxShadow: healthStatus ? `0 0 6px ${C.green}60` : 'none',
+                      }} />
+                    )}
                     <span style={{ fontSize: 18 }}>{p.icon}</span>
                     <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 500, color: isActive ? p.color : C.tx2 }}>{p.label}</span>
                     <span style={{ fontSize: 10, color: C.tx3 }}>{p.desc}</span>
@@ -655,18 +735,32 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
                     {lastModelCheck ? `Dernière vérification : ${lastModelCheck}` : 'Aucune vérification effectuée'}
                   </div>
                 </div>
-                <button
-                  onClick={checkAllModels}
-                  disabled={modelCheckStatus === 'checking'}
-                  style={{
-                    padding: '6px 12px', borderRadius: 6, border: 'none',
-                    background: modelCheckStatus === 'checking' ? C.tx3 : C.blue,
-                    color: 'white', fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  {modelCheckStatus === 'checking' ? '⏳ Vérification...' : '🔍 Vérifier tous les modèles'}
-                </button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={autoSelectWorkingProvider}
+                    disabled={modelCheckStatus === 'checking'}
+                    style={{
+                      padding: '6px 12px', borderRadius: 6, border: 'none',
+                      background: modelCheckStatus === 'checking' ? C.tx3 : C.green,
+                      color: 'white', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {modelCheckStatus === 'checking' ? '⏳...' : '⚡ Auto-sélectionner'}
+                  </button>
+                  <button
+                    onClick={checkAllModels}
+                    disabled={modelCheckStatus === 'checking'}
+                    style={{
+                      padding: '6px 12px', borderRadius: 6, border: 'none',
+                      background: modelCheckStatus === 'checking' ? C.tx3 : C.blue,
+                      color: 'white', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {modelCheckStatus === 'checking' ? '⏳ Vérification...' : '🔍 Vérifier tous'}
+                  </button>
+                </div>
               </div>
               
               {/* Résultats de la vérification */}

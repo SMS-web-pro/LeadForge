@@ -66,12 +66,12 @@ async function testSerperApi(config: ApiConfig): Promise<ApiTestResult> {
   }
 }
 
-// Config des endpoints LLM
-const LLM_ENDPOINTS: Record<string, { url: string; model: string; needsProxy: boolean }> = {
-  groq:      { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.1-8b-instant', needsProxy: false },
-  nvidia:    { url: '/api/llm', model: 'nvidia/nemotron-3-super-120b-a12b', needsProxy: true },
-  gemini:    { url: '/api/llm', model: 'gemini-2.5-flash', needsProxy: true },
-  openrouter: { url: '/api/llm', model: 'nvidia/nemotron-3-super-120b-a12b:free', needsProxy: true },
+// Config des endpoints LLM — TOUS passent par le proxy /api/llm (évite CORS)
+const LLM_ENDPOINTS: Record<string, { model: string }> = {
+  groq:      { model: 'llama-3.1-8b-instant' },
+  nvidia:    { model: 'nvidia/nemotron-3-super-120b-a12b' },
+  gemini:    { model: 'gemini-2.5-flash' },
+  openrouter: { model: 'nvidia/nemotron-3-super-120b-a12b:free' },
 };
 
 // Test read-only d'un provider LLM — ne modifie PAS l'état global des erreurs
@@ -86,54 +86,28 @@ async function testLlmProvider(provider: string, apiKey: string): Promise<ApiTes
   }
 
   try {
-    // Utiliser callLLMDirect pour les providers qui passent par le proxy
-    if (endpoint.needsProxy) {
-      const result = await callLLMDirect({
-        provider,
-        apiKey,
-        model: endpoint.model,
-        messages: [{ role: 'user', content: 'Hi' }],
-        max_tokens: 10,
-      });
-
-      if (result.content) {
-        return { service: provider, status: 'ok', message: `API ${provider} fonctionnelle` };
-      }
-      if (result.status === 404) {
-        return { service: provider, status: 'error', message: `Proxy /api/llm non disponible (404)`, statusCode: 404 };
-      }
-      if (result.status === 429) {
-        return { service: provider, status: 'error', message: `Rate limit ${provider} atteint`, statusCode: 429 };
-      }
-      return { service: provider, status: 'error', message: `Erreur API ${provider}: ${result.status} ${result.error || ''}`, statusCode: result.status };
-    }
-
-    // Appel direct pour Groq (pas de proxy)
-    const response = await fetch(endpoint.url, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: endpoint.model,
-        messages: [{ role: 'user', content: 'Hi' }],
-        max_tokens: 10,
-      }),
+    // TOUS les providers passent par le proxy /api/llm (évite CORS côté browser)
+    const result = await callLLMDirect({
+      provider,
+      apiKey,
+      model: endpoint.model,
+      messages: [{ role: 'user', content: 'Hi' }],
+      max_tokens: 10,
     });
 
-    if (response.ok) {
-      const data = await response.json().catch(() => ({}));
-      const hasContent = !!data.choices?.[0]?.message?.content;
-      return { service: provider, status: 'ok', message: `API ${provider} fonctionnelle${hasContent ? '' : ' (réponse vide)'}` };
+    if (result.content) {
+      return { service: provider, status: 'ok', message: `API ${provider} fonctionnelle` };
     }
-
-    if (response.status === 404) {
-      return { service: provider, status: 'error', message: `Proxy /api/llm non disponible (404)`, statusCode: 404 };
+    if (result.status === 404) {
+      return { service: provider, status: 'error', message: `Modèle ${endpoint.model} non disponible (404)`, statusCode: 404 };
     }
-
-    if (response.status === 429) {
+    if (result.status === 429) {
       return { service: provider, status: 'error', message: `Rate limit ${provider} atteint`, statusCode: 429 };
     }
-
-    return { service: provider, status: 'error', message: `Erreur API ${provider}: ${response.status}`, statusCode: response.status };
+    if (result.status === 401 || result.status === 403) {
+      return { service: provider, status: 'error', message: `Clé API ${provider} invalide`, statusCode: result.status };
+    }
+    return { service: provider, status: 'error', message: `Erreur API ${provider}: ${result.status} ${(result.error || '').slice(0, 80)}`, statusCode: result.status };
   } catch (error) {
     return { service: provider, status: 'error', message: `Erreur réseau ${provider}: ${(error as Error).message}` };
   }
