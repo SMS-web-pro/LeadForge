@@ -1,6 +1,5 @@
 // ── PREMIUM LOCAL BUSINESS TEMPLATE ──
 // Design épuré, luxe, professionnel. Zero gimmicks, zero popups agressifs.
-// REWRITE: Dynamic content per lead, layout variation, no static repetition.
 
 import { getSectorImages, getSectorImagesAsync, getServiceImageQuery, fetchSectorImagesFromAPI, fetchServiceImages, getPexelsApiKey, setPexelsApiKey } from './pexelsImages';
 import { getImagesForLead } from './pexelsApi';
@@ -9,223 +8,6 @@ import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
 import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText } from './template/helpers';
 export { detectLanguage };
-
-// ── DYNAMIC CONTENT GENERATORS ──
-// These generate unique content per lead from their actual data.
-
-function generateUniqueHeroTitle(lead: any, lang: 'fr' | 'en'): string {
-  const name = lead.name || '';
-  const desc = (lead.description || '').toLowerCase();
-  const sector = (lead.sector || '').toLowerCase();
-  const city = lead.city || '';
-
-  // Use the business name directly — it's the most unique identifier
-  if (name) return name;
-
-  // Fallback: build from description keywords
-  if (lang === 'en') {
-    if (desc.includes('restaurant') || desc.includes('cuisine')) return 'Farm-to-Table Restaurant';
-    if (desc.includes('plomb')) return 'Certified Plumbing Expert';
-    if (desc.includes('électri') || desc.includes('electric')) return 'Certified Electrician';
-    if (desc.includes('coiff') || desc.includes('salon')) return 'Hair Salon & Barber';
-    if (desc.includes('garage') || desc.includes('mécan')) return 'Expert Auto Mechanic';
-    if (desc.includes('nettoy')) return 'Professional Cleaning Service';
-    if (desc.includes('jardin') || desc.includes('paysag')) return 'Landscape Gardener';
-    if (desc.includes('fitness') || desc.includes('gym')) return 'Gym & Personal Training';
-    if (desc.includes('médec') || desc.includes('santé')) return 'Medical Practice';
-    if (desc.includes('avocat') || desc.includes('droit')) return 'Law Office';
-    return 'Your Trusted Partner';
-  }
-  if (desc.includes('restaurant') || desc.includes('cuisine')) return 'Restaurant de Marché';
-  if (desc.includes('plomb')) return 'Plombier Chauffagiste Certifié';
-  if (desc.includes('électri') || desc.includes('electric')) return 'Électricien Certifié';
-  if (desc.includes('coiff') || desc.includes('salon')) return 'Salon de Coiffure';
-  if (desc.includes('garage') || desc.includes('mécan')) return 'Garage Mécanicien';
-  if (desc.includes('nettoy')) return 'Enterprise de Nettoyage';
-  if (desc.includes('jardin') || desc.includes('paysag')) return 'Jardinier Paysagiste';
-  if (desc.includes('fitness') || desc.includes('gym')) return 'Salle de Sport';
-  if (desc.includes('médec') || desc.includes('santé')) return 'Cabinet Médical';
-  if (desc.includes('avocat') || desc.includes('droit')) return 'Cabinet d\'Avocats';
-  return 'Votre Partenaire de Confiance';
-}
-
-function generateUniqueHeroSubtitle(lead: any, lang: 'fr' | 'en'): string {
-  const desc = lead.description || '';
-  const city = lead.city || '';
-  const sector = (lead.sector || '').toLowerCase();
-
-  // Use the lead's actual description as hero subtitle — it's unique
-  if (desc && desc.length > 20) {
-    const suffix = city ? (lang === 'en' ? ` — based in ${city}.` : ` — basé à ${city}.`) : '.';
-    return desc.length > 140 ? desc.substring(0, 137) + '...' + suffix : desc + suffix;
-  }
-
-  // Fallback to sector-specific
-  const template = getUltimateTemplate(sector);
-  const base = lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle;
-  return `${base}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
-}
-
-function generateUniqueAboutText(lead: any, lang: 'fr' | 'en'): string {
-  const desc = lead.description || '';
-  const name = lead.name || '';
-  const city = lead.city || '';
-  const sector = (lead.sector || '').toLowerCase();
-  const reviews = lead.googleReviews || 0;
-  const rating = lead.googleRating || 0;
-  const tags = lead.tags || [];
-
-  // Build a unique about text from lead data
-  const parts: string[] = [];
-
-  if (desc) {
-    parts.push(desc);
-  }
-
-  // Add location
-  if (city) {
-    parts.push(lang === 'en'
-      ? `Based in ${city}, we serve the surrounding area with dedication.`
-      : `Basé à ${city}, nous intervenons dans les environs avec dévouement.`);
-  }
-
-  // Add reputation
-  if (reviews > 0 && rating > 0) {
-    parts.push(lang === 'en'
-      ? `Rated ${rating}/5 on Google from ${reviews} verified reviews.`
-      : `Noté ${rating}/5 sur Google (${reviews} avis vérifiés).`);
-  }
-
-  // Add tags as specialties
-  if (tags.length > 0) {
-    const specialties = tags.slice(0, 4).join(', ');
-    parts.push(lang === 'en'
-      ? `Specialties: ${specialties}.`
-      : `Spécialités : ${specialties}.`);
-  }
-
-  if (parts.length > 0) return parts.join(' ');
-
-  // Final fallback
-  const template = getUltimateTemplate(sector);
-  return lang === 'en' ? template.aboutTextEn : template.aboutText;
-}
-
-function generateDynamicStats(lead: any, lang: 'fr' | 'en'): Array<{ value: string; label: { fr: string; en: string } }> {
-  const reviews = lead.googleReviews || 0;
-  const rating = lead.googleRating || 0;
-  const desc = (lead.description || '').toLowerCase();
-  const tags = lead.tags || [];
-
-  // Extract years from description
-  let years = '10+';
-  const yearMatch = desc.match(/(\d+)\s*ans/i);
-  if (yearMatch) years = yearMatch[1] + '+';
-
-  // Count services from tags or description
-  const serviceCount = tags.length > 0 ? tags.length : 5;
-
-  const stats = [];
-  if (rating > 0) stats.push({ value: `${rating}/5`, label: { fr: 'Note Google', en: 'Google Rating' } });
-  if (years) stats.push({ value: years, label: { fr: 'Ans d\'expérience', en: 'Years Experience' } });
-  if (reviews > 0) stats.push({ value: `${reviews}+`, label: { fr: 'Avis Google', en: 'Google Reviews' } });
-  stats.push({ value: `${serviceCount}`, label: { fr: 'Services', en: 'Services' } });
-
-  return stats.slice(0, 4);
-}
-
-function generateDynamicApproach(lead: any, lang: 'fr' | 'en'): string {
-  const desc = lead.description || '';
-  const sector = (lead.sector || '').toLowerCase();
-  const city = lead.city || '';
-  const tags = lead.tags || [];
-
-  // Build approach from description
-  if (desc && desc.length > 30) {
-    const cityStr = city ? (lang === 'en' ? ` in ${city}` : ` à ${city}`) : '';
-    if (lang === 'en') {
-      return `Our approach${cityStr} is built on ${desc.toLowerCase().includes('qualit') ? 'quality' : 'expertise'}. ${desc} We combine professional-grade equipment with certified techniques to deliver consistent, measurable results.`;
-    }
-    return `Notre approche${cityStr} repose sur ${desc.toLowerCase().includes('qualit') ? 'la qualité' : 'l\'expertise'}. ${desc} Nous combinons du matériel professionnel et des techniques certifiées pour des résultats constants et mesurables.`;
-  }
-
-  // Fallback: use sector-specific approach
-  const template = getUltimateTemplate(sector);
-  return lang === 'en' ? template.aboutTextEn : template.aboutText;
-}
-
-// ── LAYOUT VARIATION ──
-// Different leads get different section combinations and orders.
-
-interface LayoutConfig {
-  showGallery: boolean;
-  showProcess: boolean;
-  showStats: boolean;
-  showFaq: boolean;
-  showTestimonials: boolean;
-  sectionOrder: string[];
-  heroStyle: 'standard' | 'centered' | 'split';
-  cardStyle: 'standard' | 'minimal' | 'detailed';
-}
-
-function generateLayoutVariant(lead: any): LayoutConfig {
-  const hash = computeCombinedHash(lead);
-  const sector = (lead.sector || '').toLowerCase();
-  const hasPhotos = (lead.images?.length || 0) + (lead.websiteImages?.length || 0) > 2;
-  const hasReviews = (lead.googleReviewsData?.length || 0) > 0;
-
-  // Section visibility
-  const showGallery = hasPhotos;
-  const showProcess = hash % 3 !== 0; // Hide 33% of the time
-  const showStats = true;
-  const showFaq = hash % 4 !== 0; // Hide 25% of the time
-  const showTestimonials = hasReviews || hash % 5 !== 0;
-
-  // Section order variation (5 variants)
-  const orders = [
-    ['about', 'services', 'process', 'testimonials', 'faq'],
-    ['services', 'about', 'process', 'faq', 'testimonials'],
-    ['about', 'process', 'services', 'testimonials', 'faq'],
-    ['services', 'process', 'about', 'faq', 'testimonials'],
-    ['process', 'about', 'services', 'testimonials', 'faq'],
-  ];
-
-  // Hero style
-  const heroStyles: LayoutConfig['heroStyle'][] = ['standard', 'centered', 'split'];
-  const heroStyle = heroStyles[hash % 3];
-
-  // Card style
-  const cardStyles: LayoutConfig['cardStyle'][] = ['standard', 'minimal', 'detailed'];
-  const cardStyle = cardStyles[hash % 3];
-
-  return {
-    showGallery,
-    showProcess,
-    showStats,
-    showFaq,
-    showTestimonials,
-    sectionOrder: orders[hash % orders.length],
-    heroStyle,
-    cardStyle,
-  };
-}
-
-function computeCombinedHash(lead: any): number {
-  const computeHash = (str: string): number => {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) {
-      h = ((h << 5) - h) + str.charCodeAt(i);
-      h |= 0;
-    }
-    return Math.abs(h);
-  };
-  const nameHash = computeHash(lead.name || '');
-  const cityHash = computeHash(lead.city || 'france');
-  const sectorHash = computeHash(lead.sector || 'default');
-  const phoneHash = computeHash(lead.phone || '0');
-  const emailHash = computeHash(lead.email || 'x');
-  return (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
-}
 
 // ── AVIS FALLBACK SECTORIELS ──
 const SECTOR_FALLBACK_REVIEWS: Record<string, Array<{ author: string; text: string; rating: number; date: string }>> = {
@@ -672,18 +454,10 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
-  const lang = detectLanguage(lead);
-
-  // DYNAMIC CONTENT: Generate unique text per lead
-  const description = generateUniqueAboutText(lead, lang);
-  const heroTitle = aiContent?.heroTitle || generateUniqueHeroTitle(lead, lang);
-  const heroSubtitle = aiContent?.heroSubtitle || generateUniqueHeroSubtitle(lead, lang);
+  const description = generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead);
+  const heroTitle = aiContent?.heroTitle || template.heroTitle;
+  const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
   let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
-
-  const combinedHash = computeCombinedHash(lead);
-  const layout = generateLayoutVariant(lead);
-  const dynamicStats = generateDynamicStats(lead, lang);
-  const dynamicApproach = generateDynamicApproach(lead, lang);
 
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -691,11 +465,6 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
       let features = s.features;
       if (!features || features.length === 0) features = generateFeaturesFromService(s.name, s.description, lead.sector);
       return { name: s.name || `Service ${idx + 1}`, description: s.description || '', features: features.slice(0, 3) };
-    });
-  } else if (lead.tags && lead.tags.length > 0) {
-    finalServices = lead.tags.slice(0, 6).map((tag: string, idx: number) => {
-      const features = generateFeaturesFromService(tag, lead.description || '', lead.sector);
-      return { name: tag, description: lead.description || `Service professionnel ${tag}.`, features: features.slice(0, 3) };
     });
   }
 
@@ -724,6 +493,21 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const fallbackReviews = getSectorFallbackReviews(lead.sector);
   while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
+
+  const computeHash = (str: string): number => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+  const nameHash = computeHash(companyName);
+  const cityHash = computeHash(city || 'france');
+  const sectorHash = computeHash(lead.sector || 'default');
+  const phoneHash = computeHash(phone || '0');
+  const emailHash = computeHash(email || 'x');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
   
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
@@ -755,11 +539,6 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
 
-  // Attach dynamic data for buildUltimateHTML
-  (content as any).layout = layout;
-  (content as any).dynamicStats = dynamicStats;
-  (content as any).dynamicApproach = dynamicApproach;
-
   const layoutVariant = combinedHash % 4;
   return buildUltimateHTML(content, template, combinedImages, layoutVariant);
 }
@@ -767,6 +546,8 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
 export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexelsKey?: string): Promise<string> {
   const lang = detectLanguage(lead);
   const template = getUltimateTemplate(lead.sector);
+  // Alimente la clé Pexels globale du module pour que fetchSectorImagesFromAPI
+  // (requêtes anglaises pertinentes) fonctionne avec la clé fournie.
   setPexelsApiKey(pexelsKey || getPexelsApiKey());
   const companyName = lead.name || (lang === 'en' ? 'Premium Business' : 'Entreprise Premium');
   const city = capitalizeCity(lead.city || '');
@@ -775,21 +556,29 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const address = lead.address || (city ? (lang === 'en' ? `Downtown, ${city}` : `Centre Ville, ${city}`) : (lang === 'en' ? 'USA' : 'France'));
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
-
-  // DYNAMIC CONTENT: Generate unique text per lead
-  const description = generateUniqueAboutText(lead, lang);
-  const heroTitle = aiContent?.heroTitle || generateUniqueHeroTitle(lead, lang);
-  const heroSubtitle = aiContent?.heroSubtitle || generateUniqueHeroSubtitle(lead, lang);
+  const description = generateAboutText(aiContent?.aboutText || lead.description || (lang === 'en' ? template.aboutTextEn : template.aboutText), lead);
+  const heroTitle = aiContent?.heroTitle || lead.name || (lang === 'en' ? template.heroTitle : template.heroTitle);
+  const heroSubtitle = aiContent?.heroSubtitle || lead.description || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
   let ctaText = aiContent?.cta || (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous');
 
-  const combinedHash = computeCombinedHash(lead);
+  const computeHash = (str: string): number => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+  const nameHash = computeHash(companyName);
+  const cityHash = computeHash(city || 'france');
+  const sectorHash = computeHash(lead.sector || 'default');
+  const phoneHash = computeHash(phone || '0');
+  const emailHash = computeHash(email || 'x');
+  const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
 
   const sloganVariationsFr = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const sloganVariationsEn = ["Excellence at your service", "The art of everyday perfection", "Premium tailored solutions", "Excellence & Passion", "Your trusted partner"];
   const finalSlogan = aiContent?.slogan || (lang === 'en' ? sloganVariationsEn[combinedHash % sloganVariationsEn.length] : sloganVariationsFr[combinedHash % sloganVariationsFr.length]);
-
-  // LAYOUT VARIATION: Different structure per lead
-  const layout = generateLayoutVariant(lead);
 
   const sectorImages = await getSectorImagesAsync(lead.sector, combinedHash);
 
@@ -877,19 +666,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
       if (!features || features.length === 0) features = generateFeaturesFromService(s.name, s.description, lead.sector);
       return { name: s.name || `Service ${idx + 1}`, description: s.description || '', features: features.slice(0, 3) };
     });
-  } else if (lead.tags && lead.tags.length > 0) {
-    // Generate services from lead tags if no AI content
-    finalServices = lead.tags.slice(0, 6).map((tag: string, idx: number) => {
-      const features = generateFeaturesFromService(tag, lead.description || '', lead.sector);
-      return { name: tag, description: lead.description || `${lang === 'en' ? 'Professional' : 'Professionnel'} ${tag} service.`, features: features.slice(0, 3) };
-    });
   }
-
-  // DYNAMIC STATS: Derive from lead data
-  const dynamicStats = generateDynamicStats(lead, lang);
-
-  // DYNAMIC APPROACH: Use lead description
-  const dynamicApproach = generateDynamicApproach(lead, lang);
 
   let testimonials = (lead.googleReviewsData || [])
     .filter((review: any) => {
@@ -955,11 +732,6 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
 
-  // Attach dynamic data for buildUltimateHTML
-  (content as any).layout = layout;
-  (content as any).dynamicStats = dynamicStats;
-  (content as any).dynamicApproach = dynamicApproach;
-
   return buildUltimateHTML(content, template, allImages, combinedHash % 4);
 }
 
@@ -1017,6 +789,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
       usedImages.add(selected);
       return selected;
     }
+    // Fallback to available images
     const fallbackPool = allImgs.filter(img => img && img.startsWith('https://'));
     if (fallbackPool.length > 0) return fallbackPool[slot % fallbackPool.length];
     return emergencyFallback;
@@ -1031,11 +804,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const decoScale = 0.8 + ((combinedHash * 3) % 40) / 100;
   const accentOpacity = 0.04 + ((combinedHash * 11) % 6) / 100;
   const sectionShape = combinedHash % 3;
-
-  // LAYOUT VARIATION
-  const layout = (content as any).layout || { showGallery: true, showProcess: true, showStats: true, showFaq: true, showTestimonials: true, sectionOrder: ['about', 'services', 'process', 'testimonials', 'faq'], heroStyle: 'standard', cardStyle: 'standard' };
-  const dynamicStats = (content as any).dynamicStats || sectorCfg.stats.slice(0, 4);
-  const dynamicApproach = (content as any).dynamicApproach || aboutText;
 
   return `<!DOCTYPE html>
 <html lang="${ui.lang}">
@@ -1100,12 +868,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.6;transition:opacity .6s}
         .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--dark-rgb),.7) 0%,rgba(var(--dark-rgb),.5) 40%,rgba(var(--dark-rgb),.8) 100%)}
         .hero-inner{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:130px 32px 80px;width:100%;display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:center}
-        .hero.style-centered .hero-inner{grid-template-columns:1fr;text-align:center;justify-items:center}
-        .hero.style-centered .hero-sub{margin-left:auto;margin-right:auto}
-        .hero.style-centered .hero-actions{justify-content:center}
-        .hero.style-centered .hero-rating{justify-content:center}
-        .hero.style-split .hero-inner{grid-template-columns:1fr 1fr;gap:64px}
-        @media(max-width:900px){.hero-inner{grid-template-columns:1fr;padding:110px 20px 60px}.hero-card{display:none}.hero-actions{flex-direction:column;align-items:stretch}.btn-pri,.btn-sec{justify-content:center}.hero.style-split .hero-inner{grid-template-columns:1fr}}
         .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:8px 20px;border-radius:100px;color:#fff;font-size:.8rem;font-weight:600;margin-bottom:24px;letter-spacing:.8px;text-transform:uppercase;backdrop-filter:blur(10px)}
         .hero h1{font-size:clamp(2.5rem,5.5vw,4.2rem);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.1}
         .hero h1 em{font-style:normal;color:var(--accent-dark);position:relative}
@@ -1183,9 +945,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);transform:scaleX(0);transition:transform .35s;transform-origin:left}
         .svc-card:hover{border-color:var(--primary);box-shadow:0 12px 40px rgba(var(--primary-rgb),.1);transform:translateY(-6px)}
         .svc-card:hover::before{transform:scaleX(1)}
-        .svc-card.style-minimal{border:none;background:var(--bg);box-shadow:none}
-        .svc-card.style-minimal:hover{background:#fff;box-shadow:0 12px 40px rgba(var(--primary-rgb),.1)}
-        .svc-card.style-detailed .svc-card-body{border-top:2px solid var(--primary)}
         .svc-card-img{width:100%;height:200px;object-fit:cover;display:block;transition:transform .5s}
         @media(min-width:1200px){.svc-card-img{height:220px}}
         .svc-card:hover .svc-card-img{transform:scale(1.05)}
@@ -1455,7 +1214,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </nav>
 
-    <section class="hero style-${layout.heroStyle}" id="hero">
+    <section class="hero" id="hero">
         <img src="${proxiedImg(heroImage)}" ${heroImgErr} alt="${companyName}" class="hero-bg">
         <div class="hero-overlay"></div>
         <div class="hero-inner">
@@ -1511,7 +1270,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 ${services.map((s, i) => {
                   const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
-                <div class="svc-card style-${layout.cardStyle} reveal reveal-d${(i % 3) + 1}">
+                <div class="svc-card reveal reveal-d${(i % 3) + 1}">
                     <img src="${proxiedImg(serviceImages[i] || heroImage)}" class="svc-card-img" alt="${s.name}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
@@ -1538,7 +1297,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
-                        ${dynamicStats.slice(0, 3).map((st: { value: string; label: { fr: string; en: string } }) => `
+                        ${sectorCfg.stats.slice(0, 3).map((st: { value: string; label: { fr: string; en: string } }) => `
                         <li><i data-lucide="check-circle-2" width="18"></i> <strong>${st.value}</strong> — ${st.label[lang]}</li>
                         `).join('')}
                     </ul>
@@ -1553,9 +1312,36 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="why-text reveal">
                     <span class="section-label">${ui.whyLabel}</span>
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
-                    <p>${dynamicApproach}</p>
+                    <p>${(() => {
+                        const s = (content.sector || '').toLowerCase();
+                        const cityStr = city ? (lang === 'en' ? ` in ${city}` : ` à ${city}`) : '';
+                        if (lang === 'en') {
+                            if (s.includes('plomb')) return `Every intervention begins with a thorough diagnosis using thermal imaging cameras and leak detectors. We use copper and PEX piping systems, certified Valiant/Buderus boilers, and apply NF C 15-100 standards. Emergency response within 90 minutes, 7 days a week.`;
+                            if (s.includes('électri') || s.includes('electric')) return `We use professional Fluke/Schneider multimeters, Legrand wiring systems, and strictly follow NFC 15-100 standards. Every installation includes Consuel certification, with thermal imaging diagnostics and complete traceability of your electrical panel.`;
+                            if (s.includes('coiff')) return `We work with L'Oréal Professionnel, Kérastase, and Olaplex ranges. Every cut is preceded by a face-shape diagnosis and hair texture analysis. Colorings are mixed on-site for a custom result, with regular training on the latest trends.`;
+                            if (s.includes('restaurant')) return `Our menu changes with the seasons, sourced from local producers within 50km. We work with daily-delivered market vegetables, artisanal meats, and fish from the morning catch. Every dish is prepared on-site, without frozen products.`;
+                            if (s.includes('garage') || s.includes('mécan')) return `We use Launch and Autel multi-brand diagnostic scanners, Michelin/Continental tires, and genuine OEM parts. Every vehicle receives a 50-point checklist before delivery, with photo report of completed work.`;
+                            if (s.includes('médec') || s.includes('dent')) return `Our equipment meets the latest hospital standards: digital X-rays, autoclave Class B sterilization, and paperless patient records. Consultations run on time, with real-time appointment booking online.`;
+                            if (s.includes('avocat')) return `We handle each case with a dedicated strategy file, secure digital document management, and transparent billing. Every client gets a single point of contact, with weekly case updates and clear, jargon-free explanations.`;
+                            if (s.includes('nettoy')) return `We use Kärcher professional machines, eco-certified Ecolab products, and microfiber systems that reduce chemical use by 80%. Every intervention includes a photo quality report, with flexible scheduling including nights and weekends.`;
+                            if (s.includes('jardin')) return `We use Husqvarna/STIHL professional tools, adapted plant selections for your climate zone, and drip irrigation systems. Every garden gets a seasonal maintenance plan, with before/after photo follow-up.`;
+                            if (s.includes('fitness')) return `We use Eleiko competition-grade equipment, Polar heart rate monitoring, and InBody composition analysis. Every member gets a personalized program with weekly progress tracking and nutrition guidance.`;
+                            return `We combine professional-grade equipment, certified techniques, and ongoing team training to deliver consistent, measurable results. Every project follows a documented process with clear milestones and transparent communication.`;
+                        }
+                        if (s.includes('plomb')) return `Chaque intervention commence par un diagnostic approfici avec caméra thermique et détecteur de fuites. Nous utilisons des systèmes de tuyauterie cuivre et PEX, des chaudières Valiant/Buderus certifiées, et appliquons les normes NF C 15-100. Déplacement d'urgence sous 90 minutes, 7j/7.`;
+                        if (s.includes('électri') || s.includes('electric')) return `Nous travaillons avec des multimètres Fluke/Schneider, du câblage Legrand, en suivant strictement les normes NFC 15-100. Chaque installation comprend une certification Consuel, un diagnostic thermographique et une traçabilité complète de votre tableau électrique.`;
+                        if (s.includes('coiff')) return `Nous travaillons avec les gammes L'Oréal Professionnel, Kérastase et Olaplex. Chaque coupe est précédée d'un diagnostic visage et analyse de la texture capillaire. Les colorations sont mélangées sur place pour un résultat personnalisé, avec formation continue sur les dernières tendances.`;
+                        if (s.includes('restaurant')) return `Notre carte évolue au rythme des saisons, approvisionnée par des producteurs locaux dans un rayon de 50km. Nous travaillons avec des légumes du marché livrés quotidiennement, des viandes artisanales et du poisson de la pêche du matin. Chaque plat est préparé sur place, sans produits surgelés.`;
+                        if (s.includes('garage') || s.includes('mécan')) return `Nous utilisons des valises diagnostiques Launch et Autel multimarques, des pneus Michelin/Continental et des pièces d'origine constructeur. Chaque véhicule reçoit un contrôle de 50 points avant restitution, avec rapport photo des travaux effectués.`;
+                        if (s.includes('médec') || s.includes('dent')) return `Nos équipements répondent aux normes hospitalières les plus récentes : radios numériques, autoclave de stérilisation classe B et dossier patient dématérialisé. Les consultations sont ponctuelles, avec prise de RDV en ligne en temps réel.`;
+                        if (s.includes('avocat')) return `Nous traitons chaque dossier avec une stratégie dédiée, une gestion numérique sécurisée des documents et une facturation transparente. Chaque client bénéficie d'un interlocuteur unique, avec des mises à jour hebdomadaires et des explications claires sans jargon juridique.`;
+                        if (s.includes('nettoy')) return `Nous travaillons avec des machines professionnelles Kärcher, des produits écolabels Ecolab et des systèmes en microfibre réduisant de 80% l'usage de produits chimiques. Chaque intervention comprend un rapport qualité photo, avec planning flexible incluant nuits et week-ends.`;
+                        if (s.includes('jardin')) return `Nous utilisons du matériel professionnel Husqvarna/STIHL, des végétaux adaptés à votre zone climatique et des systèmes d'irrigation goutte-à-goutte. Chaque jardin bénéficie d'un plan d'entretien saisonnier, avec suivi photo avant/après.`;
+                        if (s.includes('fitness')) return `Nous disposons de matériel Eleiko de compétition, de suivi cardiaque Polar et d'analyses de composition corporelle InBody. Chaque membre bénéficie d'un programme personnalisé avec suivi hebdomadaire et conseils nutritionnels.`;
+                        return `Nous combinons du matériel professionnel, des techniques certifiées et une formation continue de nos équipes pour des résultats constants et mesurables. Chaque projet suit un processus documenté avec des jalons clairs et une communication transparente.`;
+                    })()}</p>
                     <div class="why-stats">
-                        ${dynamicStats.map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
+                        ${sectorCfg.stats.slice(0, 4).map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
                     </div>
                 </div>
                 <div class="why-img reveal">
