@@ -24,6 +24,9 @@ export const UI = {
     privacyTitle: 'Politique de Confidentialité',
     formPlaceholderName: 'Votre nom', formPlaceholderPhone: '06 XX XX XX XX', formPlaceholderEmail: 'votre@email.com', formPlaceholderMsg: 'Décrivez le problème ou les travaux souhaités...',
     whatsapp: 'WhatsApp',
+    formConsent: 'J\'accepte que mes coordonnées soient utilisées pour être recontacté(e) au sujet de ma demande. Voir notre ',
+    privacyLink: 'politique de confidentialité',
+    testEmpty: 'Avis en attente',
   },
   en: {
     lang: 'en', hreflang: 'en',
@@ -46,5 +49,8 @@ export const UI = {
     privacyTitle: 'Privacy Policy',
     formPlaceholderName: 'Your name', formPlaceholderPhone: '+1 (555) 000-0000', formPlaceholderEmail: 'your@email.com', formPlaceholderMsg: 'Describe your issue or request...',
     whatsapp: 'WhatsApp',
+    formConsent: 'I agree my details may be used to contact me about my request. See our ',
+    privacyLink: 'privacy policy',
+    testEmpty: 'Reviews coming soon',
   }
 } as const;

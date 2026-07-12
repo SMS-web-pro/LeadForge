@@ -178,6 +178,9 @@ export interface UltimateContent {
   accentOnDark?: string;
   hours?: string;
   establishedYear?: number;
+  footerDesc?: string;
+  hasRealRating?: boolean;
+  hasRealReviews?: boolean;
 }
 
 const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
