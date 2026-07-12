@@ -116,7 +116,6 @@ export interface ApiConfig {
   // Payment Configuration
   whopDepositLink: string; // Lien pour paiement 46$ (dépôt)
   whopFinalPaymentLink: string; // Lien pour paiement 100$ (paiement final)
-  web3formsKey?: string; // Clé Web3Forms pour le formulaire de contact
 }
 
 export interface ApiStatus {
@@ -164,8 +163,6 @@ export const defaultApiConfig: ApiConfig = {
   // Payment defaults
   whopDepositLink: '',
   whopFinalPaymentLink: '',
-  // Web3Forms contact form
-  web3formsKey: '',
 };
 
 export const defaultEmailTemplates: EmailTemplate[] = [

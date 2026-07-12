@@ -541,7 +541,7 @@ Tout en français. Contenu ORIGINAL et SPÉCIFIQUE au secteur "${lead.sector || 
       // PRIORITÉ 2: API Pexels dynamique → Supabase Storage
       
       updateProgress({ step: '🎨 Génération du site ULTIMATE...' });
-      const html = await generateUltimateSiteAsync(lead, content, apiConfig.pexelsKey, apiConfig.web3formsKey);
+      const html = await generateUltimateSiteAsync(lead, content, apiConfig.pexelsKey);
       logger.log(`✅ HTML generated for ${lead.name}`);
       
       updateProgress({ step: '☁️ Hébergement Cloud (Storage)...' });

@@ -596,19 +596,16 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
         { key: 'whopFinalPaymentLink', label: 'Lien paiement 100$ (final)', masked: false, placeholder: 'https://whop.com/products/...',
           helpUrl: 'https://whop.com/dashboard',
           helpText: 'whop.com → Dashboard → Products → Copier le lien du produit de 100$' },
-        { key: 'web3formsKey', label: 'Clé Web3Forms (formulaire de contact)', masked: false, placeholder: 'votre-clé-web3forms',
-          helpUrl: 'https://web3forms.com',
-          helpText: 'web3forms.com → Créer un accès gratuit → Copier la clé d\'accès (Access Key). Active le formulaire des sites générés.' },
       ],
       testFn: async (c) => {
         const issues = [];
         if (!c.whopDepositLink) issues.push('Lien dépôt 46$ manquant');
         if (!c.whopFinalPaymentLink) issues.push('Lien paiement 100$ manquant');
-
+        
         if (issues.length > 0) {
           return { ok: false, msg: `❌ ${issues.join(', ')}` };
         }
-
+        
         // Validation basique des URLs
         const urlRegex = /^https:\/\/whop\.com\/products\//;
         if (!urlRegex.test(c.whopDepositLink)) {
@@ -617,7 +614,7 @@ export default function Settings({ config, updateConfig, statuses, setStatus, on
         if (!urlRegex.test(c.whopFinalPaymentLink)) {
           return { ok: false, msg: '❌ Lien paiement final invalide (doit commencer par https://whop.com/products/)' };
         }
-
+        
         return { ok: true, msg: '✅ Liens de paiement Whop configurés ! 46$ dépôt + 100$ final actifs.' };
       },
     },
