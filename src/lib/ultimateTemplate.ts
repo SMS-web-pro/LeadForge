@@ -744,6 +744,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
   const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear, formKey } = content;
   const lang = content.lang || 'fr';
+  const years = (typeof establishedYear === 'number' && establishedYear > 0) ? (new Date().getFullYear() - establishedYear) : null;
   const ui = UI[lang];
   const cleanWebsite = (website || '').split('?')[0].split('#')[0] || '#';
   const sector = content.sector || '';
@@ -969,11 +970,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .why-stat-num{font-size:1.85rem;font-weight:800;color:var(--accent);line-height:1}
         .why-stat-label{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:8px;text-transform:uppercase;letter-spacing:1.2px}
         .why-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:40px 38px;backdrop-filter:blur(6px)}
-        .why-card-rating{font-size:3.4rem;font-weight:800;line-height:1;color:#fff;font-family:${headingFont}}
-        .why-card-rating span{font-size:1.4rem;opacity:.7;font-weight:600}
-        .why-card-stars{display:flex;gap:3px;color:var(--accent);margin:10px 0 6px}
-        .why-card-text{color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.6}
-        .why-card-div{height:1px;background:rgba(255,255,255,.12);margin:24px 0}
+.why-card-title{font-size:1.5rem;font-weight:800;color:#fff;font-family:${headingFont};margin-bottom:4px}
+.why-card-div{height:1px;background:rgba(255,255,255,.12);margin:24px 0}
         .why-card-points{display:grid;gap:14px}
         .why-card-point{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.88);font-weight:500;font-size:.98rem}
         .why-card-point i{color:var(--accent);flex-shrink:0}
@@ -1275,7 +1273,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <main id="main-content">
     <div class="trust-bar">
         <div class="trust-inner">
-            ${getTrustBar(content.sector, lang, rating).map((g: { title: string; icon: string }, i: number) => `
+            ${getTrustBar(content.sector, lang, rating, reviews, city, years).map((g: { title: string; icon: string }, i: number) => `
             <div class="trust-item"><i data-lucide="${g.icon}" width="16"></i> ${g.title}</div>
             ${i < 3 ? '<div class="trust-div"></div>' : ''}
             `).join('')}
@@ -1339,9 +1337,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <a href="#contact" class="btn-pri" style="margin-top:24px">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
                 <div class="why-card reveal">
-                    <div class="why-card-rating">${rating}<span>/5</span></div>
-                    <div class="why-card-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div>
-                    <div class="why-card-text">${rating ? (lang === 'en' ? `Based on ${reviews} verified Google reviews` : `Issu de ${reviews} avis Google vérifiés`) : (lang === 'en' ? 'Trusted by our clients' : 'La confiance de nos clients')}</div>
+                    <div class="why-card-title">${lang === 'en' ? 'Why choose us' : 'Pourquoi nous choisir'}</div>
                     <div class="why-card-div"></div>
                     <div class="why-card-points">
                         ${getWhyPoints(content.sector, lang).map(p => `<div class="why-card-point"><i data-lucide="check" width="16"></i> ${p}</div>`).join('')}
@@ -1445,18 +1441,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <p>${lang === 'en' ? `${companyName} sends you a detailed, no-obligation quote before any work begins.` : `${companyName} vous communique un devis détaillé et sans engagement avant tout travail.`}</p>
             <div class="devis-grid">
                 <div class="devis-card"><div class="devis-ico"><i data-lucide="file-text" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Free quote' : 'Devis gratuit'}</div><div class="devis-label">${lang === 'en' ? 'Detailed, no obligation' : 'Détaillé, sans engagement'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="clock" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Fast response' : 'Réponse rapide'}</div><div class="devis-label">${lang === 'en' ? 'Within 2 business hours' : 'Sous 2h ouvrées'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="badge-check" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Certified pros' : 'Artisans certifiés'}</div><div class="devis-label">${lang === 'en' ? 'Qualified & insured' : 'Qualifiés et assurés'}</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="message-circle" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Personal reply' : 'Réponse personnalisée'}</div><div class="devis-label">${lang === 'en' ? 'Within 24 hours' : 'Sous 24h ouvrées'}</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="user-check" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'One contact' : 'Interlocuteur unique'}</div><div class="devis-label">${lang === 'en' ? 'From quote to follow-up' : 'Du devis au suivi'}</div></div>
             </div>
             <a href="#contact" class="btn-cta">${lang === 'en' ? 'Request my free quote' : 'Demander mon devis gratuit'} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>${ui.ctaTitle}</h2>
-            <p>${ui.ctaDesc}</p>
-            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
 
