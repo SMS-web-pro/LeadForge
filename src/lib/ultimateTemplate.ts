@@ -1111,6 +1111,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .float-urgent:hover{transform:translateY(-3px);box-shadow:0 12px 45px rgba(var(--primary-rgb),.5)}
         @keyframes pulse-urgent{0%,100%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}50%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.6),0 0 0 10px rgba(var(--primary-rgb),.1)}}
         @media(max-width:768px){.float-urgent{bottom:20px;right:20px;padding:14px 22px;font-size:.85rem}}
+        .cursor-dot{position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:var(--accent-dark);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s var(--ease),height .2s var(--ease),background .2s var(--ease);mix-blend-mode:difference;opacity:0}
+        .cursor-dot.is-active{opacity:1}
+        .cursor-dot.is-hover{width:34px;height:34px;background:rgba(255,255,255,.6)}
+        @media(pointer:coarse),(max-width:767px),(prefers-reduced-motion:reduce){.cursor-dot{display:none!important}}
 
         .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
         .reveal.active{opacity:1;transform:translateY(0)}
@@ -1548,6 +1552,16 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <script>
         lucide.createIcons();
+        (function(){
+          var fine = window.matchMedia('(pointer:fine)').matches;
+          var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+          if(!fine || reduce) return;
+          var dot=document.createElement('div');dot.className='cursor-dot';document.body.appendChild(dot);
+          window.addEventListener('mousemove',function(e){dot.classList.add('is-active');dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';});
+          window.addEventListener('mouseover',function(e){if(e.target.closest('a,button,[role="button"],input,textarea,select,.svc-card,.guar-card,.test-card'))dot.classList.add('is-hover');});
+          window.addEventListener('mouseout',function(e){if(e.target.closest('a,button,[role="button"],input,textarea,select,.svc-card,.guar-card,.test-card'))dot.classList.remove('is-hover');});
+          document.addEventListener('mouseleave',function(){dot.classList.remove('is-active');});
+        })();
         window.addEventListener('scroll',()=>{
             const n=document.getElementById('navbar');
             const ib=document.querySelector('.info-bar');
