@@ -6,7 +6,7 @@ import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
-import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getAboutPoints, getTrustBar, iconForService, normalizeReviewDate } from './template/helpers';
+import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getWhyContent, getWhyPoints, getAboutPoints, getTrustBar, iconForService, normalizeReviewDate } from './template/helpers';
 export { detectLanguage };
 
 // ── AVIS FALLBACK SECTORIELS ──
@@ -157,7 +157,6 @@ export interface UltimateContent {
   galleryImages: string[];
   realPhotos?: string[];
   testimonials: Array<{ author: string; text: string; rating: number; date?: string }>;
-  realReviews?: boolean;
   heroTitle: string;
   heroSubtitle: string;
   aboutText: string;
@@ -501,9 +500,9 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     seenTexts.add(normalized);
     return true;
   });
-  const realReviews = testimonials.length > 0;
-  // On n'affiche QUE de vrais avis Google. Sans avis réels => état "Avis en attente" (jamais de faux avis génériques).
-  testimonials = realReviews ? testimonials.slice(0, 6) : [];
+  const fallbackReviews = getSectorFallbackReviews(lead.sector);
+  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 6);
 
   const computeHash = (str: string): number => {
     let h = 0;
@@ -547,7 +546,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear, realReviews
+    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
   };
 
   const layoutVariant = combinedHash % 4;
@@ -701,9 +700,9 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     seenTextsAsync.add(normalized);
     return true;
   });
-  const realReviews = testimonials.length > 0;
-  // On n'affiche QUE de vrais avis Google. Sans avis réels => état "Avis en attente" (jamais de faux avis génériques).
-  testimonials = realReviews ? testimonials.slice(0, 6) : [];
+  const fallbackReviews = getSectorFallbackReviews(lead.sector);
+  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
+  testimonials = testimonials.slice(0, 6);
 
   // Service images : TOUJOURS Pexels (images pro, sans texte/logo)
   const serviceImages: string[] = finalServices.map((s, i) =>
@@ -736,7 +735,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear, formKey: web3formsKey, realReviews
+    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear, formKey: web3formsKey
   };
 
   return buildUltimateHTML(content, template, allImages, combinedHash % 4);
@@ -746,7 +745,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear, formKey } = content;
   const lang = content.lang || 'fr';
   const ui = UI[lang];
-  const cleanWebsite = (website || '').replace(/^http:/i, 'https:').split('?')[0].split('#')[0] || '#';
+  const cleanWebsite = (website || '').split('?')[0].split('#')[0] || '#';
   const sector = content.sector || '';
   const sectorCfg = getSectorConfig(sector);
   const hoursSummary = leadHours || `${ui.hoursLunVen} ${sectorCfg.defaultHours.weekdays} · ${ui.hoursSam} ${sectorCfg.defaultHours.saturday}`;
@@ -778,10 +777,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
-  const mapAddr = address
-    ? (city && !address.toLowerCase().includes(city.toLowerCase().split(' ')[0]) ? address + ', ' + city : address)
-    : (city || '');
-  const mapQuery = encodeURIComponent(mapAddr);
+  const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
 
   const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="${primaryColor}"/><text x="50%" y="50%" font-family="sans-serif" font-size="45" font-weight="bold" fill="white" dominant-baseline="central" text-anchor="middle">${logoInfo.initials}</text></svg>`;
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
@@ -884,8 +880,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .btn-pri:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}
         .btn-sec{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:.95rem;transition:all .3s;backdrop-filter:blur(8px)}
         .btn-sec:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35)}
-        .hero-actions .btn-pri{box-shadow:0 6px 26px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.14)}
-        .hero-actions .btn-sec{box-shadow:0 6px 26px rgba(0,0,0,.3)}
         .hero-rating{display:flex;align-items:center;gap:10px}
         .hero-stars{display:flex;gap:2px;color:#fbbf24}
         .hero-rating-text{font-size:.88rem;color:rgba(255,255,255,.65)}
@@ -1073,10 +1067,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .form-submit{width:100%;padding:15px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:.98rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .form-submit:hover{opacity:.92;transform:translateY(-1px)}
         .form-note{text-align:center;margin-top:12px;font-size:.78rem;color:var(--text-t)}
-        .form-consent{margin:6px 0 4px}
-        .consent-label{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--text-s);cursor:pointer;line-height:1.5}
-        .consent-label input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
-        .consent-label a{color:var(--primary);text-decoration:underline;font-weight:600}
 
         .contact-sidebar{display:flex;flex-direction:column;gap:22px}
         .contact-hours{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:32px}
@@ -1177,11 +1167,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .test-card{position:relative;overflow:hidden}
         .test-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:0;background:var(--primary);transition:height .4s;border-radius:0 0 4px 4px}
         .test-card:hover::before{height:100%}
-        .test-empty{display:flex;justify-content:center;padding:20px 0 8px}
-        .test-empty-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:40px 48px;text-align:center;max-width:520px;box-shadow:0 8px 30px rgba(var(--primary-rgb),.05)}
-        .test-empty-card i{color:var(--primary);margin-bottom:16px}
-        .test-empty-title{font-size:1.15rem;font-weight:700;margin-bottom:8px}
-        .test-empty-sub{font-size:.95rem;color:var(--text-s);line-height:1.6}
 
         .gal-item::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(var(--primary-rgb),0),rgba(var(--primary-rgb),.1));opacity:0;transition:opacity .5s;pointer-events:none}
         .gal-item:hover::after{opacity:1}
@@ -1328,15 +1313,37 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="about-grid">
                 <div class="about-img reveal">
                     <img src="${proxiedImg(aboutImg)}" ${imgErr(2)} alt="${companyName}" loading="lazy">
-                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : (rating ? rating + '/5' : sectorCfg.aboutBadge.value)}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : (rating ? (lang === 'en' ? 'Google Rating' : 'Note Google') : sectorCfg.aboutBadge.label[lang])}</div></div>
+                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
-                    <h2>${content.aboutTitle || (lang === 'en' ? 'About ' + companyName : 'À propos de ' + companyName)}</h2>
+                    <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
                         ${getAboutPoints(content.sector, lang).map(p => `<li><i data-lucide="check-circle-2" width="18"></i> ${p}</li>`).join('')}
                     </ul>
+                    <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-dark" id="why">
+        <div class="container">
+            <div class="why-grid">
+                <div class="why-text reveal">
+                <span class="section-label">${ui.whyLabel}</span>
+                ${(() => { const wc = getWhyContent(content.sector, lang, city, companyName); return `<h2>${wc.title}</h2><p>${wc.text}</p>`; })()}
+                <a href="#contact" class="btn-pri" style="margin-top:24px">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
+                </div>
+                <div class="why-card reveal">
+                    <div class="why-card-rating">${rating}<span>/5</span></div>
+                    <div class="why-card-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div>
+                    <div class="why-card-text">${rating ? (lang === 'en' ? `Based on ${reviews} verified Google reviews` : `Issu de ${reviews} avis Google vérifiés`) : (lang === 'en' ? 'Trusted by our clients' : 'La confiance de nos clients')}</div>
+                    <div class="why-card-div"></div>
+                    <div class="why-card-points">
+                        ${getWhyPoints(content.sector, lang).map(p => `<div class="why-card-point"><i data-lucide="check" width="16"></i> ${p}</div>`).join('')}
+                    </div>
                 </div>
             </div>
         </div>
@@ -1344,18 +1351,16 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
     <div class="stats" style="background:var(--primary)">
         ${sectorCfg.stats.map((s, i) => {
-          const yearNum = (establishedYear && i === 1) ? (new Date().getFullYear() - establishedYear) : null;
-          const raw = i === 0 ? (rating + '/5') : (yearNum !== null ? (yearNum + '+') : s.value);
-          const label = (i === 1 && yearNum !== null) ? { fr: 'Ans d\'expérience', en: 'Years Experience' } : s.label;
+          const raw = i === 0 ? (rating + '/5') : s.value;
           const m = String(raw).match(/^([\d.]+)(.*)$/);
           if (!m) {
             const safeRaw = String(raw).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return `<div class="stat-item"><div class="stat-num">${safeRaw}</div><div class="stat-label">${label[lang]}</div></div>`;
+            return `<div class="stat-item"><div class="stat-num">${safeRaw}</div><div class="stat-label">${s.label[lang]}</div></div>`;
           }
           const num = parseFloat(m[1]);
           const suffix = m[2];
           const dec = (m[1].includes('.')) ? m[1].split('.')[1].length : 0;
-          return `<div class="stat-item"><div class="stat-num" data-count="${num}" data-dec="${dec}" data-suffix="${suffix}">0${suffix}</div><div class="stat-label">${label[lang]}</div></div>`;
+          return `<div class="stat-item"><div class="stat-num" data-count="${num}" data-dec="${dec}" data-suffix="${suffix}">0${suffix}</div><div class="stat-label">${s.label[lang]}</div></div>`;
         }).join('')}
     </div>
 
@@ -1372,6 +1377,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="proc-step reveal reveal-d${Math.min(i, 3)}"><div class="proc-num">0${i + 1}</div><h3>${step.title}</h3><p>${step.desc}</p></div>
                 `).join('')}
             </div>
+            <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a></div>
         </div>
     </section>
 
@@ -1402,21 +1408,13 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <h2>${ui.testTitle}</h2>
                 <p>${ui.testDesc}</p>
             </div>
-            ${content.realReviews ? `
             <div class="test-grid">
                 ${testimonials.slice(0,6).map((t,i) => `
                 <div class="test-card reveal reveal-d${(i % 3) + 1}">
                     <div><div class="test-stars">${Array(t.rating).fill('<i data-lucide="star" fill="currentColor" width="15"></i>').join('')}</div><p class="test-text">"${t.text}"</p></div>
                     <div class="test-author"><div class="test-avatar">${t.author.charAt(0)}</div><div><div class="test-name">${t.author}</div>${t.date?`<div class="test-date">${t.date}</div>`:''}</div></div>
                 </div>`).join('')}
-            </div>` : `
-            <div class="test-empty reveal">
-                <div class="test-empty-card">
-                    <i data-lucide="message-square-text" width="30"></i>
-                    <p class="test-empty-title">${lang === 'en' ? 'Google reviews coming soon' : 'Avis Google en attente'}</p>
-                    <p class="test-empty-sub">${lang === 'en' ? 'Be the first to share your experience.' : 'Soyez le premier à partager votre expérience.'}</p>
-                </div>
-            </div>`}
+            </div>
             <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>
         </div>
     </section>
@@ -1435,6 +1433,20 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="faq-a-wrap"><div class="faq-a">${f.a}</div></div>
                 </div>`).join('')}
             </div>
+        </div>
+    </section>
+
+    <section class="devis-banner" id="devis-banner">
+        <div class="container reveal">
+            <span class="section-label">${lang === 'en' ? 'Free Quote' : 'Devis gratuit'}</span>
+            <h2>${lang === 'en' ? 'Get your free quote' : 'Demandez votre devis gratuit'}</h2>
+            <p>${lang === 'en' ? `${companyName} sends you a detailed, no-obligation quote before any work begins.` : `${companyName} vous communique un devis détaillé et sans engagement avant tout travail.`}</p>
+            <div class="devis-grid">
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="file-text" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Free quote' : 'Devis gratuit'}</div><div class="devis-label">${lang === 'en' ? 'Detailed, no obligation' : 'Détaillé, sans engagement'}</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="clock" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Fast response' : 'Réponse rapide'}</div><div class="devis-label">${lang === 'en' ? 'Within 2 business hours' : 'Sous 2h ouvrées'}</div></div>
+                <div class="devis-card"><div class="devis-ico"><i data-lucide="badge-check" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Certified pros' : 'Artisans certifiés'}</div><div class="devis-label">${lang === 'en' ? 'Qualified & insured' : 'Qualifiés et assurés'}</div></div>
+            </div>
+            <a href="#contact" class="btn-cta">${lang === 'en' ? 'Request my free quote' : 'Demander mon devis gratuit'} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
 
@@ -1474,9 +1486,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                           }
                           return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><input class="${field.type}" class="form-control" name="${field.name}" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></div>`;
                         }).join('')}
-                        <div class="form-group form-consent">
-                            <label class="consent-label"><input type="checkbox" name="consent" required> ${lang === 'en' ? 'I accept the ' : 'J\'accepte la '}<a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${lang === 'en' ? 'privacy policy' : 'politique de confidentialité'}</a></label>
-                        </div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> ${ui.formSubmit}</button>
                         <p class="form-note">${formKey ? ui.formNote : (lang === 'en' ? 'Form not configured — please call us.' : 'Formulaire non configuré — appelez-nous.')}</p>
                     </form>
@@ -1509,7 +1518,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${content.slogan || (lang === 'en' ? 'Your trusted local partner.' : 'Votre partenaire de proximité.')}</p>
+                    <p class="footer-desc">${aboutText}</p>
                     <div class="footer-social">
                         ${content.socialLinks?.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
                         ${content.socialLinks?.instagram ? `<a href="${content.socialLinks.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" width="18"></i></a>` : ''}
@@ -1522,7 +1531,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     </div>
                 </div>
                 <div class="footer-col"><h4>${ui.navServices}</h4><ul>${services.slice(0,5).map(s=>`<li><a href="#services">${s.name}</a></li>`).join('')}</ul></div>
-                <div class="footer-col"><h4>${ui.footerNav}</h4><ul><li><a href="#about">${ui.navAbout}</a></li><li><a href="#pourquoi">${ui.navWhy}</a></li><li><a href="#testimonials">${ui.navAvis}</a></li><li><a href="#contact">${ui.navContact}</a></li><li><a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${ui.footerPrivacy}</a></li></ul></div>
+                <div class="footer-col"><h4>${ui.footerNav}</h4><ul><li><a href="#about">${ui.navAbout}</a></li><li><a href="#why">${ui.navWhy}</a></li><li><a href="#testimonials">${ui.navAvis}</a></li><li><a href="#contact">${ui.navContact}</a></li><li><a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${ui.footerPrivacy}</a></li></ul></div>
                 <div class="footer-col"><h4>${ui.footerContact}</h4>
                     ${phone?`<div class="footer-contact-item"><i data-lucide="phone" width="14"></i> ${phone}</div>`:''}
                     ${email?`<div class="footer-contact-item"><i data-lucide="mail" width="14"></i> ${email}</div>`:''}
