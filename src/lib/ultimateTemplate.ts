@@ -458,7 +458,6 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
   const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
   let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
-  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
   let finalServices = template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -480,7 +479,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     })
     .map((review: any) => ({
       author: review.author || 'Client',
-      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
+      text: review.text.trim(),
       rating: Math.min(5, Math.max(1, review.rating || 5)),
       date: review.date || 'Récemment'
     }));
@@ -558,10 +557,9 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
   const description = generateAboutText(aiContent?.aboutText || lead.description || (lang === 'en' ? template.aboutTextEn : template.aboutText), lead);
-  const heroTitle = aiContent?.heroTitle || (lang === 'en' ? template.heroTitleEn : template.heroTitle);
-  const heroSubtitle = aiContent?.heroSubtitle || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
+  const heroTitle = aiContent?.heroTitle || lead.name || (lang === 'en' ? template.heroTitle : template.heroTitle);
+  const heroSubtitle = aiContent?.heroSubtitle || lead.description || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
   let ctaText = aiContent?.cta || (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous');
-  if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
   const computeHash = (str: string): number => {
     let h = 0;
@@ -649,13 +647,17 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const realPhotos = scrapedImages.filter(img => !isLikelyLogo(img));
   const allScraped = scrapedImages;
 
-  // Hero : TOUJOURS Pexels (jamais logo scrapé)
-  const heroImage = pexelsImages.length > 0
-    ? pexelsImages[((combinedHash * 2654435761) >>> 0) % pexelsImages.length]
-    : (sectorImages[0] || '');
+  // Hero : images scrapées du lead en priorité, sinon Pexels
+  const heroImage = realPhotos.length > 0
+    ? realPhotos[((combinedHash * 2654435761) >>> 0) % realPhotos.length]
+    : pexelsImages.length > 0
+      ? pexelsImages[((combinedHash * 2654435761) >>> 0) % pexelsImages.length]
+      : (sectorImages[0] || '');
 
-  // allImages : Pexels pour hero/about/approach
-  const allImages = pexelsImages.length > 0 ? pexelsImages.slice(0, 6) : sectorImages.slice(0, 6);
+  // allImages : mélange images scrapées + Pexels pour about/approach
+  const allImages = realPhotos.length > 0
+    ? [...realPhotos.slice(0, 3), ...pexelsImages.slice(0, 3)]
+    : pexelsImages.length > 0 ? pexelsImages.slice(0, 6) : sectorImages.slice(0, 6);
 
   let finalServices = (lang === 'en' ? template.servicesEn : undefined) || template.services;
   if (aiContent?.services && Array.isArray(aiContent.services) && aiContent.services.length > 0) {
@@ -678,7 +680,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     })
     .map((review: any) => ({
       author: review.author || (lang === 'en' ? 'Client' : 'Client'),
-      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
+      text: review.text.trim(),
       rating: Math.min(5, Math.max(1, review.rating || 5)),
       date: review.date || (lang === 'en' ? 'Recently' : 'Récemment')
     }));
@@ -693,9 +695,12 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
 
-  // Service images : TOUJOURS Pexels (images pro, sans texte/logo)
+  // Service images : images scrapées du lead en priorité, sinon Pexels varié
   const serviceImages: string[] = finalServices.map((s, i) =>
-    pexelsImages[i % pexelsImages.length] || heroImage || (sectorImages[i % (sectorImages.length || 1)])
+    realPhotos[i % realPhotos.length]
+    || pexelsImages[(i + combinedHash) % pexelsImages.length]
+    || heroImage
+    || (sectorImages[i % (sectorImages.length || 1)])
   );
 
   // Gallery : images scrapées du lead (photos du vrai business, pas les logos)
@@ -1296,7 +1301,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                         <li><i data-lucide="check-circle-2" width="18"></i> <strong>${st.value}</strong> — ${st.label[lang]}</li>
                         `).join('')}
                     </ul>
-                    <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
             </div>
         </div>
@@ -1485,38 +1489,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>${(() => {
-              const s = (content.sector || '').toLowerCase();
-              if (lang === 'en') {
-                if (s.includes('plomb')) return `${companyName} — Your Emergency Plumbing Partner`;
-                if (s.includes('coiff')) return `${companyName} — Book Your Transformation`;
-                if (s.includes('restaurant')) return `${companyName} — Reserve Your Table Tonight`;
-                if (s.includes('garage') || s.includes('mécan')) return `${companyName} — Your Vehicle Deserves the Best`;
-                if (s.includes('médec') || s.includes('dent')) return `${companyName} — Your Health, Our Priority`;
-                if (s.includes('avocat')) return `${companyName} — Protect Your Rights`;
-                if (s.includes('nettoy')) return `${companyName} — Spotless Spaces, Guaranteed`;
-                if (s.includes('jardin')) return `${companyName} — Your Dream Garden Starts Here`;
-                if (s.includes('fitness')) return `${companyName} — Start Your Transformation Today`;
-                return ui.ctaTitle;
-              }
-              if (s.includes('plomb')) return `${companyName} — Votre Plombier de Confiance`;
-              if (s.includes('coiff')) return `${companyName} — Réservez Votre Transformation`;
-              if (s.includes('restaurant')) return `${companyName} — Réservez Votre Table ce Soir`;
-              if (s.includes('garage') || s.includes('mécan')) return `${companyName} — Votre Véhicule Mérite le Mejor`;
-              if (s.includes('médec') || s.includes('dent')) return `${companyName} — Votre Santé, Notre Priorité`;
-              if (s.includes('avocat')) return `${companyName} — Défendez Vos Droits`;
-              if (s.includes('nettoy')) return `${companyName} — Des Espaces Impeccables, Garantis`;
-              if (s.includes('jardin')) return `${companyName} — Votre Jardin Rêve Commence Ici`;
-              if (s.includes('fitness')) return `${companyName} — Lancez Votre Transformation`;
-              return ui.ctaTitle;
-            })()}</h2>
-            <p>${ui.ctaDesc}</p>
-            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
@@ -1573,7 +1545,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${aboutText.substring(0,120)}...</p>
+                    <p class="footer-desc">${aboutText}</p>
                     ${content.socialLinks && Object.values(content.socialLinks).some(v => v) ? `
                     <div class="footer-social">
                         ${content.socialLinks.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
