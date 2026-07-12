@@ -308,64 +308,6 @@ export function getTrustBar(sector: string, lang: 'fr' | 'en', rating: number = 
   ];
 }
 
-// Remove leftover AI placeholder tokens ([année], [nom], {{var}}, …) so generated
-// sites never show unrendered brackets to end users. Also cleans the dangling
-// fragments left behind (e.g. "Fondé en [année]," → "Fondé en ,").
-export function cleanText(text?: string): string {
-  if (!text) return '';
-  return text
-    .replace(/\[[^\]\n]{1,40}\]/g, '')
-    .replace(/\{\{[^}]*\}\}/g, '')
-    .replace(/Fond[ée] en\s*[,.\s]+/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/[,;:]\s*[,;:]/g, ',')
-    .replace(/\s+([.,;:!?])/g, '$1')
-    .trim();
-}
-
-// Stats band — data-driven & honest. Real signals (rating, review count, years in
-// business) are shown when available; otherwise the band is padded with clearly
-// framed service commitments (response time, availability, free quote) so no
-// invented "facts" are ever displayed.
-export function getStats(sector: string, lang: 'fr' | 'en', rating?: number, reviews?: number, establishedYear?: number, hasRealRating: boolean = false, hasRealReviews: boolean = false): Array<{ value: string; label: string }> {
-  const s = (sector || '').toLowerCase();
-  const isEn = lang === 'en';
-  const out: Array<{ value: string; label: string }> = [];
-  if (hasRealRating && rating) out.push({ value: `${rating}/5`, label: isEn ? 'Google rating' : 'Note Google' });
-  if (hasRealReviews && reviews) out.push({ value: `${reviews}`, label: isEn ? 'Client reviews' : 'Avis clients' });
-  if (establishedYear) {
-    const y = new Date().getFullYear() - establishedYear;
-    if (y > 0 && y < 120) out.push({ value: `${y}+`, label: isEn ? 'Years in business' : 'Ans d\'expérience' });
-  }
-  const C: Record<string, { fr: [string, string][]; en: [string, string][] }> = {
-    plomberie: { fr: [['<2h', 'Délai intervention'], ['24h/24', 'Disponible'], ['Devis gratuit', 'Sans engagement']], en: [['<2h', 'Response time'], ['24/7', 'Available'], ['Free quote', 'No obligation']] },
-    electricien: { fr: [['<2h', 'Délai intervention'], ['24h/24', 'Disponible'], ['Devis gratuit', 'Sans engagement']], en: [['<2h', 'Response time'], ['24/7', 'Available'], ['Free quote', 'No obligation']] },
-    coiffeur: { fr: [['Devis offert', 'Sans engagement'], ['Sans RDV', 'Accueil possible'], ['Hygiène', 'Certifiée']], en: [['Free quote', 'No obligation'], ['Walk-ins', 'Welcome'], ['Hygiene', 'Certified']] },
-    restaurant: { fr: [['Produits frais', 'Chaque jour'], ['Réservation', 'En ligne'], ['Accessible', 'Tous budgets']], en: [['Fresh food', 'Daily'], ['Booking', 'Online'], ['Welcoming', 'All budgets']] },
-    garage: { fr: [['Devis gratuit', 'Sans engagement'], ['Pièces', 'Garanties'], ['Véhicule', 'de prêt']], en: [['Free quote', 'No obligation'], ['Parts', 'Guaranteed'], ['Courtesy', 'vehicle']] },
-    nettoyage: { fr: [['Devis gratuit', 'Sur place'], ['Équipes', 'Discrètes'], ['Écologique', 'Certifié']], en: [['Free quote', 'On-site'], ['Trained', 'discreet'], ['Eco', 'certified']] },
-    jardin: { fr: [['Devis détaillé', 'Gratuit'], ['Conseil', 'Saisonnier'], ['Entretien', 'Régulier']], en: [['Detailed quote', 'Free'], ['Seasonal', 'advice'], ['Upkeep', 'Regular']] },
-    fitness: { fr: [['1ʳᵉ séance', 'Offerte'], ['Sans engagement', 'Initial'], ['Coachs', 'Diplômés']], en: [['1st session', 'Free'], ['No commitment', 'Initial'], ['Coaches', 'Certified']] },
-    medical: { fr: [['1ʳᵉ RDV', 'Rapide'], ['Mutuelle', 'Acceptée'], ['Accessible', 'PMR']], en: [['First appt', 'Fast'], ['Insurance', 'accepted'], ['Accessible', 'PMR']] },
-    avocat: { fr: [['1ʳᵉ call', 'Conseil gratuit'], ['Honoraires', 'Transparents'], ['Confidentialité', 'Totale']], en: [['Free call', 'First'], ['Fees', 'Transparent'], ['Confidential', '100%']] },
-    default: { fr: [['Devis gratuit', 'Sans engagement'], ['Réponse', '<24h'], ['Satisfaction', 'Garantie']], en: [['Free quote', 'No obligation'], ['Reply', '<24h'], ['Satisfaction', 'Guaranteed']] },
-  };
-  let key = 'default';
-  if (s.includes('plomb') || s.includes('chauffage') || s.includes('clim')) key = 'plomberie';
-  else if (s.includes('électr') || s.includes('electric')) key = 'electricien';
-  else if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) key = 'coiffeur';
-  else if (s.includes('restaurant') || s.includes('cuisin')) key = 'restaurant';
-  else if (s.includes('garage') || s.includes('mécan') || s.includes('auto')) key = 'garage';
-  else if (s.includes('nettoy')) key = 'nettoyage';
-  else if (s.includes('jardin') || s.includes('paysag')) key = 'jardin';
-  else if (s.includes('fitness') || s.includes('sport')) key = 'fitness';
-  else if (s.includes('médec') || s.includes('santé')) key = 'medical';
-  else if (s.includes('avocat') || s.includes('juridi')) key = 'avocat';
-  const commits = C[key][lang];
-  for (const c of commits) { if (out.length >= 4) break; out.push({ value: c[0], label: c[1] }); }
-  return out.slice(0, 4);
-}
-
 export function getWhyContent(sector: string, lang: 'fr' | 'en', city: string, companyName: string): { title: string; text: string } {
   const s = (sector || '').toLowerCase();
   const c = capitalizeCity(city || '');
