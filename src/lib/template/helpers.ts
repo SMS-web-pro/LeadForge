@@ -175,6 +175,58 @@ export function capitalizeCity(city: string): string {
   return city.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }
 
+/**
+ * Strip leftover template tokens / placeholders from AI-generated copy so they
+ * never appear on a live site. Removes [année], [name], {{var}}, dangling
+ * "Fondé en ," and collapses whitespace.
+ */
+export function cleanText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\[année\]/gi, '')
+    .replace(/\[\s*\w[\w\-éèêàçùôîïëüæœ'’]*\s*\]/g, '')
+    .replace(/\{\{\s*[^}]+\s*\}\}/g, '')
+    .replace(/fond[ée]\s+en\s*,?/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+export interface StatItem { num: string; label: string; }
+
+/**
+ * Build the stats band from REAL data when available; otherwise substitute honest
+ * sector commitments. Never invents numbers. Max 4 items.
+ */
+export function getStats(
+  sector: string,
+  lang: 'fr' | 'en',
+  rating: number | undefined,
+  reviews: number | undefined,
+  establishedYear: number | undefined,
+  hasRealRating: boolean,
+  hasRealReviews: boolean
+): StatItem[] {
+  const stats: StatItem[] = [];
+  if (hasRealRating && typeof rating === 'number' && rating > 0) {
+    stats.push({ num: String(rating), label: lang === 'en' ? 'Google Rating' : 'Note Google' });
+  }
+  if (hasRealReviews && typeof reviews === 'number' && reviews > 0) {
+    stats.push({ num: String(reviews), label: lang === 'en' ? 'Client Reviews' : 'Avis Clients' });
+  }
+  if (typeof establishedYear === 'number' && establishedYear > 0) {
+    const y = new Date().getFullYear() - establishedYear;
+    if (y > 0) stats.push({ num: y + '+', label: lang === 'en' ? 'Years Experience' : 'Ans d\'Expérience' });
+  }
+  const commitments: StatItem[] = lang === 'en'
+    ? [{ num: '< 2h', label: 'Response' }, { num: '24/7', label: 'Available' }, { num: 'Free', label: 'Free Quote' }]
+    : [{ num: '< 2h', label: 'Réponse' }, { num: '24/7', label: 'Disponible' }, { num: 'Gratuit', label: 'Devis Gratuit' }];
+  for (const c of commitments) {
+    if (stats.length >= 4) break;
+    stats.push(c);
+  }
+  return stats.slice(0, 4);
+}
+
 export function getLogoInfo(name: string, sector: string = 'default') {
   const words = name.split(' ').filter(Boolean);
   const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
