@@ -964,6 +964,21 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .svc-card p{color:var(--text-s);font-size:.92rem;margin-bottom:16px;line-height:1.6}
         .svc-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:600;font-size:.88rem;text-decoration:none;transition:gap .25s}
         .svc-link:hover{gap:10px}
+        /* Soft Evolution card elevation */
+        .svc-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+        .svc-card:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border));box-shadow:var(--sh-2);transform:translateY(-6px)}
+        .svc-card-img{transition:transform .6s var(--ease);border-bottom:1px solid var(--border-l)}
+        .guar-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .guar-card:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+        .guar-icon{background:var(--accent-soft)}
+        .test-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .test-card:hover{box-shadow:var(--sh-2);transform:translateY(-4px)}
+        .contact-form{border-radius:var(--r-lg);box-shadow:var(--sh-1)}
+        .about-img{border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+        .why-stat{border-radius:var(--r);transition:transform var(--dur) var(--ease),background var(--dur) var(--ease)}
+        .why-stat:hover{transform:translateY(-3px)}
+        .proc-num{border-radius:50%;transition:all var(--dur) var(--ease)}
+        .proc-step:hover .proc-num{box-shadow:var(--sh-glow)}
         @media(max-width:768px){.svc-grid{grid-template-columns:1fr}.svc-card-img{height:200px}}
 
         .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
