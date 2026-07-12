@@ -1251,15 +1251,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <main id="main-content">
-    <div class="trust-bar">
-        <div class="trust-inner">
-            ${getGuarantees(content.sector, lang).map((g: { title: string; icon: string }, i: number) => `
-            <div class="trust-item"><i data-lucide="${g.icon}" width="16"></i> ${g.title}</div>
-            ${i < 3 ? '<div class="trust-div"></div>' : ''}
-            `).join('')}
-        </div>
-    </div>
-
     <section class="section" id="services">
         <div class="container" style="position:relative">
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:${leadVariant % 2 === 0 ? '-80px' : 'auto'};left:${leadVariant % 2 !== 0 ? '-80px' : 'auto'};animation-delay:${leadVariant}s"></div>
@@ -1297,14 +1288,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
-                    <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
+                    <h2>${content.aboutTitle || (lang === 'en' ? 'About ' + companyName : 'À propos de ' + companyName)}</h2>
                     <p>${aboutText}</p>
-                    <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[1]?.title || (lang === 'en' ? 'Here for You' : 'À votre écoute')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[2]?.title || (lang === 'en' ? 'Satisfaction Guaranteed' : 'Satisfaction garantie')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[3]?.title || (lang === 'en' ? 'Trusted Service' : 'Service de confiance')}</li>
-                    </ul>
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
             </div>
@@ -1316,8 +1301,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="why-grid">
                 <div class="why-text reveal">
                     <span class="section-label">${ui.whyLabel}</span>
-                    <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
-                    <p>${aboutText.substring(0, 200)}...</p>
+                    <h2>${lang === 'en' ? 'Our Approach' : 'Notre Approche'}</h2>
+                    <p>${lang === 'en'
+                        ? `${companyName} puts its expertise at the service of ${city ? 'its clients in ' + city : 'your projects'} through a simple, proven approach: listening to your needs, careful work, and personal follow-up.`
+                        : `${companyName} met son savoir-faire au service de ${city ? 'ses clients à ' + city : 'vos projets'} avec une approche simple et éprouvée : écoute de vos besoins, travail soigné et suivi personnalisé.`}</p>
                     <div class="why-stats">
                         ${sectorCfg.stats.slice(0, 4).map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
                     </div>
@@ -1329,10 +1316,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
         </div>
     </section>
-
-    <div class="stats" style="background:var(--primary)">
-        ${sectorCfg.stats.map(s => `<div class="stat-item"><div class="stat-num">${s.value}</div><div class="stat-label">${s.label[lang]}</div></div>`).join('')}
-    </div>
 
     <section class="section section-alt" id="process">
         <div class="container" style="position:relative">
