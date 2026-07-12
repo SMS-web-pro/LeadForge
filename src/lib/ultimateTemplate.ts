@@ -1307,7 +1307,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:${leadVariant % 2 === 0 ? '-80px' : 'auto'};left:${leadVariant % 2 !== 0 ? '-80px' : 'auto'};animation-delay:${leadVariant}s"></div>
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:180px;top:40%;left:-40px;animation-delay:2s"></div>' : ''}
             <div class="section-hdr reveal">
-                <span class="section-label">${servicesTitle || sectorCfg.ui.svcTitle[lang]}</span>
+                <span class="section-label">${ui.eyebrowServices}</span>
                 <h2>${sectorCfg.ui.svcTitle[lang]}</h2>
                 <p>${sectorCfg.ui.svcDesc[lang]}</p>
             </div>
@@ -1338,7 +1338,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="about-badge"><div class="about-badge-num">${hasRealRating && rating ? rating + '/5' : (establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value)}</div><div class="about-badge-text">${hasRealRating && rating ? (lang === 'en' ? 'Google Rating' : 'Note Google') : (establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang])}</div></div>
                 </div>
                 <div class="about-text reveal">
-                    <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
+                    <span class="section-label">${ui.eyebrowAbout}</span>
                     <h2>${lang === 'en' ? 'About' : 'À propos de'} ${companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
@@ -1356,7 +1356,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         <div class="container">
             <div class="why-grid">
                 <div class="why-text reveal">
-                    <span class="section-label">${ui.whyLabel}</span>
+                    <span class="section-label">${ui.eyebrowWhy}</span>
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
                     <p>${aboutText.substring(0, 200)}...</p>
                     <div class="why-stats">
@@ -1380,7 +1380,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
             <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</span>
+                <span class="section-label">${ui.eyebrowGuarantees}</span>
                 <h2>${lang === 'en' ? 'Why Choose Us' : 'Pourquoi nous choisir'}</h2>
                 <p>${lang === 'en' ? 'The concrete reasons our clients trust us, sector after sector.' : 'Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.'}</p>
             </div>
@@ -1406,7 +1406,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">${ui.testLabel}</span>
+                <span class="section-label">${ui.eyebrowTestimonials}</span>
                 <h2>${ui.testTitle}</h2>
                 <p>${ui.testDesc}</p>
             </div>
@@ -1452,7 +1452,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">${ui.contactLabel}</span>
+                <span class="section-label">${ui.eyebrowContact}</span>
                 <h2>${ui.contactTitle}</h2>
                 <p>${ui.contactDesc}</p>
             </div>

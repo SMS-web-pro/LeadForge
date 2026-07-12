@@ -27,6 +27,12 @@ export const UI = {
     formConsent: 'J\'accepte que mes coordonnées soient utilisées pour être recontacté(e) au sujet de ma demande. Voir notre ',
     privacyLink: 'politique de confidentialité',
     testEmpty: 'Avis en attente',
+    eyebrowServices: 'Nos prestations',
+    eyebrowAbout: 'À propos',
+    eyebrowWhy: 'Pourquoi nous',
+    eyebrowGuarantees: 'Nos engagements',
+    eyebrowTestimonials: 'Ils nous font confiance',
+    eyebrowContact: 'Contact',
   },
   en: {
     lang: 'en', hreflang: 'en',
@@ -52,5 +58,11 @@ export const UI = {
     formConsent: 'I agree my details may be used to contact me about my request. See our ',
     privacyLink: 'privacy policy',
     testEmpty: 'Reviews coming soon',
+    eyebrowServices: 'Our services',
+    eyebrowAbout: 'About',
+    eyebrowWhy: 'Why us',
+    eyebrowGuarantees: 'Our guarantees',
+    eyebrowTestimonials: 'What clients say',
+    eyebrowContact: 'Get in touch',
   }
 } as const;
