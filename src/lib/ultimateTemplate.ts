@@ -6,7 +6,7 @@ import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
-import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, cleanText } from './template/helpers';
+import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, cleanText, getStats } from './template/helpers';
 export { detectLanguage };
 
 // ── AVIS FALLBACK SECTORIELS ──
@@ -744,7 +744,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 }
 
 function buildUltimateHTML(content: UltimateContent, template: any, combinedImages: string[] = [], layoutVariant: number = 0): string {
-  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear } = content;
+  const { companyName, heroTitle, heroSubtitle, aboutText, services, serviceImages, galleryImages, realPhotos, testimonials, phone, email, address, website, city, ctaText, rating, reviews, slogan, heroImage, allImages, galleryTitle, aboutTitle, servicesTitle, accentOnDark, hours: leadHours, establishedYear, footerDesc, hasRealRating, hasRealReviews } = content;
   const lang = content.lang || 'fr';
   const ui = UI[lang];
   const sector = content.sector || '';
@@ -777,7 +777,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   };
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
-  const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
+  const mapQuery = encodeURIComponent(address || '');
 
   const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="${primaryColor}"/><text x="50%" y="50%" font-family="sans-serif" font-size="45" font-weight="bold" fill="white" dominant-baseline="central" text-anchor="middle">${logoInfo.initials}</text></svg>`;
   const faviconDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(faviconSvg)}`;
@@ -1074,6 +1074,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .form-submit{width:100%;padding:15px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:.98rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .form-submit:hover{opacity:.92;transform:translateY(-1px)}
         .form-note{text-align:center;margin-top:12px;font-size:.78rem;color:var(--text-t)}
+        .form-check{display:flex;align-items:flex-start;gap:10px;margin:6px 0 14px;font-size:.82rem;color:var(--text-s);line-height:1.5}
+        .form-check input{margin-top:3px;width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
+        .form-check a{color:var(--primary);text-decoration:underline}
+        .test-empty{text-align:center;padding:48px 20px;color:var(--text-t);background:#fff;border:1px dashed var(--border);border-radius:var(--r-lg)}
+        .test-empty i{color:var(--primary);margin-bottom:12px;display:block}
+        .test-empty p{font-size:.98rem}
 
         .contact-sidebar{display:flex;flex-direction:column;gap:22px}
         .contact-hours{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:32px}
@@ -1225,12 +1231,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${email ? `<div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:${email}">${email}</a></div>` : ''}
             ${address ? `<div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> ${address}${city ? ', ' + city : ''}</div>` : ''}
             <div class="info-bar-item"><i data-lucide="clock" width="14"></i> ${lang === 'en' ? 'Mon-Fri 8am-6pm · Sat 9am-2pm' : 'Lun-Ven 08h-18h · Sam 09h-14h'}</div>
-            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
+            ${hasRealRating && rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
             ${phone ? `<div class="info-bar-item"><i data-lucide="phone" width="14"></i> <a href="tel:${cleanPhoneLink}">${phone}</a></div>` : ''}
             ${email ? `<div class="info-bar-item"><i data-lucide="mail" width="14"></i> <a href="mailto:${email}">${email}</a></div>` : ''}
             ${address ? `<div class="info-bar-item"><i data-lucide="map-pin" width="14"></i> ${address}${city ? ', ' + city : ''}</div>` : ''}
             <div class="info-bar-item"><i data-lucide="clock" width="14"></i> ${lang === 'en' ? 'Mon-Fri 8am-6pm · Sat 9am-2pm' : 'Lun-Ven 08h-18h · Sam 09h-14h'}</div>
-            ${rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
+            ${hasRealRating && rating ? `<div class="info-bar-item"><i data-lucide="star" width="14" fill="currentColor"></i> ${rating}/5 ${ui.testGoogle} (${reviews} ${ui.testAvis})</div>` : ''}
         </div>
     </div>
     <a href="#hero" class="skip-link">${lang === 'en' ? 'Skip to main content' : 'Aller au contenu principal'}</a>
@@ -1266,7 +1272,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> ${ui.heroCall}</a>` : ''}
                 </div>
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
-                    <div class="hero-rating"><div class="hero-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} ${ui.testGoogle}</span></div>
+                    ${hasRealRating && rating ? `<div class="hero-rating"><div class="hero-stars">${Array(Math.round(rating)).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} ${ui.testGoogle}</span></div>` : ''}
                 </div>
             </div>
             <div class="hero-card">
@@ -1310,7 +1316,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                   const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
-                    <img src="${proxiedImg(serviceImages[i] || heroImage)}" class="svc-card-img" alt="${s.name}" loading="lazy">
+                    <img src="${proxiedImg(serviceImages[i] || heroImage)}" class="svc-card-img" alt="${s.name} à ${city}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
                         <h3>${s.name}</h3>
@@ -1329,11 +1335,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="about-grid">
                 <div class="about-img reveal">
                     <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName}" loading="lazy">
-                    <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
+                    <div class="about-badge"><div class="about-badge-num">${hasRealRating && rating ? rating + '/5' : (establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value)}</div><div class="about-badge-text">${hasRealRating && rating ? (lang === 'en' ? 'Google Rating' : 'Note Google') : (establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang])}</div></div>
                 </div>
                 <div class="about-text reveal">
                     <span class="section-label">${aboutTitle || ui.aboutLabel}</span>
-                    <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
+                    <h2>${lang === 'en' ? 'About' : 'À propos de'} ${companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
                         <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
@@ -1341,7 +1347,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                         <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[2]?.title || (lang === 'en' ? 'Satisfaction Guaranteed' : 'Satisfaction garantie')}</li>
                         <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[3]?.title || (lang === 'en' ? 'Trusted Service' : 'Service de confiance')}</li>
                     </ul>
-                    <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
             </div>
         </div>
@@ -1367,25 +1372,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        ${sectorCfg.stats.map(s => `<div class="stat-item"><div class="stat-num">${s.value}</div><div class="stat-label">${s.label[lang]}</div></div>`).join('')}
+        ${getStats(content.sector, lang, rating, reviews, establishedYear, hasRealRating ?? false, hasRealReviews ?? false).map(s => `<div class="stat-item"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join('')}
     </div>
-
-    <section class="section section-alt" id="process">
-        <div class="container" style="position:relative">
-            <div class="section-deco deco-circle" style="width:160px;height:160px;bottom:-40px;${leadVariant % 2 === 0 ? 'right:-60px' : 'left:-60px'};animation-delay:${leadVariant + 3}s"></div>
-            <div class="section-hdr reveal">
-                <span class="section-label">${ui.procLabel}</span>
-                <h2>${ui.procTitle}</h2>
-                <p>${ui.procDesc}</p>
-            </div>
-            <div class="proc-grid">
-                ${getProcessSteps(content.sector, lang).map((step, i) => `
-                <div class="proc-step reveal reveal-d${Math.min(i, 3)}"><div class="proc-num">0${i + 1}</div><h3>${step.title}</h3><p>${step.desc}</p></div>
-                `).join('')}
-            </div>
-            <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a></div>
-        </div>
-    </section>
 
     <section class="section" id="pourquoi">
         <div class="container" style="position:relative">
@@ -1422,6 +1410,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <h2>${ui.testTitle}</h2>
                 <p>${ui.testDesc}</p>
             </div>
+            ${hasRealReviews && testimonials.length > 0 ? `
             <div class="test-grid">
                 ${testimonials.slice(0,6).map((t,i) => `
                 <div class="test-card reveal reveal-d${(i % 3) + 1}">
@@ -1429,7 +1418,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <div class="test-author"><div class="test-avatar">${t.author.charAt(0)}</div><div><div class="test-name">${t.author}</div>${t.date?`<div class="test-date">${t.date}</div>`:''}</div></div>
                 </div>`).join('')}
             </div>
-            <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>
+            ${hasRealRating ? `<div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>${rating}/5 ${ui.testGoogle}</strong><div style="font-size:.8rem;color:var(--text-s)">${ui.testBasé} ${reviews} ${ui.testAvis}</div></div></div>` : ''}
+            ` : `
+            <div class="test-empty reveal">
+                <i data-lucide="message-square" width="28"></i>
+                <p>${ui.testEmpty}</p>
+            </div>`}
         </div>
     </section>
 
@@ -1455,14 +1449,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         </div>
     </section>
 
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>${ui.ctaTitle}</h2>
-            <p>${ui.ctaDesc}</p>
-            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
@@ -1484,6 +1470,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                           }
                           return `<div class="form-group"><label class="form-label">${field.placeholder[lang]}</label><input type="${field.type}" class="form-control" name="${field.name}" placeholder="${field.placeholder[lang]}" ${field.required ? 'required' : ''}></div>`;
                         }).join('')}
+                        <div class="form-check">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <label for="consent">${ui.formConsent}<a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">${ui.privacyLink}</a>.</label>
+                        </div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> ${ui.formSubmit}</button>
                         <p class="form-note">${ui.formNote}</p>
                     </form>
@@ -1519,7 +1509,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${aboutText.substring(0,120)}...</p>
+                    <p class="footer-desc">${footerDesc || (lang === 'en' ? `Your trusted ${content.sector} — ${companyName}.` : `Votre ${content.sector} de confiance — ${companyName}.`)}</p>
                     ${content.socialLinks && Object.values(content.socialLinks).some(v => v) ? `
                     <div class="footer-social">
                         ${content.socialLinks.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
