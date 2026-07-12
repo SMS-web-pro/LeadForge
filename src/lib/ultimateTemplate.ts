@@ -12,92 +12,92 @@ export { detectLanguage };
 // ── AVIS FALLBACK SECTORIELS ──
 const SECTOR_FALLBACK_REVIEWS: Record<string, Array<{ author: string; text: string; rating: number; date: string }>> = {
   plomberie: [
-    { author: 'M. Dupont', text: "Fuite d'eau en pleine nuit, j'ai appelé à 2h du matin et le plombier est arrivé en 45 minutes. Il a utilisé sa caméra pour localiser la fuite sans casser le carrelage, puis a réparé le joint en 30 minutes. Facture très détaillée, tarif honnête. Je recommande vivement.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Martin', text: "Ma chaudière Viessmann était en panne depuis 3 jours et il faisait 8°C dans l'appartement. Le technicien est arrivé avec les pièces nécessaires, a diagnostiqué un défaut d'allumage et l'a réparé en 1h. Il m'a aussi expliqué comment entretenir la chaudière moi-même pour éviter les pannes. Service impeccable.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Pierre L.', text: "Rénovation complète de ma salle de bain : plomberie, carrelage, douche à l'italienne. Le chantier a duré exactement le temps prévu, les artisans étaient ponctuels et soigneux. Le résultat est magnifique, les photos avant/après sont impressionnantes.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Sophie R.', text: "Détection de fuite invisible dans les murs grâce à la caméra thermique FLIR. Sans cette technologie, il aurait fallu casser tout le mur du salon. Localisation précise à 10cm, colmatage sans destruction. Un vrai soulagement, je n'avais même pas imaginé que c'était possible.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Jean-Claude B.', text: "Entretien annuel de ma chaudière Atlantic effectué à l'heure prévue. Le technicien a vérifié la combustion, détartré les radiateurs et m'a expliqué les réglages pour réduire ma facture de gaz de 15%. Document de conformité remis en fin d'intervention. Très satisfait.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Marie T.', text: "Canalisation bouchée avec remontée des eaux dans la cuisine un dimanche matin. J'ai appelé à 8h et le plombier était là à 9h15. Débouchage haute pression en 20 minutes, tout est remis en place. Le genre de problème qui vous met le coeur au creux de la main quand c'est résolu.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'M. Dupont', text: "Intervention rapide pour une fuite d'eau en pleine nuit. Plombier professionnel et tarifs justes. Je recommande !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Mme Martin', text: "Chauffage réparé en 1h, impeccable. Un vrai pro qui connait son métier.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Pierre L.', text: "Remplacement complet de la salle de bain. Travail soigné, respect des délais.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Sophie R.', text: "Détection de fuite sans casse. Technologie au top et prix raisonnable.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Jean-Claude B.', text: "Entretien annuel de la chaudière. Consciencieux et sympathique.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Marie T.', text: "Débouchage d'urgence. Arrivé en 45min, problème résolu. Merci !", rating: 5, date: 'Il y a 2 mois' }
   ],
   electricien: [
-    { author: 'Sylvie M.', text: "Mise aux normes complète de ma maison ancienne de 1960 : tableau Legrand Cellini neuf, câblage en gaine ICTA, passage en norme NF C 15-100. Le chantier a duré 2 jours, l'artisan était très soigneux et a tout nettoyé après lui. Le Consuel a validé du premier coup.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Marc D.', text: "Installation de ma borne de recharge Wallbox pour ma voiture électrique. Le technicien a vérifié la capacité de mon tableau, créé un circuit dédié, et la borne fonctionne parfaitement. Le chantier a duré 2h, tout était prévu et respecté. Je recommande.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Nathalie P.', text: "Maison connectée entièrement installée : volets Somfy, éclairage Philips Hue, thermostat Netatmo. Le professionnel a tout paramétré sur mon smartphone et m'a fait une démonstration complète de chaque fonction. C'est devenu un vrai confort au quotidien, je ne peux plus m'en passer.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Philippe R.', text: "Court-circuit dans le garage qui faisait sauter le disjoncteur. L'électricien est arrivé avec son multimètre Fluke, a localisé le problème en 15 minutes : un fil abîmé dans un plafond. Réparation propre et rapide avec remplacement du fil défectueux. Très professionnel.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Isabelle G.', text: "Remplacement complet de l'éclairage de mon commerce par des LED Philips. Réduction de facture visible dès le premier mois, l'éclairage est beaucoup plus agréable et uniforme. Le technicien a fait une étude luminothéchnique avant l'installation, c'est très sérieux.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'François L.', text: "Diagnostic complet avant achat immobilier : vérification de toute l'installation, photos du tableau, rapport écrit détaillé avec les non-conformités. Ça m'a permis de négocier le prix de vente car il y avait 4000€ de travaux à prévoir. Un investissement qui a largement valu le coup.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Sylvie M.', text: "Mise aux normes complète de ma maison ancienne. Travail propre et conforme.", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Marc D.', text: "Installation de ma borne de recharge voiture électrique. Parfait !", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Nathalie P.', text: "Domotique installée dans toute la maison. Un vrai confort au quotidien.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Philippe R.', text: "Court-circuit réparé en urgence. Intervention rapide et efficace.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Isabelle G.', text: "Éclairage LED dans tout l'appartement. Économies d'énergie garanties.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'François L.', text: "Diagnostic complet avant achat immobilier. Rassurant et professionnel.", rating: 5, date: 'Il y a 2 mois' }
   ],
   coiffeur: [
-    { author: 'Sophie L.', text: "Le coiffeur a pris le temps de faire un diagnostic capillaire avant ma coloration, m'a expliqué les différentes options selon ma texture. Le balayage est naturel, les mèches sont parfaitement fondues. Des compliments tous les jours depuis, mes amies veulent toutes connaître le salon.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Thomas H.', text: "Barbier au top, rasage au rasoir ouvert avec mousse Taylor of Old Bond Street. L'ambiance est relaxante, le fauteuil vintage est très confortable et le résultat est impeccable. La barbe est parfaitement délimitée, je repars comme neuf à chaque fois.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Camille D.', text: "Après 3 ans de colorations ratées ailleurs, j'ai enfin trouvé un salon qui utilise l'Olaplex pour protéger les cheveux. Le coiffeur a analysé la texture de mes cheveux et a trouvé la bonne nuance de châtain. Le résultat est magnifique, les cheveux sont brillants et souples.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Laura M.', text: "Soin kératine pour mes cheveux frisés et abîmés par les colorations précédentes. Le coiffeur a utilisé la gamme Cadiveu, un vrai soin sans formol. Résultat spectaculaire : mes cheveux sont lisses, brillants et faciles à coiffer au quotidien. Ça dure vraiment 3 mois.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Emma B.', text: "Chignon de mariage exceptionnel, le coiffeur a fait un essai gratuit la semaine précédente pour valider le style. Le chignon a tenu toute la journée et la nuit de bal, même sous la pluie. Toutes mes amies mariées ont pris note du salon.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Nicolas P.', text: "Extensions capillaires en cheveux indiens, pose à froid micro-link. Le résultat est tellement naturel que personne ne voit la différence. Le coiffeur m'a bien expliqué l'entretien à domicile et les rendez-vous de maintenance. Travail remarquable.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Sophie L.', text: "Coupe parfaite, exactement ce que je voulais. Le visagisme fait toute la différence !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Thomas H.', text: "Barbier au top, rasage à l'ancienne de qualité. Ambiance masculine garantie.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Camille D.', text: "Coloration balayage magnifique. Des compliments tous les jours !", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Laura M.', text: "Soins kératine pour mes cheveux abîmés. Résultat spectaculaire.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Emma B.', text: "Chignon de mariage exceptionnel. Tenu toute la journée et la nuit.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Nicolas P.', text: "Extensions naturelles, on ne voit pas la différence. Super travail.", rating: 5, date: 'Il y a 2 mois' }
   ],
   restaurant: [
-    { author: 'Julie M.', text: "Menu dégustation à 45€, une explosion de saveurs à chaque plat. Le chef a utilisé des produits du marché du jour : Saint-Jacques fraîches, légumes de la ferme. L'accord mets-vins avec le côtes du rhône du sommelier était parfait. Une adresse que nous garderons précieusement.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Antoine D.', text: "Service impeccable et cadre magnifique sur la terrasse avec vue sur les toits. Nous étions venus pour un anniversaire, le restaurant nous a offert un dessert avec bougies. Les produits sont vraiment frais, on sent la différence avec les chaînes. À refaire absolument.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Sarah K.', text: "Cuisine créative et produits locaux, une vraie découverte. Le chef cuisine avec des légumes du potager bio d'Orgon, la viande vient de la boucherie du quartier. La carte change selon les arrivages, ce qui rend chaque visite différente. Le poisson livré de la criée du port était exceptionnel.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'David L.', text: "Brunch de qualité le dimanche : oeufs brouillés truffés, saumon fumé maison, pastries fraîches du four. Les produits sont copieux et vraiment faits maison, on ne sent aucun produit industriel. Le service est attentionné sans être envahissant. On reviendra chaque semaine.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Claire P.', text: "Accueil chaleureux comme à la maison, le chef est venu nous parler de la carte et nous expliquer l'origine des produits. Les plats sont généreux et bien assaisonnés, les épices sont dosées à la perfection. L'addition est très raisonnable pour la qualité servie.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Romain G.', text: "Carte des vins excellente avec plus de 100 références de vignerons locaux. Le sommelier nous a proposé un accord parfait pour notre plateau de fromages. Les fromages viennent d'un affineur local, on sent le savoir-faire dans chaque bouchée. Soirée parfaite pour un anniversaire de mariage.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Julie M.', text: "Menu dégustation exceptionnel. Une explosion de saveurs à chaque plat !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Antoine D.', text: "Service impeccable et cadre magnifique. Parfait pour les occasions spéciales.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Sarah K.', text: "Produits locaux et cuisine créative. Une belle découverte gastronomique.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'David L.', text: "Brunch de qualité, copieux et fait maison. On reviendra !", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Claire P.', text: "Accueil chaleureux comme à la maison. Une cuisine avec du cœur.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Romain G.', text: "Carte des vins excellente et conseils avisés. Soirée parfaite.", rating: 5, date: 'Il y a 2 mois' }
   ],
   garage: [
-    { author: 'Stéphane B.', text: "Réparation moteur complexe sur ma BMW, le mécanicien a utilisé la valise Autel MaxiSys pour diagnostiquer le problème en 20 minutes. Pièces d'origine BMW commandées et posées en 2 jours. Le rapport photo m'a été envoyé pendant le chantier. Très sérieux et transparent.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Aurélie M.', text: "Changement de 4 pneus Michelin et géométrie 3D. Le garage avait le stock nécessaire, le montage a duré 45 minutes. Le mécanicien m'a expliqué l'usure de mes anciens pneus et m'a donné des conseils pour les faire durer. Prix très compétitif par rapport au concessionnaire.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Christophe L.', text: "Diagnostic électronique sur mon Renault qui affichait le voyant moteur. La valise Autel a identifié le défaut en 5 minutes : sonde lambda défaillante. Réparation rapide avec pièce d'origine. Enfin un garage honnête qui ne propose pas de travaux inutiles.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Marie-Jeanne T.', text: "Rayure profonde sur ma carrosserie, le carrossier a fait un débosselage sans peinture (PDR) en 2h. La rayure a complètement disparu, on ne voit plus rien. Le polissage 3M a rendu la peinture comme neuille. Très satisfaite du résultat et du tarif.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Pierre D.', text: "Révision complète de mon véhicule avec vidange huile Castrol, filtres Mann-Filter et contrôle des freins Brembo. Le mécanicien m'a montré les pièces usées et les nouvelles, tout était transparent. Carnet d'entretien mis à jour, pas de travaux inutiles proposés.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Sandrine H.', text: "Recharge climatisation R134a et remplacement du filtre habitacle antibactérien. Le technicien a fait un test de température avant/après, la clim souffle maintenant à 6°C. Le tarif était inférieur à celui du concessionnaire pour un travail identique.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Stéphane B.', text: "Réparation moteur complexe résolue en 2 jours. Mécanicien de talent !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Aurélie M.', text: "Pneus changés et géométrie faite. Prix compétitif et rapide.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Christophe L.', text: "Diagnostic électronique précis. Enfin un garage honnête !", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Marie-Jeanne T.', text: "Carrosserie réparée impeccablement. On ne voit plus la rayure.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Pierre D.', text: "Révision complète à prix juste. Pas de travaux inutiles proposés.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Sandrine H.', text: "Climatisation rechargée et nettoyée. Parfait pour l'été.", rating: 5, date: 'Il y a 2 mois' }
   ],
   nettoyage: [
-    { author: 'Mme Bernard', text: "Nettoyage complet après déménagement : gravats, poussière, taches sur les murs. L'équipe est arrivée avec du matériel Kärcher professionnel et des produits écolabels Ecolab. L'appartement est rendu impeccable, les propriétaires ont rendu la caution sans problème.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'M. Leroy', text: "Bureaux de notre entreprise nettoyés tous les soirs depuis 2 ans. L'équipe est ponctuelle, discrète et efficace. Le contrôle qualité photo envoyé après chaque passage nous rassure sur la propreté. Les produits Ecolabel n'ont aucune odeur chimique, c'est appréciable.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Famille Dubois', text: "Nettoyage après travaux de rénovation : poussière partout, débris de carrelage, taches de ciment. L'équipe a tout enlevé en une journée, y compris les gravats. Le sol en parquet a été lavé à la monobrosse et ciré. Résultat impeccable, on ne voit plus les traces de travaux.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Petit', text: "Nettoyage à domicile de canapés et moquettes avec un aspirateur eau/poussière numatic. Les taches de café et de vin ont complètement disparu, les moquettes ont retrouvé leur couleur d'origine. Odeur fraîche sans produits agressifs. Très professionnel.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Moreau', text: "Nettoyage de vitres en hauteur pour notre immeuble de 4 étages. L'équipe est intervenue avec un système WFP (Water Fed Pole) pour des vitres sans traces. Le travail a été fait en 3h sans perturber les locataires. Résultat parfait.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Roux', text: "Désinfection complète de notre cabinet médical avec nébulisation de produit biocide homologué. Le traitement a couvert toutes les surfaces et l'air ambiant. Le rapport de désinfection nous a été remis en fin d'intervention. Rassurant et conforme aux normes.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Mme Bernard', text: "Appartement rendu impeccable après déménagement. Propreté impeccable !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'M. Leroy', text: "Bureaux entreprise nettoyés tous les soirs. Service fiable et discret.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Famille Dubois', text: "Nettoyage après travaux. Poussière et débris partout enlevés. Bravo !", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Mme Petit', text: "Canapé et moquettes nettoyés à domicile. Comme neuf, odeurs disparues.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'M. Moreau', text: "Vitres immeuble 4 étages sans traces. Équipe courageuse !", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Mme Roux', text: "Désinfection complète post-covid. Rassurant et professionnel.", rating: 5, date: 'Il y a 2 mois' }
   ],
   jardin: [
-    { author: 'M. Fontaine', text: "Création complète de mon jardin : plan 3D avant chantier, plantation de haies de cupressus, massifs de lavande et gazon en rouleau. Le paysagiste a analysé mon sol argileux et a choisi des espèces parfaitement adaptées. Le jardin est devenu un vrai havre de paix.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Chevalier', text: "Taille de haies de thuya sur 20 mètres de long, le jardinier est intervenu avec une nacelle et un cutter STIHL professionnel. La taille est précise et géométrique, les branches ont été broyées sur place pour le paillage. Rangement impeccable du terrain après le chantier.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Lambert', text: "Rénovation complète de ma terrasse en bois ipé, les lames ont été remplacées et traitées avec une huile de protection. Le jardinier a vérifié l'état des lattages en dessous et a remplacé les pièces abîmées. Protégée pour au moins 10 ans, le résultat est magnifique.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Simon', text: "Création d'un massif fleuri de A à Z : analyse du sol, choix des plantes selon l'exposition (plein soleil, mi-ombre), plantation et paillage. Le jardinier a utilisé des vivaces pour un entretien minimal. Le massif fleurit du printemps à l'automne, c'est exactement ce que je voulais.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Roussel', text: "Installation d'un système d'arrosage automatique Hunter avec programmateur wifi. Le jardinier a enterré les tuyères et positionné les arroseurs pour couvrir toute la pelouse. Economie d'eau estimée à 60% par rapport à l'arrosage manuel. Zéro entretien, c'est le rêve.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Garnier', text: "Élagage d'un grand chêne de 15m qui menaçait la maison. Le jardinier est intervenu avec une nacelle et un tronçonneur STIHL, en toute sécurité. Les branches ont été broyées sur place et le compost sera utilisé pour les massifs. Travail dangereux fait avec professionnalisme.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'M. Fontaine', text: "Jardin totalement transformé. Un vrai havre de paix maintenant !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Mme Chevalier', text: "Taille de haies millimétrée. Géométrie parfaite et nettoyé.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'M. Lambert', text: "Terrasse bois rénovée et traitée. Protégée pour des années.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Mme Simon', text: "Massif fleuri créé de A à Z. Plantes parfaitement adaptées.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'M. Roussel', text: "Pelouse semée et arrosage automatique installé. Zéro entretien !", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Mme Garnier', text: "Élagage dangereux d'un grand chêne. Pro sans risques.", rating: 5, date: 'Il y a 2 mois' }
   ],
   fitness: [
-    { author: 'Nicolas V.', text: "Programme de perte de poids sur mesure : -8kg en 3 mois avec un coach certifié BPJEPS. Les séances sont variées (musculation, cardio, HIIT), le coach ajuste la difficulté chaque semaine. L'analyse InBody montre une vraie progression. Je recommande à 100%.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Caroline M.', text: "Remise en forme post-grossesse avec un coach spécialisé. Les exercices étaient adaptés à ma condition (périnée, abdominaux), sans rush. Le coach a été patient et motivant. Après 3 mois, je me sens plus forte qu'avant la grossesse. Merci pour ce suivi personnalisé.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Alexandre K.', text: "Préparation marathon avec programme de coach personnel. Le coach a analyisé ma condition avec des tests de performance, a adapté les séances de footing et de renforcement. J'ai atteint mon temps visé (3h45) grâce au suivi hebdomadaire et aux conseils nutritionnels.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Émilie R.', text: "Cours collectifs dynamiques, maximum 15 personnes pour un vrai suivi. Les coachs connaissent notre nom et nos objectifs. L'espace bien-être (sauna, hammam) est inclus dans l'adhésion, idéal pour la récupération. Ambiance top et sans pression.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Julien B.', text: "Bilan nutritionnel avec analyse InBody + programme d'entraînement personnalisé. Le coach a identifié mes erreurs alimentaires et m'a donné des repas concrets à préparer. Résultat : -5kg de gras et +3kg de muscle en 4 mois. L'approche est sérieuse et scientifique.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Sophie G.', text: "Musculation sans blessure grâce aux conseils techniques du coach. J'étais débutante et j'avais peur de me faire mal. Le coach m'a appris les gestes sûrs, la respiration, la progressivité. Après 6 mois, je suis plus confiante et je progresse à chaque séance.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Nicolas V.', text: "Programme perte de poids efficace -8kg en 3 mois. Coach motivant !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Caroline M.', text: "Remise en forme post-grossesse adaptée. Exercices sur mesure.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Alexandre K.', text: "Préparation marathon réussie. Temps visé atteint grâce au suivi.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Émilie R.', text: "Cours collectifs dynamiques. Ambiance top et résultats garantis.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Julien B.', text: "Nutrition + sport = résultats durables. Accompagnement complet.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Sophie G.', text: "Musculation sans blessure grâce aux conseils techniques.", rating: 5, date: 'Il y a 2 mois' }
   ],
   medical: [
-    { author: 'M. Durand', text: "Consultation à l'écoute avec le Dr Martin : bilan complet en 30 minutes, prise de tension, auscultation, bilan sanguin prescrit. Le médecin a pris le temps de m'expliquer les résultats et de me rassurer. Enfin un médecin disponible et vraiment attentif à ses patients.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Lefebvre', text: "Kinésithérapie pour rééducation du genou après opération. Le kiné utilise une table hydraulique, des ultrasons et des exercices ciblés. Après 10 séances, j'ai retrouvé une mobilité complète. Le suivi était rigoureux avec des exercices à faire chez soi.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Michel', text: "Soins chez le dentiste avec peur panique depuis l'enfance. Le praticien a été d'une douceur incroyable, il m'a expliqué chaque étape avant de commencer. Injections presque indolores, résultat esthétique parfait. Ma phobie a été vaincue grâce à cette équipe.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Fournier', text: "Infirmière à domicile pour les pansements de mon père. Passage régulier 3 fois par semaine, toujours à l'heure, toujours souriante. Les pansements sont impeccables, la désinfection est rigoureuse. Mon père a retrouvé confiance grâce à ce suivi régulier.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Girard', text: "Pédicure pour diabétique, le soin était extrêmement précautionneux. L'infirmière a vérifié la sensibilité de mes pieds, taillé les ongles avec précision et appliqué un soin hydratant spécifique. Régulièrement disponible et toujours ponctuelle.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Bonnet', text: "Kinésithérapie pour des maux de dos chroniques depuis 10 ans. Le kiné a identifié un problème de posture avec un bilan postural complet. Après 15 séances de rééducation + exercices quotidiens, la douleur a diminué de 80%. Je dors enfin correctement.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'M. Durand', text: "Consultation à l'écoute et diagnostic précis. Enfin un médecin disponible !", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Mme Lefebvre', text: "Kiné compétente pour ma rééducation genou. Progrès rapides.", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'M. Michel', text: "Dentiste doux et patient. Phobie du dentiste vaincue !", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Mme Fournier', text: "Infirmière à domicile régulière et professionnelle. Rassurante.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'M. Girard', text: "Pédicure soignante pour diabétique. Extrêmement précautionneuse.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Mme Bonnet', text: "Ostéo qui soulage enfin mes maux de dos chroniques. Un soulagement !", rating: 5, date: 'Il y a 2 mois' }
   ],
   avocat: [
-    { author: 'M. Lemaire', text: "Divorce compliqué avec deux enfants, l'avocat a négocié un accord à l'amiable qui protège mes droits de garde et mes intérêts financiers. L'échange a été constructif, sans agressivité. Le dossier a été traité en 3 mois au lieu de 18. Merci pour ce professionnalisme.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Mme Duval', text: "Licenciement abusif après 8 ans d'ancienneté, j'ai gagné aux prud'hommes. L'avocat a constitué un dossier solide avec les emails, les témoignages et les bulletins de salaire. Indemnités de 12 000€ obtenues. Défense exemplaire et suivi hebdomadaire.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'M. Bernard', text: "Rédaction de statuts pour ma nouvelle SAS. L'avocat a vérifié chaque clause, m'a conseillé sur le régime fiscal optimal et a rédigé un pacte d'associés clair. Tout était prêt pour le dépôt au greffe. Un vrai accompagnement de A à Z pour un entrepreneur.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Mme Morin', text: "Succession familiale compliquée après le décès de mon père, avec des biens immobiliers et des comptes à l'étranger. L'avocat a débloqué la situation en 6 mois, a négocié entre les héritiers et a optimisé la fiscalité. Les conflits familiaux ont été apaisés grâce à sa médiation.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'M. Petit', text: "Conseil fiscal pour la création de mon entreprise. L'avocat a analysé mon statut (micro-entreprise vs SAS), m'a expliqué les avantages de chaque option et m'a fait économiser 3 000€ de charges le premier an. Les honoraires étaient communiqués par écrit, sans surprise.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Mme Giraud', text: "Accusée à tort de harcèlement moral au travail, l'avocat a constitué ma défense avec les preuves de mon innocence. Acquittement obtenu au tribunal correctionnel. La confidentialité et le soutien psychologique tout au long de la procédure m'ont été précieux.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'M. Lemaire', text: "Divorce compliqué géré avec professionnalisme et empathie.", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Mme Duval', text: "Succès en appel pour mon licenciement abusif. Défense exemplaire !", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'M. Bernard', text: "Contrat commercial rédigé avec précision. Zéro zone grise.", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Mme Morin', text: "Succession familiale débloquée rapidement. Fin des conflits.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'M. Petit', text: "Conseil fiscal pertinent qui m'a fait économiser beaucoup.", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Mme Giraud', text: "Défense pénale efficace. Acquittement obtenu. Excellence !", rating: 5, date: 'Il y a 2 mois' }
   ],
   default: [
-    { author: 'Emma L.', text: "Intervention rapide et professionnelle, le technicien a diagnosé le problème en 15 minutes et l'a résolu proprement. Facture claire et tarif honnête. Je recommande vivement pour la qualité du service et la réactivité.", rating: 5, date: 'Il y a 1 semaine' },
-    { author: 'Arthur D.', text: "Devis détaillé et transparent reçu le jour même, intervention planifiée dans la semaine. Le travail a été fait soigneusement, sans aucun dégât collatéral. L'équipe était ponctuelle et sympathique. Très satisfait du résultat.", rating: 5, date: 'Il y a 2 semaines' },
-    { author: 'Sophie M.', text: "J'avais besoin d'un professionnel fiable pour un dossier urgent. L'équipe a répondu rapidement, a pris le temps d'analyser ma situation et m'a proposé une solution adaptée. Le suivi était régulier, je n'ai jamais eu à me poser de questions.", rating: 5, date: 'Il y a 3 semaines' },
-    { author: 'Lucas P.', text: "Travail impeccable du début à la fin : analyse du besoin, proposition technique, exécution soignée et contrôle qualité en fin de chantier. Les photos avant/après m'ont été envoyées le soir même. Un vrai professionnalisme à chaque étape.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Marie B.', text: "Service client irréprochable, réactivité exceptionnelle pour une intervention en urgence. Le technicien est arrivé en 45 minutes, avait tout le matériel nécessaire et a résolu mon problème rapidement. Tarif très raisonnable pour la qualité rendue.", rating: 5, date: 'Il y a 1 mois' },
-    { author: 'Thomas R.', text: "Excellence et qualité au rendez-vous, c'est rare de trouver un aussi bon rapport qualité-prix. L'équipe est compétente, les matériaux utilisés sont de marque reconnue et le résultat est durable. Je recommande sans hésitation.", rating: 5, date: 'Il y a 2 mois' }
+    { author: 'Emma L.', text: "Une expérience tout simplement majestueuse...", rating: 5, date: 'Il y a 1 semaine' },
+    { author: 'Arthur D.', text: "Service d'excellence du début à la fin...", rating: 5, date: 'Il y a 2 semaines' },
+    { author: 'Sophie M.', text: "Je recommande vivement cette entreprise...", rating: 5, date: 'Il y a 3 semaines' },
+    { author: 'Lucas P.', text: "Professionnalisme et expertise remarquables...", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Marie B.', text: "Un service client irréprochable...", rating: 5, date: 'Il y a 1 mois' },
+    { author: 'Thomas R.', text: "Excellence et qualité au rendez-vous...", rating: 5, date: 'Il y a 2 mois' }
   ]
 };
 
@@ -193,232 +193,240 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
   plomberie: {
     primary: '#0f766e', secondary: '#115e59', accent: '#14b8a6', background: '#f0fdfa',
     services: [
-      { name: 'Dépannage Urgence', description: "Fuite de canalisation, chaudière en panne, canalisation bouchée ? Nous intervenons sous 90 minutes avec une caméra investigatrice pour localiser le problème sans casser vos murs ni vos carrelages.", features: ['Caméra endoscopique', 'Détection sans casse', 'Arrivée sous 90min'] },
-      { name: 'Installation Sanitaire', description: "Pose complète de salle de bain avec Robinetterie Grohe/Hansgrohe, WC suspendus Geberit, meubles Vasco. Nous travaillons avec les fournisseurs du commerce de détail pour vous garantir les meilleurs prix.", features: ['Robinetterie Grohe', 'WC Geberit', 'Meubles Vasco'] },
-      { name: 'Chauffage & Chaudière', description: "Installation et entretien de chaudières gaz Viessmann, Vaillant et Atlantic. Nous sommes certifiés RGE pour les pompes à chaleur air/eau et air/air. Vérification annuelle obligatoire pour votre sécurité.", features: ['Viessmann/Vaillant', 'Certifié RGE', 'PAC air/eau'] },
-      { name: 'Détection de Fuites', description: "Fuite invisible ? Notre gaz traceur et caméra thermique FLIR localisent la fuite à 10cm près. Colmatage sans destruction, facture claire avant toute intervention.", features: ['Caméra FLIR', 'Gaz traceur', 'Localisation ±10cm'] },
-      { name: 'Rénovation Salle de Bain', description: "Rénovation complète clé en main : carrelage, plomberie, chauffage au sol, douche à l'italienne. Devis détaillé avec plans 3D, délai garanti, sans mauvaise surprise.", features: ['Plans 3D', 'Douce à l\'italienne', 'Clé en main'] },
-      { name: 'Entretien Chaudière', description: "Contrôle annuel obligatoire pour votre garantie constructeur. Détartrage complet, vérification des joints, test de combustion. Nous fournissons le certificat de conformité.", features: ['Certificat fourni', 'Détartrage inclus', 'Norme NF'] }
+      { name: 'Dépannage 24h/24', description: "Intervention d'urgence sur toutes fuites et pannes", features: ['Disponible 7j/7', 'Arrivée sous 1h30', 'Sans surprise tarifaire'] },
+      { name: 'Installation Sanitaire', description: 'Pose et remplacement de vos appareils', features: ['Robinetterie', 'Éviers', 'WC', 'Douches'] },
+      { name: 'Chauffage & Chaudière', description: 'Installation et réparation chauffage', features: ['Chaudières gaz/fioul', 'Pompes à chaleur', 'Détartrage'] },
+      { name: 'Détection de Fuites', description: 'Localisation précise sans casse', features: ['Caméra thermique', 'Gaz traceur', 'Colmatage immédiat'] },
+      { name: 'Rénovation Salle de Bain', description: 'Création et rénovation complète', features: ['Devis gratuit', 'Aide au choix', 'Clé en main'] },
+      { name: 'Entretien Annuel', description: 'Maintenance préventive', features: ['Contrôle chauffage', 'Détartrage', 'Mise aux normes'] }
     ],
     guarantees: [
       { title: 'Garantie Décennale', icon: 'shield-check' },
-      { title: 'Arrivée sous 90min', icon: 'clock' },
+      { title: 'Intervention < 2h', icon: 'clock' },
       { title: 'Devis Gratuit', icon: 'file-text' },
-      { title: 'Artisan RGE', icon: 'badge-check' }
+      { title: 'Artisan Qualifié', icon: 'badge-check' }
     ],
-    heroTitle: 'Plombier Chauffagiste Certifié', heroTitleEn: 'Certified Heating & Plumbing Expert',
-    heroSubtitle: "Fuite urgente, panne de chaudière ou rénovation de salle de bain — nous intervenons 7j/7 avec caméra investigatrice et devis gratuit avant toute intervention.", heroSubtitleEn: 'Emergency leaks, boiler breakdowns or bathroom renovation — we respond 7 days a week with inspection camera and free quote before any work.',
-    aboutText: "Artisan plombier chauffagiste certifié RGE depuis 15 ans, nous maîtrisons l'installation sanitaire, le dépannage d'urgence et la rénovation complète. Nos véhicules sont équipés de caméras investigatrices FLIR, de outils de soudure pour tuyauterie cuivre et PER, et de tout le matériel nécessaire pour une intervention rapide et propre. Chaque chantier est suivi avec un rapport photo que nous vous transmettons en fin de journée.", aboutTextEn: 'Certified RGE plumber and heating engineer for 15 years, we master sanitary installation, emergency repair and complete renovation. Our vehicles are equipped with FLIR inspection cameras, soldering tools for copper and PER piping, and all the equipment needed for a fast, clean intervention. Every job is tracked with a photo report sent to you at end of day.',
+    heroTitle: 'Artisan Plombier', heroTitleEn: 'Plumbing Expert',
+    heroSubtitle: "De la fuite d'eau à la rénovation complète, un savoir-faire au service de vos installations", heroSubtitleEn: 'From leak repair to complete renovation, expertise for your plumbing systems',
+    aboutText: "Plombier chauffagiste depuis plus de 15 ans, je mets mon savoir-faire au service de vos installations. Artisan passionné, je garantis un travail soigné, des délais respectés et des tarifs transparents.", aboutTextEn: 'Plumber and heating specialist for over 15 years. I bring my expertise to your installations with quality work, respected deadlines, and transparent pricing.',
     ctaText: 'Demander un devis gratuit', ctaTextEn: 'Get a Free Quote'
   },
   electricien: {
     primary: '#1e40af', secondary: '#1e3a8a', accent: '#2563eb', background: '#f8fafc',
     services: [
-      { name: 'Mise aux Normes', description: "Votre installation a plus de 15 ans ? La norme NFC 15-100 impose une mise à conformité. Nous remplaçons votre tableau ancien par un tableau Legrand Cellini, câblage en fil rigide rouge/bleu/noir conforme, et passage en TT ou TNS selon votre réseau.", features: ['Tableau Legrand', 'Norme NFC 15-100', 'Certificat Consuel'] },
-      { name: 'Dépannage Électrique', description: "Disjoncteur qui saute, court-circuit, prise qui chauffe ? Notre multimètre Fluke localize la panne en quelques minutes. Nous remplaçons les composants défectueux par du matériel Legrand ou Schneider, avec facture détaillée.", features: ['Multimètre Fluke', 'Diagnostic 15min', 'Pièces Legrand'] },
-      { name: 'Installation Complète', description: "Construction neuve ou rénovationtotale : plan électrique validé par le Consuel, câblage complet en gaine ICTA, pose de points lumineux, prises RJ45 et interrupteurs connectés si souhaité.", features: ['Plan Consuel', 'Gaine ICTA', 'Points lumineux'] },
-      { name: 'Domotique', description: "Maison connectée avec volets roulants Somfy, éclairage piloté par KNX ou Tuya, thermostat Netatmo. Programmation complète depuis votre smartphone, avec démonstration sur site.", features: ['Somfy/KNX', 'Pilotage smartphone', 'Démo incluse'] },
-      { name: 'Éclairage LED', description: "Réduction de 80% sur votre facture. Spots LED encastrés Philips, bandes lumineuses pour kitchen LED, éclairage extérieur solaire Ip65. Étude luminothéchnique incluse pour un résultat optimal.", features: ['Philips/Schneider', 'Étude lumino', '-80% facture'] },
-      { name: 'Borne de Recharge', description: "Installation de bornes Wallbox ou NauticUp pour véhicule électrique. Certification IRVE obligatoire, raccordement au tableau existant ou création d'un dédié. TVA réduite à 10% pour les particuliers.", features: ['Wallbox/NauticUp', 'Certif. IRVE', 'TVA 10%'] }
+      { name: 'Mise aux Normes', description: 'Remise à neuf de votre installation électrique', features: ['Norme NFC 15-100', 'Tableau électrique neuf', 'Mise à la terre'] },
+      { name: 'Dépannage Électrique', description: 'Pannes, court-circuits, disjonctions', features: ['Intervention rapide', 'Diagnostic complet', 'Réparation durable'] },
+      { name: 'Installation Complète', description: 'Construction ou rénovation électrique', features: ['Câblage complet', 'Points de lumière', 'Prises et inters'] },
+      { name: 'Domotique & Smart Home', description: 'Maison connectée et automatisée', features: ['Volets roulants', 'Éclairage auto', 'Thermostats'] },
+      { name: 'Éclairage LED', description: 'Solutions éclairage économiques', features: ['Spots encastrés', 'Suspensions design', 'Éclairage extérieur'] },
+      { name: 'Bornes de Recharge', description: 'Installation bornes véhicule électrique', features: ['Wallbox particulier', 'Borne entreprise', 'Certification IRVE'] }
     ],
     guarantees: [
       { title: 'Consuel Certifié', icon: 'shield-check' },
-      { title: 'Garantie 10 ans', icon: 'badge-check' },
-      { title: 'Diagnostic 15min', icon: 'clock' },
+      { title: 'Garantie Décennale', icon: 'badge-check' },
+      { title: 'Intervention < 2h', icon: 'clock' },
       { title: 'Devis Gratuit', icon: 'file-text' }
     ],
-    heroTitle: 'Électricien Certifié Consuel', heroTitleEn: 'Consuel-Certified Electrician',
-    heroSubtitle: "Installation, dépannage et mise aux normes NFC 15-100 — nous sécurisons votre habitat avec du matériel Legrand/Schneider et un diagnostic rapide au multimètre Fluke.", heroSubtitleEn: 'Installation, repair and NFC 15-100 compliance — we secure your home with Legrand/Schneider equipment and fast Fluke multimeter diagnostics.',
-    aboutText: "Électricien certifié Consuel depuis 15 ans, nous sécurisons les habitations et commerces avec du matériel professionnel Legrand, Schneider et Hager. Nos véhicules de service sont équipés de multimètres Fluke, de caméras thermiques et de tout le nécessaire pour un diagnostic en 15 minutes. Chaque intervention fait l'objet d'un rapport de conformité que nous remettons en fin de chantier.", aboutTextEn: 'Consuel-certified electrician for 15 years, we secure homes and businesses with professional Legrand, Schneider and Hager equipment. Our service vehicles are equipped with Fluke multimeters, thermal cameras and everything needed for a 15-minute diagnosis. Every intervention comes with a compliance report delivered at end of job.',
-    ctaText: 'Demander un devis', ctaTextEn: 'Request a Quote'
+    heroTitle: 'Électricien Agréé', heroTitleEn: 'Certified Electrician',
+    heroSubtitle: "Des installations sûres, conformes et durables pour votre habitat et votre entreprise", heroSubtitleEn: 'Safe, compliant, and durable installations for your home and business',
+    aboutText: "Électricien certifié Consuel avec 15 ans d'expérience. Je sécurise votre habitat grâce à des installations conformes et durables. Artisan sérieux, intervention rapide et devis transparent.", aboutTextEn: 'Consuel-certified electrician with 15 years of experience. I secure your home with compliant and durable installations. Professional work, fast response, and transparent quotes.',
+    ctaText: 'Contactez-nous', ctaTextEn: 'Contact Us'
   },
   coiffeur: {
     primary: '#6b21a8', secondary: '#581c87', accent: '#7c3aed', background: '#faf5ff',
     services: [
-      { name: 'Coupe & Conseil', description: "Avant toute coupe, diagnostic capillaire avec analyse de la texture (épaisse, fine, crépue, lisse) et du visage. Coupe femme ou homme avec les techniques les plus récentes : dégradé effilé, coupe au carré asymétrique, undercut moderne. Conseils personnalisés pour l'entretien à domicile.", features: ['Diagnostic capillaire', 'Techniques 2024', 'Conseil à domicile'] },
-      { name: 'Barbier Traditionnel', description: "Rasage au rasoir ouverte avec mousse savonnette Taylor of Old Bond Street, après-rasage balm Proraso. Taille de barbe au fer à chauffer, délimitation au fil. Soins de la barbe avec huile argan et baume à la cire d'abeille.", features: ['Rasoir ouvert', 'Savon Taylor', 'Huile argan'] },
-      { name: 'Coloration & Balayage', description: "Coloration L'Oréal Professionnel Majirel, balayage手工 (fait main) pour un rendu naturel, mèches sur mesure avec papillons. Nous utilisons la gamme Olaplex pour protéger la fibre capillaire pendant la coloration.", features: ['L\'Oréal Majirel', 'Olaplex protection', 'Balayage main'] },
-      { name: 'Soin Kératine', description: "Traitement profond à la kératine brésilienne pour cheveux frisés ou abîmés. Redoux semi-permanent jusqu'à 3 mois, lissage sans formol avec la gamme Cadiveu. Application de masque réparateur à l'huile de coco avant le soin.", features: ['Kératine Cadiveu', 'Sans formol', 'Résultat 3 mois'] },
-      { name: 'Extensions', description: "Extensions capillaires 100% cheveux indiens : pose à froid micro-link, tissage africain, ou keratin bond. Large choix de longueurs (30 à 80cm) et de couleurs. Entretien toutes les 3 semaines inclus la première pose.", features: ['Cheveux indiens', 'Pose à froid', 'Entretien inclus'] },
-      { name: 'Coiffure Événement', description: "Mariage, baptême, soirée de gala : coiffure sur mesure avec essai gratuit la semaine précédente. Chignon élégant, tresse bohème, ou lâché bouclé. Maquillage léger inclus si souhaité.", features: ['Essai gratuit', 'Maquillage inclus', 'Sur mesure'] }
+      { name: 'Coupes & Styles', description: 'Coupe sur-mesure femme et homme', features: ['Visagisme personnalisé', 'Techniques actuelles', 'Conseil entretien'] },
+      { name: 'Barbier Traditionnel', description: 'Rasage et soins barbe', features: ["Rasage à l'ancienne", 'Taille précise', 'Soins barbe'] },
+      { name: 'Coloration Expert', description: 'Balayages, ombrés et couleurs', features: ['Coloration végétale', 'Mèches sur mesure', 'Glitter color'] },
+      { name: 'Soins Capillaires', description: 'Traitements réparateurs', features: ['Botox capillaire', 'Kératine', 'Massage crânien'] },
+      { name: 'Extensions Volume', description: 'Rajouts longueur et épaisseur', features: ['Pose à froid', 'Tape-in', 'Entretien inclus'] },
+      { name: 'Chignons & Événements', description: 'Coiffures de cérémonie', features: ['Mariage', 'Sofreh aghd', 'Maquillage combo'] }
     ],
     guarantees: [
       { title: 'Produits Bio', icon: 'leaf' },
-      { title: 'Stérilisation Auto', icon: 'sparkles' },
+      { title: 'Stérilisation Outils', icon: 'sparkles' },
       { title: 'Formation Continue', icon: 'scissors' },
       { title: 'Satisfait ou Refait', icon: 'heart' }
     ],
-    heroTitle: 'Salon de Coiffure & Barbier', heroTitleEn: 'Hair Salon & Barber',
-    heroSubtitle: "Coupe, coloration, soins et barbier traditionnel — notre équipe de 3 coiffeurs certifiés vous accueille du mardi au samedi avec rendez-vous en ligne.", heroSubtitleEn: 'Cut, coloring, treatments and traditional barber — our team of 3 certified stylists welcomes you Tuesday to Saturday with online booking.',
-    aboutText: "Salon de coiffure et barbier depuis 15 ans, notre équipe de 3 coiffeurs certifiés travaille avec les gammes L'Oréal Professionnel, Kérastase et Olaplex. Nous avons investi dans des stations de lavage ergonomiques, des fauteuils hydrauliques Takara Belmont et un espace barbier séparé avec fauteuil vintage. Chaque client bénéficie d'un diagnostic capillaire personnalisé avant toute prestation.", aboutTextEn: 'Hair salon and barber for 15 years, our team of 3 certified stylists works with L\'Oréal Professionnel, Kérastase and Olaplex ranges. We have invested in ergonomic washing stations, Takara Belmont hydraulic chairs and a separate barber space with vintage chair. Every client receives a personalized hair diagnosis before any service.',
+    heroTitle: 'Coiffeur Visagiste', heroTitleEn: 'Hair Stylist',
+    heroSubtitle: "L'art de sublimer vos cheveux avec passion et expertise", heroSubtitleEn: 'The art of enhancing your hair with passion and expertise',
+    aboutText: "Coiffeur passionné depuis 15 ans, je crée des looks qui vous ressemblent. Spécialiste du visagisme et des techniques modernes, je veille à la santé de vos cheveux avec des produits naturels et de qualité.", aboutTextEn: 'Passionate hair stylist for 15 years, I create looks that suit you. Specialist in face-shaping and modern techniques, I care for your hair with natural, quality products.',
     ctaText: 'Prendre rendez-vous', ctaTextEn: 'Book Appointment'
   },
   restaurant: {
     primary: '#c2410c', secondary: '#9a3412', accent: '#ea580c', background: '#fff7ed',
     services: [
-      { name: 'Cuisine de Marché', description: "Notre carte évolue chaque semaine selon les arrivages du marché de la Halle. Légumes de saison du marché d'Orgon, viande de la boucherie Traiteur Saint-Martin, poissons livrés chaque matin par la criée de la Pointe. Tout est cuisiné sur place, aucune pièce industrielle.", features: ['Marché d\'Orgon', 'Criée du jour', 'Cuisson sur place'] },
-      { name: 'Menu Dégustation', description: "5 temps de cuisine à 45€ : amuse-bouche, entrée, poisson, viande, fromage affineur puis dessert du glacier artisanal. Accord mets et vins par notre sommelier avec des cuvées de la région (Côtes du Rhône, Bandol, Cassis).", features: ['5 temps à 45€', 'Accord vin', 'Fromage affineur'] },
-      { name: 'Terrasse & Jardin', description: "120 places sur notre terrasse ombragée avec vue sur les toits de la ville. Espace enfants sécurisé, brumisateur pour les forte chaleur, chauffage d'ambiance en hiver. Réservation en ligne pour la terrasse.", features: ['120 places', 'Vue panoramique', 'Espace enfants'] },
-      { name: 'Événements Privés', description: "Salle privative de 40 personnes pour mariages, anniversaires et séminaires. Menu sur mesure, buffet cocktail, traiteur dépanneuse. Nous avons accueilli plus de 200 événements en 10 ans.", features: ['40 personnes', 'Menu sur mesure', '200+ événements'] },
-      { name: 'Service Traiteur', description: "Plateaux repas professionnels pour vos séminaires (à partir de 18€/personne). Buffets de fête, livraison en van isotherme. Capacité jusqu'à 150 couverts.", features: ['Dès 18€/pers', 'Van isotherme', '150 couverts'] },
-      { name: 'Carte des Vins', description: "Notre cave reference plus de 120 références de vignerons locaux et de grandes domaines. Dégustation le vendredi soir avec l'accord du chef. Vente à la bouteille et en libre-service.", features: ['120 références', 'Vignerons locaux', 'Dégustation vendredi'] }
+      { name: 'Cuisine Maison', description: 'Plats préparés sur place', features: ['Produits locaux', 'Recettes authentiques', 'Fait minute'] },
+      { name: 'Menu du Jour', description: 'Formule déjeuner économique', features: ['Entrée + Plat + Dessert', 'Produits frais', 'Cuisson minute'] },
+      { name: 'Spécialités', description: 'Nos plats signature', features: ['Recettes du terroir', 'Grillades', 'Poissons frais'] },
+      { name: 'Événements & Groupes', description: 'Repas de famille et séminaires', features: ['Menu groupe', 'Salle privative', 'Sur mesure'] },
+      { name: 'Service Traiteur', description: 'Livraison et à emporter', features: ['Plateaux repas', 'Buffets', 'Livraison pro'] },
+      { name: 'Boissons & Vins', description: 'Carte des vins et cocktails', features: ['Vins régionaux', 'Cocktails maison', 'Bières artisanales'] }
     ],
     guarantees: [
-      { title: 'Produits du Marché', icon: 'leaf' },
-      { title: 'Ouvert 7j/7', icon: 'clock' },
-      { title: 'Note 4.8/5 Google', icon: 'star' },
-      { title: 'Terrasse Ombragée', icon: 'car' }
+      { title: 'Produits Frais', icon: 'leaf' },
+      { title: 'Service Rapide', icon: 'clock' },
+      { title: 'Avis 4.8/5', icon: 'star' },
+      { title: 'Parking Gratuit', icon: 'car' }
     ],
-    heroTitle: 'Restaurant de Marché', heroTitleEn: 'Farm-to-Table Restaurant',
-    heroSubtitle: "Cuisine de marché avec des produits fraîchement livrés chaque matin — notre carte change selon les arrivages, nos vins viennent des domaines voisins.", heroSubtitleEn: 'Farm-to-table dining with fresh daily deliveries — our menu changes with the season, our wines come from neighboring estates.',
-    aboutText: "Restaurant familial depuis 2009, notre chef cuisine avec des produits du marché livrés chaque matin : légumes du potager bio d'Orgon, viande de la boucherie traiteur Saint-Martin, poissons de la criée du port. Notre cave reference plus de 120 vignerons de la région. Nous avons reçu le prix de la meilleure table de la ville en 2023 et 2024. Ouvert du mardi au dimanche, terrasse de 120 places avec vue panoramique.", aboutTextEn: 'Family restaurant since 2009, our chef cooks with daily market produce: vegetables from the Orgon organic farm, meat from Saint-Martin butcher, fish from the port auction. Our cellar references over 120 regional winemakers. We won best restaurant in 2023 and 2024. Open Tuesday to Sunday, 120-seat terrace with panoramic views.',
+    heroTitle: 'Restaurant Traditionnel', heroTitleEn: 'Traditional Restaurant',
+    heroSubtitle: "Cuisine authentique et accueil chaleureux depuis 2009", heroSubtitleEn: 'Authentic cuisine and warm hospitality since 2009',
+    aboutText: "Chef passionné depuis 15 ans, je cuisine avec cœur des plats généreux et savoureux. Produits frais du marché, recettes authentiques et ambiance conviviale vous attendent.", aboutTextEn: 'Passionate chef for 15 years, cooking generous and flavorful dishes with heart. Fresh market produce, authentic recipes, and a welcoming atmosphere await you.',
     ctaText: 'Réserver une table', ctaTextEn: 'Reserve a Table'
   },
   garage: {
     primary: '#166534', secondary: '#14532d', accent: '#059669', background: '#f0fdf4',
     services: [
-      { name: 'Diagnostic Électronique', description: "Valise multimarque Autel MaxiSys pour lecture des codes défauts sur toutes les marques (BMW, Mercedes, Peugeot, Renault, Toyota...). Rapport PDF détaillé envoyé par email avec les pièces à changer et les coûts estimés.", features: ['Autel MaxiSys', 'Rapport PDF', 'Toutes marques'] },
-      { name: 'Révision Complète', description: "Révision constructeur avec vidange huile Castrol/Mobil, remplacement filtres Mann-Filter, contrôle freins Brembo, test batterie. Carnet d'entretien mis à jour pour préserver la valeur de revente.", features: ['Huile Castrol', 'Filtres Mann', 'Carnet à jour'] },
-      { name: 'Pneumatiques', description: "Montage, équilibrage et géométrie 3D sur pneus Michelin, Continental, Goodyear et Bridgestone. Stock de 400 pneus sur place, montage en 45 minutes. Vérification pression et usure des 4 roues.", features: ['Michelin/Bosch', 'Géométrie 3D', 'Stock 400 pneus'] },
-      { name: 'Freins & Disques', description: "Remplacement plaquettes Brembo, disques perforés, étriers neufs. Test d'usure gratuit à chaque passage. Nous utilisons uniquement des pièces certifiées ECE R90 pour votre sécurité.", features: ['Brembo/EBC', 'Test gratuit', 'Certif. ECE R90'] },
-      { name: 'Climatisation Auto', description: "Recharge gaz R134a ou R1234yf selon votre véhicule, détection fuite UV, remplacement filtre habitacle antibactérien. Test de température avant/après avec thermomètre digital.", features: ['R134a/R1234yf', 'Test UV', 'Filtre anti-bact'] },
-      { name: 'Carrosserie & Peinture', description: "Débosselage sans peinture (PDR), retouche à la pince à douille, polissage optique 3M. Pour les dommages plus importants, remise en peinture à la nuance constructeur avec séchoir infrarouge.", features: ['PDR sans peinture', '3M polissage', 'Nuance exacte'] }
+      { name: 'Mécanique Générale', description: 'Entretien et réparation toutes marques', features: ['Révisions constructeur', 'Courroies', 'Freins'] },
+      { name: 'Diagnostic Auto', description: 'Analyse électronique complète', features: ['Valise multimarque', 'Effacement défauts', 'Paramétrage'] },
+      { name: 'Pneumatiques', description: 'Montage, équilibrage, géométrie', features: ['Pneus toutes saisons', 'Pneus run-flat', 'Parallélisme'] },
+      { name: 'Climatisation', description: 'Recharge et réparation clim', features: ['Recharge gaz R134a', 'Détection fuites', 'Filtre habitacle'] },
+      { name: 'Carrosserie', description: 'Réparation et peinture', features: ['Débosselage', 'Peinture à la nuance', 'Polissage optique'] },
+      { name: 'Contrôle Technique', description: 'Préparation et contre-visite', features: ['Pré-contrôle', 'Réparations conformité', 'Accompagnement'] }
     ],
     guarantees: [
-      { title: 'Devis Avant Travaux', icon: 'file-text' },
-      { title: 'Pièces Certifiées', icon: 'shield-check' },
-      { title: 'Diagnostic Gratuit', icon: 'clock' },
-      { title: 'Véhicule de Prêt', icon: 'car' }
+      { title: 'Devis Gratuit', icon: 'file-text' },
+      { title: 'Garantie Pièces', icon: 'shield-check' },
+      { title: 'Équipe Qualifiée', icon: 'clock' },
+      { title: 'Véhicule de Courtoisie', icon: 'car' }
     ],
-    heroTitle: 'Garage Mécanicien Expert', heroTitleEn: 'Expert Auto Mechanic',
-    heroSubtitle: "Diagnostic électronique Autel, pièces Brembo/Michelin, révision constructeur — votre véhicule entre de bonnes mains avec un devis gratuit avant toute intervention.", heroSubtitleEn: 'Autel electronic diagnostics, Brembo/Michelin parts, manufacturer service — your vehicle is in good hands with a free quote before any work.',
-    aboutText: "Garage mécanique indépendant depuis 15 ans, nous entretenons et réparons toutes les marques avec des équipements professionnels : valise Autel MaxiSys, pont élévateur Norauto, outils de géométrie 3D. Nos pièces de rechange proviennent de distributeurs agréés (Pixparts, Oscaro) pour un rapport qualité-prix optimal. Nous avons accueilli plus de 3000 véhicules l'an dernier et garantissons chaque réparation 12 mois.", aboutTextEn: 'Independent auto repair shop for 15 years, we service and repair all brands with professional equipment: Autel MaxiSys scanner, Norauto lift, 3D geometry tools. Our parts come from authorized distributors (Pixparts, Oscaro) for optimal value. We serviced over 3,000 vehicles last year and guarantee every repair for 12 months.',
-    ctaText: 'Demander un devis gratuit', ctaTextEn: 'Get a Free Quote'
+    heroTitle: 'Garage Automobile', heroTitleEn: 'Auto Garage',
+    heroSubtitle: "Mécanicien passionné, votre véhicule entre de bonnes mains", heroSubtitleEn: 'Passionate mechanic, your vehicle in good hands',
+    aboutText: "Mécanicien automobile depuis 15 ans, j'entretiens et répare toutes marques avec passion. Diagnostic précis, devis transparents et respect des délais.", aboutTextEn: 'Automotive mechanic for 15 years, I maintain and repair all brands with passion. Accurate diagnostics, transparent quotes, and respected deadlines.',
+    ctaText: 'Demendez un RDV', ctaTextEn: 'Book an Appointment'
   },
   nettoyage: {
     primary: '#059669', secondary: '#047857', accent: '#10b981', background: '#f0fdf4',
     services: [
-      { name: 'Nettoyage Bureaux', description: "Entretien quotidien ou hebdomadaire de vos locaux : aspirateur Kärcher professionnel, serpillière humide microfibre, produits écolabels Ecolab. Chaque passage fait l'objet d'un contrôle qualité avec photo envoyée par WhatsApp.", features: ['Kärcher pro', 'Écolabel Ecolab', 'Photo contrôle'] },
-      { name: 'Vitres & Façades', description: "Nettoyage de vitres en hauteur jusqu'au 10ème étage avec nacelle ou échafaudage. Systeme WFP (Water Fed Pole) pour des vitres sans traces. Traitement anti-pluie pour une protection longue durée.", features: ['WFP système', 'Anti-pluie', 'Jusqu\'au R+10'] },
-      { name: 'Nettoyage Industriel', description: "Entrepôts, ateliers et usines : monobrosse industrielle Taski, aspirateur eau/poussérie numatic, nettoyage haute pression Kärcher HD. Intervention de nuit pour ne pas perturber votre activité.", features: ['Taski/Numatic', 'HP Kärcher', 'Nuit possible'] },
-      { name: 'Grand Nettoyage', description: "Nettoyage en profondeur après travaux ou déménagement. Dégraissage cuisine professionnelle au détergent industriel, désinfection salle de bain à l'eau de javel stabilisée, lavage sols à la monobrosse.", features: ['Dégraissage pro', 'Désinfection', 'Monobrosse'] },
-      { name: 'Désinfection', description: "Traitement virucide et bactéricide certifié COVID-19. Nébulisation de produit biocide homologué par le Ministère de la Santé. Idéal pour cabinets médicaux, écoles et ERP.", features: ['Certifié COVID', 'Nébulisation', 'Ministère validé'] },
-      { name: 'Remise en État', description: "Nettoyage fin de finition après travaux : enlèvement de gravats, lavage des murs au chiffon humide, dépoussiérage plafonds et luminaires, lavage de sols. Livraison clé en main avec inventaire.", features: ['Clé en main', 'Inventaire', 'Gravats inclus'] }
+      { name: 'Nettoyage de Bureaux', description: 'Entretien quotidien de vos locaux', features: ['Poussière, sols, vitres', 'Produits écolabels', 'Horaires flexibles'] },
+      { name: 'Nettoyage Vitres', description: 'Vitres intérieures et extérieures', features: ['Accès difficile', 'Sans traces garanti', 'Bâtiments R+10'] },
+      { name: 'Grand Nettoyage', description: 'Nettoyage en profondeur résidentiel', features: ['Cuisine dégraissée', 'Salle de bain désinfectée', 'Sol ciré'] },
+      { name: 'Désinfection', description: 'Traitement anti-bactérien et virucide', features: ['Certifié COVID', 'Produits bio', 'Rapport de traitement'] },
+      { name: 'Nettoyage Industriel', description: 'Entrepôts, usines, ateliers', features: ['Monobrosse industrielle', 'Aspirateur eau/poussière', 'Horaires de nuit'] },
+      { name: 'Remise en État', description: 'Après travaux ou déménagement', features: ['Évacuation gravats', 'Nettoyage fin', 'Livraison clé en main'] }
     ],
     guarantees: [
       { title: 'Produits Écolabels', icon: 'leaf' },
-      { title: 'Personnel Certifié', icon: 'users' },
-      { title: 'Contrôle Qualité', icon: 'clock' },
+      { title: 'Personnel Formé', icon: 'users' },
+      { title: 'Intervention Fiable', icon: 'clock' },
       { title: 'Assurance RC Pro', icon: 'shield-check' }
     ],
-    heroTitle: 'Enterprise de Nettoyage Pro', heroTitleEn: 'Professional Cleaning Company',
-    heroSubtitle: "Bureaux, commerces et industriels — nos équipes certifiées interviennent avec du matériel Kärcher/Taski et des produits écolabels Ecolab.", heroSubtitleEn: 'Offices, retail and industrial — our certified teams use Kärcher/Taski equipment and Ecolab eco-certified products.',
-    aboutText: "Entreprise de nettoyage certifiée ISO 9001 depuis 15 ans, nous intervenons sur les bureaux, commerces, industries et ERP avec du matériel professionnel Kärcher, Taski et Numatic. Nos produits sont tous écolabels Ecolab et sans danger pour les occupants. Nous avons développé un système de contrôle qualité photo envoyé après chaque intervention, et un planning flexible incluant les nuits et week-ends.", aboutTextEn: 'ISO 9001 certified cleaning company for 15 years, we service offices, retail, industrial buildings and public facilities with professional Kärcher, Taski and Numatic equipment. All our products are Ecolab eco-certified and safe for occupants. We developed a photo quality control system sent after every intervention, and a flexible schedule including nights and weekends.',
+    heroTitle: 'Société de Nettoyage', heroTitleEn: 'Cleaning Company',
+    heroSubtitle: "Propreté professionnelle et écologique pour vos espaces", heroSubtitleEn: 'Professional and eco-friendly cleanliness for your spaces',
+    aboutText: "Entreprise de nettoyage depuis 15 ans, nos équipes formées interviennent avec rigueur et discrétion. Produits écolabels, matériel professionnel et engagement qualité.", aboutTextEn: 'Cleaning company for 15 years, our trained teams work with precision and discretion. Eco-label products, professional equipment, and quality commitment.',
     ctaText: 'Demander un devis', ctaTextEn: 'Request a Quote'
   },
   jardin: {
     primary: '#14532d', secondary: '#166534', accent: '#15803d', background: '#f0fdf4',
     services: [
-      { name: 'Création de Jardin', description: "Conception et réalisation de jardins paysagers avec plans 3D avant chantier. Plantation d'arbres fruitiers, haies persistantes, massifs fleuris et gazon en rouleau. Conseil sur les espèces adaptées à votre sol argileux ou sableux.", features: ['Plans 3D', 'Sol analysé', 'Espèces locales'] },
-      { name: 'Tonte & Entretien', description: "Tonte régulière avec tondeuse professionnelle Honda, taille de haies au cutter STIHL, désherbage manuel sans produit chimique. Nous utilisons de l'engrais organique生物 pour préserver la vie du sol.", features: ['Honda/STIHL', 'Sans chimique', 'Engrais organique'] },
-      { name: 'Élagage Professionnel', description: "Élagage d'arbres jusqu'à 15m avec nacelle, coupe au tronçonneur STIHL et broyage des branches sur place. Nous fournissons le certificat d'élagage conforme à la réglementation environnementale.", features: ['Nacelle 15m', 'STIHL pro', 'Certificat fourni'] },
-      { name: 'Arrosage Auto', description: "Système d'irrigation goutte-à-goutte Hunter avec programmateur connecté. Réduction de 60% de la consommation d'eau par rapport au arrosage manuel. Installation enterrée invisible.", features: ['Hunter/Rain Bird', '-60% eau', 'Programmateur wifi'] },
-      { name: 'Terrasse & Clôtures', description: "Construction de terrasse en bois ipé ou pin traité, clôtures occultation bois composite, pergolas bioclimatiques. Devis détaillé avec plan de chantier et délais garantis.", features: ['Ipé/composite', 'Pergola bioclim', 'Plan garanti'] },
-      { name: 'Potager & Verger', description: "Création de potager surélevé en bois, taille fruitiers (pommiers, cerisiers, vignes), semis de saison. Nous installons un paillage BRF pour limiter l'arrosage et enrichir le sol.", features: ['Bacs surélevés', 'Taille fruitiers', 'Paillage BRF'] }
+      { name: 'Création de Jardins', description: 'Aménagement paysager complet', features: ['Plan sur mesure', 'Plantations adaptées', 'Gazon en rouleaux'] },
+      { name: 'Tonte & Entretien', description: 'Pelouse et massifs entretenus', features: ['Tonte régulière', 'Taille haies', 'Désherbage manuel'] },
+      { name: 'Élagage & Abattage', description: 'Arbres et arbustes sécurisés', features: ['Élagage raisonné', 'Grimper pro', 'Broyage branches'] },
+      { name: 'Terrasses & Clôtures', description: 'Aménagement structure bois', features: ['Terrasse pin/ipé', 'Clôture occultation', 'Pergolas'] },
+      { name: 'Arrosage Automatique', description: 'Installation système arrosage', features: ['Goutte à goutte', 'Tuyères enterrées', 'Programmateur connecté'] },
+      { name: 'Potager & Verger', description: 'Création et entretien potager', features: ['Bacs surélevés', 'Compostage', 'Taille fruitiers'] }
     ],
     guarantees: [
-      { title: 'Plantes Garanties 1an', icon: 'sprout' },
-      { title: 'Matériel STIHL', icon: 'sparkles' },
+      { title: 'Plantes Garanties', icon: 'sprout' },
+      { title: 'Intervention Propre', icon: 'sparkles' },
       { title: 'Conseils Saisonniers', icon: 'sun' },
-      { title: 'Paysagiste DPLG', icon: 'tree-deciduous' }
+      { title: 'Paysagiste Qualifié', icon: 'tree-deciduous' }
     ],
-    heroTitle: 'Jardinier Paysagiste DPLG', heroTitleEn: 'DPLG Landscape Gardener',
-    heroSubtitle: "Création, entretien et rénovation de jardins avec du matériel STIHL/Honda — analyse de sol incluse pour des plantations adaptées à votre terrain.", heroSubtitleEn: 'Garden creation, maintenance and renovation with STIHL/Honda equipment — soil analysis included for plantings adapted to your land.',
-    aboutText: "Jardinier paysagiste DPLG depuis 15 ans, nous concevons et entretenons des espaces verts avec du matériel professionnel STIHL, Honda et Hunter. Notre véhicule emporte une tondeuse autoportée Kubota, un broyeur, un tronçonneur et tout le nécessaire pour une intervention sans retard. Nous analysons votre sol avant chaque plantation pour garantir l'adhésion des espèces.", aboutTextEn: 'DPLG landscape gardener for 15 years, we design and maintain green spaces with professional STIHL, Honda and Hunter equipment. Our vehicle carries a Kubota ride-on mower, a shredder, a chainsaw and everything needed for prompt intervention. We analyze your soil before every planting to ensure species thrive.',
-    ctaText: 'Demander un devis gratuit', ctaTextEn: 'Get a Free Quote'
+    heroTitle: 'Jardinier Paysagiste', heroTitleEn: 'Landscaper',
+    heroSubtitle: "Création et entretien de jardins uniques et harmonieux", heroSubtitleEn: 'Creation and maintenance of unique, harmonious gardens',
+    aboutText: "Paysagiste passionné depuis 15 ans, je conçois et entretiens des espaces verts qui vivent au rythme des saisons.", aboutTextEn: 'Passionate landscaper for 15 years, I design and maintain green spaces that live in harmony with the seasons.',
+    ctaText: 'Demander un devis', ctaTextEn: 'Request a Quote'
   },
   fitness: {
     primary: '#dc2626', secondary: '#b91c1c', accent: '#ef4444', background: '#fef2f2',
     services: [
-      { name: 'Coach Personnel', description: "Programme d'entraînement sur mesure basé sur un bilan morphologique complet : mesure IMC, test cardio, analyse de la posture. Séances 1 à 1 avec coach certifié BPJEPS, suivi hebdomadaire et ajustement du programme.", features: ['Bilan complet', 'Certifié BPJEPS', 'Suivi hebdo'] },
-      { name: 'Musculation Libre', description: "Espace de 200m² avec matériel Eleiko (barres olympiques), dumbbells jusqu'à 50kg, cages à squat, leg press Cybex. Ouvert de 6h à 23h, accès par code personnel.", features: ['Eleiko/Cybex', '200m²', '6h-23h'] },
-      { name: 'Cours Collectifs', description: "HIIT (30min intense), Yoga Vinyasa, Zumba, Body Pump avec barres à 1,2kg. Maximum 15 personnes par cours pour un suivi personnalisé. Programmes rotatifs chaque semaine.", features: ['Max 15 pers', '6 cours/semaine', 'Personnalisé'] },
-      { name: 'Cardio Training', description: "Tapis connectés Technogym Skillmill (sans moteur), vélos Wattbike pour mesure de puissance, rameurs Concept2. Suivi fréquence cardiaque en temps réel avec écrans individuels.", features: ['Technogym', 'Wattbike', 'Écrans live'] },
-      { name: 'Espace Bien-Être', description: "Sauna finlandais à 80°C, hammam, douche à jets et casiers sécurisés à code. Accès inclus dans toute adhésion. Idéal pour la récupération post-effort.", features: ['Sauna/Hammam', 'Gratuit', 'Récupération'] },
-      { name: 'Nutrition & Suivi', description: "Bilan nutritionnel avec InBody (analyse de la composition corporelle), plan alimentaire personnalisé, ajustement mensuel. Partenariat avec un diététicien du quartier pour les cas spécifiques.", features: ['InBody 570', 'Plan sur mesure', 'Diététicien'] }
+      { name: 'Coaching Personnel', description: 'Accompagnement individuel sur mesure', features: ['Bilan morpho', 'Programme adapté', 'Suivi hebdo'] },
+      { name: 'Cours Collectifs', description: 'Groupes dynamiques et motivants', features: ['HIIT', 'Yoga', 'Zumba', 'Musculation guidée'] },
+      { name: 'Musculation Libre', description: 'Espace haltères et machines', features: ['Poids libres', 'Machines guidées', 'Cage à squat'] },
+      { name: 'Cardio Zone', description: 'Équipements endurance modernes', features: ['Tapis connectés', 'Vélos elliptiques', 'Rameurs'] },
+      { name: 'Préparation Physique', description: 'Prépa compétition ou remise en forme', features: ['Tests perf', 'Plan nutrition', 'Récupération'] },
+      { name: 'Espace Bien-être', description: 'Détente après effort', features: ['Sauna', 'Douche jets', 'Casiers sécurisés'] }
     ],
     guarantees: [
-      { title: 'Coachs BPJEPS', icon: 'award' },
-      { title: 'Matériel Eleiko', icon: 'dumbbell' },
+      { title: 'Coachs Diplômés', icon: 'award' },
+      { title: 'Matériel Neuf', icon: 'dumbbell' },
       { title: 'Sans Engagement', icon: 'badge-check' },
-      { title: '6h-23h 7j/7', icon: 'clock' }
+      { title: 'Accès 6h-23h', icon: 'clock' }
     ],
-    heroTitle: 'Salle de Sport & Coach', heroTitleEn: 'Gym & Personal Training',
-    heroSubtitle: "Coach certifié BPJEPS, matériel Eleiko et Technogym, analyses InBody — votre programme sur mesure commence ici avec un essai gratuit.", heroSubtitleEn: 'BPJEPS certified coach, Eleiko and Technogym equipment, InBody analysis — your custom program starts here with a free trial.',
-    aboutText: "Salle de sport indépendante depuis 15 ans, nous avons investi dans du matériel haut de gamme : Eleiko pour la musculation, Technogym pour le cardio, InBody pour l'analyse corporelle. Nos 5 coachs sont tous certifiés BPJEPS avec spécialités (préparation physique, remise en forme post-grossesse, nutrition sportive). Pas d'engagement, résiliation en 30 jours. Essai gratuit sans engagement.", aboutTextEn: 'Independent gym for 15 years, we invested in premium equipment: Eleiko for weight training, Technogym for cardio, InBody for body composition. Our 5 coaches are all BPJEPS certified with specializations (athletic conditioning, post-pregnancy fitness, sports nutrition). No commitment, 30-day cancellation. Free trial with no obligation.',
-    ctaText: 'Essai gratuit', ctaTextEn: 'Free Trial'
+    heroTitle: 'Coach Sportif', heroTitleEn: 'Fitness Coach',
+    heroSubtitle: "Votre coach personnel pour atteindre vos objectifs fitness", heroSubtitleEn: 'Your personal coach to reach your fitness goals',
+    aboutText: "Coach sportif diplômé d'État avec 15 ans d'expérience. Programmes personnalisés pour perdre du poids, gagner en muscle ou préparer une compétition.", aboutTextEn: 'State-certified fitness coach with 15 years of experience. Personalized programs for weight loss, muscle gain, or competition preparation.',
+    ctaText: 'Essai offert', ctaTextEn: 'Free Trial'
   },
   medical: {
     primary: '#1e40af', secondary: '#1e3a8a', accent: '#2563eb', background: '#eff6ff',
     services: [
-      { name: 'Consultation Générale', description: "Bilan de santé complet avec auscultation, prise de tension, vérification du poids et des constantes. Dossier médical informatisé avec historique complet. Ordonnances électroniques directement transmises à votre pharmacie.", features: ['Dossier électronique', 'Ordonnance e-处方', 'Prise de tension'] },
-      { name: 'Kinésithérapie', description: "Rééducation articulaire et musculaire avec équipements de dernière génération : table de kinésithérapie auto-lock, electrothérapie TENS, ultrasons. Spécialités : kinésithérapie du sport, périnéale, respiratoire.", features: ['Table auto-lock', 'TENS/Ultrasons', 'Spécialités'] },
-      { name: 'Analyses Biologiques', description: "Prise de sang sur place avec résultats en 24h pour les analyses courantes (NFS, glycémie, cholestérol, bilan hépatique). Partenariat avec le laboratoire Biogroup pour les analyses spécialisées.", features: ['Résultats 24h', 'Biogroup', 'Prise sur place'] },
-      { name: 'Vaccination', description: "Vaccination grippe saisonnière, COVID-19, HPV, typhoïde et voyages. Chambre froide +2°/+8° conforme aux normes HAS. Certificats de vaccination délivrés sur place.", features: ['Chambre froide HAS', 'Vaccins voyage', 'Certificat'] },
-      { name: 'Télémédecine', description: "Consultation vidéo par Doctolib ou en plateforme propriétaire. Ordonnance électronique envoyée directement. Disponible le soir et le week-end pour les urgences non vitales.", features: ['Doctolib', 'Ordonnance e', 'Soir/WE'] },
-      { name: 'Suivi Médical', description: "Suivi des patients chroniques (diabète, hypertension, asthme) avec rendez-vous programmés. Carnet de santé numérique partagé avec votre médecin traitant et votre pharmacie.", features: ['Patients chroniques', 'Rendez-vous programmés', 'Carnet numérique'] }
+      { name: 'Médecine Générale', description: 'Consultations et suivi de santé', features: ['Bilan annuel', 'Vaccinations', 'Certificats'] },
+      { name: 'Kinésithérapie', description: 'Rééducation et réadaptation', features: ['Massages médicaux', 'Rééducation post-op', 'Posturologie'] },
+      { name: 'Ostéopathie', description: 'Soins sans médicaments', features: ['Bébés', 'Femmes enceintes', 'Sportifs'] },
+      { name: 'Infirmier à Domicile', description: 'Soins à votre domicile', features: ['Injections', 'Pansements', 'Prélèvements'] },
+      { name: 'Analyses Biologiques', description: 'Laboratoire sur place', features: ['Prise de sang', 'Tests rapides', 'Résultats 24h'] },
+      { name: 'Télémédecine', description: 'Consultation vidéo', features: ['Ordonnance électronique', '7j/7 disponible', 'Sans déplacement'] }
     ],
     guarantees: [
       { title: 'Conventionné Secteur 1', icon: 'stethoscope' },
-      { title: 'Tiers Payant', icon: 'credit-card' },
+      { title: '3ème Payant', icon: 'credit-card' },
       { title: 'RDV sous 48h', icon: 'calendar' },
       { title: 'Équipe Pluridisciplinaire', icon: 'users' }
     ],
-    heroTitle: 'Cabinet Médical Polyvalent', heroTitleEn: 'General Medical Practice',
-    heroSubtitle: "Médecin généraliste, kinésithérapeute et analyses biologiques sous le même toit — prise de RDV en ligne et tiers payant accepté.", heroSubtitleEn: 'General practitioner, physiotherapist and biological analyses under one roof — online booking and direct billing accepted.',
-    aboutText: "Cabinet médical pluridisciplinaire depuis 15 ans, nous accueillons médecins généralistes, kinésithérapeutes et infirmiers à domicile. Le cabinet est équipé d'un electrocardiographe Schiller, d'un spiromètre et d'une chambre froide pour les vaccins conformes aux normes HAS. Le dossier patient est entièrement dématérialisé avec transmission électronique des ordonnances à votre pharmacie.", aboutTextEn: 'Multidisciplinary medical practice for 15 years, we welcome general practitioners, physiotherapists and home nurses. The practice is equipped with a Schiller electrocardiograph, spirometer and compliant vaccine cold room. Patient records are fully digitized with electronic prescription transmission to your pharmacy.',
+    heroTitle: 'Cabinet Médical', heroTitleEn: 'Medical Practice',
+    heroSubtitle: "Votre santé entre les mains de professionnels qualifiés", heroSubtitleEn: 'Your health in the hands of qualified professionals',
+    aboutText: "Médecin généraliste depuis 15 ans, je vous accueille dans un cabinet moderne et chaleureux. Écoute, diagnostic précis et suivi personnalisé.", aboutTextEn: 'General practitioner for 15 years, welcoming you in a modern, warm practice. Listening, accurate diagnosis, and personalized follow-up.',
     ctaText: 'Prendre rendez-vous', ctaTextEn: 'Book Appointment'
   },
   avocat: {
     primary: '#1e3a8a', secondary: '#172554', accent: '#2563eb', background: '#f8fafc',
     services: [
-      { name: 'Droit de la Famille', description: "Divorce amiable ou contentieux, garde d'enfants, pension alimentaire, prestation compensatoire. Nous négocions en priorité une solution amiable pour préserver l'intérêt supérieur de l'enfant.", features: ['Divorce amiable', 'Garde enfant', 'Négociation'] },
-      { name: 'Droit du Travail', description: "Licenciement abusif, harcèlement moral ou sexuel, rupture conventionnelle, prud'hommes. Nous calculons vos indemnités avec le logiciel специализированный et constituons votre dossier avec les preuves solides.", features: ['Prud\'hommes', 'Indemnités', 'Preuves solides'] },
-      { name: 'Droit Pénal', description: "Défense pénale à toutes les étapes : garde à vue, comparution immédiate, tribunal correctionnel. Nous assurons votre défense avec rigueur et confidentialité absolue.", features: ['Garde à vue', 'Comparution immédiate', 'Confidentialité'] },
-      { name: 'Droit des Affaires', description: "Création de société (SARL, SAS, SARL unipersonnelle), rédaction de statuts, pacte d'associés, fusion-acquisition. Accompagnement juridique complet pour les entrepreneurs.", features: ['Statuts SAS/SARL', 'Pacte associés', 'Fusion-acquisition'] },
-      { name: 'Droit Immobilier', description: "Vente, achat, copropriété, bail commercial, litiges constructeurs. Nous vérifions les diagnostics immobiliers et négocions les clauses du compromis de vente.", features: ['Compromis', 'Copropriété', 'Diagnostic juridique'] },
-      { name: 'Médiation', description: "Médiation familiale ou civile pour résoudre les conflits sans passer par le tribunal. Nous facilitions le dialogue entre les parties pour trouver un accord durable et équilibré.", features: ['Médiation familiale', 'Accord durable', 'Hors tribunal'] }
+      { name: 'Droit Civil & Famille', description: 'Divorce, succession, bail', features: ['Divorce amiable/contentieux', 'Régime matrimonial', 'Garde alternée'] },
+      { name: 'Droit Pénal', description: 'Défense et assistance victimes', features: ['Garde à vue', 'Tribunal correctionnel', 'Victimes préjudice'] },
+      { name: 'Droit du Travail', description: 'Licenciement et contentieux', features: ['Rupture conventionnelle', 'Harcèlement', "Prud'hommes"] },
+      { name: 'Droit des Affaires', description: 'Conseil entreprises et particuliers', features: ['Création société', 'Contrats commerciaux', 'Recouvrement'] },
+      { name: 'Immobilier', description: 'Vente, achat, litiges', features: ['Promesse vente', 'Copropriété', 'Malfaisance construction'] },
+      { name: 'Droit Routier', description: 'Permis, accidents, infractions', features: ['Retrait permis', 'Excès vitesse', 'Défense pénale'] }
     ],
     guarantees: [
-      { title: 'Inscrit au Barreau', icon: 'scale' },
+      { title: 'Avocat au Barreau', icon: 'scale' },
       { title: 'Consultation Privée', icon: 'shield' },
       { title: 'Défense Déterminée', icon: 'sword' },
-      { title: 'Honoraires Clairs', icon: 'file-text' }
+      { title: 'Honoraires Transparent', icon: 'file-text' }
     ],
-    heroTitle: 'Cabinet d\'Avocats', heroTitleEn: 'Law Office',
-    heroSubtitle: "Droit de la famille, du travail, pénal et des affaires — consultation privée avec devis d'honoraires transparent avant toute procédure.", heroSubtitleEn: 'Family, employment, criminal and business law — private consultation with transparent fee estimate before any proceedings.',
-    aboutText: "Cabinet d'avocats inscrit au Barreau depuis 15 ans, nous défendons les particuliers et les entreprises dans les domaines du droit de la famille, du travail, pénal et des affaires. Nous avons obtenu plus de 85% de succès aux prud'hommes l'année dernière. Chaque dossier est suivi par un avocat dédié avec mise à jour hebdomadaire. Les honoraires sont communiqués par écrit avant chaque étape.", aboutTextEn: 'Law office registered at the Bar for 15 years, we represent individuals and businesses in family, employment, criminal and business law. We achieved over 85% success rate at employment tribunals last year. Each case is managed by a dedicated attorney with weekly updates. Fees are communicated in writing before each step.',
-    ctaText: 'Demander une consultation', ctaTextEn: 'Request a Consultation'
+    heroTitle: 'Avocat à la Cour', heroTitleEn: 'Attorney at Law',
+    heroSubtitle: "Conseil juridique personnalisé et défense de vos droits", heroSubtitleEn: 'Personalized legal advice and defense of your rights',
+    aboutText: "Avocat inscrit au Barreau depuis 15 ans, je défends vos intérêts avec rigueur et détermination. Chaque dossier mérite une stratégie sur mesure.", aboutTextEn: 'Bar-certified attorney for 15 years, defending your interests with rigor and determination. Every case deserves a tailored strategy.',
+    ctaText: 'Prendre rendez-vous', ctaTextEn: 'Book Appointment'
   },
   default: {
     primary: '#1e293b', secondary: '#334155', accent: '#475569', background: '#f8fafc',
     services: [
-      { name: 'Service Principal', description: "Notre expertise au service de vos projets. Nous analysons votre besoin, proposons une solution adaptée et exécutons les travaux avec un suivi qualité rigoureux.", features: ['Analyse besoin', 'Solution adaptée', 'Suivi qualité'] },
-      { name: 'Conseil & Devis', description: "Étude personnalisée de votre demande avec visite sur site si nécessaire. Devis détaillé et transparent, sans frais cachés, valable 30 jours.", features: ['Visite sur site', 'Devis détaillé', 'Valable 30 jours'] },
-      { name: 'Intervention Rapide', description: "Équipe dédiée pour les urgences. Nous garantissons un retour sous 24h et une intervention dans les meilleurs délais.", features: ['Retour 24h', 'Équipe dédiée', 'Délai garanti'] },
-      { name: 'Suivi & Maintenance', description: "Contrôle qualité systématique après chaque intervention. Contrat de maintenance possible pour un entretien régulier.", features: ['Contrôle qualité', 'Maintenance', 'Régulier'] },
-      { name: 'Matériel Professionnel', description: "Nous utilisons du matériel de marque reconnu pour garantir la durabilité de nos interventions. Formation continue de nos équipes.", features: ['Marques reconnues', 'Formation continue', 'Durabilité'] },
-      { name: 'Garantie Satisfaction', description: "Chaque prestation est garantie. Si le résultat ne vous satisfait pas, nous intervenons gratuitement jusqu'à votre entière satisfaction.", features: ['Garantie travaux', 'Intervention gratuite', 'Satisfaction'] }
+      { name: 'Prestation Sur Mesure', description: 'Services adaptés à vos besoins', features: ['Étude personnalisée', 'Devis détaillé', 'Écoute attentive'] },
+      { name: 'Service Professionnel', description: 'Un travail soigné et de qualité', features: ['Matériel adapté', 'Techniques actuelles', 'Respect des normes'] },
+      { name: 'Conseil & Accompagnement', description: 'Un accompagnement de A à Z', features: ['Diagnostic complet', 'Solutions pertinentes', 'Suivi personnalisé'] },
+      { name: 'Réactivité', description: 'Un service à votre rythme', features: ['Réponse rapide', 'Horaires flexibles', 'Prise en charge efficace'] },
+      { name: 'Qualité Garantie', description: 'Un engagement sur le résultat', features: ['Contrôle qualité', 'Corrections incluses', 'SAV réactif'] },
+      { name: 'Tarifs Clairs', description: 'Des honoraires transparents', features: ['Devis préalable', 'Pas de surprise', 'Facilités de paiement'] }
+    ],
+    servicesEn: [
+      { name: 'Tailored Service', description: 'Services adapted to your needs', features: ['Personalized study', 'Detailed quote', 'Attentive listening'] },
+      { name: 'Professional Service', description: 'Careful, quality work', features: ['Adapted equipment', 'Modern techniques', 'Standards compliance'] },
+      { name: 'Consulting & Support', description: 'End-to-end guidance', features: ['Complete diagnosis', 'Relevant solutions', 'Personalized follow-up'] },
+      { name: 'Responsiveness', description: 'A service at your pace', features: ['Fast response', 'Flexible hours', 'Efficient handling'] },
+      { name: 'Quality Guaranteed', description: 'A commitment to results', features: ['Quality control', 'Corrections included', 'Responsive support'] },
+      { name: 'Clear Pricing', description: 'Transparent fees', features: ['Prior quote', 'No surprises', 'Payment options'] }
     ],
     guarantees: [
-      { title: 'Équipe Certifiée', icon: 'badge-check' },
-      { title: 'Devis Transparent', icon: 'file-text' },
-      { title: 'Intervention Rapide', icon: 'clock' },
-      { title: 'Satisfaction Garantie', icon: 'heart' }
+      { title: 'Équipe Qualifiée', icon: 'badge-check' },
+      { title: 'Devis Clair', icon: 'file-text' },
+      { title: 'Réactivité', icon: 'clock' },
+      { title: 'Satisfaction Client', icon: 'heart' }
     ],
-    heroTitle: 'Votre Partenaire de Confiance', heroTitleEn: 'Your Trusted Partner',
-    heroSubtitle: "Un service professionnel, fiable et de qualité — nous répondons à vos besoins avec expertise et transparence.", heroSubtitleEn: 'Professional, reliable and quality service — we meet your needs with expertise and transparency.',
-    aboutText: "Professionnel certifié depuis 15 ans, nous mettons notre expertise au service de vos projets avec du matériel professionnel et une équipe formée. Chaque intervention suit un protocole qualité documenté.", aboutTextEn: 'Certified professional for 15 years, we bring our expertise to your projects with professional equipment and a trained team. Every intervention follows a documented quality protocol.',
+    heroTitle: 'Notre Établissement', heroTitleEn: 'Our Business',
+    heroSubtitle: "Un service de qualité, à l'écoute de vos besoins", heroSubtitleEn: 'Quality service, attentive to your needs',
+    aboutText: "Notre équipe met un point d'honneur à offrir un service personnalisé et de qualité. Avec des années d'expérience, nous mettons notre expertise au service de votre satisfaction.", aboutTextEn: 'Our team is committed to delivering personalized, quality service. With years of experience, we put our expertise at your service.',
     ctaText: 'Contactez-nous', ctaTextEn: 'Contact Us'
   }
 };
