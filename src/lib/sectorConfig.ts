@@ -50,7 +50,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Menu', en: 'Menu' }, href: '#services' },
-      { label: { fr: 'Spécialités', en: 'Specialties' }, href: '#why' },
+      { label: { fr: 'Spécialités', en: 'Specialties' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Réservation', en: 'Reservation' }, href: '#contact' },
     ],
@@ -88,7 +88,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Services', en: 'Services' }, href: '#services' },
-      { label: { fr: 'Galerie', en: 'Gallery' }, href: '#why' },
+      { label: { fr: 'Galerie', en: 'Gallery' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Prendre RDV', en: 'Book Now' }, href: '#contact' },
     ],
@@ -169,7 +169,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Services', en: 'Services' }, href: '#services' },
-      { label: { fr: 'Réalisations', en: 'Portfolio' }, href: '#why' },
+      { label: { fr: 'Réalisations', en: 'Portfolio' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Contact', en: 'Contact' }, href: '#contact' },
     ],
@@ -209,7 +209,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Diagnostics', en: 'Diagnostics' }, href: '#services' },
-      { label: { fr: 'Réparations', en: 'Repairs' }, href: '#why' },
+      { label: { fr: 'Réparations', en: 'Repairs' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Prendre RDV', en: 'Book Appointment' }, href: '#contact' },
     ],
@@ -251,7 +251,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Spécialités', en: 'Specialties' }, href: '#services' },
-      { label: { fr: 'Équipe', en: 'Team' }, href: '#why' },
+      { label: { fr: 'Équipe', en: 'Team' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Prendre RDV', en: 'Book Appointment' }, href: '#contact' },
     ],
@@ -292,7 +292,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Domaines', en: 'Practice Areas' }, href: '#services' },
-      { label: { fr: 'Démarche', en: 'Process' }, href: '#why' },
+      { label: { fr: 'Démarche', en: 'Process' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Consultation', en: 'Consultation' }, href: '#contact' },
     ],
@@ -332,7 +332,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Soin', en: 'Treatments' }, href: '#services' },
-      { label: { fr: 'Ambiance', en: 'Atmosphere' }, href: '#why' },
+      { label: { fr: 'Ambiance', en: 'Atmosphere' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Réserver', en: 'Book' }, href: '#contact' },
     ],
@@ -373,7 +373,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Programmes', en: 'Programs' }, href: '#services' },
-      { label: { fr: 'Coachs', en: 'Coaches' }, href: '#why' },
+      { label: { fr: 'Coachs', en: 'Coaches' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Essai Gratuit', en: 'Free Trial' }, href: '#contact' },
     ],
@@ -414,7 +414,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Services', en: 'Services' }, href: '#services' },
-      { label: { fr: 'Méthode', en: 'Method' }, href: '#why' },
+      { label: { fr: 'Méthode', en: 'Method' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Devis', en: 'Quote' }, href: '#contact' },
     ],
@@ -454,7 +454,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Services', en: 'Services' }, href: '#services' },
-      { label: { fr: 'Réalisations', en: 'Portfolio' }, href: '#why' },
+      { label: { fr: 'Réalisations', en: 'Portfolio' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Devis', en: 'Quote' }, href: '#contact' },
     ],
@@ -494,7 +494,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     navItems: [
       { label: { fr: 'À propos', en: 'About' }, href: '#about' },
       { label: { fr: 'Services', en: 'Services' }, href: '#services' },
-      { label: { fr: 'Notre Approche', en: 'Our Approach' }, href: '#why' },
+      { label: { fr: 'Notre Approche', en: 'Our Approach' }, href: '#pourquoi' },
       { label: { fr: 'Avis', en: 'Reviews' }, href: '#testimonials' },
       { label: { fr: 'Contact', en: 'Contact' }, href: '#contact' },
     ],

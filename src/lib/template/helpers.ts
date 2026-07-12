@@ -221,7 +221,19 @@ export function generateAboutText(templateText: string, lead: any): string {
     const yearMatch = lead.description.match(/(\d+)\s*ans?\s+d['']exp[eé]rience/i);
     if (yearMatch) years = yearMatch[1];
   }
-  return templateText.replace(/depuis plus de 15 ans/gi, `depuis ${years} ans`).replace(/15 ans d['']exp[eé]rience/gi, `${years} ans d'expérience`);
+  let result = templateText
+    .replace(/depuis plus de 15 ans/gi, `depuis ${years} ans`)
+    .replace(/15 ans d['']exp[eé]rience/gi, `${years} ans d'expérience`);
+  // Supprime tout placeholder non résolu laissé par la génération IA (ex: [année], [city], [year]...)
+  result = result.replace(/\[[^\]]{1,40}\]/g, '').replace(/\s{2,}/g, ' ').trim();
+  // Répare les fragments restants après suppression de placeholders
+  result = result
+    .replace(/(Fondé|Créé|Depuis|Implanté)\s+en\s*,/gi, '$1 en ')
+    .replace(/\bdepuis\s*,/gi, 'depuis ')
+    .replace(/,\s*,/g, ',')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return result;
 }
 
 export function capitalizeCity(city: string): string {
