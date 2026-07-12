@@ -24,12 +24,15 @@
     <link rel="alternate" hreflang="fr" href="https://proxieau.fr">
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"Proxi Eau Plomberie","description":"De la fuite d'eau à la rénovation complète, un savoir-faire au service de vos installations à Lyon","image":"https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1920&q=80","telephone":"+33 4 72 00 00 00","email":"contact@proxieau.fr","address":{"@type":"PostalAddress","streetAddress":"5 Cours Lafayette","addressLocality":"Lyon","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.6","reviewCount":"89"}}}</script>
     <style>
-        :root{--primary:#0f766e;--primary-rgb:15, 118, 110;--secondary:#115e59;--accent:#14b8a6;--accent-dark:#14b8a6;--bg:#fafaf9;--surface:#fff;--text:#1a1a2e;--text-s:#555770;--text-t:#8b8da3;--border:#e8e8ef;--border-l:#f2f2f7;--dark:#1a2744;--dark-rgb:26,39,68;--deco-rotation:190deg;--deco-scale:1.1;--accent-opacity:0.06;--section-shape:1}
+        :root{--primary:#0f766e;--primary-rgb:15, 118, 110;--secondary:#115e59;--accent:#14b8a6;--accent-dark:#14b8a6;--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:190deg;--deco-scale:1.1;--accent-opacity:0.06;--section-shape:1;--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms}
         *{margin:0;padding:0;box-sizing:border-box}
         html{scroll-behavior:smooth;font-size:16px}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
         img{max-width:100%;height:auto;display:block}
         h1,h2,h3,h4,h5{font-family:'Playfair Display','DM Sans',sans-serif;line-height:1.25;font-weight:700;letter-spacing:-0.02em}
+        a,button,[role="button"]{cursor:pointer}
+        :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:4px}
+        ::selection{background:color-mix(in srgb,var(--accent) 22%,#fff);color:var(--text)}
         .container{max-width:1400px;margin:0 auto;padding:0 32px}
         @media(max-width:768px){.container{padding:0 20px}}
 
@@ -57,32 +60,36 @@
         .mobile-menu a:last-child{border:none}
         @media(max-width:768px){.navbar-links{display:none!important}.mobile-toggle{display:block}}
 
-        .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--dark)}
-        .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.6;transition:opacity .6s}
-        .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--dark-rgb),.7) 0%,rgba(var(--dark-rgb),.5) 40%,rgba(var(--dark-rgb),.8) 100%)}
-        .hero-inner{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:130px 32px 80px;width:100%;display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:center}
-        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:8px 20px;border-radius:100px;color:#fff;font-size:.8rem;font-weight:600;margin-bottom:24px;letter-spacing:.8px;text-transform:uppercase;backdrop-filter:blur(10px)}
-        .hero h1{font-size:clamp(2.5rem,5.5vw,4.2rem);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.1}
+        .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--dark);padding-top:36px}
+        .hero-mesh{position:absolute;inset:0;z-index:1;background:
+          radial-gradient(60% 70% at 18% 20%,rgba(var(--primary-rgb),.35) 0%,transparent 60%),
+          radial-gradient(50% 60% at 85% 15%,rgba(var(--accent-rgb,120,120,160),.30) 0%,transparent 55%),
+          radial-gradient(70% 80% at 75% 90%,rgba(var(--secondary-rgb,80,90,140),.28) 0%,transparent 60%);
+          filter:saturate(1.05);opacity:.95;transition:opacity .6s}
+        .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.45;z-index:0;transition:opacity .6s}
+        .hero-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(var(--dark-rgb),.72) 0%,rgba(var(--dark-rgb),.55) 45%,rgba(var(--dark-rgb),.82) 100%)}
+        .hero-inner{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:130px 32px 80px;width:100%;display:grid;grid-template-columns:1.1fr 360px;gap:56px;align-items:center}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.20);padding:9px 20px;border-radius:100px;color:#fff;font-size:.78rem;font-weight:600;margin-bottom:24px;letter-spacing:.6px;text-transform:uppercase;backdrop-filter:blur(10px)}
+        .hero h1{font-size:clamp(2.4rem,5vw,3.7rem);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.08;text-shadow:0 2px 24px rgba(0,0,0,.25)}
         .hero h1 em{font-style:normal;color:var(--accent-dark);position:relative}
-        .hero-sub{font-size:1.15rem;color:rgba(255,255,255,.8);max-width:540px;margin-bottom:36px;line-height:1.8}
+        .hero-sub{font-size:1.12rem;color:rgba(255,255,255,.86);max-width:540px;margin-bottom:36px;line-height:1.8;text-shadow:0 1px 12px rgba(0,0,0,.2)}
         .hero-actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:40px}
-        .btn-pri{display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:.95rem;transition:all .3s;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(var(--primary-rgb),.3)}
-        .btn-pri:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}
-        .btn-sec{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:.95rem;transition:all .3s;backdrop-filter:blur(8px)}
-        .btn-sec:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35)}
+        .btn-pri{display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:16px 32px;border-radius:14px;text-decoration:none;font-weight:700;font-size:.95rem;transition:all var(--dur) var(--ease);border:none;cursor:pointer;box-shadow:var(--sh-glow),0 0 0 1px rgba(255,255,255,.08) inset}
+        .btn-pri:hover{transform:translateY(-2px);box-shadow:0 20px 50px rgba(var(--primary-rgb),.42)}
+        .btn-sec{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.26);color:#fff;padding:16px 32px;border-radius:14px;text-decoration:none;font-weight:600;font-size:.95rem;transition:all var(--dur) var(--ease);backdrop-filter:blur(8px)}
+        .btn-sec:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
         .hero-rating{display:flex;align-items:center;gap:10px}
         .hero-stars{display:flex;gap:2px;color:#fbbf24}
-        .hero-rating-text{font-size:.88rem;color:rgba(255,255,255,.65)}
-
-        .hero-card{background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:36px;color:#fff;box-shadow:0 8px 40px rgba(0,0,0,.15)}
-        .hero-card-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:rgba(255,255,255,.5);margin-bottom:24px}
+        .hero-rating-text{font-size:.88rem;color:rgba(255,255,255,.72)}
+        .hero-card{background:rgba(255,255,255,.10);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-lg);padding:36px;color:#fff;box-shadow:var(--sh-2)}
+        .hero-card-title{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:rgba(255,255,255,.5);margin-bottom:24px}
         .hero-hours{margin-bottom:28px}
         .hero-hours-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:.92rem}
         .hero-hours-row:last-child{border:none}
         .hero-hours-day{color:rgba(255,255,255,.7)}
         .hero-hours-time{font-weight:600}
         .hero-card .btn-pri{width:100%;justify-content:center;margin-top:18px}
-        .hero-card-note{text-align:center;font-size:.78rem;color:rgba(255,255,255,.4);margin-top:12px}
+        .hero-card-note{text-align:center;font-size:.78rem;color:rgba(255,255,255,.45);margin-top:12px}
         @media(max-width:900px){.hero-inner{grid-template-columns:1fr;padding:110px 20px 60px}.hero-card{display:none}.hero-actions{flex-direction:column;align-items:stretch}.btn-pri,.btn-sec{justify-content:center}}
         @media(max-width:480px){.hero h1{font-size:2rem}.hero-sub{font-size:1rem}.hero-badge{font-size:.7rem;padding:6px 16px}.hero-rating-text{font-size:.8rem}.hero-inner{padding:100px 16px 40px}}
 
@@ -147,6 +154,21 @@
         .svc-card p{color:var(--text-s);font-size:.92rem;margin-bottom:16px;line-height:1.6}
         .svc-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:600;font-size:.88rem;text-decoration:none;transition:gap .25s}
         .svc-link:hover{gap:10px}
+        /* Soft Evolution card elevation */
+        .svc-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+        .svc-card:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border));box-shadow:var(--sh-2);transform:translateY(-6px)}
+        .svc-card-img{transition:transform .6s var(--ease);border-bottom:1px solid var(--border-l)}
+        .guar-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .guar-card:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+        .guar-icon{background:var(--accent-soft)}
+        .test-card{border-radius:var(--r-lg);box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .test-card:hover{box-shadow:var(--sh-2);transform:translateY(-4px)}
+        .contact-form{border-radius:var(--r-lg);box-shadow:var(--sh-1)}
+        .about-img{border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+        .why-stat{border-radius:var(--r);transition:transform var(--dur) var(--ease),background var(--dur) var(--ease)}
+        .why-stat:hover{transform:translateY(-3px)}
+        .proc-num{border-radius:50%;transition:all var(--dur) var(--ease)}
+        .proc-step:hover .proc-num{box-shadow:var(--sh-glow)}
         @media(max-width:768px){.svc-grid{grid-template-columns:1fr}.svc-card-img{height:200px}}
 
         .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
@@ -237,6 +259,12 @@
         .form-submit{width:100%;padding:15px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:.98rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .form-submit:hover{opacity:.92;transform:translateY(-1px)}
         .form-note{text-align:center;margin-top:12px;font-size:.78rem;color:var(--text-t)}
+        .form-check{display:flex;align-items:flex-start;gap:10px;margin:6px 0 14px;font-size:.82rem;color:var(--text-s);line-height:1.5}
+        .form-check input{margin-top:3px;width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
+        .form-check a{color:var(--primary);text-decoration:underline}
+        .test-empty{text-align:center;padding:48px 20px;color:var(--text-t);background:#fff;border:1px dashed var(--border);border-radius:var(--r-lg)}
+        .test-empty i{color:var(--primary);margin-bottom:12px;display:block}
+        .test-empty p{font-size:.98rem}
 
         .contact-sidebar{display:flex;flex-direction:column;gap:22px}
         .contact-hours{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:32px}
@@ -279,11 +307,19 @@
         .float-urgent:hover{transform:translateY(-3px);box-shadow:0 12px 45px rgba(var(--primary-rgb),.5)}
         @keyframes pulse-urgent{0%,100%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}50%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.6),0 0 0 10px rgba(var(--primary-rgb),.1)}}
         @media(max-width:768px){.float-urgent{bottom:20px;right:20px;padding:14px 22px;font-size:.85rem}}
+        .cursor-dot{position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:var(--accent-dark);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s var(--ease),height .2s var(--ease),background .2s var(--ease);mix-blend-mode:difference;opacity:0}
+        .cursor-dot.is-active{opacity:1}
+        .cursor-dot.is-hover{width:34px;height:34px;background:rgba(255,255,255,.6)}
+        @media(pointer:coarse),(max-width:767px),(prefers-reduced-motion:reduce){.cursor-dot{display:none!important}}
 
-        .reveal{opacity:0;transform:translateY(35px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
         .reveal.active{opacity:1;transform:translateY(0)}
-        .reveal-d1{transition-delay:.12s}.reveal-d2{transition-delay:.24s}.reveal-d3{transition-delay:.36s}
-        @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.stat-item{animation:none;opacity:1}.deco-circle,.deco-diamond,.deco-line,.deco-dot{animation:none!important}.hero-badge{animation:none!important}.cta-banner::before,.cta-banner::after{animation:none!important}}
+        .reveal-d1{transition-delay:.06s}.reveal-d2{transition-delay:.14s}.reveal-d3{transition-delay:.22s}
+        @media(prefers-reduced-motion:reduce){
+          *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+          .reveal{opacity:1!important;transform:none!important}
+          .hero-mesh{opacity:.8!important}
+        }
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         .hero-badge{animation:float 3s ease-in-out infinite}
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
@@ -409,6 +445,7 @@
 
     <section class="hero" id="hero">
         <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.7'" alt="Proxi Eau Plomberie" class="hero-bg">
+        <div class="hero-mesh"></div>
         <div class="hero-overlay"></div>
         <div class="hero-inner">
             <div>
@@ -460,14 +497,14 @@
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:-80px;left:auto;animation-delay:0s"></div>
             <div class="section-deco deco-line" style="width:180px;top:40%;left:-40px;animation-delay:2s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Nos Interventions</span>
+                <span class="section-label">Nos prestations</span>
                 <h2>Nos Interventions</h2>
                 <p>Du dépannage urgent à la rénovation complète, un savoir-faire au service de vos installations</p>
             </div>
             <div class="svc-grid">
                 
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Dépannage 24h/24" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504328345606-18bbc8c9d7d1%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Dépannage 24h/24 à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="droplets" width="22" height="22"></i></div>
                         <h3>Dépannage 24h/24</h3>
@@ -476,7 +513,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Installation Sanitaire" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Installation Sanitaire à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="wrench" width="22" height="22"></i></div>
                         <h3>Installation Sanitaire</h3>
@@ -485,7 +522,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Chauffage & Chaudière" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1607472586893-edb5ca08f55d%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Chauffage & Chaudière à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="thermometer" width="22" height="22"></i></div>
                         <h3>Chauffage & Chaudière</h3>
@@ -494,7 +531,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Détection de Fuites" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Détection de Fuites à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="scan-line" width="22" height="22"></i></div>
                         <h3>Détection de Fuites</h3>
@@ -503,7 +540,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504307651254-35680f356dfd%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Rénovation Salle de Bain" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1504307651254-35680f356dfd%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Rénovation Salle de Bain à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="bath" width="22" height="22"></i></div>
                         <h3>Rénovation Salle de Bain</h3>
@@ -512,7 +549,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Entretien Annuel" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Entretien Annuel à Lyon" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="settings" width="22" height="22"></i></div>
                         <h3>Entretien Annuel</h3>
@@ -531,11 +568,11 @@
             <div class="about-grid">
                 <div class="about-img reveal">
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1581092918056-0c4c3acd3789%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618047-3c8c76ca7a13%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Proxi Eau Plomberie" loading="lazy">
-                    <div class="about-badge"><div class="about-badge-num">11+</div><div class="about-badge-text">Ans d'expérience</div></div>
+                    <div class="about-badge"><div class="about-badge-num">4.6/5</div><div class="about-badge-text">Note Google</div></div>
                 </div>
                 <div class="about-text reveal">
-                    <span class="section-label">À propos de nous</span>
-                    <h2>Notre Établissement — Lyon</h2>
+                    <span class="section-label">À propos</span>
+                    <h2>À propos de Proxi Eau Plomberie</h2>
                     <p>Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain.</p>
                     <ul class="about-checks">
                         <li><i data-lucide="check-circle-2" width="18"></i> Équipe Qualifiée</li>
@@ -543,7 +580,6 @@
                         <li><i data-lucide="check-circle-2" width="18"></i> Réactivité</li>
                         <li><i data-lucide="check-circle-2" width="18"></i> Satisfaction Client</li>
                     </ul>
-                    <a href="#contact" class="btn-pri">Demander un devis gratuit <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
             </div>
         </div>
@@ -553,7 +589,7 @@
         <div class="container">
             <div class="why-grid">
                 <div class="why-text reveal">
-                    <span class="section-label">Pourquoi nous choisir ?</span>
+                    <span class="section-label">Pourquoi nous</span>
                     <h2>Notre Approche</h2>
                     <p>Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain....</p>
                     <div class="why-stats">
@@ -569,40 +605,15 @@
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        <div class="stat-item"><div class="stat-num">4.8/5</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Années</div></div><div class="stat-item"><div class="stat-num"><2h</div><div class="stat-label">Délai d'intervention</div></div><div class="stat-item"><div class="stat-num">24h/24</div><div class="stat-label">Disponible</div></div>
+        <div class="stat-item"><div class="stat-num">4.6</div><div class="stat-label">Note Google</div></div><div class="stat-item"><div class="stat-num">89</div><div class="stat-label">Avis Clients</div></div><div class="stat-item"><div class="stat-num">11+</div><div class="stat-label">Ans d'Expérience</div></div><div class="stat-item"><div class="stat-num">< 2h</div><div class="stat-label">Réponse</div></div>
     </div>
-
-    <section class="section section-alt" id="process">
-        <div class="container" style="position:relative">
-            <div class="section-deco deco-circle" style="width:160px;height:160px;bottom:-40px;right:-60px;animation-delay:3s"></div>
-            <div class="section-hdr reveal">
-                <span class="section-label">Comment ça marche</span>
-                <h2>Un Accompagnement Sur Mesure</h2>
-                <p>Du premier contact à la réalisation, nous vous accompagnons à chaque étape.</p>
-            </div>
-            <div class="proc-grid">
-                
-                <div class="proc-step reveal reveal-d0"><div class="proc-num">01</div><h3>Contact</h3><p>Échangez avec nous pour nous exposer votre besoin.</p></div>
-                
-                <div class="proc-step reveal reveal-d1"><div class="proc-num">02</div><h3>Analyse</h3><p>Nous étudions votre demande et identifions la meilleure solution.</p></div>
-                
-                <div class="proc-step reveal reveal-d2"><div class="proc-num">03</div><h3>Proposition</h3><p>Recevez une offre claire, adaptée à votre budget et vos attentes.</p></div>
-                
-                <div class="proc-step reveal reveal-d3"><div class="proc-num">04</div><h3>Réalisation</h3><p>Notre équipe intervient avec soin et professionnalisme.</p></div>
-                
-                <div class="proc-step reveal reveal-d3"><div class="proc-num">05</div><h3>Suivi</h3><p>Nous assurons un suivi qualité pour votre entière satisfaction.</p></div>
-                
-            </div>
-            <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">Demander un devis gratuit <i data-lucide="arrow-right" width="16"></i></a></div>
-        </div>
-    </section>
 
     <section class="section" id="pourquoi">
         <div class="container" style="position:relative">
             <div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>
             <div class="section-deco deco-dot" style="top:10%;left:5%;animation-delay:0s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">Nos Engagements</span>
+                <span class="section-label">Nos engagements</span>
                 <h2>Pourquoi nous choisir</h2>
                 <p>Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.</p>
             </div>
@@ -636,38 +647,15 @@
     <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Avis Clients</span>
+                <span class="section-label">Ils nous font confiance</span>
                 <h2>Ce que disent nos clients</h2>
                 <p>La satisfaction de nos clients est notre meilleure carte de visite.</p>
             </div>
-            <div class="test-grid">
-                
-                <div class="test-card reveal reveal-d1">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Une expérience tout simplement majestueuse..."</p></div>
-                    <div class="test-author"><div class="test-avatar">E</div><div><div class="test-name">Emma L.</div><div class="test-date">Il y a 1 semaine</div></div></div>
-                </div>
-                <div class="test-card reveal reveal-d2">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Service d'excellence du début à la fin..."</p></div>
-                    <div class="test-author"><div class="test-avatar">A</div><div><div class="test-name">Arthur D.</div><div class="test-date">Il y a 2 semaines</div></div></div>
-                </div>
-                <div class="test-card reveal reveal-d3">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Je recommande vivement cette entreprise..."</p></div>
-                    <div class="test-author"><div class="test-avatar">S</div><div><div class="test-name">Sophie M.</div><div class="test-date">Il y a 3 semaines</div></div></div>
-                </div>
-                <div class="test-card reveal reveal-d1">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Professionnalisme et expertise remarquables..."</p></div>
-                    <div class="test-author"><div class="test-avatar">L</div><div><div class="test-name">Lucas P.</div><div class="test-date">Il y a 1 mois</div></div></div>
-                </div>
-                <div class="test-card reveal reveal-d2">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Un service client irréprochable..."</p></div>
-                    <div class="test-author"><div class="test-avatar">M</div><div><div class="test-name">Marie B.</div><div class="test-date">Il y a 1 mois</div></div></div>
-                </div>
-                <div class="test-card reveal reveal-d3">
-                    <div><div class="test-stars"><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i><i data-lucide="star" fill="currentColor" width="15"></i></div><p class="test-text">"Excellence et qualité au rendez-vous..."</p></div>
-                    <div class="test-author"><div class="test-avatar">T</div><div><div class="test-name">Thomas R.</div><div class="test-date">Il y a 2 mois</div></div></div>
-                </div>
+            
+            <div class="test-empty reveal">
+                <i data-lucide="message-square" width="28"></i>
+                <p>Avis en attente</p>
             </div>
-            <div class="test-google reveal"><i data-lucide="star" fill="#f59e0b" width="20" class="test-google-star"></i><div><strong>4.6/5 sur Google</strong><div style="font-size:.8rem;color:var(--text-s)">Basé sur 89 avis vérifiés</div></div></div>
         </div>
     </section>
 
@@ -700,18 +688,10 @@
         </div>
     </section>
 
-    <section class="cta-banner">
-        <div class="container reveal">
-            <h2>Envie d'en savoir plus ?</h2>
-            <p>Contactez-nous pour découvrir comment nous pouvons vous accompagner.</p>
-            <a href="#contact" class="btn-cta">Demander un devis gratuit <i data-lucide="arrow-right" width="18"></i></a>
-        </div>
-    </section>
-
     <section class="section" id="contact">
         <div class="container">
             <div class="section-hdr reveal">
-                <span class="section-label">Nous contacter</span>
+                <span class="section-label">Contact</span>
                 <h2>Prenez Contact avec Nous</h2>
                 <p>Envoyez-nous un message ou appelez-nous. Nous répondons rapidement.</p>
             </div>
@@ -721,6 +701,10 @@
                     <p>Nous vous répondrons dans les plus brefs délais.</p>
                     <form action="javascript:void(0)" onsubmit="event.preventDefault();this.querySelector('.form-submit').textContent='Message envoyé ✓';this.querySelector('.form-submit').style.background='#16a34a'">
                         <div class="form-group"><label class="form-label">Votre nom</label><input type="text" class="form-control" name="name" placeholder="Votre nom" required></div><div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-control" name="phone" placeholder="Téléphone" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" placeholder="Email" ></div><div class="form-group"><label class="form-label">Type d'intervention</label><select class="form-control" name="urgency" required><option value="">Type d'intervention</option><option value="Urgence (fuite, panne)">Urgence (fuite, panne)</option><option value="Installation">Installation</option><option value="Entretien">Entretien</option><option value="Rénovation">Rénovation</option></select></div><div class="form-group"><label class="form-label">Décrivez votre problème...</label><textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre problème..." required></textarea></div>
+                        <div class="form-check">
+                            <input type="checkbox" id="consent" name="consent" required>
+                            <label for="consent">J'accepte que mes coordonnées soient utilisées pour être recontacté(e) au sujet de ma demande. Voir notre <a href="#" onclick="event.preventDefault();document.getElementById('privacy-modal').classList.add('open')">politique de confidentialité</a>.</label>
+                        </div>
                         <button type="submit" class="form-submit"><i data-lucide="send" width="16"></i> Envoyer ma Demande →</button>
                         <p class="form-note">Nous vous répondrons dans les meilleurs délais.</p>
                     </form>
@@ -741,7 +725,7 @@
                 </div>
             </div>
             <div class="contact-map reveal" style="margin-top:32px">
-                <iframe src="https://maps.google.com/maps?q=5%20Cours%20Lafayette%2C%20Lyon&t=&z=14&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <iframe src="https://maps.google.com/maps?q=5%20Cours%20Lafayette&t=&z=14&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>
@@ -752,7 +736,7 @@
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="droplets" width="18" height="18"></i></div><span class="footer-brand-text">Proxi Eau Plomberie</span></div>
-                    <p class="footer-desc">Plombier chauffagiste à Lyon : dépannage urgence, fuites, rénovation salle de bain....</p>
+                    <p class="footer-desc">Votre Plombier de confiance — Proxi Eau Plomberie.</p>
                     
                 </div>
                 <div class="footer-col"><h4>Services</h4><ul><li><a href="#services">Dépannage 24h/24</a></li><li><a href="#services">Installation Sanitaire</a></li><li><a href="#services">Chauffage & Chaudière</a></li><li><a href="#services">Détection de Fuites</a></li><li><a href="#services">Rénovation Salle de Bain</a></li></ul></div>
@@ -776,12 +760,22 @@
             <h2>Politique de Confidentialité</h2>
             <h2>Politique de Confidentialité</h2><p><strong>Proxi Eau Plomberie</strong> respecte votre vie privée. Cette politique décrit comment nous collectons, utilisons et protégeons vos données personnelles lorsque vous utilisez notre site web et nos services.</p><h3>Collecte de Données</h3><p>Nous pouvons collecter les données personnelles suivantes : nom, adresse email, numéro de téléphone et toute information que vous fournissez via nos formulaires de contact.</p><h3>Utilisation des Données</h3><p>Vos données sont utilisées uniquement pour répondre à vos demandes et fournir nos services. Nous ne vendons ni ne partageons vos données avec des tiers sans votre consentement.</p><h3>Sécurité des Données</h3><p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données personnelles contre tout accès, modification ou destruction non autorisés.</p><h3>Contact</h3><p>Pour toute question concernant cette politique, contactez-nous à <a href="mailto:contact@proxieau.fr">contact@proxieau.fr</a>.</p>
             
-            <p style="margin-top:24px;font-size:.82rem;color:var(--text-t)">Dernière mise à jour : 11 juillet 2026</p>
+            <p style="margin-top:24px;font-size:.82rem;color:var(--text-t)">Dernière mise à jour : 13 juillet 2026</p>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+        (function(){
+          var fine = window.matchMedia('(pointer:fine)').matches;
+          var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+          if(!fine || reduce) return;
+          var dot=document.createElement('div');dot.className='cursor-dot';document.body.appendChild(dot);
+          window.addEventListener('mousemove',function(e){dot.classList.add('is-active');dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';});
+          window.addEventListener('mouseover',function(e){if(e.target.closest('a,button,[role="button"],input,textarea,select,.svc-card,.guar-card,.test-card'))dot.classList.add('is-hover');});
+          window.addEventListener('mouseout',function(e){if(e.target.closest('a,button,[role="button"],input,textarea,select,.svc-card,.guar-card,.test-card'))dot.classList.remove('is-hover');});
+          document.addEventListener('mouseleave',function(){dot.classList.remove('is-active');});
+        })();
         window.addEventListener('scroll',()=>{
             const n=document.getElementById('navbar');
             const ib=document.querySelector('.info-bar');
