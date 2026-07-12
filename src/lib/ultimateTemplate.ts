@@ -770,6 +770,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
   const logoInfo = getLogoInfo(companyName, content.sector);
 
+  // Proxy images through wsrv.nl to fix Mixed Content (HTTP→HTTPS) and CORS
+  const proxiedImg = (url: string): string => {
+    if (!url || !url.startsWith('http')) return url;
+    return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=1200&q=80&output=webp&default=1`;
+  };
   const heroBadge = getHeroBadge(content.sector);
   const cleanPhoneLink = phone ? phone.replace(/[^0-9+]/g, '') : '';
   const mapQuery = encodeURIComponent(address + (city ? ', ' + city : ''));
@@ -791,17 +796,8 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
   const whyImg = orderedPool[2 % orderedPool.length];
   const svcImgs: string[] = services.map((_: any, i: number) => orderedPool[(3 + i) % orderedPool.length]);
   const heroSectorFallback = orderedPool;
-
-  // Direct image URLs with robust fallback chain (no external proxy dependency)
-  const getImgSrc = (url: string, fallbackIndex: number = 0): string => {
-    if (!url || !url.startsWith('http')) return orderedPool[fallbackIndex % orderedPool.length];
-    return url;
-  };
-  const imgErr = (fallbackIndex: number): string => {
-    const fallbackUrl = orderedPool[fallbackIndex % orderedPool.length];
-    return `onerror="this.onerror=null;this.src='${fallbackUrl}';this.style.opacity='0.7'"`;
-  };
-  const heroImgErr = imgErr(1);
+  const heroImgErr = `onerror="this.onerror=null;this.src='${proxiedImg(orderedPool[1 % orderedPool.length])}';this.style.opacity='0.7'"`;
+  const imgErr = (fallbackSlot: number) => `onerror="this.onerror=null;this.src='${proxiedImg(orderedPool[fallbackSlot % orderedPool.length])}';this.style.opacity='0.8'"`;
 
   const fontPair = combinedHash % 4;
   const headingFont = fontPair === 0 ? "'DM Sans'" : fontPair === 1 ? "'Plus Jakarta Sans'" : fontPair === 2 ? "'Playfair Display'" : "'Cormorant Garamond'";
@@ -1242,7 +1238,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </nav>
 
     <section class="hero" id="hero">
-        <img src="${getImgSrc(heroImage)}" ${heroImgErr} alt="${companyName}" class="hero-bg">
+        <img src="${proxiedImg(heroImage)}" ${heroImgErr} alt="${companyName}" class="hero-bg">
         <div class="hero-overlay"></div>
         <div class="hero-inner">
             <div>
@@ -1298,7 +1294,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                   const iconName = iconForService(s.name, content.sector) || sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
-                    <img src="${getImgSrc(svcImgs[i] || heroImage)}" ${imgErr(0)} class="svc-card-img" alt="${s.name}" loading="lazy">
+                    <img src="${proxiedImg(svcImgs[i] || heroImage)}" ${imgErr(0)} class="svc-card-img" alt="${s.name}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
                         <h3>${s.name}</h3>
@@ -1316,7 +1312,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant > 1 ? '<div class="section-deco deco-dot" style="top:20%;right:10%;animation-delay:1.5s"></div>' : ''}
             <div class="about-grid">
                 <div class="about-img reveal">
-                    <img src="${getImgSrc(aboutImg)}" ${imgErr(2)} alt="${companyName}" loading="lazy">
+                    <img src="${proxiedImg(aboutImg)}" ${imgErr(2)} alt="${companyName}" loading="lazy">
                     <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
