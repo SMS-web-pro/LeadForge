@@ -1112,10 +1112,14 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes pulse-urgent{0%,100%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}50%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.6),0 0 0 10px rgba(var(--primary-rgb),.1)}}
         @media(max-width:768px){.float-urgent{bottom:20px;right:20px;padding:14px 22px;font-size:.85rem}}
 
-        .reveal{opacity:0;transform:translateY(35px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
         .reveal.active{opacity:1;transform:translateY(0)}
-        .reveal-d1{transition-delay:.12s}.reveal-d2{transition-delay:.24s}.reveal-d3{transition-delay:.36s}
-        @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.stat-item{animation:none;opacity:1}.deco-circle,.deco-diamond,.deco-line,.deco-dot{animation:none!important}.hero-badge{animation:none!important}.cta-banner::before,.cta-banner::after{animation:none!important}}
+        .reveal-d1{transition-delay:.06s}.reveal-d2{transition-delay:.14s}.reveal-d3{transition-delay:.22s}
+        @media(prefers-reduced-motion:reduce){
+          *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+          .reveal{opacity:1!important;transform:none!important}
+          .hero-mesh{opacity:.8!important}
+        }
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         .hero-badge{animation:float 3s ease-in-out infinite}
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
