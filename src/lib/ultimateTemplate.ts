@@ -456,6 +456,47 @@ function getUltimateTemplate(sector: string) {
 // getProcessSteps, getPrivacyContent, getGalleryDesc, getLogoInfo, capitalizeCity,
 // isEnglishText, detectLanguage, UI, getGuarantees, getHeroBadge — all imported from './template/helpers' and './template/ui'
 
+function computeAccentOnDark(accent: string): string {
+  const hexToRgb = (hex: string): [number, number, number] => {
+    const h = (hex || '').replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return [r, g, b];
+  };
+  const luminance = (r: number, g: number, b: number) => {
+    const f = (c: number) => {
+      const s = c / 255;
+      return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  };
+  const contrastRatio = (l1: number, l2: number) =>
+    (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  const lightenHex = (hex: string, factor: number) => {
+    const [r, g, b] = hexToRgb(hex);
+    return `rgb(${Math.min(255, Math.round(r + (255 - r) * factor))}, ${Math.min(255, Math.round(g + (255 - g) * factor))}, ${Math.min(255, Math.round(b + (255 - b) * factor))})`;
+  };
+  const rawAccent = accent || '#6366f1';
+  const darkBg = '#1a2744';
+  const darkRgbArr = hexToRgb(darkBg);
+  const darkLum = luminance(darkRgbArr[0], darkRgbArr[1], darkRgbArr[2]);
+  const accentRgbArr = hexToRgb(rawAccent);
+  const accentLum = luminance(accentRgbArr[0], accentRgbArr[1], accentRgbArr[2]);
+  if (contrastRatio(accentLum, darkLum) < 3.0) {
+    let factor = 0.1;
+    const lightenLum = (h: string, f: number) => {
+      const a = hexToRgb(h);
+      return luminance(a[0], a[1], a[2]);
+    };
+    while (contrastRatio(lightenLum(rawAccent, factor), darkLum) < 4.5 && factor < 0.85) {
+      factor += 0.05;
+    }
+    return lightenHex(rawAccent, factor);
+  }
+  return rawAccent;
+}
+
 export function generateUltimateSite(lead: any, aiContent?: any): string {
   const template = getUltimateTemplate(lead.sector);
   const companyName = lead.name || 'Entreprise Premium';
@@ -544,11 +585,12 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const galleryImages = leadImages.slice(0, 5);
 
   const socialLinks = lead.socialLinks || {};
+  const accentOnDark = computeAccentOnDark(template.accent);
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
+    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
     footerDesc: lead.footerDesc || '', hasRealRating, hasRealReviews
   };
 
@@ -598,46 +640,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 
   const sectorImages = await getSectorImagesAsync(lead.sector, combinedHash);
 
-  // Lighten accent for dark backgrounds — WCAG AA contrast ≥ 4.5:1
-  const hexToRgb = (hex: string) => {
-    const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-    return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [0, 0, 0];
-  };
-  const luminance = (r: number, g: number, b: number) => {
-    const a = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
-    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-  };
-  const contrastRatio = (l1: number, l2: number) => {
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    return (lighter + 0.05) / (darker + 0.05);
-  };
-  const lightenHex = (hex: string, factor: number) => {
-    const [r, g, b] = hexToRgb(hex);
-    return `rgb(${Math.min(255, Math.round(r + (255 - r) * factor))}, ${Math.min(255, Math.round(g + (255 - g) * factor))}, ${Math.min(255, Math.round(b + (255 - b) * factor))})`;
-  };
-
-  const darkBg = '#1a2744';
-  const darkRgbArr = hexToRgb(darkBg);
-  const darkLum = luminance(darkRgbArr[0], darkRgbArr[1], darkRgbArr[2]);
-  const rawAccent = template.accent || '#6366f1';
-  let accentOnDark = rawAccent;
-  const accentRgbArr = hexToRgb(rawAccent);
-  const accentLum = luminance(accentRgbArr[0], accentRgbArr[1], accentRgbArr[2]);
-  if (contrastRatio(accentLum, darkLum) < 3.0) {
-    let factor = 0.1;
-    const lightenLum = (h: string, f: number) => {
-      const a = hexToRgb(h);
-      const lr = Math.min(255, Math.round(a[0] + (255 - a[0]) * f));
-      const lg = Math.min(255, Math.round(a[1] + (255 - a[1]) * f));
-      const lb = Math.min(255, Math.round(a[2] + (255 - a[2]) * f));
-      return luminance(lr, lg, lb);
-    };
-    while (contrastRatio(lightenLum(rawAccent, factor), darkLum) < 4.5 && factor < 0.85) {
-      factor += 0.05;
-    }
-    accentOnDark = lightenHex(rawAccent, factor);
-  }
+  const accentOnDark = computeAccentOnDark(template.accent);
 
   // IMAGES — séparation stricte : Pexels (stock) vs scrapées (Google Maps)
   // pexelsImages = pool anglais pertinent (API Pexels EN via fetchSectorImagesFromAPI,
