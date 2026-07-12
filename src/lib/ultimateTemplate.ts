@@ -1292,7 +1292,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant > 1 ? '<div class="section-deco deco-dot" style="top:20%;right:10%;animation-delay:1.5s"></div>' : ''}
             <div class="about-grid">
                 <div class="about-img reveal">
-                    <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName}" loading="lazy">
+                    <img src="${proxiedImg(getImg(1))}" ${imgErr(1)} alt="${companyName} — ${content.sector}" loading="lazy">
                     <div class="about-badge"><div class="about-badge-num">${establishedYear ? (new Date().getFullYear() - establishedYear) + '+' : sectorCfg.aboutBadge.value}</div><div class="about-badge-text">${establishedYear ? (lang === 'en' ? 'Years Experience' : 'Ans d\'expérience') : sectorCfg.aboutBadge.label[lang]}</div></div>
                 </div>
                 <div class="about-text reveal">
@@ -1300,10 +1300,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[1]?.title || (lang === 'en' ? 'Here for You' : 'À votre écoute')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[2]?.title || (lang === 'en' ? 'Satisfaction Guaranteed' : 'Satisfaction garantie')}</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[3]?.title || (lang === 'en' ? 'Trusted Service' : 'Service de confiance')}</li>
+                        ${sectorCfg.stats.slice(0, 3).map((st: { value: string; label: { fr: string; en: string } }) => `
+                        <li><i data-lucide="check-circle-2" width="18"></i> <strong>${st.value}</strong> — ${st.label[lang]}</li>
+                        `).join('')}
                     </ul>
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
@@ -1317,22 +1316,45 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="why-text reveal">
                     <span class="section-label">${ui.whyLabel}</span>
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
-                    <p>${aboutText.substring(0, 200)}...</p>
+                    <p>${(() => {
+                        const s = (content.sector || '').toLowerCase();
+                        const cityStr = city ? (lang === 'en' ? ` in ${city}` : ` à ${city}`) : '';
+                        if (lang === 'en') {
+                            if (s.includes('plomb')) return `Every intervention begins with a thorough diagnosis using thermal imaging cameras and leak detectors. We use copper and PEX piping systems, certified Valiant/Buderus boilers, and apply NF C 15-100 standards. Emergency response within 90 minutes, 7 days a week.`;
+                            if (s.includes('électri') || s.includes('electric')) return `We use professional Fluke/Schneider multimeters, Legrand wiring systems, and strictly follow NFC 15-100 standards. Every installation includes Consuel certification, with thermal imaging diagnostics and complete traceability of your electrical panel.`;
+                            if (s.includes('coiff')) return `We work with L'Oréal Professionnel, Kérastase, and Olaplex ranges. Every cut is preceded by a face-shape diagnosis and hair texture analysis. Colorings are mixed on-site for a custom result, with regular training on the latest trends.`;
+                            if (s.includes('restaurant')) return `Our menu changes with the seasons, sourced from local producers within 50km. We work with daily-delivered market vegetables, artisanal meats, and fish from the morning catch. Every dish is prepared on-site, without frozen products.`;
+                            if (s.includes('garage') || s.includes('mécan')) return `We use Launch and Autel multi-brand diagnostic scanners, Michelin/Continental tires, and genuine OEM parts. Every vehicle receives a 50-point checklist before delivery, with photo report of completed work.`;
+                            if (s.includes('médec') || s.includes('dent')) return `Our equipment meets the latest hospital standards: digital X-rays, autoclave Class B sterilization, and paperless patient records. Consultations run on time, with real-time appointment booking online.`;
+                            if (s.includes('avocat')) return `We handle each case with a dedicated strategy file, secure digital document management, and transparent billing. Every client gets a single point of contact, with weekly case updates and clear, jargon-free explanations.`;
+                            if (s.includes('nettoy')) return `We use Kärcher professional machines, eco-certified Ecolab products, and microfiber systems that reduce chemical use by 80%. Every intervention includes a photo quality report, with flexible scheduling including nights and weekends.`;
+                            if (s.includes('jardin')) return `We use Husqvarna/STIHL professional tools, adapted plant selections for your climate zone, and drip irrigation systems. Every garden gets a seasonal maintenance plan, with before/after photo follow-up.`;
+                            if (s.includes('fitness')) return `We use Eleiko competition-grade equipment, Polar heart rate monitoring, and InBody composition analysis. Every member gets a personalized program with weekly progress tracking and nutrition guidance.`;
+                            return `We combine professional-grade equipment, certified techniques, and ongoing team training to deliver consistent, measurable results. Every project follows a documented process with clear milestones and transparent communication.`;
+                        }
+                        if (s.includes('plomb')) return `Chaque intervention commence par un diagnostic approfici avec caméra thermique et détecteur de fuites. Nous utilisons des systèmes de tuyauterie cuivre et PEX, des chaudières Valiant/Buderus certifiées, et appliquons les normes NF C 15-100. Déplacement d'urgence sous 90 minutes, 7j/7.`;
+                        if (s.includes('électri') || s.includes('electric')) return `Nous travaillons avec des multimètres Fluke/Schneider, du câblage Legrand, en suivant strictement les normes NFC 15-100. Chaque installation comprend une certification Consuel, un diagnostic thermographique et une traçabilité complète de votre tableau électrique.`;
+                        if (s.includes('coiff')) return `Nous travaillons avec les gammes L'Oréal Professionnel, Kérastase et Olaplex. Chaque coupe est précédée d'un diagnostic visage et analyse de la texture capillaire. Les colorations sont mélangées sur place pour un résultat personnalisé, avec formation continue sur les dernières tendances.`;
+                        if (s.includes('restaurant')) return `Notre carte évolue au rythme des saisons, approvisionnée par des producteurs locaux dans un rayon de 50km. Nous travaillons avec des légumes du marché livrés quotidiennement, des viandes artisanales et du poisson de la pêche du matin. Chaque plat est préparé sur place, sans produits surgelés.`;
+                        if (s.includes('garage') || s.includes('mécan')) return `Nous utilisons des valises diagnostiques Launch et Autel multimarques, des pneus Michelin/Continental et des pièces d'origine constructeur. Chaque véhicule reçoit un contrôle de 50 points avant restitution, avec rapport photo des travaux effectués.`;
+                        if (s.includes('médec') || s.includes('dent')) return `Nos équipements répondent aux normes hospitalières les plus récentes : radios numériques, autoclave de stérilisation classe B et dossier patient dématérialisé. Les consultations sont ponctuelles, avec prise de RDV en ligne en temps réel.`;
+                        if (s.includes('avocat')) return `Nous traitons chaque dossier avec une stratégie dédiée, une gestion numérique sécurisée des documents et une facturation transparente. Chaque client bénéficie d'un interlocuteur unique, avec des mises à jour hebdomadaires et des explications claires sans jargon juridique.`;
+                        if (s.includes('nettoy')) return `Nous travaillons avec des machines professionnelles Kärcher, des produits écolabels Ecolab et des systèmes en microfibre réduisant de 80% l'usage de produits chimiques. Chaque intervention comprend un rapport qualité photo, avec planning flexible incluant nuits et week-ends.`;
+                        if (s.includes('jardin')) return `Nous utilisons du matériel professionnel Husqvarna/STIHL, des végétaux adaptés à votre zone climatique et des systèmes d'irrigation goutte-à-goutte. Chaque jardin bénéficie d'un plan d'entretien saisonnier, avec suivi photo avant/après.`;
+                        if (s.includes('fitness')) return `Nous disposons de matériel Eleiko de compétition, de suivi cardiaque Polar et d'analyses de composition corporelle InBody. Chaque membre bénéficie d'un programme personnalisé avec suivi hebdomadaire et conseils nutritionnels.`;
+                        return `Nous combinons du matériel professionnel, des techniques certifiées et une formation continue de nos équipes pour des résultats constants et mesurables. Chaque projet suit un processus documenté avec des jalons clairs et une communication transparente.`;
+                    })()}</p>
                     <div class="why-stats">
                         ${sectorCfg.stats.slice(0, 4).map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
                     </div>
                 </div>
                 <div class="why-img reveal">
-                    <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}" loading="lazy">
+                    <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName} — ${lang === 'en' ? 'our approach' : 'notre approche'}" loading="lazy">
                     <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">${ui.whySatisfaction}</div></div>
                 </div>
             </div>
         </div>
     </section>
-
-    <div class="stats" style="background:var(--primary)">
-        ${sectorCfg.stats.map(s => `<div class="stat-item"><div class="stat-num">${s.value}</div><div class="stat-label">${s.label[lang]}</div></div>`).join('')}
-    </div>
 
     <section class="section section-alt" id="process">
         <div class="container" style="position:relative">
@@ -1347,37 +1369,26 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="proc-step reveal reveal-d${Math.min(i, 3)}"><div class="proc-num">0${i + 1}</div><h3>${step.title}</h3><p>${step.desc}</p></div>
                 `).join('')}
             </div>
-            <div style="text-align:center;margin-top:40px"><a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a></div>
         </div>
     </section>
 
-    <section class="section" id="pourquoi">
+    ${(realPhotos && realPhotos.length > 0) ? `
+    <section class="section" id="gallery">
         <div class="container" style="position:relative">
-            ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
-            <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</span>
-                <h2>${lang === 'en' ? 'Why Choose Us' : 'Pourquoi nous choisir'}</h2>
-                <p>${lang === 'en' ? 'The concrete reasons our clients trust us, sector after sector.' : 'Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.'}</p>
+                <span class="section-label">${lang === 'en' ? 'Gallery' : 'Galerie'}</span>
+                <h2>${lang === 'en' ? 'Our Work in Pictures' : 'Nos Réalisations en Images'}</h2>
+                <p>${getGalleryDesc(content.sector, lang)}</p>
             </div>
-            <div class="guar-grid reveal">
-                ${getGuarantees(content.sector, lang).map((g: any, i: number) => `
-                <div class="guar-card reveal-d${Math.min(i, 3)}">
-                    <div class="guar-icon"><i data-lucide="${g.icon}" width="24" height="24"></i></div>
-                    <h3>${g.title}</h3>
-                    <p class="guar-desc">${ADV_DESC[g.icon]?.[lang] || (lang === 'en' ? 'A commitment we stand behind' : 'Un engagement que nous honorons')}</p>
-                </div>`).join('')}
+            <div class="gal-grid reveal">
+                <div class="gal-item gal-main"><img src="${proxiedImg(realPhotos[0])}" ${imgErr(1)} alt="${companyName} — ${lang === 'en' ? 'realization' : 'réalisation'} 1" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[1] || realPhotos[0])}" ${imgErr(2)} alt="${companyName} — ${lang === 'en' ? 'realization' : 'réalisation'} 2" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[2] || realPhotos[0])}" ${imgErr(3)} alt="${companyName} — ${lang === 'en' ? 'realization' : 'réalisation'} 3" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[3] || realPhotos[0])}" ${imgErr(4)} alt="${companyName} — ${lang === 'en' ? 'realization' : 'réalisation'} 4" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[4] || realPhotos[0])}" ${imgErr(5)} alt="${companyName} — ${lang === 'en' ? 'realization' : 'réalisation'} 5" loading="lazy"></div>
             </div>
-            ${(realPhotos && realPhotos.length > 0) ? `
-            <div class="gal-grid reveal" style="margin-top:44px">
-                <div class="gal-item gal-main"><img src="${proxiedImg(realPhotos[0])}" ${imgErr(1)} alt="${companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(realPhotos[1] || realPhotos[0])}" ${imgErr(2)} alt="${companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(realPhotos[2] || realPhotos[0])}" ${imgErr(3)} alt="${companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(realPhotos[3] || realPhotos[0])}" ${imgErr(4)} alt="${companyName}" loading="lazy"></div>
-                <div class="gal-item"><img src="${proxiedImg(realPhotos[4] || realPhotos[0])}" ${imgErr(5)} alt="${companyName}" loading="lazy"></div>
-            </div>` : ''}
         </div>
-    </section>
+    </section>` : ''}
 
     <section class="section section-alt" id="testimonials">
         <div class="container">
@@ -1405,23 +1416,110 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <p>${lang === 'en' ? `Everything you need to know before calling ${companyName}.` : `Tout ce qu'il faut savoir avant de faire appel à ${companyName}.`}</p>
             </div>
             <div class="faq-wrap reveal">
-                ${[
-                  { q: lang === 'en' ? `Do you operate in ${city || 'the area'}?` : `Intervenez-vous à ${city || 'domicile'} ?`, a: lang === 'en' ? `Yes, ${companyName} operates ${city ? `in ${city} and surrounding areas` : 'in your area'}. Reach out to confirm availability.` : `Oui, ${companyName} intervient ${city ? `à ${city} et ses alentours` : 'dans votre zone'}. Contactez-nous pour confirmer la disponibilité.` },
-                  { q: lang === 'en' ? 'Do you provide a free quote?' : 'Proposez-vous un devis gratuit ?', a: lang === 'en' ? 'Yes — we always provide a detailed, transparent, no-obligation quote.' : 'Oui, nous établissons systématiquement un devis détaillé et transparent, sans engagement.' },
-                  { q: lang === 'en' ? 'Are you insured and guaranteed?' : 'Êtes-vous assuré et garant ?', a: lang === 'en' ? 'Absolutely. Our work is covered by professional liability insurance and every intervention is guaranteed.' : 'Absolument. Notre travail est couvert par une assurance responsabilité civile professionnelle et nos interventions sont garanties.' },
-                  { q: lang === 'en' ? 'What are your response times?' : 'Quels sont vos délais d\'intervention ?', a: leadHours ? (lang === 'en' ? `Our hours: ${leadHours}.` : `Nos horaires : ${leadHours}.`) : (lang === 'en' ? 'We strive to respond quickly, including for emergencies.' : 'Nous nous efforçons de répondre rapidement, y compris en urgence.') },
-                ].map(f => `
+                ${(() => {
+                  const s = (content.sector || '').toLowerCase();
+                  const cityMention = city ? (lang === 'en' ? ` in ${city}` : ` à ${city}`) : '';
+                  const faqs: Array<{ q: string; a: string }> = [];
+                  if (lang === 'en') {
+                    faqs.push({ q: `Do you serve ${city || 'my area'}?`, a: `Yes, ${companyName} serves ${city ? `${city} and surrounding areas` : 'your area'}. Contact us to confirm availability for your location.` });
+                    if (s.includes('plomb') || s.includes('électri') || s.includes('electric') || s.includes('garage') || s.includes('mécan')) {
+                      faqs.push({ q: 'Do you handle emergencies?', a: `Yes. For ${s.includes('plomb') ? 'leaks, bursts, and heating failures' : s.includes('garage') ? 'breakdowns and flat tires' : 'electrical faults and outages'}, we offer rapid intervention with arrival under 90 minutes. Call us directly for immediate assistance.` });
+                      faqs.push({ q: 'What brands/equipment do you work with?', a: s.includes('plomb') ? 'We use Valiant, Buderus, and Atlantic boilers, copper and PEX piping systems, and Fluke diagnostic tools. All materials meet current French standards.' : s.includes('garage') ? 'We work with Michelin, Continental, and Bosch parts, using Launch and Autel multi-brand diagnostic scanners for accurate troubleshooting.' : 'We use Legrand, Schneider Electric, and Hager systems. Every installation follows NFC 15-100 standards with Consuel certification.' });
+                    } else if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) {
+                      faqs.push({ q: 'How do I book an appointment?', a: `You can book online through our contact form or call us directly at ${phone || 'our number'}. Walk-ins are welcome subject to availability.` });
+                      faqs.push({ q: 'What products do you use?', a: 'We exclusively use L\'Oréal Professionnel, Kérastase, and Olaplex ranges — professional-grade products that protect and enhance your hair.' });
+                    } else if (s.includes('restaurant') || s.includes('cuisin')) {
+                      faqs.push({ q: 'Do you take reservations?', a: `Yes, you can reserve by phone or through our contact form. For groups of 8+, we recommend booking at least 48 hours in advance.` });
+                      faqs.push({ q: 'Do you accommodate dietary restrictions?', a: 'Absolutely. We offer gluten-free, vegetarian, and vegan options. Inform us of any allergies when booking and we\'ll adapt our menu.' });
+                    } else if (s.includes('médec') || s.includes('dent') || s.includes('sant')) {
+                      faqs.push({ q: 'How quickly can I get an appointment?', a: 'We typically offer appointments within 48 hours. For urgent matters, contact us directly and we\'ll do our best to accommodate you.' });
+                      faqs.push({ q: 'Do you accept health insurance?', a: 'Yes, we work with all major French health insurance providers. Third-party payment is available for covered services.' });
+                    } else if (s.includes('avocat') || s.includes('juridi')) {
+                      faqs.push({ q: 'How does the initial consultation work?', a: 'The first consultation allows us to understand your situation, review relevant documents, and outline your legal options. Billed at a fixed rate with no surprises.' });
+                      faqs.push({ q: 'Do you handle cases across France?', a: 'Yes, we represent clients throughout France, with hearings in local courts as needed. Remote consultations available via video conference.' });
+                    } else if (s.includes('nettoy')) {
+                      faqs.push({ q: 'What areas do you cover?', a: `We serve ${city ? `${city} and a 30km radius` : 'the greater metropolitan area'}. Industrial and commercial clients can arrange recurring contracts.` });
+                      faqs.push({ q: 'Are your products eco-friendly?', a: 'Yes, we exclusively use Ecolab eco-certified products and microfiber systems that reduce chemical usage by 80%. Safe for children and pets.' });
+                    } else if (s.includes('jardin') || s.includes('paysag')) {
+                      faqs.push({ q: 'When is the best season to start?', a: 'Spring and autumn are ideal for major projects. Maintenance can begin year-round. Contact us for a free on-site assessment.' });
+                      faqs.push({ q: 'Do you provide maintenance contracts?', a: 'Yes, we offer seasonal maintenance plans including mowing, pruning, fertilization, and irrigation system checks.' });
+                    } else if (s.includes('fitness') || s.includes('sport')) {
+                      faqs.push({ q: 'Can I try before committing?', a: 'Yes, we offer a free trial session so you can experience our equipment, meet our coaches, and find the right program for your goals.' });
+                      faqs.push({ q: 'Do I need experience?', a: 'Not at all. Our coaches adapt programs to every level, from complete beginners to advanced athletes. Your starting point is our baseline.' });
+                    } else {
+                      faqs.push({ q: 'Do you provide free quotes?', a: 'Yes, we always provide detailed, transparent quotes with no obligation. Contact us with your project details and we\'ll respond within 24 hours.' });
+                      faqs.push({ q: 'Are you insured and certified?', a: 'Absolutely. We carry full professional liability insurance and all work is guaranteed. Certifications available on request.' });
+                    }
+                    faqs.push({ q: 'What are your working hours?', a: leadHours ? `Our hours: ${leadHours}. Emergency services available outside regular hours for urgent situations.` : 'We respond quickly to all inquiries, including evenings and weekends for urgent situations.' });
+                  } else {
+                    faqs.push({ q: `Intervenez-vous${cityMention} ?`, a: `Oui, ${companyName} intervient${city ? ` à ${city} et ses alentours` : ' dans votre zone'}. Contactez-nous pour confirmer la disponibilité dans votre secteur.` });
+                    if (s.includes('plomb') || s.includes('électri') || s.includes('electric') || s.includes('garage') || s.includes('mécan')) {
+                      faqs.push({ q: 'Prenez-vous les urgences ?', a: `Oui. Pour ${s.includes('plomb') ? 'les fuites, les canalisations gelées et les pannes de chauffage' : s.includes('garage') ? 'les pannes, les crevaisons et les problèmes moteur' : 'les pannes électriques et les court-circuits'}, nous proposons une intervention rapide avec arrivée sous 90 minutes. Appelez-nous directement.` });
+                      faqs.push({ q: 'Quelles marques/utilisez-vous ?', a: s.includes('plomb') ? 'Nous travaillons avec les chaudières Valiant, Buderus et Atlantic, des tuyauteries cuivre et PEX, et des outils de diagnostic Fluke. Tous les matériaux sont conformes aux normes françaises.' : s.includes('garage') ? 'Nous utilisons des pièces Michelin, Continental et Bosch, avec des valises diagnostiques Launch et Autel multimarques pour un diagnostic précis.' : 'Nous travaillons avec les systèmes Legrand, Schneider Electric et Hager. Chaque installation suit les normes NFC 15-100 avec certification Consuel.' });
+                    } else if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) {
+                      faqs.push({ q: 'Comment prendre rendez-vous ?', a: `Vous pouvez réserver en ligne via notre formulaire ou nous appeler au ${phone || 'notre numéro'}. Les passages sans RDV sont possibles sous réserve de disponibilité.` });
+                      faqs.push({ q: 'Quelles marques utilisez-vous ?', a: 'Nous travaillons exclusivement avec les gammes L\'Oréal Professionnel, Kérastase et Olaplex — des produits professionnels qui protègent et subliment vos cheveux.' });
+                    } else if (s.includes('restaurant') || s.includes('cuisin')) {
+                      faqs.push({ q: 'Acceptez-vous les réservations ?', a: 'Oui, vous pouvez réserver par téléphone ou via notre formulaire. Pour les groupes de 8+, nous recommandons de réserver au moins 48h à l\'avance.' });
+                      faqs.push({ q: 'Adapté-vous aux régimes alimentaires ?', a: 'Absolument. Nous proposons des options sans gluten, végétariennes et véganes. Informez-nous de vos allergies lors de la réservation.' });
+                    } else if (s.includes('médec') || s.includes('dent') || s.includes('sant')) {
+                      faqs.push({ q: 'Quel est le délai pour un rendez-vous ?', a: 'Nous proposons généralement des rendez-vous sous 48h. Pour les situations urgentes, contactez-nous et nous ferons notre possible pour vous accueillir.' });
+                      faqs.push({ q: 'Travaillez-vous avec la Sécurité sociale ?', a: 'Oui, nous travaillons avec toutes les mutuelles et assurances santé. Le tiers payant est disponible pour les prestations couvertes.' });
+                    } else if (s.includes('avocat') || s.includes('juridi')) {
+                      faqs.push({ q: 'Comment se déroule la première consultation ?', a: 'La première consultation permet d\'analyser votre situation, examiner les documents et définir vos options juridiques. Forfaitaire, sans surprise.' });
+                      faqs.push({ q: 'Intervenez-vous sur toute la France ?', a: 'Oui, nous défendons nos clients sur tout le territoire, avec des audiences dans les tribunaux locaux. Consultations à distance par visioconférence.' });
+                    } else if (s.includes('nettoy')) {
+                      faqs.push({ q: 'Quelles zones couvrez-vous ?', a: `Nous intervenons${city ? ` à ${city} et dans un rayon de 30km` : ' dans toute la métropole'}. Contrats récurrents disponibles pour les clients professionnels et industriels.` });
+                      faqs.push({ q: 'Vos produits sont-ils écologiques ?', a: 'Oui, nous utilisons exclusivement des produits écolabels Ecolab et des systèmes en microfibre réduisant de 80% l\'usage de produits chimiques. Sans danger pour enfants et animaux.' });
+                    } else if (s.includes('jardin') || s.includes('paysag')) {
+                      faqs.push({ q: 'Quelle est la meilleure saison pour démarrer ?', a: 'Le printemps et l\'automne sont idéaux pour les projets importants. L\'entretien peut commencer toute l\'année. Contactez-nous pour une visite gratuite.' });
+                      faqs.push({ q: 'Proposez-vous des contrats d\'entretien ?', a: 'Oui, nous proposons des formules saisonnières comprenant tonte, taille, fertilisation et vérification du système d\'irrigation.' });
+                    } else if (s.includes('fitness') || s.includes('sport')) {
+                      faqs.push({ q: 'Puis-je essayer avant de m\'engager ?', a: 'Oui, nous proposons une séance d\'essai gratuite pour découvrir notre matériel, rencontrer nos coaches et trouver le programme adapté à vos objectifs.' });
+                      faqs.push({ q: 'Faut-il déjà avoir de l\'expérience ?', a: 'Pas du tout. Nos coaches adaptent les programmes à tous les niveaux, du débutant complet à l\'athlète confirmé. Votre point de départ est notre base.' });
+                    } else {
+                      faqs.push({ q: 'Proposez-vous des devis gratuits ?', a: 'Oui, nous établissons systématiquement un devis détaillé et transparent, sans engagement. Contactez-nous avec les détails de votre projet et nous répondons sous 24h.' });
+                      faqs.push({ q: 'Êtes-vous assurés et certifiés ?', a: 'Absolument. Nous disposons d\'une assurance responsabilité civile professionnelle complète et tous nos travaux sont garantis. Certificats disponibles sur demande.' });
+                    }
+                    faqs.push({ q: 'Quels sont vos horaires ?', a: leadHours ? `Nos horaires : ${leadHours}. Services d\'urgence disponibles en dehors des heures d\'ouverture.` : 'Nous répondons rapidement à toutes les demandes, y compris le soir et le week-end pour les urgences.' });
+                  }
+                  return faqs.map(f => `
                 <details class="faq-item">
                     <summary class="faq-q">${f.q} <i data-lucide="chevron-down" width="18"></i></summary>
                     <div class="faq-a">${f.a}</div>
-                </details>`).join('')}
+                </details>`).join('');
+                })()}
             </div>
         </div>
     </section>
 
     <section class="cta-banner">
         <div class="container reveal">
-            <h2>${ui.ctaTitle}</h2>
+            <h2>${(() => {
+              const s = (content.sector || '').toLowerCase();
+              if (lang === 'en') {
+                if (s.includes('plomb')) return `${companyName} — Your Emergency Plumbing Partner`;
+                if (s.includes('coiff')) return `${companyName} — Book Your Transformation`;
+                if (s.includes('restaurant')) return `${companyName} — Reserve Your Table Tonight`;
+                if (s.includes('garage') || s.includes('mécan')) return `${companyName} — Your Vehicle Deserves the Best`;
+                if (s.includes('médec') || s.includes('dent')) return `${companyName} — Your Health, Our Priority`;
+                if (s.includes('avocat')) return `${companyName} — Protect Your Rights`;
+                if (s.includes('nettoy')) return `${companyName} — Spotless Spaces, Guaranteed`;
+                if (s.includes('jardin')) return `${companyName} — Your Dream Garden Starts Here`;
+                if (s.includes('fitness')) return `${companyName} — Start Your Transformation Today`;
+                return ui.ctaTitle;
+              }
+              if (s.includes('plomb')) return `${companyName} — Votre Plombier de Confiance`;
+              if (s.includes('coiff')) return `${companyName} — Réservez Votre Transformation`;
+              if (s.includes('restaurant')) return `${companyName} — Réservez Votre Table ce Soir`;
+              if (s.includes('garage') || s.includes('mécan')) return `${companyName} — Votre Véhicule Mérite le Mejor`;
+              if (s.includes('médec') || s.includes('dent')) return `${companyName} — Votre Santé, Notre Priorité`;
+              if (s.includes('avocat')) return `${companyName} — Défendez Vos Droits`;
+              if (s.includes('nettoy')) return `${companyName} — Des Espaces Impeccables, Garantis`;
+              if (s.includes('jardin')) return `${companyName} — Votre Jardin Rêve Commence Ici`;
+              if (s.includes('fitness')) return `${companyName} — Lancez Votre Transformation`;
+              return ui.ctaTitle;
+            })()}</h2>
             <p>${ui.ctaDesc}</p>
             <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
