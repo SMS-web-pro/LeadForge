@@ -36,56 +36,56 @@ export function getProcessSteps(sector: string, lang: 'fr' | 'en' = 'fr'): Array
   const s = (sector || '').toLowerCase();
   if (lang === 'en') {
     if (s.includes('restaurant') || s.includes('cuisin') || s.includes('traiteur') || s.includes('boulanger') || s.includes('pâtissier'))
-      return [{ title: 'Reservation', desc: 'Book your table online or by phone.' }, { title: 'Welcome', desc: 'A warm setting and attentive service await you.' }, { title: 'Dining', desc: 'Savor our dishes prepared with fresh, seasonal ingredients.' }, { title: 'Service', desc: 'Our team ensures your comfort throughout your meal.' }, { title: 'Satisfaction', desc: 'A culinary experience you\'ll want to return to.' }];
+      return [{ title: 'Reservation', desc: 'Book your table online or by phone, we prepare your seating.' }, { title: 'Welcome', desc: 'A warm setting with tableware and seasonal decor awaiting you.' }, { title: 'Dining', desc: 'Savor our dishes crafted with market-fresh ingredients and a 120-reference wine list.' }, { title: 'Service', desc: 'Our team ensures your comfort throughout your meal with attentive, unhurried care.' }, { title: 'Satisfaction', desc: 'A culinary experience to remember — and to return for.' }];
     if (s.includes('coiff') || s.includes('barb') || s.includes('salon') || s.includes('beauté') || s.includes('esthétique'))
-      return [{ title: 'Booking', desc: 'Schedule your appointment online at your convenience.' }, { title: 'Consultation', desc: 'A personalized hair diagnosis and tailored advice.' }, { title: 'Styling', desc: 'Let our expertise create a look that suits you.' }, { title: 'Advice', desc: 'Recommendations to maintain your style every day.' }, { title: 'Result', desc: 'A look that\'s uniquely yours, for every occasion.' }];
+      return [{ title: 'Booking', desc: 'Schedule your appointment online at your convenience.' }, { title: 'Consultation', desc: 'A personalized hair diagnosis using L\'Oréal Professionnel analysis tools.' }, { title: 'Styling', desc: 'Expert cutting and coloring with Kérastase and Olaplex treatments.' }, { title: 'Advice', desc: 'Recommendations with specific products to maintain your style at home.' }, { title: 'Result', desc: 'A look that\'s uniquely yours, crafted by certified colorists.' }];
     if (s.includes('garage') || s.includes('mécan') || s.includes('auto') || s.includes('carrosserie'))
-      return [{ title: 'Booking', desc: 'Schedule your visit around your timetable.' }, { title: 'Diagnosis', desc: 'A complete vehicle check with modern equipment.' }, { title: 'Quote', desc: 'A clear, detailed estimate before any work.' }, { title: 'Repair', desc: 'Quality work by qualified, certified technicians.' }, { title: 'Delivery', desc: 'Your vehicle returned spotless, ready to drive.' }];
+      return [{ title: 'Booking', desc: 'Schedule your visit around your timetable.' }, { title: 'Diagnosis', desc: 'Complete vehicle check with Autel MaxiSys diagnostic equipment.' }, { title: 'Quote', desc: 'A clear, detailed estimate with OEM parts reference numbers.' }, { title: 'Repair', desc: 'Quality work with Brembo, Michelin, Mann-Filter parts and a 50-point checklist.' }, { title: 'Delivery', desc: 'Your vehicle returned spotless, with documented service history.' }];
     if (s.includes('avocat') || s.includes('notaire') || s.includes('juridi') || s.includes('droit'))
-      return [{ title: 'Contact', desc: 'Tell us about your situation in an initial exchange.' }, { title: 'Consultation', desc: 'A thorough analysis of your case and options.' }, { title: 'Strategy', desc: 'A clear course of action, tailored to your goals.' }, { title: 'Action', desc: 'We defend your interests with rigor and determination.' }, { title: 'Follow-up', desc: 'Ongoing support until your case is resolved.' }];
+      return [{ title: 'Contact', desc: 'Tell us about your situation in a confidential initial exchange.' }, { title: 'Consultation', desc: 'A thorough analysis of your case with relevant case law review.' }, { title: 'Strategy', desc: 'A clear course of action with written fee schedule, no surprises.' }, { title: 'Action', desc: 'We defend your interests with rigor and 85% success rate at prud\'hommes.' }, { title: 'Follow-up', desc: 'Weekly case updates until resolution.' }];
     if (s.includes('médec') || s.includes('clinique') || s.includes('dentiste') || s.includes('santé') || s.includes('kiné'))
-      return [{ title: 'Appointment', desc: 'Book your visit in just a few clicks.' }, { title: 'Consultation', desc: 'A careful examination and personalized diagnosis.' }, { title: 'Treatment', desc: 'A care plan tailored to your situation.' }, { title: 'Follow-up', desc: 'Regular monitoring for your well-being.' }, { title: 'Results', desc: 'Rediscover a better quality of life.' }];
+      return [{ title: 'Appointment', desc: 'Book your visit in just a few clicks.' }, { title: 'Consultation', desc: 'Careful examination with Schiller ECG and modern diagnostic tools.' }, { title: 'Treatment', desc: 'A care plan using electronic prescriptions and HAS-compliant protocols.' }, { title: 'Follow-up', desc: 'Regular monitoring with lab results from Biogroup network.' }, { title: 'Results', desc: 'Rediscover a better quality of life with evidence-based care.' }];
     if (s.includes('fitness') || s.includes('sport') || s.includes('coach') || s.includes('gym') || s.includes('salle'))
-      return [{ title: 'Assessment', desc: 'A complete fitness evaluation.' }, { title: 'Program', desc: 'A personalized training plan for your goals.' }, { title: 'Training', desc: 'Sessions led by our certified coaches.' }, { title: 'Tracking', desc: 'Regular follow-up to measure your progress.' }, { title: 'Goals', desc: 'Reach your goals and push your limits.' }];
+      return [{ title: 'Assessment', desc: 'Complete fitness evaluation with InBody 570 body composition analysis.' }, { title: 'Program', desc: 'A personalized training plan using Eleiko bars and Technogym Skillmill.' }, { title: 'Training', desc: 'Sessions led by BPJEPS-certified coaches with Wattbike performance tracking.' }, { title: 'Tracking', desc: 'Monthly InBody measurements and training log review.' }, { title: 'Goals', desc: 'Reach your goals with progressive overload and periodized programming.' }];
     if (s.includes('nettoyag') || s.includes('propreté') || s.includes('ménage'))
-      return [{ title: 'Quote', desc: 'An accurate estimate tailored to your needs.' }, { title: 'Planning', desc: 'A flexible schedule that fits your constraints.' }, { title: 'Service', desc: 'Our trained teams work with precision.' }, { title: 'Quality Check', desc: 'Systematic quality control after every visit.' }, { title: 'Maintenance', desc: 'Ongoing upkeep for consistently pristine spaces.' }];
+      return [{ title: 'Quote', desc: 'An accurate estimate with Kärcher and Taski equipment specifications.' }, { title: 'Planning', desc: 'A flexible schedule that fits your constraints.' }, { title: 'Service', desc: 'Our trained teams work with Ecolab products and WFP window systems.' }, { title: 'Quality Check', desc: 'ISO 9001 quality control with photo documentation after every visit.' }, { title: 'Maintenance', desc: 'Ongoing upkeep with eco-label certified products.' }];
     if (s.includes('jardin') || s.includes('paysag') || s.includes('espace vert'))
-      return [{ title: 'Visit', desc: 'An on-site meeting to assess your space.' }, { title: 'Design', desc: 'A customized landscape project with plans and visuals.' }, { title: 'Creation', desc: 'Implementation by our team of qualified gardeners.' }, { title: 'Maintenance', desc: 'Seasonal upkeep to preserve your garden\'s beauty.' }, { title: 'Evolution', desc: 'Adjustments through the seasons and your preferences.' }];
+      return [{ title: 'Visit', desc: 'An on-site meeting to assess your soil, exposure, and existing plants.' }, { title: 'Design', desc: 'A customized landscape project with DPLG-certified plans and 3D visuals.' }, { title: 'Creation', desc: 'Implementation with STIHL/Honda equipment and Hunter irrigation systems.' }, { title: 'Maintenance', desc: 'Seasonal upkeep with BRF mulching and organic treatments.' }, { title: 'Evolution', desc: 'Adjustments through the seasons and your preferences.' }];
     return [{ title: 'Contact', desc: 'Reach out to share your needs with us.' }, { title: 'Analysis', desc: 'We study your request and identify the best solution.' }, { title: 'Proposal', desc: 'Receive a clear offer, tailored to your budget.' }, { title: 'Delivery', desc: 'Our team works with care and professionalism.' }, { title: 'Follow-up', desc: 'We ensure quality follow-up for your satisfaction.' }];
   }
   if (s.includes('restaurant') || s.includes('cuisin') || s.includes('traiteur') || s.includes('boulanger') || s.includes('pâtissier'))
-    return [{ title: 'Réservation', desc: 'Réservez votre table en ligne ou par téléphone.' }, { title: 'Accueil', desc: 'Un cadre chaleureux et un service attentionné vous attendent.' }, { title: 'Dégustation', desc: 'Savourez nos plats préparés avec des produits frais et de saison.' }, { title: 'Service', desc: 'Notre équipe veille à votre confort tout au long du repas.' }, { title: 'Satisfait', desc: 'Un moment culinaire dont vous aurez envie de revenir.' }];
+    return [{ title: 'Réservation', desc: 'Réservez votre table en ligne ou par téléphone, nous préparons votre coin.' }, { title: 'Accueil', desc: 'Un cadre chaleureux avec vaisselle de saison et décoration soignée.' }, { title: 'Dégustation', desc: 'Savourez nos plats cuisinés avec des produits frais du marché et une cave de 120 références.' }, { title: 'Service', desc: 'Notre équipe veille à votre confort sans pression, avec attention constante.' }, { title: 'Satisfait', desc: 'Un moment culinaire mémorable — dont vous aurez envie de revenir.' }];
   if (s.includes('coiff') || s.includes('barb') || s.includes('salon') || s.includes('beauté') || s.includes('esthétique'))
-    return [{ title: 'RDV', desc: 'Prenez rendez-vous en ligne quand ça vous convient.' }, { title: 'Consultation', desc: 'Un diagnostic capillaire personnalisé et des conseils sur-mesure.' }, { title: 'Coiffage', desc: 'Laissez faire notre expertise pour un résultat à votre image.' }, { title: 'Conseils', desc: 'Des recommandations pour entretenir votre style au quotidien.' }, { title: 'Résultat', desc: 'Un look qui vous ressemble, pour briller à chaque occasion.' }];
+    return [{ title: 'RDV', desc: 'Prenez rendez-vous en ligne quand ça vous convient.' }, { title: 'Consultation', desc: 'Diagnostic capillaire personnalisé avec les outils d\'analyse L\'Oréal Professionnel.' }, { title: 'Coiffage', desc: 'Coupe et coloration expertes avec soins Kérastase et Olaplex.' }, { title: 'Conseils', desc: 'Recommandations de produits spécifiques pour entretenir votre style chez vous.' }, { title: 'Résultat', desc: 'Un look qui vous ressemble, réalisé par des coloristes certifiés.' }];
   if (s.includes('garage') || s.includes('mécan') || s.includes('auto') || s.includes('carrosserie'))
-    return [{ title: 'RDV', desc: 'Planifiez votre passage selon votre emploi du temps.' }, { title: 'Diagnostic', desc: 'Un contrôle complet de votre véhicule avec équipement moderne.' }, { title: 'Devis', desc: 'Une estimation claire et détaillée avant toute intervention.' }, { title: 'Réparation', desc: 'Un travail soigné par des techniciens qualifiés et certifiés.' }, { title: 'Livraison', desc: 'Votre véhicule vous est restitué impeccable, prêt à rouler.' }];
+    return [{ title: 'RDV', desc: 'Planifiez votre passage selon votre emploi du temps.' }, { title: 'Diagnostic', desc: 'Contrôle complet avec équipement Autel MaxiSys et valise diagnostic.' }, { title: 'Devis', desc: 'Estimation claire et détaillée avec numéros de références pièces OEM.' }, { title: 'Réparation', desc: 'Travail soigné avec pièces Brembo, Michelin, Mann-Filter et checklist 50 points.' }, { title: 'Livraison', desc: 'Votre véhicule restitué impeccable, historique d\'entretien documenté.' }];
   if (s.includes('avocat') || s.includes('notaire') || s.includes('juridi') || s.includes('droit'))
-    return [{ title: 'Contact', desc: 'Exposez-nous votre situation lors d\'un premier échange.' }, { title: 'Consultation', desc: 'Une analyse approfondie de votre dossier et de vos options.' }, { title: 'Stratégie', desc: 'Une ligne de conduite claire, adaptée à vos objectifs.' }, { title: 'Action', desc: 'Nous défendons vos intérêts avec rigueur et détermination.' }, { title: 'Suivi', desc: 'Un accompagnement continu jusqu\'à la résolution de votre dossier.' }];
+    return [{ title: 'Contact', desc: 'Échangez avec nous pour nous exposer votre besoin en toute confidentialité.' }, { title: 'Consultation', desc: 'Analyse approfondie de votre dossier avec revue de la jurisprudence applicable.' }, { title: 'Stratégie', desc: 'Ligne de conduite claire avec grille d\'honoraires écrite, pas de surprise.' }, { title: 'Action', desc: 'Défense de vos intérêts avec rigueur et 85% de réussite aux prud\'hommes.' }, { title: 'Suivi', desc: 'Mises à jour hebdomadaires de l\'avancement de votre dossier.' }];
   if (s.includes('médec') || s.includes('clinique') || s.includes('dentiste') || s.includes('santé') || s.includes('kiné'))
-    return [{ title: 'RDV', desc: 'Prenez rendez-vous en quelques clics.' }, { title: 'Consultation', desc: 'Un examen attentif et un diagnostic personnalisé.' }, { title: 'Traitement', desc: 'Un plan de soins adapté à votre situation.' }, { title: 'Suivi', desc: 'Un accompagnement régulier pour votre bien-être.' }, { title: 'Résultat', desc: 'Retrouvez une meilleure qualité de vie.' }];
+    return [{ title: 'RDV', desc: 'Prenez rendez-vous en quelques clics.' }, { title: 'Consultation', desc: 'Examen attentif avec ECG Schiller et outils de diagnostic modernes.' }, { title: 'Traitement', desc: 'Plan de soins avec prescriptions électroniques et protocoles conformes aux HAS.' }, { title: 'Suivi', desc: 'Surveillance régulière avec résultats de laboratoire du réseau Biogroup.' }, { title: 'Résultat', desc: 'Retrouvez une meilleure qualité de vie grâce à une médecine fondée sur les preuves.' }];
   if (s.includes('fitness') || s.includes('sport') || s.includes('coach') || s.includes('gym') || s.includes('salle'))
-    return [{ title: 'Bilan', desc: 'Un assessment complet de votre condition physique.' }, { title: 'Programme', desc: 'Un plan d\'entraînement sur mesure adapté à vos objectifs.' }, { title: 'Entraînement', desc: 'Des séances encadrées par nos coaches diplômés.' }, { title: 'Suivi', desc: 'Un suivi régulier pour mesurer vos progrès.' }, { title: 'Objectif', desc: 'Atteignez vos objectifs et dépassez vos limites.' }];
+    return [{ title: 'Bilan', desc: 'Évaluation complète avec analyse de composition corporelle InBody 570.' }, { title: 'Programme', desc: 'Plan d\'entraînement sur mesure avec barres Eleiko et Technogym Skillmill.' }, { title: 'Entraînement', desc: 'Séances encadrées par coaches certifiés BPJEPS avec Wattbike et cardio.' }, { title: 'Suivi', desc: 'Mesures InBody mensuelles et revue du journal d\'entraînement.' }, { title: 'Objectif', desc: 'Atteignez vos objectifs grâce à la surcharge progressive et la périodisation.' }];
   if (s.includes('nettoyag') || s.includes('propreté') || s.includes('ménage'))
-    return [{ title: 'Devis', desc: 'Un chiffrage précis adapté à vos besoins.' }, { title: 'Planification', desc: 'Un planning flexible qui s\'adapte à vos contraintes.' }, { title: 'Intervention', desc: 'Nos équipes formées interviennent avec rigueur.' }, { title: 'Contrôle', desc: 'Un contrôle qualité systématique après chaque passage.' }, { title: 'Régulier', desc: 'Un entretien maintenu pour des espaces toujours impeccables.' }];
+    return [{ title: 'Devis', desc: 'Chiffrage précis avec spécifications équipements Kärcher et Taski.' }, { title: 'Planification', desc: 'Planning flexible qui s\'adapte à vos contraintes.' }, { title: 'Intervention', desc: 'Nos équipes formées travaillent avec produits Ecolabel et systèmes WFP vitres.' }, { title: 'Contrôle', desc: 'Contrôle qualité ISO 9001 avec documentation photo après chaque passage.' }, { title: 'Régulier', desc: 'Entretien maintenu avec produits certifiés écolabel.' }];
   if (s.includes('jardin') || s.includes('paysag') || s.includes('espace vert'))
-    return [{ title: 'Visite', desc: 'Un rendez-vous sur site pour analyser votre espace.' }, { title: 'Conception', desc: 'Un projet paysager personnalisé avec plans et visualisation.' }, { title: 'Réalisation', desc: 'La mise en œuvre par notre équipe de jardiniers qualifiés.' }, { title: 'Entretien', desc: 'Un suivi saisonnier pour maintenir la beauté de votre jardin.' }, { title: 'Évolution', desc: 'Des ajustements au fil des saisons et de vos envies.' }];
+    return [{ title: 'Visite', desc: 'Rendez-vous sur site pour analyser votre sol, exposition et végétation existante.' }, { title: 'Conception', desc: 'Projet paysager personnalisé avec plans certifiés DPLG et visualisation 3D.' }, { title: 'Réalisation', desc: 'Mise en œuvre avec équipements STIHL/Honda et arrosage Hunter.' }, { title: 'Entretien', desc: 'Suivi saisonnier avec paillage BRF et traitements biologiques.' }, { title: 'Évolution', desc: 'Ajustements au fil des saisons et de vos envies.' }];
   return [{ title: 'Contact', desc: 'Échangez avec nous pour nous exposer votre besoin.' }, { title: 'Analyse', desc: 'Nous étudions votre demande et identifions la meilleure solution.' }, { title: 'Proposition', desc: 'Recevez une offre claire, adaptée à votre budget et vos attentes.' }, { title: 'Réalisation', desc: 'Notre équipe intervient avec soin et professionnalisme.' }, { title: 'Suivi', desc: 'Nous assurons un suivi qualité pour votre entière satisfaction.' }];
 }
 
 export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr'): Array<{ title: string; icon: string }> {
   const s = (sector || '').toLowerCase();
   const g: Record<string, Array<{ title: string; icon: string; titleEn: string }>> = {
-    plomberie: [{ title: 'Garantie Décennale', icon: 'shield-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Artisan Qualifié', icon: 'badge-check', titleEn: 'Certified Pro' }],
-    electricien: [{ title: 'Consuel Certifié', icon: 'shield-check', titleEn: 'Consuel Certified' }, { title: 'Garantie Décennale', icon: 'badge-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }],
-    coiffeur: [{ title: 'Produits Bio', icon: 'leaf', titleEn: 'Organic Products' }, { title: 'Stérilisation Outils', icon: 'sparkles', titleEn: 'Sterilized Tools' }, { title: 'Formation Continue', icon: 'scissors', titleEn: 'Ongoing Training' }, { title: 'Satisfait ou Refait', icon: 'heart', titleEn: 'Satisfaction Guaranteed' }],
-    restaurant: [{ title: 'Produits Frais', icon: 'leaf', titleEn: 'Fresh Ingredients' }, { title: 'Service Rapide', icon: 'clock', titleEn: 'Fast Service' }, { title: 'Avis 4.8/5', icon: 'star', titleEn: '4.8/5 Rating' }, { title: 'Parking Gratuit', icon: 'car', titleEn: 'Free Parking' }],
-    garage: [{ title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Garantie Pièces', icon: 'shield-check', titleEn: 'Parts Warranty' }, { title: 'Équipe Qualifiée', icon: 'clock', titleEn: 'Qualified Team' }, { title: 'Véhicule de Courtoisie', icon: 'car', titleEn: 'Courtesy Vehicle' }],
-    nettoyage: [{ title: 'Produits Écolabels', icon: 'leaf', titleEn: 'Eco-Friendly Products' }, { title: 'Personnel Formé', icon: 'users', titleEn: 'Trained Staff' }, { title: 'Intervention Fiable', icon: 'clock', titleEn: 'Reliable Service' }, { title: 'Assurance RC Pro', icon: 'shield-check', titleEn: 'Professional Insurance' }],
-    jardin: [{ title: 'Plantes Garanties', icon: 'sprout', titleEn: 'Plants Guaranteed' }, { title: 'Intervention Propre', icon: 'sparkles', titleEn: 'Clean Work' }, { title: 'Conseils Saisonniers', icon: 'sun', titleEn: 'Seasonal Advice' }, { title: 'Paysagiste Qualifié', icon: 'tree-deciduous', titleEn: 'Qualified Landscaper' }],
-    fitness: [{ title: 'Coachs Diplômés', icon: 'award', titleEn: 'Certified Coaches' }, { title: 'Matériel Neuf', icon: 'dumbbell', titleEn: 'New Equipment' }, { title: 'Sans Engagement', icon: 'badge-check', titleEn: 'No Commitment' }, { title: 'Accès 6h-23h', icon: 'clock', titleEn: 'Open 6AM-11PM' }],
-    medical: [{ title: 'Conventionné', icon: 'stethoscope', titleEn: 'Insurance Accepted' }, { title: '3ème Payant', icon: 'credit-card', titleEn: 'Direct Billing' }, { title: 'RDV sous 48h', icon: 'calendar', titleEn: '48h Appointment' }, { title: 'Équipe Pluridisciplinaire', icon: 'users', titleEn: 'Multidisciplinary Team' }],
-    avocat: [{ title: 'Avocat au Barreau', icon: 'scale', titleEn: 'Bar Certified' }, { title: 'Consultation Privée', icon: 'shield', titleEn: 'Private Consultation' }, { title: 'Défense Déterminée', icon: 'sword', titleEn: 'Determined Defense' }, { title: 'Honoraires Transparent', icon: 'file-text', titleEn: 'Transparent Fees' }],
-    default: [{ title: 'Équipe Qualifiée', icon: 'badge-check', titleEn: 'Qualified Team' }, { title: 'Devis Clair', icon: 'file-text', titleEn: 'Clear Quote' }, { title: 'Réactivité', icon: 'clock', titleEn: 'Responsiveness' }, { title: 'Satisfaction Client', icon: 'heart', titleEn: 'Client Satisfaction' }]
+    plomberie: [{ title: 'Garantie Décennale Assurée', icon: 'shield-check', titleEn: '10-Year Decennial Warranty' }, { title: 'Dépannage < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit Sans Engagement', icon: 'file-text', titleEn: 'Free No-Obligation Quote' }, { title: 'Artisan RGE & Qualibat', icon: 'badge-check', titleEn: 'RGE & Qualibat Certified' }],
+    electricien: [{ title: 'Certifié Consuel', icon: 'shield-check', titleEn: 'Consuel Certified' }, { title: 'Garantie Décennale', icon: 'badge-check', titleEn: '10-Year Decennial Warranty' }, { title: 'Conformité NFC 15-100', icon: 'zap', titleEn: 'NFC 15-100 Compliant' }, { title: 'Devis Gratuit < 24h', icon: 'file-text', titleEn: 'Free Quote < 24h' }],
+    coiffeur: [{ title: 'Produits L\'Oréal & Kérastase', icon: 'sparkles', titleEn: 'L\'Oréal & Kérastase Products' }, { title: 'Outils Stérilisés Autoclave', icon: 'shield-check', titleEn: 'Autoclave Sterilized Tools' }, { title: 'Coloristes Certifiés', icon: 'award', titleEn: 'Certified Colorists' }, { title: 'Satisfait ou Refait Offert', icon: 'heart', titleEn: 'Satisfaction or Free Redo' }],
+    restaurant: [{ title: 'Produits Frais du Marché', icon: 'leaf', titleEn: 'Fresh Market Ingredients' }, { title: 'Carte 120 Vins', icon: 'wine', titleEn: '120-Wine List' }, { title: 'Terrasse 120 Couverts', icon: 'sun', titleEn: '120-Seat Terrace' }, { title: 'Service Sans Pression', icon: 'clock', titleEn: 'No-Pressure Service' }],
+    garage: [{ title: 'Garantie 12 Mois Pièces', icon: 'shield-check', titleEn: '12-Month Parts Warranty' }, { title: 'Diagnostic Autel MaxiSys', icon: 'scan', titleEn: 'Autel MaxiSys Diagnosis' }, { title: 'Checklist 50 Points', icon: 'clipboard-check', titleEn: '50-Point Checklist' }, { title: 'Véhicule de Courtoisie', icon: 'car', titleEn: 'Courtesy Vehicle' }],
+    nettoyage: [{ title: 'Produits Écolabel Ecolab', icon: 'leaf', titleEn: 'Ecolab Eco-Label Products' }, { title: 'Certifié ISO 9001', icon: 'shield-check', titleEn: 'ISO 9001 Certified' }, { title: 'Système WFP Sans Traces', icon: 'droplets', titleEn: 'WFP Streak-Free System' }, { title: 'Assurance RC Pro', icon: 'badge-check', titleEn: 'Professional Liability Insurance' }],
+    jardin: [{ title: 'Paysagiste DPLG Certifié', icon: 'award', titleEn: 'DPLG Certified Landscaper' }, { title: 'Matériel STIHL/Honda', icon: 'tree-deciduous', titleEn: 'STIHL/Honda Equipment' }, { title: 'Arrosage Hunter', icon: 'sprout', titleEn: 'Hunter Irrigation System' }, { title: 'Plantes Garanties 1 An', icon: 'sprout', titleEn: '1-Year Plant Guarantee' }],
+    fitness: [{ title: 'Coaches BPJEPS Diplômés', icon: 'award', titleEn: 'BPJEPS-Certified Coaches' }, { title: 'Matériel Eleiko & Technogym', icon: 'dumbbell', titleEn: 'Eleiko & Technogym Equipment' }, { title: 'Analyse InBody 570', icon: 'activity', titleEn: 'InBody 570 Analysis' }, { title: 'Sans Engagement', icon: 'badge-check', titleEn: 'No Commitment' }],
+    medical: [{ title: 'Conventionné Sécurité Sociale', icon: 'stethoscope', titleEn: 'Insurance Accepted' }, { title: '3ème Payant', icon: 'credit-card', titleEn: 'Direct Billing' }, { title: 'Équipements Schiller & HAS', icon: 'shield-check', titleEn: 'Schiller & HAS Equipment' }, { title: 'Laboratoire Biogroup', icon: 'flask-conical', titleEn: 'Biogroup Lab Network' }],
+    avocat: [{ title: 'Avocat Inscrit au Barreau', icon: 'scale', titleEn: 'Bar-Certified Lawyer' }, { title: 'Honoraires Grille Écrite', icon: 'file-text', titleEn: 'Written Fee Schedule' }, { title: 'Confidentialité Absolue', icon: 'shield', titleEn: 'Absolute Confidentiality' }, { title: '85% Réussite Prud\'hommes', icon: 'trophy', titleEn: '85% Prud\'homme Win Rate' }],
+    default: [{ title: 'Équipe Certifiée', icon: 'badge-check', titleEn: 'Certified Team' }, { title: 'Devis Clair & Détaillé', icon: 'file-text', titleEn: 'Clear Detailed Quote' }, { title: 'Intervention < 48h', icon: 'clock', titleEn: 'Response < 48h' }, { title: 'Satisfaction Garantie', icon: 'heart', titleEn: 'Satisfaction Guaranteed' }]
   };
   let matched = g.default;
   for (const [key, val] of Object.entries(g)) {
@@ -96,35 +96,41 @@ export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr'): Array<{
 
 export function getHeroBadge(sector: string): { icon: string; text: string } {
   const s = (sector || '').toLowerCase();
-  if (s.includes('plomb')) return { icon: 'droplets', text: 'Dépannage rapide garanti' };
-  if (s.includes('électricien') || s.includes('electric')) return { icon: 'zap', text: 'Électricien certifié' };
-  if (s.includes('coiff') || s.includes('barb')) return { icon: 'scissors', text: 'Coiffeur professionnel' };
-  if (s.includes('restaurant') || s.includes('cuisin')) return { icon: 'chef-hat', text: 'Chef qualifié' };
-  if (s.includes('garage') || s.includes('mécan')) return { icon: 'wrench', text: 'Garage agréé' };
-  if (s.includes('nettoy') || s.includes('ménage')) return { icon: 'sparkles', text: 'Service nettoyage pro' };
-  if (s.includes('jardin') || s.includes('paysag')) return { icon: 'leaf', text: 'Jardinier expert' };
-  if (s.includes('fitness') || s.includes('sport')) return { icon: 'dumbbell', text: 'Coach diplômé' };
-  if (s.includes('médec') || s.includes('santé') || s.includes('dentiste')) return { icon: 'stethoscope', text: 'Professionnel de santé' };
-  if (s.includes('avocat') || s.includes('juridi')) return { icon: 'scale', text: 'Avocat au barreau' };
-  return { icon: 'badge-check', text: 'Professionnel certifié' };
+  if (s.includes('plomb')) return { icon: 'droplets', text: 'Plombier RGE Qualibat' };
+  if (s.includes('électricien') || s.includes('electric')) return { icon: 'zap', text: 'Électricien Certifié Consuel' };
+  if (s.includes('coiff') || s.includes('barb')) return { icon: 'scissors', text: 'Coloriste Certifié L\'Oréal' };
+  if (s.includes('restaurant') || s.includes('cuisin')) return { icon: 'chef-hat', text: 'Chef — Produits Frais du Marché' };
+  if (s.includes('garage') || s.includes('mécan')) return { icon: 'wrench', text: 'Garage Autel MaxiSys' };
+  if (s.includes('nettoy') || s.includes('ménage')) return { icon: 'sparkles', text: 'Nettoyage Certifié ISO 9001' };
+  if (s.includes('jardin') || s.includes('paysag')) return { icon: 'leaf', text: 'Paysagiste DPLG Certifié' };
+  if (s.includes('fitness') || s.includes('sport')) return { icon: 'dumbbell', text: 'Coach BPJEPS Diplômé' };
+  if (s.includes('médec') || s.includes('santé') || s.includes('dentiste')) return { icon: 'stethoscope', text: 'Conventionné Sécurité Sociale' };
+  if (s.includes('avocat') || s.includes('juridi')) return { icon: 'scale', text: 'Avocat Inscrit au Barreau' };
+  return { icon: 'badge-check', text: 'Professionnel Certifié' };
 }
 
 export function getGalleryDesc(sector: string, lang: 'fr' | 'en' = 'fr'): string {
   const s = (sector || '').toLowerCase();
   if (lang === 'en') {
-    if (s.includes('restaurant') || s.includes('cuisin')) return 'A glimpse into our kitchen and the dishes we prepare with passion.';
-    if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return 'Our salon, our creations, our universe.';
-    if (s.includes('garage') || s.includes('mécan')) return 'Our workshop and the vehicles we service.';
-    if (s.includes('jardin') || s.includes('paysag')) return 'Our achievements and the spaces we transform.';
-    if (s.includes('fitness') || s.includes('sport')) return 'Our gym and the equipment at your disposal.';
-    return 'A glimpse into our world and what we stand for.';
+    if (s.includes('restaurant') || s.includes('cuisin')) return 'A glimpse into our kitchen, our seasonal dishes, and the market-fresh ingredients we work with.';
+    if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return 'Our salon, the L\'Oréal and Kérastase products we use, and the looks we create.';
+    if (s.includes('garage') || s.includes('mécan')) return 'Our workshop equipped with Autel MaxiSys, Brembo parts, and the vehicles we service.';
+    if (s.includes('jardin') || s.includes('paysag')) return 'Our STIHL and Honda equipment, Hunter irrigation systems, and the gardens we transform.';
+    if (s.includes('fitness') || s.includes('sport')) return 'Our Eleiko bars, Technogym Skillmill, Wattbike bikes, and InBody 570 station.';
+    if (s.includes('nettoyag') || s.includes('propreté')) return 'Our Kärcher and Taski equipment, Ecolab eco-label products, and the spaces we transform.';
+    if (s.includes('médec') || s.includes('santé')) return 'Our Schiller ECG equipment, modern consultation rooms, and our patient-centered approach.';
+    if (s.includes('avocat') || s.includes('juridi')) return 'Our consultation rooms, our case files, and our commitment to defending your interests.';
+    return 'A glimpse into our world, our tools, and what we stand for.';
   }
-  if (s.includes('restaurant') || s.includes('cuisin')) return 'Un aperçu de notre cuisine et des plats que nous préparons avec passion.';
-  if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return 'Notre salon, nos créations, notre univers.';
-  if (s.includes('garage') || s.includes('mécan')) return 'Notre atelier et les véhicules que nous entretenons.';
-  if (s.includes('jardin') || s.includes('paysag')) return 'Nos réalisations et les espaces que nous transformons.';
-  if (s.includes('fitness') || s.includes('sport')) return 'Notre salle et les équipements à votre disposition.';
-  return 'Quelques moments qui reflètent notre univers et notre engagement.';
+  if (s.includes('restaurant') || s.includes('cuisin')) return 'Un aperçu de notre cuisine, nos plats de saison et les produits frais du marché que nous travaillons.';
+  if (s.includes('coiff') || s.includes('barb') || s.includes('salon')) return 'Notre salon, les produits L\'Oréal et Kérastase que nous utilisons, et les looks que nous créons.';
+  if (s.includes('garage') || s.includes('mécan')) return 'Notre atelier équipé Autel MaxiSys, nos pièces Brembo, et les véhicules que nous entretenons.';
+  if (s.includes('jardin') || s.includes('paysag')) return 'Nos équipements STIHL et Honda, nos systèmes Hunter, et les jardins que nous transformons.';
+  if (s.includes('fitness') || s.includes('sport')) return 'Nos barres Eleiko, Technogym Skillmill, vélos Wattbike, et notre station InBody 570.';
+  if (s.includes('nettoyag') || s.includes('propreté')) return 'Nos équipements Kärcher et Taski, produits écolabels Ecolab, et les espaces que nous transformons.';
+  if (s.includes('médec') || s.includes('santé')) return 'Nos équipements Schiller ECG, nos salles de consultation modernes, et notre approche centrée patient.';
+  if (s.includes('avocat') || s.includes('juridi')) return 'Nos salles de consultation, nos dossiers, et notre engagement à défendre vos intérêts.';
+  return 'Quelques moments qui reflètent notre univers, nos outils et notre engagement.';
 }
 
 export function getPrivacyContent(lang: 'fr' | 'en', companyName: string, email: string, address: string): string {
@@ -136,23 +142,46 @@ export function getPrivacyContent(lang: 'fr' | 'en', companyName: string, email:
 
 export function generateFeaturesFromService(name: string, description: string, sector: string): string[] {
   const serviceName = (name || '').toLowerCase();
+  const serviceDesc = (description || '').toLowerCase();
+  const s = (sector || '').toLowerCase();
+  const all = `${serviceName} ${serviceDesc}`;
+
   const defaultFeatures = ['Service professionnel', 'Intervention garantie', 'Devis gratuit'];
-  const featureDictionary: Record<string, string[]> = {
-    'urgence': ['Disponible 24h/24', 'Intervention rapide', 'Déplacement inclus'],
-    'depannage': ['Réparation durable', 'Pièces garanties', 'Tarifs transparents'],
-    'installation': ['Pose certifiée', 'Conformité normes', 'Garantie décennale'],
-    'mise aux normes': ['Conformité NFC 15-100', 'Certification Consuel', 'Sécurité garantie'],
-    'coupe': ['Visagisme personnalisé', 'Conseil entretien', 'Produits adaptés'],
-    'coloration': ['Coloration végétale', 'Protection cheveux', 'Brillance longue durée'],
-    'barbier': ['Rasage précis', 'Soins barbe', 'Ambiance masculine'],
-    'menu': ['Produits frais', 'Cuisine maison', 'Accord mets-vins'],
-    'moteur': ['Diagnostic précis', 'Réparation garantie', "Pièces d'origine"],
-    'ménage': ['Produits écologiques', 'Équipe formée', 'Intervention régulière'],
-    'coaching': ['Programme personnalisé', 'Suivi nutrition', 'Résultats mesurables'],
-    'consultation': ["À l'écoute", 'Diagnostic précis', 'Disponibilité rapide'],
+
+  const sectorFeatures: Record<string, string[]> = {
+    plomberie: ['Détection fuite caméra thermique FLIR', 'Chaudière Vaillant/Valiant', 'Conformité NF C 15-100', 'Robinetterie Grohe/Hansgrohe'],
+    electricien: ['Diagnostic Fluke multicompteur', 'Tableau Legrand/Schneider/Hager', 'Conformité NFC 15-100 Consuel', 'Domotique Somfy/KNX', 'IRVE certifié borne recharge'],
+    coiffeur: ['Gamme L\'Oréal Kérastase Olaplex', 'Fauteuil Takara Belmont', 'Kératine Cadiveu sans formol', 'Rasoir Taylor of Old Bond Street'],
+    restaurant: ['Produits frais marché du jour', 'Carte 120 références vins', 'Menu dégustation 5 services 45€', 'Terrasse 120 couverts'],
+    garage: ['Valise Autel MaxiSys diagnostic', 'Pièces Brembo Michelin Mann-Filter', 'Checklist entretien 50 points', 'Garantie 12 mois pièces'],
+    nettoyage: ['Aspirateur Kärcher/Taski/Numatic', 'Produits écolabels Ecolab', 'Norme ISO 9001 qualité', 'Système WFP sans traces vitres'],
+    jardin: ['Matériel STIHL/Honda professionnel', 'Arrosage Hunter programmable', 'Certification DPLG paysagiste', 'Paillage BRF broyage'],
+    fitness: ['Barres Eleiko compétition', 'Tapis Technogym Skillmill', 'Vélo Wattbike performance', 'Analyse corporelle InBody 570'],
+    medical: ['ECG Schiller diagnostics', 'Chaine du froid conforme HAS', 'Prescriptions électroniques', 'Laboratoire Biogroup analyses'],
+    avocat: ['85% réussite prud\'hommes', 'Mises à jour dossier hebdo', 'Grille honoraires écrite', 'Confidentialité renforcée'],
   };
+
+  const featureDictionary: Record<string, string[]> = {
+    'urgence': ['Disponible 24h/24', 'Déplacement < 2h', 'Dépanneur certifié'],
+    'depannage': ['Réparation durable garantie', 'Pièces d\'origine', 'Tarifs transparents'],
+    'installation': ['Pose certifiée RGE', 'Conformité normes NF', 'Garantie décennale'],
+    'mise aux normes': ['Conformité NFC 15-100', 'Certificat Consuel', 'Sécurité garantie'],
+    'coupe': ['Visagisme personnalisé', 'Conseil entretien maison', 'Produits L\'Oréal/Kérastase'],
+    'coloration': ['Coloration sans ammoniaque', 'Protocole Olaplex', 'Brillance longue durée'],
+    'barbier': ['Rasoir ouvert Taylor', 'Mousse savon artisanal', 'Ambiance vintage'],
+    'menu': ['Produits frais marché', 'Cuisine maison 100%', 'Accord mets-vins sommelier'],
+    'moteur': ['Diagnostic Autel MaxiSys', 'Réparation garantie 12 mois', 'Pièces OEM d\'origine'],
+    'ménage': ['Produits écolabels Ecolab', 'Équipe certifiée ISO 9001', 'Contrôle qualité photo'],
+    'coaching': ['Programme InBody 570', 'Nutrition sur mesure', 'Résultats mesurables'],
+    'consultation': ['Diagnostic précis', 'Protocole HAS', 'Disponibilité sous 48h'],
+  };
+
+  if (s in sectorFeatures) {
+    return sectorFeatures[s];
+  }
+
   for (const [keyword, features] of Object.entries(featureDictionary)) {
-    if (serviceName.includes(keyword)) return features;
+    if (all.includes(keyword)) return features;
   }
   return defaultFeatures;
 }
