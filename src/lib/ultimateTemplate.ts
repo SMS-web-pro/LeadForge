@@ -6,7 +6,7 @@ import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
-import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getWhyContent, getWhyPoints, getAboutPoints, getTrustBar, iconForService, normalizeReviewDate } from './template/helpers';
+import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, getFaq, getWhyContent, getTrustBar, iconForService, normalizeReviewDate } from './template/helpers';
 export { detectLanguage };
 
 // ── AVIS FALLBACK SECTORIELS ──
@@ -489,7 +489,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     })
     .map((review: any) => ({
       author: review.author || 'Client',
-      text: review.text.trim(),
+      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
       rating: Math.min(5, Math.max(1, review.rating || 5)),
       date: review.date || 'Récemment'
     }));
@@ -689,7 +689,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     })
     .map((review: any) => ({
       author: review.author || (lang === 'en' ? 'Client' : 'Client'),
-      text: review.text.trim(),
+      text: review.text.trim().length > 200 ? review.text.trim().substring(0, 197) + '...' : review.text.trim(),
       rating: Math.min(5, Math.max(1, review.rating || 5)),
       date: normalizeReviewDate(review.date, lang)
     }));
@@ -942,7 +942,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes countUp{0%{opacity:0;transform:translateY(30px) scale(.9)}60%{opacity:1;transform:translateY(-5px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}
         @media(max-width:768px){.stats{grid-template-columns:1fr 1fr;padding:44px 24px;gap:28px}.stat-num{font-size:2.4rem}}
         @media(max-width:480px){.stats{padding:36px 20px;gap:20px}.stat-num{font-size:2rem}.stat-label{font-size:.72rem;letter-spacing:1.2px}}
-        @media(min-width:769px){.stat-item:not(:last-child){border-right:1px solid rgba(255,255,255,.16)}}
 
         .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
         .svc-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:0;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
@@ -968,16 +967,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .why-stat:hover{background:rgba(255,255,255,.12);transform:translateY(-3px)}
         .why-stat-num{font-size:1.85rem;font-weight:800;color:var(--accent);line-height:1}
         .why-stat-label{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:8px;text-transform:uppercase;letter-spacing:1.2px}
-        .why-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:40px 38px;backdrop-filter:blur(6px)}
-        .why-card-rating{font-size:3.4rem;font-weight:800;line-height:1;color:#fff;font-family:${headingFont}}
-        .why-card-rating span{font-size:1.4rem;opacity:.7;font-weight:600}
-        .why-card-stars{display:flex;gap:3px;color:var(--accent);margin:10px 0 6px}
-        .why-card-text{color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.6}
-        .why-card-div{height:1px;background:rgba(255,255,255,.12);margin:24px 0}
-        .why-card-points{display:grid;gap:14px}
-        .why-card-point{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.88);font-weight:500;font-size:.98rem}
-        .why-card-point i{color:var(--accent);flex-shrink:0}
-        @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-card{padding:32px 26px}}
+        .why-img{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+        .why-img img{width:100%;height:480px;object-fit:cover;display:block}
+        .why-img-badge{position:absolute;bottom:24px;right:24px;background:var(--primary);color:#fff;padding:20px 28px;border-radius:16px;text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.3)}
+        .why-img-badge-num{font-size:2.2rem;font-weight:800;line-height:1}
+        .why-img-badge-text{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;margin-top:4px}
+        @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-img{order:-1}.why-img-badge{bottom:16px;right:16px;padding:16px 22px}.why-img-badge-num{font-size:1.8rem}.why-stats{gap:12px}.why-stat{padding:18px}}
 
         .guar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
         .guar-card{text-align:center;padding:32px 18px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:all .35s}
@@ -988,13 +983,11 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
 
         .faq-wrap{max-width:820px;margin:0 auto}
         .faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:14px;background:#fff;overflow:hidden;transition:border-color .25s,box-shadow .25s}
-        .faq-item.open{border-color:var(--primary);box-shadow:0 8px 30px rgba(var(--primary-rgb),.08)}
-        .faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;cursor:pointer;font-weight:600;font-size:1.02rem;width:100%;text-align:left;background:none;border:none;color:var(--text);font-family:inherit}
-        .faq-q .faq-ico{color:var(--primary);flex-shrink:0;transition:transform .35s ease}
-        .faq-item.open .faq-q .faq-ico{transform:rotate(45deg)}
-        .faq-a-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
-        .faq-a-wrap>div{overflow:hidden}
-        .faq-item.open .faq-a-wrap{grid-template-rows:1fr}
+        .faq-item[open]{border-color:var(--primary);box-shadow:0 8px 30px rgba(var(--primary-rgb),.08)}
+        .faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;cursor:pointer;font-weight:600;font-size:1.02rem;list-style:none}
+        .faq-q::-webkit-details-marker{display:none}
+        .faq-q i{color:var(--primary);flex-shrink:0;transition:transform .3s}
+        .faq-item[open] .faq-q i{transform:rotate(180deg)}
         .faq-a{padding:0 26px 24px;color:var(--text-s);font-size:.96rem;line-height:1.75}
         @media(max-width:768px){.faq-q{padding:18px 20px;font-size:.95rem}.faq-a{padding:0 20px 20px}}
         @media(max-width:768px){.guar-grid{grid-template-columns:1fr 1fr;gap:16px}.guar-card{padding:24px 14px}.guar-icon{width:48px;height:48px}}
@@ -1048,11 +1041,9 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         .devis-banner h2{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;margin-bottom:18px;letter-spacing:-.02em;position:relative;z-index:1}
         .devis-banner p{color:rgba(255,255,255,.85);margin-bottom:36px;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.7;position:relative;z-index:1}
         .devis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:880px;margin:0 auto 40px;position:relative;z-index:1}
-        .devis-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:30px 20px;backdrop-filter:blur(10px);transition:transform .3s,background .3s}
-        .devis-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.16)}
-        .devis-ico{width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:#fff;margin:0 auto 16px}
-        .devis-title{font-size:1.1rem;font-weight:700;color:#fff}
-        .devis-label{font-size:.85rem;margin-top:8px;opacity:.85;line-height:1.5}
+        .devis-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:28px 18px;backdrop-filter:blur(10px)}
+        .devis-price{font-size:2.4rem;font-weight:800;line-height:1;font-family:${headingFont}}
+        .devis-label{font-size:.85rem;margin-top:8px;opacity:.85}
         @media(max-width:768px){.devis-banner{padding:60px 0}.devis-grid{grid-template-columns:1fr}}
 
         .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px}
@@ -1273,7 +1264,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     <main id="main-content">
     <div class="trust-bar">
         <div class="trust-inner">
-            ${getTrustBar(content.sector, lang, rating).map((g: { title: string; icon: string }, i: number) => `
+            ${getTrustBar(content.sector, lang).map((g: { title: string; icon: string }, i: number) => `
             <div class="trust-item"><i data-lucide="${g.icon}" width="16"></i> ${g.title}</div>
             ${i < 3 ? '<div class="trust-div"></div>' : ''}
             `).join('')}
@@ -1320,7 +1311,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                     <h2>${content.aboutTitle || ui.aboutTitle || template.heroTitle} — ${city || companyName}</h2>
                     <p>${aboutText}</p>
                     <ul class="about-checks">
-                        ${getAboutPoints(content.sector, lang).map(p => `<li><i data-lucide="check-circle-2" width="18"></i> ${p}</li>`).join('')}
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[1]?.title || (lang === 'en' ? 'Here for You' : 'À votre écoute')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[2]?.title || (lang === 'en' ? 'Satisfaction Guaranteed' : 'Satisfaction garantie')}</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> ${getGuarantees(content.sector, lang)[3]?.title || (lang === 'en' ? 'Trusted Service' : 'Service de confiance')}</li>
                     </ul>
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
@@ -1334,34 +1328,17 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
                 <div class="why-text reveal">
                 <span class="section-label">${ui.whyLabel}</span>
                 ${(() => { const wc = getWhyContent(content.sector, lang, city, companyName); return `<h2>${wc.title}</h2><p>${wc.text}</p>`; })()}
-                <a href="#contact" class="btn-pri" style="margin-top:24px">${ctaText} <i data-lucide="arrow-right" width="16"></i></a>
                 </div>
-                <div class="why-card reveal">
-                    <div class="why-card-rating">${rating}<span>/5</span></div>
-                    <div class="why-card-stars">${Array(5).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div>
-                    <div class="why-card-text">${rating ? (lang === 'en' ? `Based on ${reviews} verified Google reviews` : `Issu de ${reviews} avis Google vérifiés`) : (lang === 'en' ? 'Trusted by our clients' : 'La confiance de nos clients')}</div>
-                    <div class="why-card-div"></div>
-                    <div class="why-card-points">
-                        ${getWhyPoints(content.sector, lang).map(p => `<div class="why-card-point"><i data-lucide="check" width="16"></i> ${p}</div>`).join('')}
-                    </div>
+                <div class="why-img reveal">
+                    <img src="${proxiedImg(whyImg)}" ${imgErr(3)} alt="${companyName}" loading="lazy">
+                    <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">${ui.whySatisfaction}</div></div>
                 </div>
             </div>
         </div>
     </section>
 
     <div class="stats" style="background:var(--primary)">
-        ${sectorCfg.stats.map((s, i) => {
-          const raw = i === 0 ? (rating + '/5') : s.value;
-          const m = String(raw).match(/^([\d.]+)(.*)$/);
-          if (!m) {
-            const safeRaw = String(raw).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return `<div class="stat-item"><div class="stat-num">${safeRaw}</div><div class="stat-label">${s.label[lang]}</div></div>`;
-          }
-          const num = parseFloat(m[1]);
-          const suffix = m[2];
-          const dec = (m[1].includes('.')) ? m[1].split('.')[1].length : 0;
-          return `<div class="stat-item"><div class="stat-num" data-count="${num}" data-dec="${dec}" data-suffix="${suffix}">0${suffix}</div><div class="stat-label">${s.label[lang]}</div></div>`;
-        }).join('')}
+        ${sectorCfg.stats.map((s, i) => `<div class="stat-item"><div class="stat-num">${i === 0 ? rating + '/5' : s.value}</div><div class="stat-label">${s.label[lang]}</div></div>`).join('')}
     </div>
 
     <section class="section section-alt" id="process">
@@ -1386,18 +1363,26 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             ${leadVariant % 2 === 0 ? '<div class="section-deco deco-line" style="width:200px;bottom:20%;right:-60px;animation-delay:3s"></div>' : ''}
             <div class="section-deco deco-dot" style="top:10%;${leadVariant % 2 === 0 ? 'left:5%' : 'right:5%'};animation-delay:${leadVariant}s"></div>
             <div class="section-hdr reveal">
-                <span class="section-label">${lang === 'en' ? 'Our Promise' : 'La promesse'}</span>
-                <h2>${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</h2>
-                <p>${lang === 'en' ? 'The concrete guarantees we stand behind on every job, in your sector like the others.' : 'Les garanties concrètes que nous honorons sur chaque intervention, dans votre secteur comme les autres.'}</p>
+                <span class="section-label">${lang === 'en' ? 'Our Commitments' : 'Nos Engagements'}</span>
+                <h2>${lang === 'en' ? 'Why Choose Us' : 'Pourquoi nous choisir'}</h2>
+                <p>${lang === 'en' ? 'The concrete reasons our clients trust us, sector after sector.' : 'Les raisons concrètes pour lesquelles nos clients nous confient leurs projets, dans votre secteur comme les autres.'}</p>
             </div>
             <div class="guar-grid reveal">
-                ${getGuarantees(content.sector, lang, rating).map((g: any, i: number) => `
+                ${getGuarantees(content.sector, lang).map((g: any, i: number) => `
                 <div class="guar-card reveal-d${Math.min(i, 3)}">
                     <div class="guar-icon"><i data-lucide="${g.icon}" width="24" height="24"></i></div>
                     <h3>${g.title}</h3>
                     <p class="guar-desc">${ADV_DESC[g.icon]?.[lang] || (lang === 'en' ? 'A commitment we stand behind' : 'Un engagement que nous honorons')}</p>
                 </div>`).join('')}
             </div>
+            ${(realPhotos && realPhotos.length > 0) ? `
+            <div class="gal-grid reveal" style="margin-top:44px">
+                <div class="gal-item gal-main"><img src="${proxiedImg(realPhotos[0])}" ${imgErr(1)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[1] || realPhotos[0])}" ${imgErr(2)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[2] || realPhotos[0])}" ${imgErr(3)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[3] || realPhotos[0])}" ${imgErr(4)} alt="${companyName}" loading="lazy"></div>
+                <div class="gal-item"><img src="${proxiedImg(realPhotos[4] || realPhotos[0])}" ${imgErr(5)} alt="${companyName}" loading="lazy"></div>
+            </div>` : ''}
         </div>
     </section>
 
@@ -1428,25 +1413,25 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             </div>
             <div class="faq-wrap reveal">
                 ${getFaq(content.sector, lang, city, rating ?? 5, reviews ?? 0).map(f => `
-                <div class="faq-item">
-                    <button type="button" class="faq-q" aria-expanded="false">${f.q} <i data-lucide="plus" width="18" class="faq-ico"></i></button>
-                    <div class="faq-a-wrap"><div class="faq-a">${f.a}</div></div>
-                </div>`).join('')}
+                <details class="faq-item">
+                    <summary class="faq-q">${f.q} <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">${f.a}</div>
+                </details>`).join('')}
             </div>
         </div>
     </section>
 
     <section class="devis-banner" id="devis-banner">
         <div class="container reveal">
-            <span class="section-label">${lang === 'en' ? 'Free Quote' : 'Devis gratuit'}</span>
-            <h2>${lang === 'en' ? 'Get your free quote' : 'Demandez votre devis gratuit'}</h2>
-            <p>${lang === 'en' ? `${companyName} sends you a detailed, no-obligation quote before any work begins.` : `${companyName} vous communique un devis détaillé et sans engagement avant tout travail.`}</p>
+            <span class="section-label">${lang === 'en' ? 'Transparent Pricing' : 'Tarifs transparents'}</span>
+            <h2>${lang === 'en' ? 'Free quote & clear pricing' : 'Devis gratuit & tarifs transparents'}</h2>
+            <p>${lang === 'en' ? `No surprises: ${companyName} sends you a detailed quote before any work begins.` : `${companyName} vous communique un devis détaillé avant tout travail, sans mauvaise surprise.`}</p>
             <div class="devis-grid">
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="file-text" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Free quote' : 'Devis gratuit'}</div><div class="devis-label">${lang === 'en' ? 'Detailed, no obligation' : 'Détaillé, sans engagement'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="clock" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Fast response' : 'Réponse rapide'}</div><div class="devis-label">${lang === 'en' ? 'Within 2 business hours' : 'Sous 2h ouvrées'}</div></div>
-                <div class="devis-card"><div class="devis-ico"><i data-lucide="badge-check" width="26"></i></div><div class="devis-title">${lang === 'en' ? 'Certified pros' : 'Artisans certifiés'}</div><div class="devis-label">${lang === 'en' ? 'Qualified & insured' : 'Qualifiés et assurés'}</div></div>
+                <div class="devis-card"><div class="devis-price">89€</div><div class="devis-label">${lang === 'en' ? 'Call-out from' : 'Dépannage dès'}</div></div>
+                <div class="devis-card"><div class="devis-price">2h</div><div class="devis-label">${lang === 'en' ? 'Free quote within' : 'Devis gratuit sous'}</div></div>
+                <div class="devis-card"><div class="devis-price">24/7</div><div class="devis-label">${lang === 'en' ? 'Emergency service' : 'Urgence 24h/24'}</div></div>
             </div>
-            <a href="#contact" class="btn-cta">${lang === 'en' ? 'Request my free quote' : 'Demander mon devis gratuit'} <i data-lucide="arrow-right" width="18"></i></a>
+            <a href="#contact" class="btn-cta">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
         </div>
     </section>
 
@@ -1518,7 +1503,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
             <div class="footer-grid">
                 <div>
                     <div class="footer-brand"><div class="footer-brand-logo"><i data-lucide="${heroBadge.icon}" width="18" height="18"></i></div><span class="footer-brand-text">${logoInfo.text}</span></div>
-                    <p class="footer-desc">${aboutText}</p>
+                    <p class="footer-desc">${aboutText.substring(0,120)}...</p>
                     <div class="footer-social">
                         ${content.socialLinks?.facebook ? `<a href="${content.socialLinks.facebook}" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook" width="18"></i></a>` : ''}
                         ${content.socialLinks?.instagram ? `<a href="${content.socialLinks.instagram}" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram" width="18"></i></a>` : ''}
@@ -1570,35 +1555,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         if('IntersectionObserver' in window){const r=document.querySelectorAll('.reveal');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('active');o.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -60px 0px'});r.forEach(el=>o.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('active'))}
         document.addEventListener('keydown',e=>{if(e.key==='Escape'){const pm=document.getElementById('privacy-modal');if(pm&&pm.classList.contains('open'))pm.classList.remove('open');const mm=document.getElementById('mobile-menu');if(mm&&mm.classList.contains('open')){mm.classList.remove('open');t&&t.setAttribute('aria-expanded','false')}}});
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
-        // Stats count-up animation
-        const statNums = document.querySelectorAll('.stat-num[data-count]');
-        const runCount = (el: any) => {
-          const target = parseFloat(el.getAttribute('data-count')) || 0;
-          const dec = parseInt(el.getAttribute('data-dec') || '0', 10);
-          const suffix = el.getAttribute('data-suffix') || '';
-          const dur = 1400; const start = performance.now();
-          const tick = (now: number) => {
-            const p = Math.min(1, (now - start) / dur);
-            const val = target * (1 - Math.pow(1 - p, 3));
-            el.textContent = (dec > 0 ? val.toFixed(dec) : Math.round(val).toString()) + suffix;
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        };
-        if ('IntersectionObserver' in window && statNums.length) {
-          const so = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { runCount(e.target); so.unobserve(e.target); } }); }, { threshold: 0.4 });
-          statNums.forEach((el: any) => so.observe(el));
-        } else {
-          statNums.forEach((el: any) => runCount(el));
-        }
-        // FAQ accordion
-        document.querySelectorAll('.faq-q').forEach((btn: any) => {
-          btn.addEventListener('click', () => {
-            const item = btn.closest('.faq-item');
-            const open = item.classList.toggle('open');
-            btn.setAttribute('aria-expanded', String(open));
-          });
-        });
     </script>
 </body>
 </html>`;

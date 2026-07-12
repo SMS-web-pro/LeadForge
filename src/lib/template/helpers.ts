@@ -80,13 +80,13 @@ export function getProcessSteps(sector: string, lang: 'fr' | 'en' = 'fr'): Array
   return [{ title: 'Contact', desc: 'Échangez avec nous pour nous exposer votre besoin.' }, { title: 'Analyse', desc: 'Nous étudions votre demande et identifions la meilleure solution.' }, { title: 'Proposition', desc: 'Recevez une offre claire, adaptée à votre budget et vos attentes.' }, { title: 'Réalisation', desc: 'Notre équipe intervient avec soin et professionnalisme.' }, { title: 'Suivi', desc: 'Nous assurons un suivi qualité pour votre entière satisfaction.' }];
 }
 
-export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr', rating: number = 5): Array<{ title: string; icon: string }> {
+export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr'): Array<{ title: string; icon: string }> {
   const s = (sector || '').toLowerCase();
   const g: Record<string, Array<{ title: string; icon: string; titleEn: string }>> = {
     plomberie: [{ title: 'Garantie Décennale', icon: 'shield-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Artisan Qualifié', icon: 'badge-check', titleEn: 'Certified Pro' }],
     electricien: [{ title: 'Consuel Certifié', icon: 'shield-check', titleEn: 'Consuel Certified' }, { title: 'Garantie Décennale', icon: 'badge-check', titleEn: '10-Year Warranty' }, { title: 'Intervention < 2h', icon: 'clock', titleEn: 'Response < 2h' }, { title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }],
     coiffeur: [{ title: 'Produits Bio', icon: 'leaf', titleEn: 'Organic Products' }, { title: 'Stérilisation Outils', icon: 'sparkles', titleEn: 'Sterilized Tools' }, { title: 'Formation Continue', icon: 'scissors', titleEn: 'Ongoing Training' }, { title: 'Satisfait ou Refait', icon: 'heart', titleEn: 'Satisfaction Guaranteed' }],
-    restaurant: [{ title: 'Produits Frais', icon: 'leaf', titleEn: 'Fresh Ingredients' }, { title: 'Service Rapide', icon: 'clock', titleEn: 'Fast Service' }, { title: `Avis ${rating}/5`, icon: 'star', titleEn: `${rating}/5 Rating` }, { title: 'Parking Gratuit', icon: 'car', titleEn: 'Free Parking' }],
+    restaurant: [{ title: 'Produits Frais', icon: 'leaf', titleEn: 'Fresh Ingredients' }, { title: 'Service Rapide', icon: 'clock', titleEn: 'Fast Service' }, { title: 'Avis 4.8/5', icon: 'star', titleEn: '4.8/5 Rating' }, { title: 'Parking Gratuit', icon: 'car', titleEn: 'Free Parking' }],
     garage: [{ title: 'Devis Gratuit', icon: 'file-text', titleEn: 'Free Quote' }, { title: 'Garantie Pièces', icon: 'shield-check', titleEn: 'Parts Warranty' }, { title: 'Équipe Qualifiée', icon: 'clock', titleEn: 'Qualified Team' }, { title: 'Véhicule de Courtoisie', icon: 'car', titleEn: 'Courtesy Vehicle' }],
     nettoyage: [{ title: 'Produits Écolabels', icon: 'leaf', titleEn: 'Eco-Friendly Products' }, { title: 'Personnel Formé', icon: 'users', titleEn: 'Trained Staff' }, { title: 'Intervention Fiable', icon: 'clock', titleEn: 'Reliable Service' }, { title: 'Assurance RC Pro', icon: 'shield-check', titleEn: 'Professional Insurance' }],
     jardin: [{ title: 'Plantes Garanties', icon: 'sprout', titleEn: 'Plants Guaranteed' }, { title: 'Intervention Propre', icon: 'sparkles', titleEn: 'Clean Work' }, { title: 'Conseils Saisonniers', icon: 'sun', titleEn: 'Seasonal Advice' }, { title: 'Paysagiste Qualifié', icon: 'tree-deciduous', titleEn: 'Qualified Landscaper' }],
@@ -100,52 +100,6 @@ export function getGuarantees(sector: string, lang: 'fr' | 'en' = 'fr', rating: 
     if (key !== 'default' && s.includes(key)) { matched = val; break; }
   }
   return matched.map(item => ({ title: lang === 'en' ? item.titleEn : item.title, icon: item.icon }));
-}
-
-// Points distincts de la section "À propos" (ne doivent PAS reprendre les garanties)
-export function getAboutPoints(sector: string, lang: 'fr' | 'en' = 'fr'): string[] {
-  const s = (sector || '').toLowerCase();
-  const p: Record<string, { fr: string[]; en: string[] }> = {
-    plomberie: { fr: ['Diagnostic complet avant chaque intervention', 'Matériel professionnel et pièces garanties', 'Intervention propre, dans le respect des délais'], en: ['Full diagnosis before any work', 'Professional equipment and guaranteed parts', 'Clean work, respecting agreed schedules'] },
-    electricien: { fr: ['Diagnostic complet de votre installation', 'Travaux conformes NFC 15-100', 'Conseils pour réduire votre consommation'], en: ['Full diagnosis of your installation', 'Work compliant with NFC 15-100', 'Tips to lower your energy use'] },
-    coiffeur: { fr: ['Analyse personnalisée de votre morphologie', 'Produits de qualité, respectueux de vos cheveux', 'Conseils entretien adaptés à votre vie'], en: ['Personalized analysis of your features', 'Quality products, kind to your hair', 'Care tips suited to your lifestyle'] },
-    restaurant: { fr: ['Sélection de produits frais chaque jour', 'Carte évolutive au fil des saisons', 'Accueil chaleureux et service attentionné'], en: ['Fresh produce selected daily', 'Seasonal menu that evolves', 'Warm welcome and attentive service'] },
-    garage: { fr: ['Diagnostic transparent, sans surprise', 'Pièces d’origine ou équivalent qualité', 'Suivi et conseil après intervention'], en: ['Transparent diagnosis, no surprises', 'OEM or equivalent-quality parts', 'Follow-up and advice after service'] },
-    nettoyage: { fr: ['Produits écocertifiés et sans risque', 'Équipes formées et discrètes', 'Contrôle qualité après chaque prestation'], en: ['Eco-certified, safe products', 'Trained, discreet teams', 'Quality check after each job'] },
-    jardin: { fr: ['Conception paysagère sur mesure', 'Plantes adaptées à votre climat', 'Entretien raisonné et durable'], en: ['Bespoke landscape design', 'Plants suited to your climate', 'Sensible, lasting upkeep'] },
-    fitness: { fr: ['Bilan personnalisé à l’entrée', 'Coachs diplômés et bienveillants', 'Suivi régulier de vos progrès'], en: ['Personal assessment on joining', 'Certified, caring coaches', 'Regular progress tracking'] },
-    medical: { fr: ['Écoute et diagnostic précis', 'Suivi de chaque patient', 'Cadre rassurant et hygiène stricte'], en: ['Listening and accurate diagnosis', 'Follow-up for every patient', 'Reassuring setting, strict hygiene'] },
-    avocat: { fr: ['Analyse approfondie de votre dossier', 'Stratégie claire et transparente', 'Confidentialité strictement préservée'], en: ['In-depth analysis of your case', 'Clear, transparent strategy', 'Strictly preserved confidentiality'] },
-    default: { fr: ['Compréhension fine de vos besoins', 'Solutions claires et adaptées', 'Disponibilité avant, pendant et après'], en: ['A clear understanding of your needs', 'Clear, tailored solutions', 'Available before, during and after'] },
-  };
-  let matched = p.default;
-  for (const [key, val] of Object.entries(p)) {
-    if (key !== 'default' && s.includes(key)) { matched = val; break; }
-  }
-  return lang === 'en' ? matched.en : matched.fr;
-}
-
-// Points de la carte "Pourquoi" — distincts des garanties et des points À propos
-export function getWhyPoints(sector: string, lang: 'fr' | 'en' = 'fr'): string[] {
-  const s = (sector || '').toLowerCase();
-  const p: Record<string, { fr: string[]; en: string[] }> = {
-    plomberie: { fr: ['Devis systématiquement gratuit', 'Intervention 7j/7 en urgence', 'Artisan certifié et assuré'], en: ['Quote always free', '24/7 emergency service', 'Certified, insured tradesperson'] },
-    electricien: { fr: ['Devis systématiquement gratuit', 'Astreinte 24h/24 en urgence', 'Travail garanti décennale'], en: ['Quote always free', '24/7 emergency call-out', 'Work backed by 10-year warranty'] },
-    coiffeur: { fr: ['Devis offert sur place', 'Accueil sans rendez-vous possible', 'Hygiène et stérilisation certifiées'], en: ['Free on-site quote', 'Walk-ins welcome', 'Certified hygiene & sterilization'] },
-    restaurant: { fr: ['Menu enfant disponible', 'Espace groupe privatisable', 'Réservation en ligne possible'], en: ['Kids menu available', 'Private group space', 'Online booking available'] },
-    garage: { fr: ['Devis gratuit accepté', 'Véhicule de prêt possible', 'Garantie sur la main-d’œuvre'], en: ['Free quote accepted', 'Courtesy vehicle possible', 'Labour warranty included'] },
-    nettoyage: { fr: ['Devis gratuit sur place', 'Intervention de nuit possible', 'Matériel professionnel inclus'], en: ['Free on-site quote', 'Overnight service possible', 'Professional gear included'] },
-    jardin: { fr: ['Devis gratuit et détaillé', 'Entretien régulier possible', 'Conseil saisonnier inclus'], en: ['Free, detailed quote', 'Regular upkeep available', 'Seasonal advice included'] },
-    fitness: { fr: ['1ʳᵉ séance d’essai offerte', 'Sans engagement initial', 'Coaching personnalisé'], en: ['First trial session free', 'No initial commitment', 'Personalized coaching'] },
-    medical: { fr: ['1ᵉʳ rendez-vous rapide', 'Prise en charge mutuelle', 'Cabinet accessible PMR'], en: ['Quick first appointment', 'Insurance billing', 'Accessible premises'] },
-    avocat: { fr: ['1ᵉʳ appel conseil gratuit', 'Honoraires au forfait possibles', 'Échanges 100% confidentiels'], en: ['Free first call', 'Fixed-fee options', '100% confidential exchanges'] },
-    default: { fr: ['Devis gratuit systématique', 'Réponse sous 24h', 'Suivi personnalisé'], en: ['Systematic free quote', 'Reply within 24h', 'Personalized follow-up'] },
-  };
-  let matched = p.default;
-  for (const [key, val] of Object.entries(p)) {
-    if (key !== 'default' && s.includes(key)) { matched = val; break; }
-  }
-  return lang === 'en' ? matched.en : matched.fr;
 }
 
 export function getHeroBadge(sector: string): { icon: string; text: string } {
@@ -291,17 +245,17 @@ export function normalizeReviewDate(date: string | undefined, lang: 'fr' | 'en')
   return d;
 }
 
-export function getTrustBar(sector: string, lang: 'fr' | 'en', rating: number = 5): Array<{ title: string; icon: string }> {
+export function getTrustBar(sector: string, lang: 'fr' | 'en'): Array<{ title: string; icon: string }> {
   if (lang === 'en') {
     return [
-      { title: `Google ${rating}/5`, icon: 'star' },
+      { title: 'Google 4.8/5', icon: 'star' },
       { title: 'Response < 2h', icon: 'clock' },
       { title: '10-Year Warranty', icon: 'shield-check' },
       { title: 'Free Quote', icon: 'file-text' },
     ];
   }
   return [
-    { title: `Avis Google ${rating}/5`, icon: 'star' },
+    { title: 'Avis Google 4.8/5', icon: 'star' },
     { title: 'Intervention < 2h', icon: 'clock' },
     { title: 'Garantie décennale', icon: 'shield-check' },
     { title: 'Devis gratuit', icon: 'file-text' },
@@ -431,7 +385,7 @@ export function getFaq(sector: string, lang: 'fr' | 'en', city: string, rating: 
         { q: `Do you cover ${c} and surrounding areas?`, a: `Yes, we operate throughout ${c} and nearby towns. Contact us with your address for a precise availability check.` },
         { q: 'How long does a compliance upgrade take?', a: 'Most residential compliance upgrades are completed within 1 to 3 days, depending on the installation size.' },
         { q: 'Are your installations Consuel and NFC 15-100 compliant?', a: 'Absolutely. All our work follows NFC 15-100 and we prepare the Consuel documentation when required.' },
-        { q: 'How much does an intervention cost?', a: 'A clear, free quote is provided within 2 hours, and the final price is always confirmed with you before any work begins.' },
+        { q: 'How much does an intervention cost?', a: 'Diagnosis from €79, with a free quote provided within 2 hours. Final pricing is confirmed before any work.' },
         { q: 'Do you install EV charging stations (IRVE)?', a: 'Yes, we supply and install certified IRVE charging points for homes and businesses.' },
         { q: 'Is the work guaranteed?', a: `Yes, all our work is backed by a 10-year warranty. Our ${reviews} Google reviews rated ${rating}/5 speak for themselves.` },
         { q: 'Is the quote free?', a: 'Yes, every quote is free and without obligation.' },
@@ -444,7 +398,7 @@ export function getFaq(sector: string, lang: 'fr' | 'en', city: string, rating: 
         { q: `Do you intervene in ${c} and the surrounding districts?`, a: `Yes, we cover ${c} and neighboring areas. Send us your address and we will confirm availability.` },
         { q: 'What is your intervention delay?', a: 'We aim for an on-site diagnosis within 2 hours for emergencies, same day for standard requests.' },
         { q: 'Are your works compliant with DTU standards?', a: 'Yes, all our interventions follow current DTU standards and building regulations.' },
-        { q: 'How much does an intervention cost?', a: 'A free quote is provided under 2 hours, and the final price is always confirmed with you before any work begins.' },
+        { q: 'How much does an intervention cost?', a: 'Emergency call-out from €89, with a free quote under 2 hours. Pricing is confirmed before any work.' },
         { q: 'Do you install heating and air conditioning?', a: 'Yes, we install boilers, heat pumps and air conditioning units, all compliant and guaranteed.' },
         { q: 'Is the work guaranteed?', a: `Yes, our work carries a 10-year warranty. Our ${reviews} Google reviews rated ${rating}/5 reflect our reliability.` },
         { q: 'Is the quote free?', a: 'Yes, every quote is free and without obligation.' },
@@ -469,7 +423,7 @@ export function getFaq(sector: string, lang: 'fr' | 'en', city: string, rating: 
       { q: `Intervenez-vous dans ${c} et les environs ?`, a: `Oui, nous couvrons ${c} et les communes limitrophes. Indiquez-nous votre adresse pour confirmer la disponibilité.` },
       { q: 'Quel est le délai pour une mise aux normes ?', a: 'La plupart des mises aux normes résidentielles sont réalisées en 1 à 3 jours, selon l\'ampleur de l\'installation.' },
       { q: 'Vos installations sont-elles conformes Consuel / NFC 15-100 ?', a: 'Tout à fait. Tous nos travaux respectent la norme NFC 15-100 et nous préparons les dossiers Consuel lorsque nécessaire.' },
-      { q: 'Combien coûte une intervention ?', a: 'Un devis gratuit et clair vous est communiqué sous 2h, et le prix définitif est toujours confirmé avant tout travail.' },
+      { q: 'Combien coûte une intervention ?', a: 'Diagnostic dès 79€, avec un devis gratuit sous 2h. Le prix définitif est confirmé avant tout travail.' },
       { q: 'Installez-vous des bornes de recharge (IRVE) ?', a: 'Oui, nous fournissons et installons des bornes de recharge IRVE certifiées pour particuliers et professionnels.' },
       { q: 'Les travaux sont-ils garantis ?', a: `Oui, tous nos travaux bénéficient d'une garantie décennale. Nos ${reviews} avis Google notés ${rating}/5 parlent d'eux-mêmes.` },
       { q: 'Le devis est-il gratuit ?', a: 'Oui, chaque devis est gratuit et sans engagement.' },
@@ -482,7 +436,7 @@ export function getFaq(sector: string, lang: 'fr' | 'en', city: string, rating: 
       { q: `Intervenez-vous dans ${c} et les arrondissements alentour ?`, a: `Oui, nous intervenons à ${c} et dans les communes voisines. Envoyez-nous votre adresse et nous confirmons la disponibilité.` },
       { q: 'Quel est votre délai d\'intervention ?', a: 'Nous visons un diagnostic sur place sous 2h pour les urgences, dans la journée pour les demandes standards.' },
       { q: 'Vos travaux respectent-ils les normes DTU ?', a: 'Oui, toutes nos interventions suivent les normes DTU en vigueur et la réglementation du bâtiment.' },
-      { q: 'Combien coûte une intervention ?', a: 'Un devis gratuit vous est communiqué sous 2h, et le tarif est toujours confirmé avant tout travail.' },
+      { q: 'Combien coûte une intervention ?', a: 'Dépannage dès 89€, devis gratuit sous 2h. Le tarif est confirmé avant tout travail.' },
       { q: 'Installez-vous chauffage et climatisation ?', a: 'Oui, nous posons chaudières, pompes à chaleur et climatiseurs, le tout conforme et garanti.' },
       { q: 'Les travaux sont-ils garantis ?', a: `Oui, nos travaux sont couverts par une garantie décennale. Nos ${reviews} avis Google notés ${rating}/5 reflètent notre fiabilité.` },
       { q: 'Le devis est-il gratuit ?', a: 'Oui, chaque devis est gratuit et sans engagement.' },
