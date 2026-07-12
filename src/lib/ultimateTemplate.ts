@@ -6,7 +6,7 @@ import { getImagesForLead } from './pexelsApi';
 import { isImageBlocked, filterImages, isStockImage } from './imageFilters';
 import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
-import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText } from './template/helpers';
+import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, cleanText } from './template/helpers';
 export { detectLanguage };
 
 // ── AVIS FALLBACK SECTORIELS ──
@@ -465,10 +465,12 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const address = lead.address || (city ? `Centre Ville, ${city}` : 'France');
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
-  const description = generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead);
+  const hasRealRating = typeof lead.googleRating === 'number';
+  const hasRealReviews = typeof lead.googleReviews === 'number';
+  const description = cleanText(generateAboutText(aiContent?.aboutText || lead.description || template.aboutText, lead));
   const heroTitle = aiContent?.heroTitle || template.heroTitle;
-  const heroSubtitle = aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`;
-  let ctaText = aiContent?.cta || template.ctaText || 'Demander un devis';
+  const heroSubtitle = cleanText(aiContent?.heroSubtitle || `${template.heroSubtitle}${city ? ' à ' + city : ''}`);
+  let ctaText = cleanText(aiContent?.cta || template.ctaText || 'Demander un devis');
   if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
   let finalServices = template.services;
@@ -502,8 +504,6 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     seenTexts.add(normalized);
     return true;
   });
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
 
   const computeHash = (str: string): number => {
@@ -522,7 +522,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const combinedHash = (nameHash * 7 + cityHash * 13 + sectorHash * 23 + phoneHash * 31 + emailHash * 37) % 100000;
   
   const sloganVariations = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
-  const finalSlogan = aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length];
+  const finalSlogan = cleanText(aiContent?.slogan || sloganVariations[combinedHash % sloganVariations.length]);
 
   // IMAGES — lead's own scraped images (sync version, no Pexels API)
   const leadImages = [
@@ -548,7 +548,8 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
+    hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
+    footerDesc: lead.footerDesc || '', hasRealRating, hasRealReviews
   };
 
   const layoutVariant = combinedHash % 4;
@@ -568,10 +569,12 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const address = lead.address || (city ? (lang === 'en' ? `Downtown, ${city}` : `Centre Ville, ${city}`) : (lang === 'en' ? 'USA' : 'France'));
   const rating = lead.googleRating || 5;
   const reviews = lead.googleReviews || 42;
-  const description = generateAboutText(aiContent?.aboutText || lead.description || (lang === 'en' ? template.aboutTextEn : template.aboutText), lead);
+  const hasRealRating = typeof lead.googleRating === 'number';
+  const hasRealReviews = typeof lead.googleReviews === 'number';
+  const description = cleanText(generateAboutText(aiContent?.aboutText || lead.description || (lang === 'en' ? template.aboutTextEn : template.aboutText), lead));
   const heroTitle = aiContent?.heroTitle || (lang === 'en' ? template.heroTitleEn : template.heroTitle);
-  const heroSubtitle = aiContent?.heroSubtitle || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`;
-  let ctaText = aiContent?.cta || (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous');
+  const heroSubtitle = cleanText(aiContent?.heroSubtitle || `${lang === 'en' ? template.heroSubtitleEn : template.heroSubtitle}${city ? (lang === 'en' ? ' in ' : ' à ') + city : ''}`);
+  let ctaText = cleanText(aiContent?.cta || (lang === 'en' ? template.ctaTextEn : template.ctaText) || (lang === 'en' ? 'Contact Us' : 'Contactez-nous'));
   if (ctaText.length > 50) ctaText = ctaText.substring(0, 47) + '...';
 
   const computeHash = (str: string): number => {
@@ -591,7 +594,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
 
   const sloganVariationsFr = ["L'excellence à votre service", "L'art de la perfection au quotidien", "Solutions premium sur-mesure", "Excellence & Passion", "Votre partenaire de confiance"];
   const sloganVariationsEn = ["Excellence at your service", "The art of everyday perfection", "Premium tailored solutions", "Excellence & Passion", "Your trusted partner"];
-  const finalSlogan = aiContent?.slogan || (lang === 'en' ? sloganVariationsEn[combinedHash % sloganVariationsEn.length] : sloganVariationsFr[combinedHash % sloganVariationsFr.length]);
+  const finalSlogan = cleanText(aiContent?.slogan || (lang === 'en' ? sloganVariationsEn[combinedHash % sloganVariationsEn.length] : sloganVariationsFr[combinedHash % sloganVariationsFr.length]));
 
   const sectorImages = await getSectorImagesAsync(lead.sector, combinedHash);
 
@@ -700,8 +703,6 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     seenTextsAsync.add(normalized);
     return true;
   });
-  const fallbackReviews = getSectorFallbackReviews(lead.sector);
-  while (testimonials.length < 6) testimonials.push(fallbackReviews[testimonials.length % fallbackReviews.length]);
   testimonials = testimonials.slice(0, 6);
 
   // Service images : TOUJOURS Pexels (images pro, sans texte/logo)
@@ -735,7 +736,8 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
     website: lead.website || '', rating, reviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
-    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear
+    socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
+    footerDesc: lead.footerDesc || '', hasRealRating, hasRealReviews
   };
 
   return buildUltimateHTML(content, template, allImages, combinedHash % 4);
