@@ -1110,11 +1110,10 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes pulse-urgent{0%,100%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.4)}50%{box-shadow:0 8px 35px rgba(var(--primary-rgb),.6),0 0 0 10px rgba(var(--primary-rgb),.1)}}
         @media(max-width:768px){.float-urgent{bottom:20px;right:20px;padding:14px 22px;font-size:.85rem}}
 
-        .reveal{opacity:1}
-        .js .reveal{opacity:0;transform:translateY(35px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
-        .js .reveal.active{opacity:1;transform:translateY(0)}
+        .reveal{opacity:0;transform:translateY(35px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+        .reveal.active{opacity:1;transform:translateY(0)}
         .reveal-d1{transition-delay:.12s}.reveal-d2{transition-delay:.24s}.reveal-d3{transition-delay:.36s}
-        @media(prefers-reduced-motion:reduce){.reveal,.js .reveal{opacity:1;transform:none;transition:none}.stat-item{animation:none;opacity:1}.deco-circle,.deco-diamond,.deco-line,.deco-dot{animation:none!important}.hero-badge{animation:none!important}.cta-banner::before,.cta-banner::after{animation:none!important}}
+        @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.stat-item{animation:none;opacity:1}.deco-circle,.deco-diamond,.deco-line,.deco-dot{animation:none!important}.hero-badge{animation:none!important}.cta-banner::before,.cta-banner::after{animation:none!important}}
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         .hero-badge{animation:float 3s ease-in-out infinite}
         @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
@@ -1203,7 +1202,6 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @media(max-width:768px){.info-bar{font-size:.75rem}.info-bar-item{padding:0 18px;gap:5px}}
     </style>
-    <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
     <div class="info-bar">
@@ -1558,7 +1556,7 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
     </div>
 
     <script>
-        try { if (window.lucide) lucide.createIcons(); } catch (e) {}
+        lucide.createIcons();
         window.addEventListener('scroll',()=>{
             const n=document.getElementById('navbar');
             const ib=document.querySelector('.info-bar');
@@ -1574,12 +1572,12 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',function(){this.style.opacity='.5';this.style.objectFit='contain';this.alt=this.alt||'Image non disponible'})});
         // Stats count-up animation
         const statNums = document.querySelectorAll('.stat-num[data-count]');
-        const runCount = (el) => {
+        const runCount = (el: any) => {
           const target = parseFloat(el.getAttribute('data-count')) || 0;
           const dec = parseInt(el.getAttribute('data-dec') || '0', 10);
           const suffix = el.getAttribute('data-suffix') || '';
           const dur = 1400; const start = performance.now();
-          const tick = (now) => {
+          const tick = (now: number) => {
             const p = Math.min(1, (now - start) / dur);
             const val = target * (1 - Math.pow(1 - p, 3));
             el.textContent = (dec > 0 ? val.toFixed(dec) : Math.round(val).toString()) + suffix;
@@ -1589,20 +1587,18 @@ function buildUltimateHTML(content: UltimateContent, template: any, combinedImag
         };
         if ('IntersectionObserver' in window && statNums.length) {
           const so = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { runCount(e.target); so.unobserve(e.target); } }); }, { threshold: 0.4 });
-          statNums.forEach((el) => so.observe(el));
+          statNums.forEach((el: any) => so.observe(el));
         } else {
-          statNums.forEach((el) => runCount(el));
+          statNums.forEach((el: any) => runCount(el));
         }
         // FAQ accordion
-        document.querySelectorAll('.faq-q').forEach((btn) => {
+        document.querySelectorAll('.faq-q').forEach((btn: any) => {
           btn.addEventListener('click', () => {
             const item = btn.closest('.faq-item');
             const open = item.classList.toggle('open');
             btn.setAttribute('aria-expanded', String(open));
           });
         });
-        // Safety net: ensure all reveal content is visible even if the observer misses it
-        setTimeout(() => { document.querySelectorAll('.reveal').forEach((el) => el.classList.add('active')); }, 1500);
     </script>
 </body>
 </html>`;
