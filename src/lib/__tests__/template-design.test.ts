@@ -50,14 +50,42 @@ describe('Soft Evolution design invariants', () => {
     expect(html).toMatch(/class="[^"]*\breveal\b/);
   });
 
-  it('shows honest empty-state when no real reviews', () => {
-    const noReviews = generateUltimateSite({ ...lead, googleReviewsData: [] } as any, undefined);
-    expect(noReviews).toContain('Avis en attente');
-    expect(noReviews).not.toContain('Marie');
+  it('shows a trust block, never "Avis en attente"', () => {
+    const noReviews = generateUltimateSite({ ...lead, googleRating: 0, googleReviews: 0 } as any, undefined);
+    expect(noReviews).not.toContain('Avis en attente');
+    expect(noReviews).toContain('trust-badge');
+    const withReviews = generateUltimateSite(lead as any, undefined);
+    expect(withReviews).toContain('avis vérifiés Google');
+    expect(withReviews).toContain('trust-card');
   });
 
   it('has no undefined/NaN leaks', () => {
     expect(html).not.toContain('undefined');
     expect(html).not.toContain('NaN');
+  });
+
+  it('has no duplicate hero subtitle', () => {
+    const h = build();
+    const subs = [...h.matchAll(/<p class="hero-sub[^"]*"[^>]*>([\s\S]*?)<\/p>/g)].map(m => m[1].trim());
+    const uniq = new Set(subs);
+    expect(uniq.size).toBe(subs.length);
+  });
+
+  it('renders no empty <section>', () => {
+    const h = build();
+    const sections = [...h.matchAll(/<section[^>]*>([\s\S]*?)<\/section>/g)].map(m => m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+    expect(sections.every(s => s.length > 20)).toBe(true);
+  });
+
+  it('uses sector-tailored why-us (not the generic 4-list)', () => {
+    const h = build();
+    expect(h).not.toContain('Équipe Qualifiée'); // generic default must not appear for mapped sectors
+    expect(h).toContain('Pourquoi nous choisir');
+  });
+
+  it('declares accent-driven tokens', () => {
+    const h = build();
+    expect(h).toContain('--accent-rgb');
+    expect(h).toContain('--secondary-rgb');
   });
 });
