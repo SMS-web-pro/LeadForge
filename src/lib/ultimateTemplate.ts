@@ -887,6 +887,30 @@ const secondaryRgb = hexToRgb(secondaryColor);
     </section>`;
   }
 
+  function buildProcess(content: UltimateContent, lang: 'fr' | 'en'): string {
+    const t = (fr: string, en: string) => (lang === 'en' ? en : fr);
+    const steps = [
+      { icon: 'message-circle', label: t('Consultation', 'Consultation'), desc: t(`Un échange pour comprendre vos besoins en ${content.sector}.`, `A conversation to understand your ${content.sector} needs.`) },
+      { icon: 'settings', label: t('Réalisation', 'Delivery'), desc: t('Une intervention soignée, dans les règles de l’art.', 'Careful work, done right.') },
+      { icon: 'refresh-cw', label: t('Suivi', 'Follow-up'), desc: t('Un accompagnement après l’intervention, sans surprise.', 'Support after the job, with no surprises.') },
+    ];
+    return `    <section class="section" id="process">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowServices}</span>
+                <h2>${t('Comment ça marche', 'How it works')}</h2>
+                <p>${t('Un process clair, de la première demande à la finition.', 'A clear process, from first contact to the finished result.')}</p>
+            </div>
+            <div class="bespoke-progs reveal">${steps.map(s => `
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="${s.icon}" width="22"></i></div>
+                    <h3>${s.label}</h3>
+                    <p>${s.desc}</p>
+                </div>`).join('')}</div>
+        </div>
+    </section>`;
+  }
+
   function buildContact(content: UltimateContent, lang: 'fr' | 'en'): string {
     return `    <section class="section" id="contact">
         <div class="container">
@@ -1121,6 +1145,7 @@ const servicesMatch = (content.services || []).some(s => packServiceNames.has((s
 const displayServices = (!servicesMatch && pack.services.length) ? pack.services.map(p => ({ name: p.name })) : content.services;
 const descs = getServiceDescriptions(pack, displayServices, lang);
   const bespokeSection = buildBespoke(content, pack, lang);
+  const hasBespokeProcess = ['coiffeur', 'avocat', 'nettoyage', 'jardin', 'garage', 'coach'].includes(pack.bespoke || '');
 
   return `<!DOCTYPE html>
 <html lang="${ui.lang}">
@@ -1589,6 +1614,8 @@ ${buildHero(content, template, lang)}
 ${buildServices(content, lang, descs, displayServices)}
 
 ${bespokeSection}
+
+${!hasBespokeProcess ? buildProcess(content, lang) : ''}
 
     <section class="section section-alt" id="about">
         <div class="container" style="position:relative">

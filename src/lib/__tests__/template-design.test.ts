@@ -105,4 +105,11 @@ describe('Soft Evolution design invariants', () => {
     expect(html).not.toMatch(/Basé sur \d+ avis|Based on \d+ reviews/);
     expect(html).not.toMatch(/★★★★★|☆☆☆☆☆/);
   });
+
+  it('shows #process for non-bespoke sectors and hides it for bespoke-process sectors', () => {
+    const electricien = generateUltimateSite(lead as any, undefined);
+    expect(electricien).toContain('id="process"');
+    const coiffeur = generateUltimateSite({ ...lead, sector: 'Coiffeur' } as any, undefined);
+    expect(coiffeur).not.toContain('id="process"');
+  });
 });
