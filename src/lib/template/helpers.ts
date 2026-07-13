@@ -3,6 +3,8 @@
 // Process steps, guarantees, hero badge, gallery, privacy
 // ============================================================
 
+import { SectorCopy } from './sectorContent';
+
 export function isEnglishText(text: string): boolean {
   if (!text) return false;
   const englishIndicators = ['the ', 'was ', 'very ', 'good ', 'great ', 'excellent ', 'highly ', 'recommend', 'amazing', 'professional', 'quick ', 'fast ', 'efficient', 'friendly', 'helpful', 'courteous', 'reasonable', 'price', 'work ', 'service', 'job '];
@@ -225,6 +227,19 @@ export function getStats(
     stats.push(c);
   }
   return stats.slice(0, 4);
+}
+
+export function getServiceDescriptions(pack: SectorCopy, services: { name: string }[], lang: 'fr' | 'en'): { name: string; desc: string }[] {
+  return services.map(s => {
+    const found = pack.services.find(p => p.name.toLowerCase() === s.name.toLowerCase());
+    return { name: s.name, desc: found ? found.desc : `${s.name} : un service professionnel, adapté à vos besoins.` };
+  });
+}
+
+export function getTrustBadges(lang: 'fr' | 'en'): string[] {
+  return lang === 'fr'
+    ? ['Devis gratuit', 'Réponse rapide', 'Garantie satisfaction', 'Équipe certifiée']
+    : ['Free quote', 'Fast response', 'Satisfaction guarantee', 'Certified team'];
 }
 
 export function getLogoInfo(name: string, sector: string = 'default') {
