@@ -1,6 +1,12 @@
 import { generateUltimateSiteAsync } from './src/lib/ultimateTemplate.ts';
 import { writeFileSync } from 'fs';
 
+const sampleReviews = (sector: string) => ([
+  { author: 'Julie M.', text: `Intervention rapide et propre, je recommande ce ${sector.toLowerCase()}.`, rating: 5, date: '2025-11-02' },
+  { author: 'Karim B.', text: 'Devis clair, travail soigné, rien à redire.', rating: 5, date: '2025-09-18' },
+  { author: 'Sophie T.', text: 'Équipe à l’écoute et résultat au rendez-vous.', rating: 4, date: '2025-07-30' },
+]);
+
 const leads = [
   {
     name: 'Electra Paris Électricité',
@@ -15,6 +21,8 @@ const leads = [
     website: 'https://electra-paris.fr',
     hours: 'Lun-Ven 08h-19h · Sam 09h-13h',
     establishedYear: 2009,
+    googleReviewsData: sampleReviews('Électricien'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Paris',
     out: 'test-electricien-paris.html',
   },
   {
@@ -30,6 +38,8 @@ const leads = [
     website: 'https://proxieau.fr',
     hours: 'Lun-Sam 07h30-20h',
     establishedYear: 2015,
+    googleReviewsData: sampleReviews('Plombier'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Lyon',
     out: 'test-plombier-lyon.html',
   },
   {
@@ -45,6 +55,8 @@ const leads = [
     website: 'https://coupdeciseaux.fr',
     hours: 'Mar-Sam 09h-19h',
     establishedYear: 2018,
+    googleReviewsData: sampleReviews('Coiffeur'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Marseille',
     out: 'test-coiffeur-marseille.html',
   },
   {
@@ -60,6 +72,8 @@ const leads = [
     website: 'https://saveur-port.fr',
     hours: 'Mar-Dim 12h-14h · 19h-22h',
     establishedYear: 2012,
+    googleReviewsData: sampleReviews('Restaurant'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Bordeaux',
     out: 'test-restaurant-bordeaux.html',
   },
   {
@@ -75,6 +89,8 @@ const leads = [
     website: 'https://dentaire-belmont.fr',
     hours: 'Lun-Ven 08h30-18h',
     establishedYear: 2005,
+    googleReviewsData: sampleReviews('Dentiste'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Nantes',
     out: 'test-dentiste-nantes.html',
   },
   {
@@ -90,6 +106,8 @@ const leads = [
     website: 'https://lefevre-avocats.fr',
     hours: 'Lun-Ven 09h-18h',
     establishedYear: 2001,
+    googleReviewsData: sampleReviews('Avocat'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Lille',
     out: 'test-avocat-lille.html',
   },
   {
@@ -105,6 +123,8 @@ const leads = [
     website: 'https://propre-net.fr',
     hours: 'Lun-Sam 07h-20h',
     establishedYear: 2016,
+    googleReviewsData: sampleReviews('Nettoyage'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Toulouse',
     out: 'test-nettoyage-toulouse.html',
   },
   {
@@ -120,6 +140,8 @@ const leads = [
     website: 'https://vertjardin.fr',
     hours: 'Lun-Sam 08h-18h',
     establishedYear: 2010,
+    googleReviewsData: sampleReviews('Jardinier'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Nice',
     out: 'test-jardinier-nice.html',
   },
   {
@@ -135,6 +157,8 @@ const leads = [
     website: 'https://coachforme.fr',
     hours: 'Lun-Sam 06h-21h',
     establishedYear: 2019,
+    googleReviewsData: sampleReviews('Coach sportif'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Cannes',
     out: 'test-coach-cannes.html',
   },
   {
@@ -150,6 +174,8 @@ const leads = [
     website: 'https://automeridien.fr',
     hours: 'Lun-Ven 08h-18h · Sam 09h-12h',
     establishedYear: 2007,
+    googleReviewsData: sampleReviews('Garage'),
+    reviewUrl: 'https://search.google.com/local/writereview?placeid=SAMPLE_Strasbourg',
     out: 'test-garage-strasbourg.html',
   },
 ];
