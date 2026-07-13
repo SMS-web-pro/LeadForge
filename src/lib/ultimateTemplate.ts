@@ -759,7 +759,8 @@ const secondaryRgb = hexToRgb(secondaryColor);
     </section>`;
   }
 
-  function buildServices(content: UltimateContent, lang: 'fr' | 'en', serviceDescs: any[]): string {
+  function buildServices(content: UltimateContent, lang: 'fr' | 'en', serviceDescs: any[], serviceList?: any[]): string {
+    const list = serviceList || services;
     return `    <section class="section" id="services">
         <div class="container" style="position:relative">
             <div class="section-deco deco-circle" style="width:200px;height:200px;top:-60px;right:${leadVariant % 2 === 0 ? '-80px' : 'auto'};left:${leadVariant % 2 !== 0 ? '-80px' : 'auto'};animation-delay:${leadVariant}s"></div>
@@ -770,7 +771,7 @@ const secondaryRgb = hexToRgb(secondaryColor);
                 ${heroSubtitle.startsWith(sectorCfg.ui.svcDesc[lang]) ? '' : `<p>${sectorCfg.ui.svcDesc[lang]}</p>`}
             </div>
             <div class="svc-grid">
-                ${services.map((s, i) => {
+                ${list.map((s, i) => {
                   const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
@@ -1003,7 +1004,10 @@ const secondaryRgb = hexToRgb(secondaryColor);
   }
 
   const pack = resolveSectorContent(content.sector, lang);
-  const descs = getServiceDescriptions(pack, content.services, lang);
+  const packServiceNames = new Set(pack.services.map(p => p.name.toLowerCase()));
+const servicesMatch = (content.services || []).some(s => packServiceNames.has((s.name || '').toLowerCase()));
+const displayServices = (!servicesMatch && pack.services.length) ? pack.services.map(p => ({ name: p.name })) : content.services;
+const descs = getServiceDescriptions(pack, displayServices, lang);
   const bespokeSection = buildBespoke(content, pack, lang);
 
   return `<!DOCTYPE html>
@@ -1470,7 +1474,7 @@ ${buildHero(content, template, lang)}
         </div>
     </div>
 
-${buildServices(content, lang, descs)}
+${buildServices(content, lang, descs, displayServices)}
 
 ${bespokeSection}
 
