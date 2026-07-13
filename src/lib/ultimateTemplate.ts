@@ -738,6 +738,9 @@ const secondaryRgb = hexToRgb(secondaryColor);
                     <a href="#contact" class="btn-pri">${ctaText} <i data-lucide="arrow-right" width="18"></i></a>
                     ${phone ? `<a href="tel:${cleanPhoneLink}" class="btn-sec"><i data-lucide="phone" width="18"></i> ${ui.heroCall}</a>` : ''}
                 </div>
+                <div class="hero-chips">
+                    ${getGuarantees(content.sector, lang).slice(0, 3).map((g: any) => `<span class="hero-chip"><i data-lucide="${g.icon}" width="14"></i> ${g.title}</span>`).join('')}
+                </div>
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
                     ${hasRealRating && rating ? `<div class="hero-rating"><div class="hero-stars">${Array(Math.round(rating)).fill('<i data-lucide="star" fill="currentColor" width="16"></i>').join('')}</div><span class="hero-rating-text">${rating}/5 — ${reviews} ${ui.testGoogle}</span></div>` : ''}
                 </div>

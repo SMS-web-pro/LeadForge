@@ -106,6 +106,12 @@ describe('Soft Evolution design invariants', () => {
     expect(html).not.toMatch(/★★★★★|☆☆☆☆☆/);
   });
 
+  it('hero shows USP chips from guarantees', () => {
+    const html = build();
+    expect(html).toContain('hero-chips');
+    expect(html).toMatch(/class="[^"]*hero-chip[^"]*"/);
+  });
+
   it('shows #process for non-bespoke sectors and hides it for bespoke-process sectors', () => {
     const electricien = generateUltimateSite(lead as any, undefined);
     expect(electricien).toContain('id="process"');
