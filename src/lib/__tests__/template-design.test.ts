@@ -136,4 +136,17 @@ describe('Soft Evolution design invariants', () => {
     expect(html).toContain('why-list');
     expect(html).toMatch(/class="[^"]*why-list-item[^"]*"/);
   });
+
+  it('densifies section padding via --section-py token', () => {
+    const html = build();
+    const m = html.match(/--section-py:([^;]+);/);
+    expect(m).toBeTruthy();
+    const maxv = parseInt((m as RegExpMatchArray)[1].match(/(\d+)px\s*\)/) as any, 10);
+    expect(maxv).toBeLessThanOrEqual(96);
+  });
+
+  it('defines CSS for new enriched components', () => {
+    const html = build();
+    ['hero-chips', 'svc-tag', 'about-mini', 'why-list', 'tcard-grid'].forEach(c => expect(html).toContain(c));
+  });
 });
