@@ -56,7 +56,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['utensils', 'wine', 'chef-hat', 'concierge-bell', 'package', 'beer'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '200+', label: { fr: 'Plats servis/jour', en: 'Dishes served/day' } },
       { value: '100%', label: { fr: 'Fait maison', en: 'Homemade' } },
@@ -70,7 +70,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { name: 'message', type: 'textarea', placeholder: { fr: 'Allergies, occasion spéciale...', en: 'Allergies, special occasion...' }, required: false },
     ],
     defaultHours: { weekdays: '12h00 – 14h30 / 19h00 – 22h30', saturday: '12h00 – 14h30 / 19h00 – 23h00', sunday: '12h00 – 14h30' },
-    aboutBadge: { value: 'Fait maison', label: { fr: 'Depuis 2009', en: 'Since 2009' } },
+    aboutBadge: { value: 'Fait maison', label: { fr: 'Maison', en: 'Homemade' } },
     sections: { process: true, whyUs: true, stats: true, gallery: true },
     animationStyle: 'warm',
     ui: {
@@ -111,7 +111,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { name: 'message', type: 'textarea', placeholder: { fr: 'Demande spéciale...', en: 'Special request...' }, required: false },
     ],
     defaultHours: { weekdays: '09h00 – 19h00', saturday: '09h00 – 18h00', sunday: 'Fermé' },
-    aboutBadge: { value: '15+ Ans', label: { fr: 'D\'expérience', en: 'Years Experience' } },
+    aboutBadge: { value: 'Expert', label: { fr: 'Coiffeur', en: 'Stylist' } },
     sections: { process: true, whyUs: true, stats: true, gallery: true },
     animationStyle: 'elegant',
     ui: {
@@ -135,7 +135,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['droplets', 'wrench', 'thermometer', 'scan-line', 'bath', 'settings'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '<2h', label: { fr: 'Délai d\'intervention', en: 'Response time' } },
       { value: '24h/24', label: { fr: 'Disponible', en: 'Available' } },
@@ -175,7 +175,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['zap', 'lightbulb', 'plug', 'circuit-board', 'shield-check', 'car'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '500+', label: { fr: 'Installations', en: 'Installations' } },
       { value: '100%', label: { fr: 'Conforme', en: 'Compliant' } },
@@ -233,7 +233,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { name: 'message', type: 'textarea', placeholder: { fr: 'Décrivez le problème...', en: 'Describe the issue...' }, required: false },
     ],
     defaultHours: { weekdays: '08h00 – 18h30', saturday: '09h00 – 13h00', sunday: 'Fermé' },
-    aboutBadge: { value: '15+ Ans', label: { fr: 'D\'expérience', en: 'Experience' } },
+    aboutBadge: { value: 'Expert', label: { fr: 'Professionnel', en: 'Professional' } },
     sections: { process: true, whyUs: true, stats: true, gallery: false },
     animationStyle: 'default',
     ui: {
@@ -379,7 +379,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['dumbbell', 'heart-pulse', 'timer', 'trophy', 'flame', 'sparkles'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '500+', label: { fr: 'Membres actifs', en: 'Active members' } },
       { value: '20+', label: { fr: 'Cours/semaine', en: 'Classes/week' } },
@@ -420,7 +420,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['sparkles', 'spray-can', 'shower-head', 'shield-check', 'recycle', 'check-circle'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '200+', label: { fr: 'Clients réguliers', en: 'Regular clients' } },
       { value: '100%', label: { fr: 'Écolabel', en: 'Eco-certified' } },
@@ -500,7 +500,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
     ],
     serviceIcons: ['shield-check', 'wrench', 'home', 'award', 'clock', 'check-circle'],
     stats: [
-      { value: '4.8/5', label: { fr: 'Note Google', en: 'Google Rating' } },
+      { value: '24/7', label: { fr: 'Disponible', en: 'Available' } },
       { value: '15+', label: { fr: 'Années', en: 'Years' } },
       { value: '500+', label: { fr: 'Clients satisfaits', en: 'Happy clients' } },
       { value: '100%', label: { fr: 'Satisfaction', en: 'Satisfaction' } },
@@ -512,7 +512,7 @@ export const SECTOR_CONFIG: Record<string, SectorConfig> = {
       { name: 'message', type: 'textarea', placeholder: { fr: 'Décrivez votre besoin...', en: 'Describe your needs...' }, required: true },
     ],
     defaultHours: { weekdays: '08h00 – 18h00', saturday: '09h00 – 14h00', sunday: 'Fermé' },
-    aboutBadge: { value: '15+ Ans', label: { fr: 'D\'expérience', en: 'Experience' } },
+    aboutBadge: { value: 'Expert', label: { fr: 'Professionnel', en: 'Professional' } },
     sections: { process: true, whyUs: true, stats: true, gallery: true },
     animationStyle: 'default',
     ui: {

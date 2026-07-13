@@ -174,7 +174,7 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
     guarantees: [
       { title: 'Produits Frais', icon: 'leaf' },
       { title: 'Service Rapide', icon: 'clock' },
-      { title: 'Avis 4.8/5', icon: 'star' },
+      { title: 'Avis Clients', icon: 'star' },
       { title: 'Parking Gratuit', icon: 'car' }
     ],
     heroTitle: 'Restaurant Traditionnel', heroTitleEn: 'Traditional Restaurant',
@@ -195,7 +195,7 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
     guarantees: [
       { title: 'Devis Gratuit', icon: 'file-text' },
       { title: 'Garantie Pièces', icon: 'shield-check' },
-      { title: 'Équipe Qualifiée', icon: 'clock' },
+      { title: 'Mécaniciens Certifiés', icon: 'clock' },
       { title: 'Véhicule de Courtoisie', icon: 'car' }
     ],
     heroTitle: 'Garage Automobile', heroTitleEn: 'Auto Garage',
@@ -327,7 +327,7 @@ const SECTOR_ULTIMATE_TEMPLATES: Record<string, {
       { name: 'Clear Pricing', description: 'Transparent fees', features: ['Prior quote', 'No surprises', 'Payment options'] }
     ],
     guarantees: [
-      { title: 'Équipe Qualifiée', icon: 'badge-check' },
+      { title: 'Expertise Reconnue', icon: 'badge-check' },
       { title: 'Devis Clair', icon: 'file-text' },
       { title: 'Réactivité', icon: 'clock' },
       { title: 'Satisfaction Client', icon: 'heart' }
@@ -1505,13 +1505,10 @@ ${bespokeSection}
                     <span class="section-label">${ui.eyebrowWhy}</span>
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
                     <p>${lang === 'en' ? `Our approach: ${pack.whyUs.slice(0, 2).map(w => w.title.toLowerCase()).join(' and ')}.` : `Notre approche : ${pack.whyUs.slice(0, 2).map(w => w.title.toLowerCase()).join(' et ')}.`}</p>
-                    <div class="why-stats">
-                        ${sectorCfg.stats.slice(0, 4).map(s => `<div class="why-stat"><div class="why-stat-num">${s.value}</div><div class="why-stat-label">${s.label[lang]}</div></div>`).join('')}
-                    </div>
                 </div>
                 <div class="why-img reveal">
                     <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}" loading="lazy">
-                    <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">${ui.whySatisfaction}</div></div>
+                    <div class="why-img-badge"><div class="why-img-badge-num">${(hasRealRating && typeof rating === 'number' && rating > 0) ? rating + '/5' : (typeof establishedYear === 'number' && establishedYear > 0 ? (new Date().getFullYear() - establishedYear) + '+' : '24/7')}</div><div class="why-img-badge-text">${(hasRealRating && typeof rating === 'number' && rating > 0) ? (lang === 'en' ? 'Google Rating' : 'Note Google') : (typeof establishedYear === 'number' && establishedYear > 0 ? (lang === 'en' ? 'Years' : 'Ans') : (lang === 'en' ? 'Available' : 'Disponible'))}</div></div>
                 </div>
             </div>
         </div>
