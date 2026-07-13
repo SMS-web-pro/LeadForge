@@ -779,6 +779,7 @@ const secondaryRgb = hexToRgb(secondaryColor);
                   const iconName = sectorCfg.serviceIcons[i % sectorCfg.serviceIcons.length] || 'check-circle';
                 return `
                 <div class="svc-card reveal reveal-d${(i % 3) + 1}">
+                    ${i === 0 ? `<div class="svc-tag">${(ui as any).svcPopular || (lang === 'fr' ? 'Populaire' : 'Popular')}</div>` : ''}
                     <img src="${proxiedImg(serviceImages[i] || heroImage)}" class="svc-card-img" alt="${s.name} à ${city}" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="${iconName}" width="22" height="22"></i></div>
