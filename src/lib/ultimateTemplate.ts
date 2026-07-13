@@ -1658,6 +1658,9 @@ ${!hasBespokeProcess ? buildProcess(content, lang) : ''}
                     <span class="section-label">${ui.eyebrowWhy}</span>
                     <h2>${content.aboutTitle || (lang === 'en' ? 'Our Approach' : 'Notre Approche')}</h2>
                     <p>${lang === 'en' ? `Our approach: ${pack.whyUs.slice(0, 2).map(w => w.title.toLowerCase()).join(' and ')}.` : `Notre approche : ${pack.whyUs.slice(0, 2).map(w => w.title.toLowerCase()).join(' et ')}.`}</p>
+                    <ul class="why-list">
+                        ${pack.whyUs.slice(0, 3).map((w: any) => `<li class="why-list-item"><i data-lucide="check" width="16"></i> <span><strong>${w.title}</strong> — ${w.desc}</span></li>`).join('')}
+                    </ul>
                 </div>
                 <div class="why-img reveal">
                     <img src="${proxiedImg(getImg(2))}" ${imgErr(2)} alt="${companyName}" loading="lazy">

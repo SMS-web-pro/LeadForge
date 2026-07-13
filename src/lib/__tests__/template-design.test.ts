@@ -130,4 +130,10 @@ describe('Soft Evolution design invariants', () => {
     expect(html).toContain('about-mini');
     expect(html).not.toContain('undefined');
   });
+
+  it('why section lists key reasons', () => {
+    const html = build();
+    expect(html).toContain('why-list');
+    expect(html).toMatch(/class="[^"]*why-list-item[^"]*"/);
+  });
 });
