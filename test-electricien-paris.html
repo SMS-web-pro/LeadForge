@@ -22,9 +22,9 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="alternate" hreflang="fr" href="https://electra-paris.fr">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"Electra Paris Électricité","description":"Des installations sûres, conformes et durables pour votre habitat et votre entreprise à Paris","image":"https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=1920&q=80","telephone":"+33 1 84 80 00 00","email":"contact@electra-paris.fr","address":{"@type":"PostalAddress","streetAddress":"12 Rue de Rivoli","addressLocality":"Paris","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"127"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"Electra Paris Électricité","description":"Des installations sûres, conformes et durables pour votre habitat et votre entreprise à Paris","image":"https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=1920&q=80","telephone":"+33 1 84 80 00 00","email":"contact@electra-paris.fr","address":{"@type":"PostalAddress","streetAddress":"12 Rue de Rivoli","addressLocality":"Paris","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"127"}}</script>
     <style>
-        :root{--primary:#1e40af;--primary-rgb:30, 64, 175;--secondary:#1e3a8a;--accent:#2563eb;--accent-dark:rgb(222, 232, 252);--accent-rgb:37, 99, 235;--secondary-rgb:30, 58, 138;--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:24deg;--deco-scale:0.9600000000000001;--accent-opacity:0.04;--section-shape:0;--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms}
+        :root{--primary:#1e40af;--primary-rgb:30, 64, 175;--secondary:#1e3a8a;--accent:#2563eb;--accent-dark:rgb(222, 232, 252);--accent-rgb:37, 99, 235;--secondary-rgb:30, 58, 138;--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:24deg;--deco-scale:0.9600000000000001;--accent-opacity:0.04;--section-shape:0;--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms;--fs-display:clamp(2.4rem,5vw,4rem);--fs-h2:clamp(1.7rem,3.2vw,2.4rem);--fs-h3:1.15rem;--lh-body:1.7;--section-py:clamp(64px,9vw,120px);--trust-bg:color-mix(in srgb,var(--accent) 6%,#fff);--hairline:color-mix(in srgb,var(--accent) 14%,var(--border));--maxw:1140px}
         *{margin:0;padding:0;box-sizing:border-box}
         html{scroll-behavior:smooth;font-size:16px}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
@@ -33,26 +33,60 @@
         a,button,[role="button"]{cursor:pointer}
         :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:4px}
         ::selection{background:color-mix(in srgb,var(--accent) 22%,#fff);color:var(--text)}
-        .container{max-width:1400px;margin:0 auto;padding:0 32px}
+        .container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
         @media(max-width:768px){.container{padding:0 20px}}
 
-        .navbar{position:fixed;top:36px;left:0;right:0;z-index:100;padding:12px 0;transition:all .4s cubic-bezier(.4,0,.2,1)}
+        .navbar{position:sticky;top:0;z-index:80;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:color-mix(in srgb,var(--surface) 82%,transparent);border-bottom:1px solid var(--hairline);padding:12px 0;transition:all .4s cubic-bezier(.4,0,.2,1)}
         .navbar.scrolled{background:rgba(255,255,255,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:10px 0;box-shadow:0 2px 30px rgba(0,0,0,.08)}
         .navbar-inner{max-width:1400px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center}
         .navbar-brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:color .3s}
-        .navbar:not(.scrolled) .navbar-brand{color:#fff}
+        .navbar:not(.scrolled) .navbar-brand{color:var(--text)}
         .navbar-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 15px rgba(var(--primary-rgb),.3);flex-shrink:0}
         .navbar-name{font-weight:700;font-size:1.05rem;color:var(--text);line-height:1.15;max-width:300px;transition:color .3s}
-        .navbar:not(.scrolled) .navbar-name{color:#fff}
+        .navbar:not(.scrolled) .navbar-name{color:var(--text)}
         .navbar-links{display:flex;align-items:center;gap:32px}
         .navbar-links a{text-decoration:none;color:var(--text-s);font-size:.9rem;font-weight:500;transition:color .25s;position:relative}
-        .navbar:not(.scrolled) .navbar-links a{color:rgba(255,255,255,.85)}
-        .navbar:not(.scrolled) .navbar-links a:hover{color:#fff}
+        .navbar:not(.scrolled) .navbar-links a{color:var(--text-s)}
+        .navbar:not(.scrolled) .navbar-links a:hover{color:var(--primary)}
         .navbar-links a:hover{color:var(--primary)}
         .navbar-cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff!important;padding:11px 24px;border-radius:10px;font-weight:600;font-size:.9rem;transition:all .25s;box-shadow:0 4px 15px rgba(var(--primary-rgb),.25)}
         .navbar-cta:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 6px 20px rgba(var(--primary-rgb),.35)}
+        h1{font-size:var(--fs-display);line-height:1.05;letter-spacing:-.02em;font-weight:800}
+        h2{font-size:var(--fs-h2);line-height:1.1;letter-spacing:-.02em;font-weight:800}
+        .trust-strip{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px}
+        .trust-badge{display:inline-flex;align-items:center;gap:8px;background:var(--trust-bg);border:1px solid var(--hairline);color:var(--text);padding:10px 16px;border-radius:999px;font-size:.9rem;font-weight:600}
+        .trust-badge i{color:var(--accent)}
+        .trust-card{background:var(--surface);border:1px solid var(--hairline);border-radius:24px;padding:clamp(32px,5vw,56px);text-align:center;max-width:720px;margin:0 auto;box-shadow:0 10px 40px rgba(var(--primary-rgb),.06)}
+        .trust-card h2{margin-bottom:20px}
+        .trust-score{display:flex;align-items:center;justify-content:center;gap:10px;font-size:1.6rem;color:var(--accent);letter-spacing:2px}
+        .trust-score strong{font-size:1.1rem;color:var(--text);letter-spacing:0}
+        .trust-meta{margin:8px 0 0;color:var(--text-s);font-size:.95rem}
+        @media(max-width:768px){.trust-strip{gap:8px}}
+
+        /* Sector bespoke blocks (Task 4) */
+        .bespoke-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;margin-top:48px}
+        .bespoke-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;box-shadow:var(--sh-1)}
+        .bespoke-card h3{font-size:1.15rem;margin-bottom:18px}
+        .spec-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-l)}
+        .spec-item:last-child{border:none}
+        .spec-item i{color:var(--accent);flex-shrink:0;margin-top:4px}
+        .spec-item strong{font-weight:600}
+        .spec-desc{color:var(--text-s);font-size:.9rem;line-height:1.6}
+        .bespoke-hours{font-size:.98rem;color:var(--text-s);line-height:1.8;white-space:pre-line}
+        .bespoke-note{margin-top:8px;font-size:.92rem;color:var(--text-t);display:flex;align-items:center;gap:8px}
+        .bespoke-progs{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+        .bespoke-prog{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .bespoke-prog:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+        .bespoke-prog-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);margin-bottom:14px}
+        .bespoke-prog h3{font-size:1.1rem;margin-bottom:10px}
+        .bespoke-prog p{color:var(--text-s);font-size:.92rem;line-height:1.6}
+        .bespoke-cares{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+        .bespoke-care{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;box-shadow:var(--sh-1)}
+        .bespoke-care h3{font-size:1.05rem;margin-bottom:10px}
+        .bespoke-care p{color:var(--text-s);font-size:.9rem;line-height:1.6}
+        @media(max-width:768px){.bespoke-grid{grid-template-columns:1fr}.bespoke-progs{grid-template-columns:1fr}.bespoke-cares{grid-template-columns:1fr}}
         .mobile-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;border-radius:8px;transition:background .2s}
-        .navbar:not(.scrolled) .mobile-toggle i{color:#fff}
+        .navbar:not(.scrolled) .mobile-toggle i{color:var(--text)}
         .mobile-toggle:hover{background:rgba(0,0,0,.05)}
         .mobile-menu{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:16px 24px;box-shadow:0 12px 40px rgba(0,0,0,.1)}
         .mobile-menu.open{display:block}
@@ -70,7 +104,7 @@
         .hero-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(var(--dark-rgb),.72) 0%,rgba(var(--dark-rgb),.55) 45%,rgba(var(--dark-rgb),.82) 100%)}
         .hero-inner{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:130px 32px 80px;width:100%;display:grid;grid-template-columns:1.1fr 360px;gap:56px;align-items:center}
         .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.20);padding:9px 20px;border-radius:100px;color:#fff;font-size:.78rem;font-weight:600;margin-bottom:24px;letter-spacing:.6px;text-transform:uppercase;backdrop-filter:blur(10px)}
-        .hero h1{font-size:clamp(2.4rem,5vw,3.7rem);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.08;text-shadow:0 2px 24px rgba(0,0,0,.25)}
+        .hero h1{font-size:var(--fs-display);font-weight:800;color:#fff;margin-bottom:20px;letter-spacing:-.03em;line-height:1.08;text-shadow:0 2px 24px rgba(0,0,0,.25)}
         .hero h1 em{font-style:normal;color:var(--accent-dark);position:relative}
         .hero-sub{font-size:1.12rem;color:rgba(255,255,255,.86);max-width:540px;margin-bottom:36px;line-height:1.8;text-shadow:0 1px 12px rgba(0,0,0,.2)}
         .hero-actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:40px}
@@ -100,11 +134,11 @@
         .trust-div{width:1px;height:24px;background:var(--border)}
         @media(max-width:768px){.trust-inner{gap:16px}.trust-div{display:none}}
 
-        .section{padding:110px 0}
+        .section{padding:var(--section-py) 0}
         .section-alt{background:#fff}
-        .section-dark{background:var(--dark);color:#fff;padding:110px 0}
+        .section-dark{background:var(--dark);color:#fff;padding:var(--section-py) 0}
         .section-hdr{text-align:center;margin-bottom:72px}
-        .section-hdr h2{font-size:clamp(1.8rem,4vw,2.85rem);font-weight:800;margin-bottom:18px;letter-spacing:-.03em}
+        .section-hdr h2{font-size:var(--fs-h2);font-weight:800;margin-bottom:18px;letter-spacing:-.03em}
         .section-hdr p{font-size:1.1rem;color:var(--text-s);max-width:580px;margin:0 auto;line-height:1.7}
         .section-dark .section-hdr h2{color:#fff}
         .section-dark .section-hdr p{color:rgba(255,255,255,.75)}
@@ -118,7 +152,7 @@
         .about-badge{position:absolute;bottom:24px;right:24px;background:var(--primary);color:#fff;padding:20px 28px;border-radius:16px;text-align:center;box-shadow:0 12px 32px rgba(var(--primary-rgb),.35)}
         .about-badge-num{font-size:2rem;font-weight:800;line-height:1}
         .about-badge-text{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;margin-top:4px}
-        .about-text h2{font-size:clamp(1.55rem,3vw,2.3rem);font-weight:800;margin-bottom:18px;letter-spacing:-.02em}
+        .about-text h2{font-size:var(--fs-h2);font-weight:800;margin-bottom:18px;letter-spacing:-.02em}
         .about-text>p{color:var(--text-s);margin-bottom:22px;font-size:1.02rem;line-height:1.8}
         .about-checks{list-style:none;display:grid;gap:14px;margin-bottom:32px}
         .about-checks li{display:flex;align-items:center;gap:12px;font-weight:500;font-size:.97rem}
@@ -170,7 +204,7 @@
         @media(max-width:768px){.svc-grid{grid-template-columns:1fr}.svc-card-img{height:200px}}
 
         .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
-        .why-text h2{font-size:clamp(1.55rem,3vw,2.3rem);font-weight:800;color:#fff;margin-bottom:18px;letter-spacing:-.02em}
+        .why-text h2{font-size:var(--fs-h2);font-weight:800;color:#fff;margin-bottom:18px;letter-spacing:-.02em}
         .why-text>p{color:rgba(255,255,255,.75);margin-bottom:36px;font-size:1.02rem;line-height:1.8}
         .why-stats{display:grid;grid-template-columns:1fr 1fr;gap:18px}
         .why-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;text-align:center;transition:all .3s}
@@ -450,16 +484,16 @@
     <div class="trust-bar">
         <div class="trust-inner">
             
-            <div class="trust-item"><i data-lucide="badge-check" width="16"></i> Équipe Qualifiée</div>
+            <div class="trust-item"><i data-lucide="shield-check" width="16"></i> Consuel Certifié</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="file-text" width="16"></i> Devis Clair</div>
+            <div class="trust-item"><i data-lucide="badge-check" width="16"></i> Garantie Décennale</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="clock" width="16"></i> Réactivité</div>
+            <div class="trust-item"><i data-lucide="clock" width="16"></i> Intervention < 2h</div>
             <div class="trust-div"></div>
             
-            <div class="trust-item"><i data-lucide="heart" width="16"></i> Satisfaction Client</div>
+            <div class="trust-item"><i data-lucide="file-text" width="16"></i> Devis Gratuit</div>
             
             
         </div>
@@ -477,60 +511,71 @@
             <div class="svc-grid">
                 
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Mise aux Normes à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Rénovation à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="zap" width="22" height="22"></i></div>
-                        <h3>Mise aux Normes</h3>
-                        <p>Remise à neuf de votre installation électrique</p>
+                        <h3>Rénovation</h3>
+                        <p>Rafraîchissement et mise aux normes de vos pièces, du sol au plafond. Un chantier coordonné, propre et dans les délais.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618666-fcd25c85f82e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Dépannage Électrique à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618666-fcd25c85f82e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Peinture à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="lightbulb" width="22" height="22"></i></div>
-                        <h3>Dépannage Électrique</h3>
-                        <p>Pannes, court-circuits, disjonctions</p>
+                        <h3>Peinture</h3>
+                        <p>Pose de peintures et enduits, intérieur comme extérieur, avec préparation soignée des supports. Un rendu net et durable.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Installation Complète à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Électricité & Plomberie à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="plug" width="22" height="22"></i></div>
-                        <h3>Installation Complète</h3>
-                        <p>Construction ou rénovation électrique</p>
+                        <h3>Électricité & Plomberie</h3>
+                        <p>Petits travaux courants : prises, éclairage, robinetterie et fuites. L'essentiel géré par un artisan de confiance.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d1">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Domotique & Smart Home à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Aménagement à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="circuit-board" width="22" height="22"></i></div>
-                        <h3>Domotique & Smart Home</h3>
-                        <p>Maison connectée et automatisée</p>
+                        <h3>Aménagement</h3>
+                        <p>Création de rangements, cloisons et espaces sur mesure. On optimise votre surface selon vos besoins.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905252507-b354bc25edac%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Éclairage LED à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905252507-b354bc25edac%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Isolation à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="shield-check" width="22" height="22"></i></div>
-                        <h3>Éclairage LED</h3>
-                        <p>Solutions éclairage économiques</p>
+                        <h3>Isolation</h3>
+                        <p>Isolation des combles et des murs pour réduire votre facture énergétique. Un confort gagné toute l'année.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
-                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Bornes de Recharge à Paris" loading="lazy">
+                    <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Entretien & Dépannage à Paris" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="car" width="22" height="22"></i></div>
-                        <h3>Bornes de Recharge</h3>
-                        <p>Installation bornes véhicule électrique</p>
+                        <h3>Entretien & Dépannage</h3>
+                        <p>Interventions ponctuelles et maintenance préventive pour préserver vos installations. On anticipe plutôt que guérir.</p>
                         <a href="#contact" class="svc-link">En savoir plus <i data-lucide="arrow-right" width="14"></i></a>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="section" id="certifications">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">Nos engagements</span>
+                <h2>Certifications & Garanties</h2>
+                <p>Les garanties qui encadrent chaque intervention.</p>
+            </div>
+            <div class="trust-strip reveal"><span class="trust-badge"><i data-lucide="badge-check" width="16"></i> RGE</span><span class="trust-badge"><i data-lucide="badge-check" width="16"></i> Assurance décennale</span><span class="trust-badge"><i data-lucide="badge-check" width="16"></i> Devis gratuit</span><span class="trust-badge"><i data-lucide="badge-check" width="16"></i> Garantie satisfaction</span></div>
         </div>
     </section>
 
@@ -548,10 +593,10 @@
                     <h2>À propos de Electra Paris Électricité</h2>
                     <p>Électricien certifié RGE intervenant à Paris pour dépannage, mise aux normes et domotique.</p>
                     <ul class="about-checks">
-                        <li><i data-lucide="check-circle-2" width="18"></i> Équipe Qualifiée</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Devis Clair</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Réactivité</li>
-                        <li><i data-lucide="check-circle-2" width="18"></i> Satisfaction Client</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> Artisan multiservices</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> Devis détaillé</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> Travail soigné</li>
+                        <li><i data-lucide="check-circle-2" width="18"></i> Respect des normes</li>
                     </ul>
                 </div>
             </div>
@@ -564,14 +609,11 @@
                 <div class="why-text reveal">
                     <span class="section-label">Pourquoi nous</span>
                     <h2>Notre Approche</h2>
-                    <p>Électricien certifié RGE intervenant à Paris pour dépannage, mise aux normes et domotique....</p>
-                    <div class="why-stats">
-                        <div class="why-stat"><div class="why-stat-num">4.8/5</div><div class="why-stat-label">Note Google</div></div><div class="why-stat"><div class="why-stat-num">15+</div><div class="why-stat-label">Années</div></div><div class="why-stat"><div class="why-stat-num">500+</div><div class="why-stat-label">Installations</div></div><div class="why-stat"><div class="why-stat-num">100%</div><div class="why-stat-label">Conforme</div></div>
-                    </div>
+                    <p>Notre approche : artisan multiservices et devis détaillé.</p>
                 </div>
                 <div class="why-img reveal">
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905252507-b354bc25edac%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy">
-                    <div class="why-img-badge"><div class="why-img-badge-num">98%</div><div class="why-img-badge-text">Satisfaction</div></div>
+                    <div class="why-img-badge"><div class="why-img-badge-num">4.8/5</div><div class="why-img-badge-text">Note Google</div></div>
                 </div>
             </div>
         </div>
@@ -593,41 +635,36 @@
             <div class="guar-grid reveal">
                 
                 <div class="guar-card reveal-d0">
-                    <div class="guar-icon"><i data-lucide="badge-check" width="24" height="24"></i></div>
-                    <h3>Équipe Qualifiée</h3>
-                    <p class="guar-desc">Un professionnel certifié et qualifié</p>
+                    <div class="guar-icon"><i data-lucide="check-circle" width="24" height="24"></i></div>
+                    <h3>Artisan multiservices</h3>
+                    <p class="guar-desc">Rénovation, peinture, électricité et plomberie par un même interlocuteur.</p>
                 </div>
                 <div class="guar-card reveal-d1">
-                    <div class="guar-icon"><i data-lucide="file-text" width="24" height="24"></i></div>
-                    <h3>Devis Clair</h3>
-                    <p class="guar-desc">Devis transparent et détaillé, sans mauvaise surprise</p>
+                    <div class="guar-icon"><i data-lucide="check-circle" width="24" height="24"></i></div>
+                    <h3>Devis détaillé</h3>
+                    <p class="guar-desc">Chaque poste est chiffré clairement avant le démarrage du chantier.</p>
                 </div>
                 <div class="guar-card reveal-d2">
-                    <div class="guar-icon"><i data-lucide="clock" width="24" height="24"></i></div>
-                    <h3>Réactivité</h3>
-                    <p class="guar-desc">Une réactivité au rendez-vous, en urgence comme en routine</p>
+                    <div class="guar-icon"><i data-lucide="check-circle" width="24" height="24"></i></div>
+                    <h3>Travail soigné</h3>
+                    <p class="guar-desc">Un savoir-faire artisanal pour des finitions durables.</p>
                 </div>
                 <div class="guar-card reveal-d3">
-                    <div class="guar-icon"><i data-lucide="heart" width="24" height="24"></i></div>
-                    <h3>Satisfaction Client</h3>
-                    <p class="guar-desc">Votre satisfaction est notre priorité absolue</p>
+                    <div class="guar-icon"><i data-lucide="check-circle" width="24" height="24"></i></div>
+                    <h3>Respect des normes</h3>
+                    <p class="guar-desc">Nos interventions suivent la réglementation en vigueur.</p>
                 </div>
             </div>
-            
+            <div class="gal-grid reveal" style="margin-top:44px"><div class="gal-item gal-main"><img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618666-fcd25c85f82e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy"></div><div class="gal-item"><img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558618666-fcd25c85f82e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy"></div><div class="gal-item"><img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905251189-08b45d6a269e%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy"></div><div class="gal-item"><img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905252507-b354bc25edac%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy"></div><div class="gal-item"><img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1621905252507-b354bc25edac%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1558449028-b53a39d100fc%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Electra Paris Électricité" loading="lazy"></div></div>
         </div>
     </section>
 
-    <section class="section section-alt" id="testimonials">
+    <section class="section trust" id="confiance">
         <div class="container">
-            <div class="section-hdr reveal">
-                <span class="section-label">Ils nous font confiance</span>
-                <h2>Ce que disent nos clients</h2>
-                <p>La satisfaction de nos clients est notre meilleure carte de visite.</p>
-            </div>
-            
-            <div class="test-empty reveal">
-                <i data-lucide="message-square" width="28"></i>
-                <p>Avis en attente</p>
+            <div class="trust-card reveal">
+                <div class="trust-score">★★★★★ <strong>4.8/5</strong></div>
+                <p class="trust-meta">Basé sur 127 avis vérifiés Google</p>
+                <div class="trust-strip"><span class="trust-badge"><i data-lucide="check-circle"></i> Devis gratuit</span><span class="trust-badge"><i data-lucide="check-circle"></i> Réponse rapide</span><span class="trust-badge"><i data-lucide="check-circle"></i> Garantie satisfaction</span></div>
             </div>
         </div>
     </section>
@@ -642,20 +679,16 @@
             <div class="faq-wrap reveal">
                 
                 <details class="faq-item">
-                    <summary class="faq-q">Intervenez-vous à Paris ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, Electra Paris Électricité intervient à Paris et ses alentours. Contactez-nous pour confirmer la disponibilité.</div>
-                </details>
-                <details class="faq-item">
                     <summary class="faq-q">Proposez-vous un devis gratuit ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Oui, nous établissons systématiquement un devis détaillé et transparent, sans engagement.</div>
+                    <div class="faq-a">Oui, nous établissons un devis détaillé et gratuit après visite, avant tout engagement.</div>
                 </details>
                 <details class="faq-item">
-                    <summary class="faq-q">Êtes-vous assuré et garant ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Absolument. Notre travail est couvert par une assurance responsabilité civile professionnelle et nos interventions sont garanties.</div>
+                    <summary class="faq-q">Intervenez-vous en urgence ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, nous traitons les dépannages courants (fuite, panne légère) dans la mesure du possible rapidement.</div>
                 </details>
                 <details class="faq-item">
-                    <summary class="faq-q">Quels sont vos délais d'intervention ? <i data-lucide="chevron-down" width="18"></i></summary>
-                    <div class="faq-a">Nos horaires : Lun-Ven 08h-19h · Sam 09h-13h.</div>
+                    <summary class="faq-q">Vos travaux respectent-ils les normes ? <i data-lucide="chevron-down" width="18"></i></summary>
+                    <div class="faq-a">Oui, chaque intervention suit la réglementation en vigueur et fait l'objet d'un devis écrit.</div>
                 </details>
             </div>
         </div>

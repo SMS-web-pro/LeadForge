@@ -1000,6 +1000,84 @@ const secondaryRgb = hexToRgb(secondaryColor);
     </section>`;
     }
 
+    const stepsBlock = (
+      id: string,
+      title: string,
+      sub: string,
+      steps: { icon: string; label: string; desc: string }[],
+    ) => `
+    <section class="section" id="${id}">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowServices}</span>
+                <h2>${title}</h2>
+                <p>${sub}</p>
+            </div>
+            <div class="bespoke-progs reveal">${steps.map(s => `
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="${s.icon}" width="22"></i></div>
+                    <h3>${s.label}</h3>
+                    <p>${s.desc}</p>
+                </div>`).join('')}</div>
+        </div>
+    </section>`;
+
+    if (kind === 'coiffeur') {
+      return stepsBlock('rituel',
+        t('Notre Rituel', 'Our Ritual'),
+        t('Un accompagnement sur mesure, du conseil à la finition.', 'Tailored care, from consultation to the finishing touch.'),
+        [
+          { icon: 'message-circle', label: t('Consultation', 'Consultation'), desc: t('Échange sur votre style, votre morphologie et vos envies.', 'We discuss your style, face shape and wishes.') },
+          { icon: 'scissors', label: t('Coupe & Styling', 'Cut & Styling'), desc: t('Une coupe précise et un brushing travaillé pour un rendu naturel.', 'A precise cut and a polished blow-dry for a natural result.') },
+          { icon: 'sparkles', label: t('Soin & Couleur', 'Care & Color'), desc: t('Colorations, balayage et soins réalisés avec des produits professionnels.', 'Color, balayage and treatments with professional products.') },
+        ]);
+    }
+
+    if (kind === 'avocat') {
+      return stepsBlock('dossier',
+        t('Votre dossier, en toute sérénité', 'Your case, with peace of mind'),
+        t('Un accompagnement juridique clair à chaque étape.', 'Clear legal support at every step.'),
+        [
+          { icon: 'lock', label: t('Consultation confidentielle', 'Confidential consultation'), desc: t('Un premier échange pour comprendre votre situation et vos objectifs.', 'A first conversation to understand your situation and goals.') },
+          { icon: 'search', label: t('Analyse juridique', 'Legal analysis'), desc: t('Étude de vos documents et stratégie adaptée à votre dossier.', 'We review your documents and build a strategy for your case.') },
+          { icon: 'scale', label: t('Action & Défense', 'Action & Defense'), desc: t('Rédaction, négociation et représentation dans vos intérêts.', 'Drafting, negotiation and representation in your interest.') },
+          { icon: 'folder-check', label: t('Suivi du dossier', 'Case follow-up'), desc: t('Un accompagnement jusqu’à la résolution, sans surprise.', 'Support through to resolution, with no surprises.') },
+        ]);
+    }
+
+    if (kind === 'nettoyage') {
+      return stepsBlock('methode',
+        t('Notre méthode', 'Our method'),
+        t('Un entretien rigoureux, du diagnostic au contrôle qualité.', 'Rigorous cleaning, from assessment to quality check.'),
+        [
+          { icon: 'clipboard-list', label: t('Diagnostic', 'Assessment'), desc: t('Évaluation de vos besoins et plan d’intervention personnalisé.', 'We assess your needs and plan a tailored intervention.') },
+          { icon: 'sparkle', label: t('Intervention détaillée', 'Detailed cleaning'), desc: t('Nettoyage en profondeur, du sol au plafond, selon vos priorités.', 'Deep cleaning, floor to ceiling, by your priorities.') },
+          { icon: 'badge-check', label: t('Contrôle qualité', 'Quality check'), desc: t('Vérification finale et exigence de propreté constante.', 'Final check and consistent cleanliness standards.') },
+        ]);
+    }
+
+    if (kind === 'jardin') {
+      return stepsBlock('savoirfaire',
+        t('Notre savoir-faire', 'Our expertise'),
+        t('Un espace vert pensé, créé et entretenu par des professionnels.', 'A green space designed, built and maintained by pros.'),
+        [
+          { icon: 'lightbulb', label: t('Conseil & Conception', 'Advice & Design'), desc: t('Étude de votre terrain et proposition paysagère sur mesure.', 'We study your land and propose a tailored landscape.') },
+          { icon: 'trees', label: t('Réalisation', 'Build'), desc: t('Plantation, aménagement et pose d’arrosage automatique.', 'Planting, landscaping and automatic irrigation.') },
+          { icon: 'calendar-check', label: t('Entretien régulier', 'Regular care'), desc: t('Taille, tonte et suivi saisonnier pour un jardin toujours parfait.', 'Pruning, mowing and seasonal care for a perfect garden.') },
+        ]);
+    }
+
+    if (kind === 'garage') {
+      return stepsBlock('process',
+        t('Notre process', 'Our process'),
+        t('Un véhicule pris en charge en toute transparence.', 'Your vehicle handled with full transparency.'),
+        [
+          { icon: 'wrench', label: t('Diagnostic', 'Diagnosis'), desc: t('Inspection complète et identification précise de la panne.', 'Full inspection and precise fault identification.') },
+          { icon: 'file-text', label: t('Devis transparent', 'Transparent quote'), desc: t('Un devis clair validé avant toute intervention.', 'A clear quote agreed before any work.') },
+          { icon: 'shield-check', label: t('Intervention & Garantie', 'Service & Warranty'), desc: t('Réparation soignée et garantie sur les pièces et la main-d’œuvre.', 'Careful repair, warranted parts and labor.') },
+        ]);
+    }
+
     return '';
   }
 

@@ -9,7 +9,7 @@ export interface SectorCopy {
   whyUs: { title: string; desc: string }[];
   services: { name: string; desc: string }[];
   faq: { q: string; a: string }[];
-  bespoke: 'restaurant' | 'coach' | 'medical' | 'artisan' | null;
+  bespoke: 'restaurant' | 'coach' | 'medical' | 'artisan' | 'coiffeur' | 'avocat' | 'nettoyage' | 'jardin' | 'garage' | null;
   trustBadges: string[];
 }
 
@@ -120,7 +120,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
 
   coiffeur: {
     fr: {
-      bespoke: null,
+      bespoke: 'coiffeur',
       trustBadges: ['Conseil gratuit', 'Produits bio', 'Outils stérilisés', 'Satisfait ou refait'],
       whyUs: [
         { title: 'Visagisme personnalisé', desc: 'Chaque coupe est pensée pour votre morphologie et votre style de vie.' },
@@ -143,7 +143,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
       ]
     },
     en: {
-      bespoke: null,
+      bespoke: 'coiffeur',
       trustBadges: ['Free consult', 'Organic products', 'Sterilized tools', 'Redo if unhappy'],
       whyUs: [
         { title: 'Personalized face-shaping', desc: 'Every cut is designed around your features and lifestyle.' },
@@ -267,7 +267,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
 
   avocat: {
     fr: {
-      bespoke: null,
+      bespoke: 'avocat',
       trustBadges: ['1er RDV conseil', 'Honoraires transparents', 'Avocat au barreau', 'Confidentialité'],
       whyUs: [
         { title: 'Avocat inscrit au barreau', desc: 'Une défense assurée par un professionnel du droit régulièrement formé.' },
@@ -290,7 +290,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
       ]
     },
     en: {
-      bespoke: null,
+      bespoke: 'avocat',
       trustBadges: ['First consult', 'Transparent fees', 'Bar certified', 'Confidentiality'],
       whyUs: [
         { title: 'Bar-certified attorney', desc: 'A defense handled by a legal professional in ongoing training.' },
@@ -316,7 +316,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
 
   nettoyage: {
     fr: {
-      bespoke: null,
+      bespoke: 'nettoyage',
       trustBadges: ['Devis gratuit', 'Produits écolabels', 'Équipe formée', 'Assurance RC Pro'],
       whyUs: [
         { title: 'Produits écolabels', desc: 'Nous nettoyons avec des produits respectueux de la santé et de l\'environnement.' },
@@ -339,7 +339,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
       ]
     },
     en: {
-      bespoke: null,
+      bespoke: 'nettoyage',
       trustBadges: ['Free quote', 'Eco-label products', 'Trained staff', 'Pro insurance'],
       whyUs: [
         { title: 'Eco-label products', desc: 'We clean with products that respect health and the environment.' },
@@ -365,7 +365,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
 
   jardin: {
     fr: {
-      bespoke: null,
+      bespoke: 'jardin',
       trustBadges: ['Devis gratuit', 'Plantes garanties', 'Conseil saisonnier', 'Paysagiste qualifié'],
       whyUs: [
         { title: 'Paysagiste à l\'écoute', desc: 'Nous concevons un espace vert qui vous ressemble et respecte votre terrain.' },
@@ -388,7 +388,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
       ]
     },
     en: {
-      bespoke: null,
+      bespoke: 'jardin',
       trustBadges: ['Free quote', 'Plants guaranteed', 'Seasonal advice', 'Qualified landscaper'],
       whyUs: [
         { title: 'A landscaper who listens', desc: 'We design a green space that reflects you and respects your land.' },
@@ -463,7 +463,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
 
   garage: {
     fr: {
-      bespoke: null,
+      bespoke: 'garage',
       trustBadges: ['Devis gratuit', 'Diagnostic précis', 'Véhicule de courtoisie', 'Pièces garanties'],
       whyUs: [
         { title: 'Diagnostic précis', desc: 'Notre valise multimarque identifie la panne sans tâtonner.' },
@@ -486,7 +486,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
       ]
     },
     en: {
-      bespoke: null,
+      bespoke: 'garage',
       trustBadges: ['Free quote', 'Accurate diagnosis', 'Courtesy car', 'Parts guaranteed'],
       whyUs: [
         { title: 'Accurate diagnosis', desc: 'Our multi-brand scanner pinpoints the fault without guesswork.' },
