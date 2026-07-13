@@ -88,4 +88,21 @@ describe('Soft Evolution design invariants', () => {
     expect(h).toContain('--accent-rgb');
     expect(h).toContain('--secondary-rgb');
   });
+
+  it('renders a #testimonials section with real reviews when provided', () => {
+    const html = generateUltimateSite({ ...lead, googleReviewsData: [
+      { author: 'Jean D.', text: 'Travail impeccable, je recommande.', rating: 5, date: '2025-03-12' },
+      { author: 'Marie L.', text: 'Ponctuel et pro.', rating: 5 },
+    ] } as any, undefined);
+    expect(html).toContain('id="testimonials"');
+    expect(html).toContain('Travail impeccable');
+  });
+
+  it('shows a review CTA (never fabricated stars) when no review data', () => {
+    const html = generateUltimateSite({ ...lead, googleRating: 0, googleReviews: 0, googleReviewsData: [] } as any, undefined);
+    expect(html).toContain('id="testimonials"');
+    expect(html).toContain('Laissez un avis');
+    expect(html).not.toMatch(/Basé sur \d+ avis|Based on \d+ reviews/);
+    expect(html).not.toMatch(/★★★★★|☆☆☆☆☆/);
+  });
 });

@@ -53,6 +53,7 @@ export interface UltimateContent {
   email?: string;
   address?: string;
   website?: string;
+  reviewUrl?: string;
   rating?: number;
   reviews?: number;
   googleRating?: number;
@@ -493,7 +494,7 @@ export function generateUltimateSite(lead: any, aiContent?: any): string {
   const accentOnDark = computeAccentOnDark(template.accent);
   const content: UltimateContent = {
     companyName, sector: lead.sector || 'Professionnel', city, description, phone, email, address,
-    website: lead.website || '', rating, reviews, googleRating: lead.googleRating, googleReviews: lead.googleReviews, services: finalServices, serviceImages, galleryImages, testimonials,
+    website: lead.website || '', reviewUrl: lead.reviewUrl || '', rating, reviews, googleRating: lead.googleRating, googleReviews: lead.googleReviews, services: finalServices, serviceImages, galleryImages, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
     socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
     footerDesc: lead.footerDesc || '', hasRealRating, hasRealReviews
@@ -642,7 +643,7 @@ export async function generateUltimateSiteAsync(lead: any, aiContent?: any, pexe
   const socialLinks = { ...deriveSocialLinks(lead.website), ...(lead.socialLinks || {}) };
   const content: UltimateContent = {
     companyName, sector: lead.sector || (lang === 'en' ? 'Professional' : 'Professionnel'), city, description, lang, phone, email, address,
-    website: lead.website || '', rating, reviews, googleRating: lead.googleRating, googleReviews: lead.googleReviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
+    website: lead.website || '', reviewUrl: lead.reviewUrl || '', rating, reviews, googleRating: lead.googleRating, googleReviews: lead.googleReviews, services: finalServices, serviceImages, galleryImages, realPhotos, testimonials,
     heroTitle, heroSubtitle, aboutText: description, ctaText, slogan: finalSlogan, heroImage, allImages,
     socialLinks, accentOnDark, hours: lead.hours || lead.serperHours || '', establishedYear: lead.establishedYear,
     footerDesc: lead.footerDesc || '', hasRealRating, hasRealReviews
@@ -825,29 +826,62 @@ const secondaryRgb = hexToRgb(secondaryColor);
     return '';
   }
 
-  function buildTrust(content: UltimateContent, lang: 'fr' | 'en'): string {
+  function buildTestimonials(content: UltimateContent, lang: 'fr' | 'en'): string {
+    const reviews = (content.testimonials || []).filter((t: any) => t && t.text);
     const rating = content.googleRating;
-    const reviews = content.googleReviews;
-    if (rating && reviews) {
+    const reviewCount = content.googleReviews;
+    const hasRating = typeof rating === 'number' && rating > 0;
+    const reviewUrl = content.reviewUrl || (content.website ? content.website : '#contact');
+    const title = lang === 'fr' ? 'Avis clients' : 'Client reviews';
+    const gLink = lang === 'fr' ? 'Voir sur Google' : 'View on Google';
+    const ctaHeading = lang === 'fr' ? 'Votre avis compte' : 'Your opinion matters';
+    const ctaText = lang === 'fr' ? 'Laissez un avis Google' : 'Leave a Google review';
+    const ctaSub = lang === 'fr' ? 'Aidez d’autres clients à faire le bon choix.' : 'Help others choose with confidence.';
+    // Branch 1: real testimonial text available
+    if (reviews.length > 0) {
+      const cards = reviews.map((r: any) => {
+        const full = Math.max(0, Math.min(5, Math.round(r.rating || 5)));
+        const stars = '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
+        return `<div class="tcard reveal">
+            <div class="tcard-stars">${stars}</div>
+            <p class="tcard-text">${r.text}</p>
+            <div class="tcard-foot"><span class="tcard-author">${r.author}</span>${r.date ? `<span class="tcard-date">${r.date}</span>` : ''}</div>
+        </div>`;
+      }).join('');
+      return `    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowTestimonials || (lang === 'fr' ? 'Témoignages' : 'Testimonials')}</span>
+                <h2>${title}</h2>
+                ${hasRating ? `<p>${gLink} — ${rating}/5 · ${reviewCount} ${(lang === 'fr' ? 'avis' : 'reviews')}</p>` : ''}
+            </div>
+            <div class="tcard-grid reveal">${cards}</div>
+        </div>
+    </section>`;
+    }
+    // Branch 2: real rating but no testimonial text
+    if (hasRating) {
       const stars = '★★★★★'.slice(0, Math.round(rating)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(rating));
-      const meta = lang === 'fr' ? `Basé sur ${reviews} avis vérifiés Google` : `Based on ${reviews} verified Google reviews`;
-      return `    <section class="section trust" id="confiance">
+      const meta = lang === 'fr' ? `Basé sur ${reviewCount} avis vérifiés Google` : `Based on ${reviewCount} verified Google reviews`;
+      return `    <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="trust-card reveal">
                 <div class="trust-score">${stars} <strong>${rating}/5</strong></div>
                 <p class="trust-meta">${meta}</p>
-                <div class="trust-strip">${['Devis gratuit', 'Réponse rapide', 'Garantie satisfaction'].map(b => `<span class="trust-badge"><i data-lucide="check-circle"></i> ${b}</span>`).join('')}</div>
+                <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-pri" style="margin-top:18px">${gLink} <i data-lucide="external-link" width="16"></i></a>
             </div>
         </div>
     </section>`;
     }
+    // Branch 3: no review data at all -> honest CTA, no fabrication
     const badges = getTrustBadges(lang);
-    const heading = lang === 'fr' ? 'Ils nous font confiance' : 'Trusted by our clients';
-    return `    <section class="section trust" id="confiance">
+    return `    <section class="section section-alt" id="testimonials">
         <div class="container">
-            <div class="trust-card reveal">
-                <h2>${heading}</h2>
-                <div class="trust-strip">${badges.map(b => `<span class="trust-badge"><i data-lucide="check-circle"></i> ${b}</span>`).join('')}</div>
+            <div class="trust-card reveal" style="text-align:center">
+                <h2>${ctaHeading}</h2>
+                <p class="trust-meta">${ctaSub}</p>
+                <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-pri" style="margin-top:18px">${ctaText} <i data-lucide="star" width="16"></i></a>
+                <div class="trust-strip">${badges.slice(0, 4).map((b: string) => `<span class="trust-badge"><i data-lucide="check-circle"></i> ${b}</span>`).join('')}</div>
             </div>
         </div>
     </section>`;
@@ -1602,7 +1636,7 @@ ${bespokeSection}
 
 ${buildWhyUs(content, pack.whyUs)}
 
-${buildTrust(content, lang)}
+${buildTestimonials(content, lang)}
 
     <section class="section section-alt" id="faq">
         <div class="container">
