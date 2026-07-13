@@ -24,7 +24,7 @@
     <link rel="alternate" hreflang="fr" href="https://saveur-port.fr">
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Saveur du Vieux Port","description":"Cuisine authentique et accueil chaleureux depuis 2009 à Bordeaux","image":"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80","telephone":"+33 5 56 00 00 00","email":"contact@saveur-port.fr","address":{"@type":"PostalAddress","streetAddress":"7 Quai des Chartrons","addressLocality":"Bordeaux","addressCountry":"FR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.5","reviewCount":"203"}}</script>
     <style>
-        :root{--primary:#c2410c;--primary-rgb:194, 65, 12;--secondary:#9a3412;--accent:#ea580c;--accent-dark:#ea580c;--accent-rgb:234, 88, 12;--secondary-rgb:154, 52, 18;--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:62deg;--deco-scale:1.1800000000000002;--accent-opacity:0.08;--section-shape:2;--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms;--fs-display:clamp(2.4rem,5vw,4rem);--fs-h2:clamp(1.7rem,3.2vw,2.4rem);--fs-h3:1.15rem;--lh-body:1.7;--section-py:clamp(64px,9vw,120px);--trust-bg:color-mix(in srgb,var(--accent) 6%,#fff);--hairline:color-mix(in srgb,var(--accent) 14%,var(--border));--maxw:1140px}
+        :root{--primary:#c2410c;--primary-rgb:194, 65, 12;--secondary:#9a3412;--accent:#ea580c;--accent-dark:#ea580c;--accent-rgb:234, 88, 12;--secondary-rgb:154, 52, 18;--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:62deg;--deco-scale:1.1800000000000002;--accent-opacity:0.08;--section-shape:2;--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms;--fs-display:clamp(2.4rem,5vw,4rem);--fs-h2:clamp(1.7rem,3.2vw,2.4rem);--fs-h3:1.15rem;--lh-body:1.7;--section-py:clamp(52px,6vw,88px);--trust-bg:color-mix(in srgb,var(--accent) 6%,#fff);--hairline:color-mix(in srgb,var(--accent) 14%,var(--border));--maxw:1140px}
         *{margin:0;padding:0;box-sizing:border-box}
         html{scroll-behavior:smooth;font-size:16px}
         body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
@@ -174,7 +174,7 @@
         @media(max-width:768px){.stats{grid-template-columns:1fr 1fr;padding:44px 24px;gap:28px}.stat-num{font-size:2.4rem}}
         @media(max-width:480px){.stats{padding:36px 20px;gap:20px}.stat-num{font-size:2rem}.stat-label{font-size:.72rem;letter-spacing:1.2px}}
 
-        .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+        .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
         .svc-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:0;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
         .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);transform:scaleX(0);transition:transform .35s;transform-origin:left}
         .svc-card:hover{border-color:var(--primary);box-shadow:0 12px 40px rgba(var(--primary-rgb),.1);transform:translateY(-6px)}
@@ -218,7 +218,7 @@
         .why-img-badge-text{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;margin-top:4px}
         @media(max-width:768px){.why-grid{grid-template-columns:1fr;gap:44px}.why-img{order:-1}.why-img-badge{bottom:16px;right:16px;padding:16px 22px}.why-img-badge-num{font-size:1.8rem}.why-stats{gap:12px}.why-stat{padding:18px}}
 
-        .guar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+        .guar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
         .guar-card{text-align:center;padding:32px 18px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:all .35s}
         .guar-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.07)}
         .guar-icon{width:56px;height:56px;border-radius:50%;background:rgba(var(--primary-rgb),.08);display:flex;align-items:center;justify-content:center;color:var(--primary);margin:0 auto 16px}
@@ -414,6 +414,24 @@
         .info-bar-item a:hover{color:#fff}
         @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
         @media(max-width:768px){.info-bar{font-size:.75rem}.info-bar-item{padding:0 18px;gap:5px}}
+        .hero-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+        .hero-chip{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:rgba(255,255,255,.86);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:7px 14px;border-radius:999px;backdrop-filter:blur(6px)}
+        .svc-tag{position:absolute;top:14px;left:14px;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px;z-index:2}
+        .svc-card{position:relative}
+        .about-sub{margin-top:14px;color:var(--text-s)}
+        .about-mini{display:flex;flex-wrap:wrap;gap:26px;margin-top:24px}
+        .about-mini-item{display:flex;flex-direction:column}.about-mini-item strong{font-size:1.6rem;color:var(--primary)}.about-mini-item span{font-size:.8rem;color:var(--text-t);text-transform:uppercase;letter-spacing:.06em}
+        .why-list{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+        .why-list-item{display:flex;gap:10px;align-items:flex-start;font-size:.96rem}.why-list-item i{color:var(--accent);margin-top:3px;flex:0 0 auto}
+        .tcard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+        .tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh-1)}
+        .tcard-stars{color:var(--accent);letter-spacing:2px;margin-bottom:10px}
+        .tcard-text{font-size:.96rem;line-height:1.6;color:var(--text)}
+        .tcard-foot{display:flex;justify-content:space-between;margin-top:14px;font-size:.82rem;color:var(--text-t)}
+        .tcard-author{font-weight:600;color:var(--text)}
+        @media(max-width:768px){.tcard-grid{grid-template-columns:1fr}}
+        .section-hdr h2{position:relative;display:inline-block}
+        .section-hdr h2::after{content:"";position:absolute;left:0;bottom:-10px;width:54px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--secondary))}
     </style>
 </head>
 <body>
@@ -463,6 +481,9 @@
                     <a href="#contact" class="btn-pri">Réserver une table <i data-lucide="arrow-right" width="18"></i></a>
                     <a href="tel:+33556000000" class="btn-sec"><i data-lucide="phone" width="18"></i> Appeler Maintenant</a>
                 </div>
+                <div class="hero-chips">
+                    <span class="hero-chip"><i data-lucide="leaf" width="14"></i> Produits Frais</span><span class="hero-chip"><i data-lucide="clock" width="14"></i> Service Rapide</span><span class="hero-chip"><i data-lucide="star" width="14"></i> Avis Clients</span>
+                </div>
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
                     <div class="hero-rating"><div class="hero-stars"><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i><i data-lucide="star" fill="currentColor" width="16"></i></div><span class="hero-rating-text">4.5/5 — 203 sur Google</span></div>
                 </div>
@@ -511,6 +532,7 @@
             <div class="svc-grid">
                 
                 <div class="svc-card reveal reveal-d1">
+                    <div class="svc-tag">Populaire</div>
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1517248135467-4c7edcad34c4%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Cuisine Maison à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="utensils" width="22" height="22"></i></div>
@@ -520,6 +542,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
+                    
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1578474846511-04ba529f0b88%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Menu du Jour à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="wine" width="22" height="22"></i></div>
@@ -529,6 +552,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
+                    
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1414235077428-338989a2e8c0%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Spécialités à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="chef-hat" width="22" height="22"></i></div>
@@ -538,6 +562,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d1">
+                    
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1555396273-367ea4eb4db5%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Événements & Groupes à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="concierge-bell" width="22" height="22"></i></div>
@@ -547,6 +572,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d2">
+                    
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1552566626-52f8b828add9%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Service Traiteur à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="package" width="22" height="22"></i></div>
@@ -556,6 +582,7 @@
                     </div>
                 </div>
                 <div class="svc-card reveal reveal-d3">
+                    
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1517248135467-4c7edcad34c4%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" class="svc-card-img" alt="Boissons & Vins à Bordeaux" loading="lazy">
                     <div class="svc-card-body">
                         <div class="svc-icon"><i data-lucide="beer" width="22" height="22"></i></div>
@@ -592,6 +619,32 @@
         </div>
     </section>
 
+    <section class="section" id="process">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">Nos prestations</span>
+                <h2>Comment ça marche</h2>
+                <p>Un process clair, de la première demande à la finition.</p>
+            </div>
+            <div class="bespoke-progs reveal">
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="message-circle" width="22"></i></div>
+                    <h3>Consultation</h3>
+                    <p>Un échange pour comprendre vos besoins en Restaurant.</p>
+                </div>
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="settings" width="22"></i></div>
+                    <h3>Réalisation</h3>
+                    <p>Une intervention soignée, dans les règles de l’art.</p>
+                </div>
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="refresh-cw" width="22"></i></div>
+                    <h3>Suivi</h3>
+                    <p>Un accompagnement après l’intervention, sans surprise.</p>
+                </div></div>
+        </div>
+    </section>
+
     <section class="section section-alt" id="about">
         <div class="container" style="position:relative">
             <div class="section-deco deco-diamond" style="top:-40px;right:-30px;animation-delay:2s"></div>
@@ -605,6 +658,12 @@
                     <span class="section-label">À propos</span>
                     <h2>À propos de Saveur du Vieux Port</h2>
                     <p>Restaurant gastronomique à Bordeaux : cuisine bordelaise et vins de la région.</p>
+                    <p class="about-sub">Du premier contact au suivi, Saveur du Vieux Port place votre satisfaction au centre.</p>
+                    <div class="about-mini">
+                        <div class="about-mini-item"><strong>14+</strong><span>Ans</span></div>
+                        <div class="about-mini-item"><strong>4.5/5</strong><span>Note Google</span></div>
+                        <div class="about-mini-item"><strong>6+</strong><span>Prestations</span></div>
+                    </div>
                     <ul class="about-checks">
                         <li><i data-lucide="check-circle-2" width="18"></i> Produits frais du marché</li>
                         <li><i data-lucide="check-circle-2" width="18"></i> Ambiance chaleureuse</li>
@@ -623,6 +682,9 @@
                     <span class="section-label">Pourquoi nous</span>
                     <h2>Notre Approche</h2>
                     <p>Notre approche : produits frais du marché et ambiance chaleureuse.</p>
+                    <ul class="why-list">
+                        <li class="why-list-item"><i data-lucide="check" width="16"></i> <span><strong>Produits frais du marché</strong> — Nos plats sont préparés chaque jour à partir de produits de saison.</span></li><li class="why-list-item"><i data-lucide="check" width="16"></i> <span><strong>Ambiance chaleureuse</strong> — Un cadre convivial et un accueil soigné pour vos moments en famille ou entre amis.</span></li><li class="why-list-item"><i data-lucide="check" width="16"></i> <span><strong>Carte des vins réfléchie</strong> — Des accords mets-vins sélectionnés pour sublimer chaque assiette.</span></li>
+                    </ul>
                 </div>
                 <div class="why-img reveal">
                     <img src="https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1414235077428-338989a2e8c0%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1" onerror="this.onerror=null;this.src='https://wsrv.nl/?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1555396273-367ea4eb4db5%3Fw%3D1920%26q%3D80&w=1200&q=80&output=webp&default=1';this.style.opacity='0.8'" alt="Saveur du Vieux Port" loading="lazy">
@@ -672,13 +734,26 @@
         </div>
     </section>
 
-    <section class="section trust" id="confiance">
+    <section class="section section-alt" id="testimonials">
         <div class="container">
-            <div class="trust-card reveal">
-                <div class="trust-score">★★★★★ <strong>4.5/5</strong></div>
-                <p class="trust-meta">Basé sur 203 avis vérifiés Google</p>
-                <div class="trust-strip"><span class="trust-badge"><i data-lucide="check-circle"></i> Devis gratuit</span><span class="trust-badge"><i data-lucide="check-circle"></i> Réponse rapide</span><span class="trust-badge"><i data-lucide="check-circle"></i> Garantie satisfaction</span></div>
+            <div class="section-hdr reveal">
+                <span class="section-label">Ils nous font confiance</span>
+                <h2>Avis clients</h2>
+                <p>Voir sur Google — 4.5/5 · 203 avis</p>
             </div>
+            <div class="tcard-grid reveal"><div class="tcard reveal">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-text">Intervention rapide et propre, je recommande ce restaurant.</p>
+            <div class="tcard-foot"><span class="tcard-author">Julie M.</span><span class="tcard-date">2025-11-02</span></div>
+        </div><div class="tcard reveal">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-text">Devis clair, travail soigné, rien à redire.</p>
+            <div class="tcard-foot"><span class="tcard-author">Karim B.</span><span class="tcard-date">2025-09-18</span></div>
+        </div><div class="tcard reveal">
+            <div class="tcard-stars">★★★★☆</div>
+            <p class="tcard-text">Équipe à l’écoute et résultat au rendez-vous.</p>
+            <div class="tcard-foot"><span class="tcard-author">Sophie T.</span><span class="tcard-date">2025-07-30</span></div>
+        </div></div>
         </div>
     </section>
 
