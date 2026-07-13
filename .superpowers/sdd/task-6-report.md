@@ -1,36 +1,22 @@
-# Task 6 Report — Editorial eyebrow labels (FR/EN)
+### Task 6 Report: Why (dark) checklist enrichment
 
-## Status
-DONE
+**Status:** DONE (green)
 
-## Changes
+**Commits:**
+- `9f87c6d0` — feat(template): add key-reasons checklist to Why section
 
-### src/lib/template/ui.ts
-- FR block (`fr: { ... }`): added 6 eyebrow fields after `testEmpty: 'Avis en attente',`:
-  - `eyebrowServices`, `eyebrowAbout`, `eyebrowWhy`, `eyebrowGuarantees`, `eyebrowTestimonials`, `eyebrowContact`
-- EN block (`en: { ... }`): added the same 6 fields after `testEmpty: 'Reviews coming soon',` with English copy.
+**Test command:**
+`npx vitest run src/lib/__tests__/template-design.test.ts`
 
-### src/lib/ultimateTemplate.ts
-Replaced 6 `section-label` spans to use the new `ui.eyebrow*` strings:
-- Services: `${ui.eyebrowServices}`
-- About: `${ui.eyebrowAbout}`
-- Why: `${ui.eyebrowWhy}`
-- Guarantees: `${ui.eyebrowGuarantees}` (replaced previously hardcoded `'Our Commitments'` / `'Nos Engagements'`)
-- Testimonials: `${ui.eyebrowTestimonials}`
-- Contact: `${ui.eyebrowContact}`
-- FAQ span (`FAQ`) left unchanged as instructed.
+**Test output summary:**
+- Before implementation: 1 failed (why section lists key reasons) / 18 passed.
+- After implementation: 19 passed (new test `why section lists key reasons` passes).
+- `npx tsc --noEmit` clean (no errors).
 
-## tsc output
-`npx tsc --noEmit` → 0 errors (no output).
+The new test added to `src/lib/__tests__/template-design.test.ts` asserts the generated HTML contains `why-list` and a `why-list-item` class. Implementation inserts a `<ul class="why-list">` with `pack.whyUs.slice(0,3)` rendered as `<li class="why-list-item">` items inside `.why-text` after the existing `<p>`.
 
-## Commit
-- Hash: `8a913b0de58303d17172511cfbeb4a94c7d811d7`
-- Message: `feat(template): editorial eyebrow labels (FR/EN)`
-- Branch: `feature/soft-evolution-redesign`
-- 2 files changed, 18 insertions(+), 6 deletions(-)
-
-## One-line test summary
-Typecheck passes with 0 errors after wiring 6 FR/EN eyebrow labels into section headers.
-
-## Concerns
-None. Removal of the `servicesTitle || sectorCfg.ui.svcTitle[lang]` fallback and the `aboutTitle || ui.aboutLabel` fallback means a caller-supplied override for those section labels is now ignored (eyebrow always wins). This is consistent with the brief's intent (editorial eyebrow always shown), but worth noting if any external code passed `servicesTitle`/`aboutTitle`.
+**Concerns:**
+- The brief's line references (~1583-1597) were stale; the actual `#why` block is now at lines ~1654-1668. Implementation targeted the correct current location.
+- CSS for `.why-list` / `.why-list-item` is intentionally deferred to Task 7 (classes use exact names so styling can be added later).
+- Pre-existing unrelated test failures (`basic.test.ts`, `validation.test.ts`) remain out of scope and untouched.
+- `pack.whyUs` items typed as `any` per brief; relies on `.title`/`.desc` fields which exist in SectorCopy.

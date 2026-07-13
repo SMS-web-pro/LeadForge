@@ -1,34 +1,20 @@
-# Task 4 Report — Reduced-motion hardening + reveal stagger
+# Task 4 Report — Services "Popular" tag + richer copy
 
 ## Status
-DONE
+GREEN — implemented, tests pass, `tsc --noEmit` clean, committed.
 
-## Changes
-File modified: `src/lib/ultimateTemplate.ts` (lines ~1115-1118).
-
-Replaced the existing `.reveal` / `.reveal.active` rules (and the adjacent, now-superseded `.reveal-d1/2/3` delays and reduced-motion media query) with the exact NEW block from the brief:
-
-- `.reveal` now uses `var(--ease)` and a smaller `translateY(28px)`.
-- Added `.reveal-d1/2/3` stagger delays (`.06s` / `.14s` / `.22s`).
-- Replaced the reduced-motion media query with a stricter one that disables `animation`/`transition`/`scroll-behavior` globally (`*`), forces `.reveal{opacity:1;transform:none}`, and sets `.hero-mesh{opacity:.8}`.
-
-Note: The file already contained separate `.reveal-d1/2/3` and a reduced-motion `@media` block adjacent to the two `.reveal` lines. To avoid duplication and apply the brief's NEW block exactly, the entire reveal-related block (the two `.reveal` lines plus the existing `.reveal-d` line and the existing reduced-motion media query) was replaced by the new block. No unrelated rules were touched.
-
-## tsc output
-```
-npx tsc --noEmit
-```
-0 errors (no output).
-
-## Commit
-- Hash: `5b76bafb7342b828591f04670c01b6ad9de5f5b4`
-- Message: `feat(template): reduced-motion hardening + reveal stagger`
-- Branch: `feature/soft-evolution-redesign`
-- `1 file changed, 7 insertions(+), 3 deletions(-)`
+## Commits
+- `a37d9712` — feat(template): add Popular tag + ensure richer service copy
 
 ## Test summary
-`npx tsc --noEmit` passes with 0 errors; no functional test harness exists for the template string (pure CSS-in-TS template literal).
+Added `it('marks the first service as popular and uses richer descriptions')` which asserts the rendered HTML contains `svc-tag` (first service card tag, fallback "Populaire") and `svc-card-body`; full file: 17 passed / 17.
+
+Command: `npx vitest run src/lib/__tests__/template-design.test.ts`
+Output: `Test Files 1 passed (1)`, `Tests 17 passed (17)`.
+`npx tsc --noEmit`: clean (no errors).
 
 ## Concerns
-- The brief says "REPLACE the two existing `.reveal` lines" but the NEW block also redefines `.reveal-d1/2/3` and the reduced-motion media query that already existed as separate lines. Applied the literal NEW block to prevent duplicated/conflicting CSS, replacing the redundant adjacent lines rather than leaving duplicates. Flagging in case strict line-level interpretation was intended.
-- The new global reduced-motion rule `* {transition:none!important}` also disables transitions on `.float-urgent` hover (already covered by constraint that reveals/custom cursor auto-disable under reduced-motion) — acceptable per brief intent.
+- `ui.svcPopular` does not exist on the `ui` union type (defined in `src/lib/template/ui.ts`, which is out of scope to modify per task constraints). To keep `tsc` clean without touching `ui.ts`, the reference is cast via `(ui as any).svcPopular`. At runtime it is undefined, so the inline fallback `lang === 'fr' ? 'Populaire' : 'Popular'` is used. If `svcPopular` is later added to the `ui` interface (e.g., by a future task), the cast can be removed.
+- `.svc-tag` CSS styles are deferred to Task 7 (per brief). The `position:relative` already exists on `.svc-card` (line 1330), so the tag will position correctly once styled.
+- Only `src/lib/ultimateTemplate.ts` and `src/lib/__tests__/template-design.test.ts` were modified. Pre-existing unrelated test failures (`src/__tests__/basic.test.ts`, `src/lib/__tests__/validation.test.ts`) remain untouched and out of scope.
+- No `git push` performed.

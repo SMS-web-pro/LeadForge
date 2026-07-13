@@ -14,7 +14,7 @@ Spec: docs/superpowers/specs/2026-07-13-site-content-enrichment-design.md
 - [x] Task 6: Why (dark) checklist enrichment — complete (commit 1f1dfeb1..9f87c6d0, review clean)
 - [x] Task 7: CSS densification + visual upgrade — complete (commit 9f87c6d0..5a94fc8c, review clean)
 - [x] Task 8: Inject sample data in test-site-gen.mts (preview only) — complete (commit 5a94fc8c..a1836e32, review clean)
-- [ ] Task 9: Full verification + honesty re-check
+- [x] Task 9: Full verification + honesty re-check — complete (commit a1836e32..e86a978b, tsc clean, 21/21 tests, regen 10/10 green, honesty OK)
 
 ## Notes
 - Contact map already exists (ultimateTemplate.ts ~905) — no contact task in plan.

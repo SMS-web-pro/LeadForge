@@ -1,53 +1,127 @@
-# Task 1 — Design-token layer in `:root` + base layer
+﻿### Task 1: Testimonials / Reviews section (`#testimonials`)
 
-**Source:** docs/superpowers/plans/2026-07-12-soft-evolution-redesign.md (Task 1)
+**Files:**
+- Modify: `src/lib/ultimateTemplate.ts` â€” replace `buildTrust` (lines ~828-854) with `buildTestimonials`; change assembly call at line ~1605.
+- Test: `src/lib/__tests__/template-design.test.ts`
 
-## Files
-- Modify: `src/lib/ultimateTemplate.ts:837` (the `:root{...}` block — a single line)
-- Modify: `src/lib/ultimateTemplate.ts:838-842` (base reset / body / headings)
+**Interfaces:**
+- Consumes: `content.testimonials` (`Array<{author:string;text:string;rating:number;date?:string}>`), `content.googleRating`, `content.googleReviews`, `content.reviewUrl`, `getTrustBadges(lang)`, `ui`, `t()`.
+- Produces: `buildTestimonials(content, lang)` returning a `<section id="testimonials">` string.
 
-## Interfaces
-- Consumes: existing tokens `--primary`, `--primary-rgb`, `--secondary`, `--accent`, `--accent-dark`, `--bg`, `--surface`, `--text`, `--text-s`, `--text-t`, `--border`, `--border-l`, `--dark`, `--dark-rgb` (already defined in the current `:root`).
-- Produces: new tokens `--r-sm`, `--r`, `--r-lg`, `--r-xl`, `--sh-1`, `--sh-2`, `--sh-glow`, `--accent-soft`, `--ease`, `--dur` used by all later tasks.
+- [ ] **Step 1: Write the failing test**
 
-## Steps
+Add to `template-design.test.ts` (inside `describe`):
 
-### Step 1: Expand the `:root` block
-Replace the ENTIRE single `:root{...}` line (currently line 837) with this exact content (the `${...}` are template-literal interpolations already present in the file — keep them verbatim; only append the new tokens at the end before the closing `}`):
+```ts
+it('renders a #testimonials section with real reviews when provided', () => {
+  const html = generateUltimateSite({ ...lead, googleReviewsData: [
+    { author: 'Jean D.', text: 'Travail impeccable, je recommande.', rating: 5, date: '2025-03-12' },
+    { author: 'Marie L.', text: 'Ponctuel et pro.', rating: 5 },
+  ] } as any, undefined);
+  expect(html).toContain('id="testimonials"');
+  expect(html).toContain('Travail impeccable');
+});
 
+it('shows a review CTA (never fabricated stars) when no review data', () => {
+  const html = generateUltimateSite({ ...lead, googleRating: 0, googleReviews: 0, googleReviewsData: [] } as any, undefined);
+  expect(html).toContain('id="testimonials"');
+  expect(html).toContain('Laissez un avis');
+  expect(html).not.toMatch(/BasÃ© sur \d+ avis|Based on \d+ reviews/);
+  expect(html).not.toMatch(/â˜…â˜…â˜…â˜…â˜…|â˜†â˜†â˜†â˜†â˜†/);
+});
 ```
-:root{--primary:${primaryColor};--primary-rgb:${primaryRgb};--secondary:${secondaryColor};--accent:${accentColor};--accent-dark:${accentOnDark};--bg:#f7f8fb;--surface:#fff;--text:#161a2b;--text-s:#51566e;--text-t:#868aa3;--border:#e6e8f0;--border-l:#f1f2f7;--dark:#16203c;--dark-rgb:22,32,60;--deco-rotation:${decoRotation}deg;--deco-scale:${decoScale};--accent-opacity:${accentOpacity};--section-shape:${sectionShape};--r-sm:10px;--r:16px;--r-lg:24px;--r-xl:32px;--sh-1:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);--sh-2:0 8px 24px rgba(16,24,40,.10),0 18px 48px rgba(16,24,40,.10);--sh-glow:0 14px 44px rgba(var(--primary-rgb),.28);--accent-soft:color-mix(in srgb,var(--accent) 9%,#fff);--ease:cubic-bezier(.22,1,.36,1);--dur:220ms}
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `npx vitest run src/lib/__tests__/template-design.test.ts`
+Expected: FAIL (`#testimonials` not present; CTA text absent).
+
+- [ ] **Step 3: Write minimal implementation**
+
+Replace `buildTrust` with:
+
+```ts
+  function buildTestimonials(content: UltimateContent, lang: 'fr' | 'en'): string {
+    const reviews = (content.testimonials || []).filter((t: any) => t && t.text);
+    const rating = content.googleRating;
+    const reviewCount = content.googleReviews;
+    const hasRating = typeof rating === 'number' && rating > 0;
+    const reviewUrl = content.reviewUrl || (content.website ? content.website : '#contact');
+    const title = lang === 'fr' ? 'Avis clients' : 'Client reviews';
+    const gLink = lang === 'fr' ? 'Voir sur Google' : 'View on Google';
+    const ctaHeading = lang === 'fr' ? 'Votre avis compte' : 'Your opinion matters';
+    const ctaText = lang === 'fr' ? 'Laissez un avis Google' : 'Leave a Google review';
+    const ctaSub = lang === 'fr' ? 'Aidez dâ€™autres clients Ã  faire le bon choix.' : 'Help others choose with confidence.';
+    // Branch 1: real testimonial text available
+    if (reviews.length > 0) {
+      const cards = reviews.map((r: any) => {
+        const full = Math.max(0, Math.min(5, Math.round(r.rating || 5)));
+        const stars = 'â˜…â˜…â˜…â˜…â˜…'.slice(0, full) + 'â˜†â˜†â˜†â˜†â˜†'.slice(0, 5 - full);
+        return `<div class="tcard reveal">
+            <div class="tcard-stars">${stars}</div>
+            <p class="tcard-text">${r.text}</p>
+            <div class="tcard-foot"><span class="tcard-author">${r.author}</span>${r.date ? `<span class="tcard-date">${r.date}</span>` : ''}</div>
+        </div>`;
+      }).join('');
+      return `    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowTestimonials || (lang === 'fr' ? 'TÃ©moignages' : 'Testimonials')}</span>
+                <h2>${title}</h2>
+                ${hasRating ? `<p>${gLink} â€” ${rating}/5 Â· ${reviewCount} ${(lang === 'fr' ? 'avis' : 'reviews')}</p>` : ''}
+            </div>
+            <div class="tcard-grid reveal">${cards}</div>
+        </div>
+    </section>`;
+    }
+    // Branch 2: real rating but no testimonial text
+    if (hasRating) {
+      const stars = 'â˜…â˜…â˜…â˜…â˜…'.slice(0, Math.round(rating)) + 'â˜†â˜†â˜†â˜†â˜†'.slice(0, 5 - Math.round(rating));
+      const meta = lang === 'fr' ? `BasÃ© sur ${reviewCount} avis vÃ©rifiÃ©s Google` : `Based on ${reviewCount} verified Google reviews`;
+      return `    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="trust-card reveal">
+                <div class="trust-score">${stars} <strong>${rating}/5</strong></div>
+                <p class="trust-meta">${meta}</p>
+                <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-pri" style="margin-top:18px">${gLink} <i data-lucide="external-link" width="16"></i></a>
+            </div>
+        </div>
+    </section>`;
+    }
+    // Branch 3: no review data at all -> honest CTA, no fabrication
+    const badges = getTrustBadges(lang);
+    return `    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="trust-card reveal" style="text-align:center">
+                <h2>${ctaHeading}</h2>
+                <p class="trust-meta">${ctaSub}</p>
+                <a href="${reviewUrl}" target="_blank" rel="noopener" class="btn-pri" style="margin-top:18px">${ctaText} <i data-lucide="star" width="16"></i></a>
+                <div class="trust-strip">${badges.slice(0, 4).map((b: string) => `<span class="trust-badge"><i data-lucide="check-circle"></i> ${b}</span>`).join('')}</div>
+            </div>
+        </div>
+    </section>`;
+  }
 ```
 
-(Note: `--bg` was `#fafaf9`, change it to `#f7f8fb`; `--text` was `#1a1a2e` → `#161a2b`; `--text-s` was `#555770` → `#51566e`; `--text-t` was `#8b8da3` → `#868aa3`; `--border` was `#e8e8ef` → `#e6e8f0`; `--border-l` was `#f2f2f7` → `#f1f2f7`; `--dark` was `#1a2744` → `#16203c`; `--dark-rgb` was `26,39,68` → `22,32,60`. The rest stays identical.)
+Then in the assembly, change the call:
 
-### Step 2: Add base layer rules
-After the `h1,h2,h3,h4,h5{...}` line (currently line 842), append these three declarations (they are additional top-level CSS rules, NOT inside the `h1...` rule):
-
-```css
-a,button,[role="button"]{cursor:pointer}
-:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:4px}
-::selection{background:color-mix(in srgb,var(--accent) 22%,#fff);color:var(--text)}
+```ts
+${buildTestimonials(content, lang)}
 ```
 
-(The existing `img{max-width:100%;height:auto;display:block}` line already exists right after — do not duplicate it.)
+(Replace the existing `${buildTrust(content, lang)}` at the `buildTrust` call site.)
 
-### Step 3: Typecheck
-Run: `npx tsc --noEmit`
-Expected: no errors (CSS lives inside a JS template string, so this just confirms the surrounding TypeScript still compiles).
+- [ ] **Step 4: Run test to verify it passes**
 
-### Step 4: Commit
+Run: `npx vitest run src/lib/__tests__/template-design.test.ts`
+Expected: PASS (both new tests + existing 12).
+
+- [ ] **Step 5: Commit**
+
 ```bash
-git add src/lib/ultimateTemplate.ts
-git commit -m "feat(template): add Soft Evolution design tokens + base a11y layer"
+git add src/lib/ultimateTemplate.ts src/lib/__tests__/template-design.test.ts
+git commit -m "feat(template): add honest testimonials/reviews section (#testimonials)"
 ```
 
-## Global Constraints (binding for every task)
-- Single `<h1>` per generated page (keep hero only).
-- All interactive elements: `cursor:pointer`, visible `:focus-visible` ring, hover transition 150–300ms.
-- No emoji icons — lucide (`data-lucide`) only.
-- Light-mode text/CTA contrast ≥ 4.5:1; no neon; no AI purple-pink gradients.
-- Responsive at 375 / 768 / 1024 / 1440.
-- Custom cursor + scroll reveals: auto-disabled when `prefers-reduced-motion: reduce` OR `pointer: coarse` (touch) OR viewport < 768px.
-- Zero new external dependencies; keep `sectorConfig`-driven dynamic copy (no hardcoded sector strings).
-- `tsc` must pass; regenerate both test sites after changes.
+---
+
