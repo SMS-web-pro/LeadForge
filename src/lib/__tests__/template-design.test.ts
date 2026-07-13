@@ -106,6 +106,15 @@ describe('Soft Evolution design invariants', () => {
     expect(html).not.toMatch(/★★★★★|☆☆☆☆☆/);
   });
 
+  it('renders rating branch without leaking undefined when review count is absent', () => {
+    const html = generateUltimateSite({ ...lead, googleRating: 4.8, googleReviews: undefined, testimonials: [], googleReviewsData: [] } as any, undefined);
+    expect(html).toContain('id="testimonials"');
+    expect(html).toContain('4.8/5');
+    expect(html).not.toContain('undefined');
+    expect(html).not.toContain('NaN');
+    expect(html).not.toMatch(/Basé sur undefined|Based on undefined/);
+  });
+
   it('hero shows USP chips from guarantees', () => {
     const html = build();
     expect(html).toContain('hero-chips');

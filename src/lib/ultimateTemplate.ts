@@ -835,9 +835,10 @@ const secondaryRgb = hexToRgb(secondaryColor);
     const rating = content.googleRating;
     const reviewCount = content.googleReviews;
     const hasRating = typeof rating === 'number' && rating > 0;
+    const hasCount = typeof reviewCount === 'number';
     const reviewUrl = content.reviewUrl || (content.website ? content.website : '#contact');
     const title = lang === 'fr' ? 'Avis clients' : 'Client reviews';
-    const gLink = lang === 'fr' ? 'Voir sur Google' : 'View on Google';
+    const gLink = lang === 'fr' ? 'Lire les avis sur Google' : 'Read our Google reviews';
     const ctaHeading = lang === 'fr' ? 'Votre avis compte' : 'Your opinion matters';
     const ctaText = lang === 'fr' ? 'Laissez un avis Google' : 'Leave a Google review';
     const ctaSub = lang === 'fr' ? 'Aidez d’autres clients à faire le bon choix.' : 'Help others choose with confidence.';
@@ -857,7 +858,7 @@ const secondaryRgb = hexToRgb(secondaryColor);
             <div class="section-hdr reveal">
                 <span class="section-label">${ui.eyebrowTestimonials || (lang === 'fr' ? 'Témoignages' : 'Testimonials')}</span>
                 <h2>${title}</h2>
-                ${hasRating ? `<p>${gLink} — ${rating}/5 · ${reviewCount} ${(lang === 'fr' ? 'avis' : 'reviews')}</p>` : ''}
+                ${hasRating ? `<p>${gLink} — ${rating}/5${hasCount ? ` · ${reviewCount} ${(lang === 'fr' ? 'avis' : 'reviews')}` : ''}</p>` : ''}
             </div>
             <div class="tcard-grid reveal">${cards}</div>
         </div>
@@ -866,7 +867,9 @@ const secondaryRgb = hexToRgb(secondaryColor);
     // Branch 2: real rating but no testimonial text
     if (hasRating) {
       const stars = '★★★★★'.slice(0, Math.round(rating)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(rating));
-      const meta = lang === 'fr' ? `Basé sur ${reviewCount} avis vérifiés Google` : `Based on ${reviewCount} verified Google reviews`;
+      const meta = lang === 'fr'
+        ? (hasCount ? `Basé sur ${reviewCount} avis vérifiés Google` : `Note ${rating}/5 sur Google`)
+        : (hasCount ? `Based on ${reviewCount} verified Google reviews` : `Rated ${rating}/5 on Google`);
       return `    <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="trust-card reveal">
