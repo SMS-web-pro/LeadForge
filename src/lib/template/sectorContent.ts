@@ -170,7 +170,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
   restaurant: {
     fr: {
       bespoke: 'restaurant',
-      trustBadges: ['Réservation en ligne', 'Produits frais', 'Parking gratuit', 'Note 4.8/5'],
+      trustBadges: ['Réservation en ligne', 'Produits frais', 'Parking gratuit', 'Avis clients'],
       whyUs: [
         { title: 'Produits frais du marché', desc: 'Nos plats sont préparés chaque jour à partir de produits de saison.' },
         { title: 'Ambiance chaleureuse', desc: 'Un cadre convivial et un accueil soigné pour vos moments en famille ou entre amis.' },
@@ -193,7 +193,7 @@ const SECTOR_CONTENT_PACKS: Record<string, Pack> = {
     },
     en: {
       bespoke: 'restaurant',
-      trustBadges: ['Book online', 'Fresh produce', 'Free parking', '4.8/5 rating'],
+      trustBadges: ['Book online', 'Fresh produce', 'Free parking', 'Customer reviews'],
       whyUs: [
         { title: 'Fresh market produce', desc: 'Our dishes are prepared daily from seasonal ingredients.' },
         { title: 'Warm atmosphere', desc: 'A welcoming setting and attentive service for time with family or friends.' },
