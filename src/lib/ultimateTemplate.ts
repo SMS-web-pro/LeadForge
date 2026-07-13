@@ -8,6 +8,8 @@ import { getSectorConfig } from './sectorConfig';
 import { UI } from './template/ui';
 import { getProcessSteps, getGuarantees, getHeroBadge, getGalleryDesc, getPrivacyContent, generateFeaturesFromService, generateAboutText, capitalizeCity, getLogoInfo, detectLanguage, isEnglishText, cleanText, getStats } from './template/helpers';
 export { detectLanguage };
+import { resolveSectorContent } from './template/sectorContent';
+import type { SectorCopy } from './template/sectorContent';
 
 
 // Descriptions courtes des engagements (clé = icône lucide) — secteur-adaptables
@@ -899,9 +901,102 @@ const secondaryRgb = hexToRgb(secondaryColor);
     </section>`;
   }
 
-  function buildBespoke(content: UltimateContent, template: any, lang: 'fr' | 'en'): string {
+  function buildBespoke(content: UltimateContent, pack: SectorCopy, lang: 'fr' | 'en'): string {
+    const kind = pack.bespoke;
+    if (!kind) return '';
+    const t = (fr: string, en: string) => (lang === 'en' ? en : fr);
+
+    if (kind === 'restaurant') {
+      const specialties = (pack.services || []).slice(0, 4).map(s => `
+                <div class="spec-item"><i data-lucide="utensils" width="16"></i><div><strong>${s.name}</strong><br><span class="spec-desc">${s.desc}</span></div></div>`).join('');
+      const reservation = (pack.trustBadges || []).find(b => /réservation|reserva|book/i.test(b));
+      const hoursBlock = content.hours
+        ? `<div class="bespoke-hours">${content.hours}</div>`
+        : (reservation ? `<div class="bespoke-note"><i data-lucide="calendar-check" width="16"></i> ${reservation}</div>` : '');
+      return `    <section class="section" id="carte-horaires">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowServices}</span>
+                <h2>${t('Carte & Horaires', 'Menu & Hours')}</h2>
+                <p>${t('Une cuisine préparée sur place, à découvrir sur notre carte.', 'House-made dishes, discover our menu.')}</p>
+            </div>
+            <div class="bespoke-grid reveal">
+                <div class="bespoke-card">
+                    <h3>${t('Nos spécialités', 'Our specialties')}</h3>
+                    ${specialties}
+                </div>
+                <div class="bespoke-card">
+                    <h3>${t('Horaires', 'Hours')}</h3>
+                    ${hoursBlock}
+                </div>
+            </div>
+        </div>
+    </section>`;
+    }
+
+    if (kind === 'coach') {
+      const get = (name: string) => (pack.services || []).find(s => s.name.toLowerCase().includes(name.toLowerCase()));
+      const programs = [
+        { label: t('Personnalisé', 'Personal'), svc: get('Coaching') },
+        { label: t('Collectif', 'Group'), svc: get('Collectif') },
+        { label: t('Préparation', 'Preparation'), svc: get('Préparation') },
+      ];
+      const cols = programs.map(p => `
+                <div class="bespoke-prog reveal">
+                    <div class="bespoke-prog-icon"><i data-lucide="dumbbell" width="22"></i></div>
+                    <h3>${p.label}</h3>
+                    <p>${p.svc ? p.svc.desc : (lang === 'en' ? 'A session adapted to your goals.' : 'Une séance adaptée à vos objectifs.')}</p>
+                </div>`).join('');
+      return `    <section class="section" id="programmes">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowServices}</span>
+                <h2>${t('Nos Programmes', 'Our Programs')}</h2>
+                <p>${t('Des formules pour chaque objectif, encadrées par des coachs diplômés.', 'Formats for every goal, led by certified coaches.')}</p>
+            </div>
+            <div class="bespoke-progs reveal">${cols}</div>
+        </div>
+    </section>`;
+    }
+
+    if (kind === 'medical') {
+      const cares = (pack.services || []).map((s, i) => `
+                <div class="bespoke-care reveal reveal-d${(i % 3) + 1}">
+                    <h3>${s.name}</h3>
+                    <p>${s.desc}</p>
+                </div>`).join('');
+      return `    <section class="section section-alt" id="soins">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowServices}</span>
+                <h2>${t('Nos Soins', 'Our Care')}</h2>
+                <p>${t('Des prises en charge adaptées, réalisées par des professionnels de santé.', 'Tailored care delivered by health professionals.')}</p>
+            </div>
+            <div class="bespoke-cares reveal">${cares}</div>
+        </div>
+    </section>`;
+    }
+
+    if (kind === 'artisan') {
+      const creds = [t('RGE', 'RGE'), t('Assurance décennale', '10-Year Warranty'), t('Devis gratuit', 'Free quote'), t('Garantie satisfaction', 'Satisfaction guarantee')];
+      const badges = creds.map(c => `<span class="trust-badge"><i data-lucide="badge-check" width="16"></i> ${c}</span>`).join('');
+      return `    <section class="section" id="certifications">
+        <div class="container">
+            <div class="section-hdr reveal">
+                <span class="section-label">${ui.eyebrowGuarantees}</span>
+                <h2>${t('Certifications & Garanties', 'Certifications & Guarantees')}</h2>
+                <p>${t('Les garanties qui encadrent chaque intervention.', 'The guarantees that back every job.')}</p>
+            </div>
+            <div class="trust-strip reveal">${badges}</div>
+        </div>
+    </section>`;
+    }
+
     return '';
   }
+
+  const pack = resolveSectorContent(content.sector, lang);
+  const bespokeSection = buildBespoke(content, pack, lang);
 
   return `<!DOCTYPE html>
 <html lang="${ui.lang}">
@@ -962,6 +1057,29 @@ const secondaryRgb = hexToRgb(secondaryColor);
         .trust-badge{display:inline-flex;align-items:center;gap:8px;background:var(--trust-bg);border:1px solid var(--hairline);color:var(--text);padding:10px 16px;border-radius:999px;font-size:.9rem;font-weight:600}
         .trust-badge i{color:var(--accent)}
         @media(max-width:768px){.trust-strip{gap:8px}}
+
+        /* Sector bespoke blocks (Task 4) */
+        .bespoke-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;margin-top:48px}
+        .bespoke-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;box-shadow:var(--sh-1)}
+        .bespoke-card h3{font-size:1.15rem;margin-bottom:18px}
+        .spec-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-l)}
+        .spec-item:last-child{border:none}
+        .spec-item i{color:var(--accent);flex-shrink:0;margin-top:4px}
+        .spec-item strong{font-weight:600}
+        .spec-desc{color:var(--text-s);font-size:.9rem;line-height:1.6}
+        .bespoke-hours{font-size:.98rem;color:var(--text-s);line-height:1.8;white-space:pre-line}
+        .bespoke-note{margin-top:8px;font-size:.92rem;color:var(--text-t);display:flex;align-items:center;gap:8px}
+        .bespoke-progs{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+        .bespoke-prog{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:32px;box-shadow:var(--sh-1);transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+        .bespoke-prog:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+        .bespoke-prog-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);margin-bottom:14px}
+        .bespoke-prog h3{font-size:1.1rem;margin-bottom:10px}
+        .bespoke-prog p{color:var(--text-s);font-size:.92rem;line-height:1.6}
+        .bespoke-cares{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+        .bespoke-care{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;box-shadow:var(--sh-1)}
+        .bespoke-care h3{font-size:1.05rem;margin-bottom:10px}
+        .bespoke-care p{color:var(--text-s);font-size:.9rem;line-height:1.6}
+        @media(max-width:768px){.bespoke-grid{grid-template-columns:1fr}.bespoke-progs{grid-template-columns:1fr}.bespoke-cares{grid-template-columns:1fr}}
         .mobile-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;border-radius:8px;transition:background .2s}
         .navbar:not(.scrolled) .mobile-toggle i{color:var(--text)}
         .mobile-toggle:hover{background:rgba(0,0,0,.05)}
@@ -1329,7 +1447,7 @@ const secondaryRgb = hexToRgb(secondaryColor);
 
 ${buildHero(content, template, lang)}
 
-    <main id="main-content">${buildBespoke(content, template, lang)}
+    <main id="main-content">
     <div class="trust-bar">
         <div class="trust-inner">
             ${getGuarantees(content.sector, lang).map((g: { title: string; icon: string }, i: number) => `
@@ -1340,6 +1458,8 @@ ${buildHero(content, template, lang)}
     </div>
 
 ${buildServices(content, lang, [])}
+
+${bespokeSection}
 
     <section class="section section-alt" id="about">
         <div class="container" style="position:relative">
