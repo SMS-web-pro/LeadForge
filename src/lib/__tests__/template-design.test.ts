@@ -124,4 +124,10 @@ describe('Soft Evolution design invariants', () => {
     const coiffeur = generateUltimateSite({ ...lead, sector: 'Coiffeur' } as any, undefined);
     expect(coiffeur).not.toContain('id="process"');
   });
+
+  it('about section has a second paragraph and honest mini-stats', () => {
+    const html = build();
+    expect(html).toContain('about-mini');
+    expect(html).not.toContain('undefined');
+  });
 });

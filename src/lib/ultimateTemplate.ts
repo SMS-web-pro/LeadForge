@@ -1634,6 +1634,12 @@ ${!hasBespokeProcess ? buildProcess(content, lang) : ''}
                     <span class="section-label">${ui.eyebrowAbout}</span>
                     <h2>${lang === 'en' ? 'About' : 'À propos de'} ${companyName}</h2>
                     <p>${aboutText}</p>
+                    <p class="about-sub">${footerDesc || (lang === 'en' ? `From first contact to follow-up, ${companyName} puts your satisfaction first.` : `Du premier contact au suivi, ${companyName} place votre satisfaction au centre.`)}</p>
+                    <div class="about-mini">
+                        ${establishedYear ? `<div class="about-mini-item"><strong>${(new Date().getFullYear() - establishedYear)}+</strong><span>${lang === 'en' ? 'Years' : 'Ans'}</span></div>` : ''}
+                        ${hasRealRating && rating ? `<div class="about-mini-item"><strong>${rating}/5</strong><span>${lang === 'en' ? 'Google Rating' : 'Note Google'}</span></div>` : ''}
+                        <div class="about-mini-item"><strong>${(services || []).length}+</strong><span>${lang === 'en' ? 'Services' : 'Prestations'}</span></div>
+                    </div>
                     <ul class="about-checks">
                         <li><i data-lucide="check-circle-2" width="18"></i> ${pack.whyUs[0]?.title || (lang === 'en' ? 'Quality Service' : 'Qualité professionnelle')}</li>
                         <li><i data-lucide="check-circle-2" width="18"></i> ${pack.whyUs[1]?.title || (lang === 'en' ? 'Here for You' : 'À votre écoute')}</li>
